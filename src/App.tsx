@@ -7,6 +7,8 @@ import { ExperienceDetail } from './components/ExperienceDetail'
 import { TripBuilder } from './components/TripBuilder'
 import { CheckoutFlow } from './components/checkout/CheckoutFlow'
 import { TripsDashboard } from './components/TripsDashboard'
+import { SavedScreen } from './components/SavedScreen'
+import { ExploreScreen } from './components/ExploreScreen'
 import { VendorLogin } from './components/vendor/VendorLogin'
 import { VendorRegister } from './components/vendor/VendorRegister'
 import { VendorDashboard } from './components/vendor/VendorDashboard'
@@ -309,37 +311,26 @@ function App() {
 
     if (currentScreen.type === 'explore') {
       return (
-        <div className="min-h-screen bg-background p-6 pb-24">
-          <h1 className="font-display text-3xl font-bold mb-6">Explore</h1>
-          <p className="text-muted-foreground">Discovery features coming soon...</p>
-        </div>
+        <ExploreScreen
+          onViewExperience={(id) => setCurrentScreen({ type: 'experience', experienceId: id })}
+        />
       )
     }
 
     if (currentScreen.type === 'saved') {
+      const savedExperiences = safeUser.saved
+        .map(id => getExperienceById(id))
+        .filter((exp): exp is Experience => exp !== undefined)
+
       return (
-        <div className="min-h-screen bg-background p-6 pb-24">
-          <h1 className="font-display text-3xl font-bold mb-6">Saved Experiences</h1>
-          {safeUser.saved.length === 0 ? (
-            <div className="text-center py-16 space-y-4">
-              <div className="text-6xl mb-4">❤️</div>
-              <h2 className="font-display text-xl font-semibold">Save experiences you love</h2>
-              <p className="text-muted-foreground">Tap the heart icon on any experience to save it here</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {safeUser.saved.map((expId) => {
-                const exp = getExperienceById(expId)
-                return exp ? (
-                  <div key={expId} className="p-4 bg-card rounded-lg border">
-                    <h3 className="font-display font-semibold">{exp.title}</h3>
-                    <p className="text-sm text-muted-foreground">{exp.provider.name}</p>
-                  </div>
-                ) : null
-              })}
-            </div>
-          )}
-        </div>
+        <SavedScreen
+          savedExperiences={savedExperiences}
+          onToggleSave={handleToggleSave}
+          onAddToTrip={(experience) => handleQuickAdd(experience)}
+          onViewExperience={(id) => setCurrentScreen({ type: 'experience', experienceId: id })}
+          onNavigateHome={() => setCurrentScreen({ type: 'home' })}
+          tripItemIds={safeTrip.items.map(item => item.experienceId)}
+        />
       )
     }
 
