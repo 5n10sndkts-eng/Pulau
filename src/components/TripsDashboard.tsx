@@ -23,6 +23,7 @@ import {
   Receipt,
   Plane,
   Package,
+  Briefcase,
 } from 'lucide-react'
 import {
   AlertDialog,
@@ -46,23 +47,42 @@ interface TripsDashboardProps {
 
 export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboardProps) {
   const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', [])
-  const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming')
+  const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
   const safeBookings = bookings || []
 
   const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  
+  // AC3: Upcoming Tab - status='confirmed' AND trip.start_date >= today
   const upcomingBookings = safeBookings.filter((b) => {
     if (!b.trip.startDate) return false
     const startDate = new Date(b.trip.startDate)
-    return startDate >= now && b.status !== 'cancelled'
+    const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    return b.status === 'confirmed' && startDay >= today
+  }).sort((a, b) => {
+    const aDate = a.trip.startDate ? new Date(a.trip.startDate).getTime() : 0
+    const bDate = b.trip.startDate ? new Date(b.trip.startDate).getTime() : 0
+    return aDate - bDate // nearest first
   })
 
+  // AC4: Past Tab - trip.end_date < today OR status='completed'
   const pastBookings = safeBookings.filter((b) => {
-    if (!b.trip.startDate) return true
-    const startDate = new Date(b.trip.startDate)
-    return startDate < now || b.status === 'cancelled' || b.status === 'completed'
+    if (!b.trip.endDate) {
+      return b.status === 'completed'
+    }
+    const endDate = new Date(b.trip.endDate)
+    const endDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+    return endDay < today || b.status === 'completed'
+  }).sort((a, b) => {
+    const aDate = a.trip.startDate ? new Date(a.trip.startDate).getTime() : 0
+    const bDate = b.trip.startDate ? new Date(b.trip.startDate).getTime() : 0
+    return bDate - aDate // most recent first
   })
+
+  // All bookings
+  const allBookings = safeBookings
 
   const handleCancelBooking = (booking: Booking) => {
     setBookings((current) => {
@@ -90,11 +110,11 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     toast.success('Booking removed from history')
   }
 
-  const handleDownloadReceipt = () => {
+  const handleDownloadReceipt = (booking: Booking) => {
     toast.success('Receipt downloaded')
   }
 
-  const handleShareTrip = () => {
+  const handleShareTrip = (booking: Booking) => {
     toast.success('Trip details copied to clipboard')
   }
 
@@ -102,28 +122,28 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     switch (status) {
       case 'confirmed':
         return (
-          <Badge className="bg-success/10 text-success border-success/20">
+          <Badge className="bg-[#27AE60]/10 text-[#27AE60] border-[#27AE60]/20 border">
             <CheckCircle className="w-3 h-3 mr-1" />
             Confirmed
           </Badge>
         )
       case 'pending':
         return (
-          <Badge variant="outline" className="border-warning text-warning">
+          <Badge className="bg-[#F4D03F]/10 text-[#F4D03F] border-[#F4D03F]/20 border">
             <Clock className="w-3 h-3 mr-1" />
             Pending
           </Badge>
         )
       case 'cancelled':
         return (
-          <Badge variant="outline" className="border-destructive text-destructive">
+          <Badge variant="outline" className="border-gray-400 text-gray-600">
             <XCircle className="w-3 h-3 mr-1" />
             Cancelled
           </Badge>
         )
       case 'completed':
         return (
-          <Badge variant="outline" className="border-muted-foreground text-muted-foreground">
+          <Badge className="bg-[#0D7377]/10 text-[#0D7377] border-[#0D7377]/20 border">
             <CheckCircle className="w-3 h-3 mr-1" />
             Completed
           </Badge>
@@ -418,29 +438,27 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     )
   }
 
-  const renderEmptyState = (type: 'upcoming' | 'past') => {
+  const renderEmptyState = (type: 'upcoming' | 'past' | 'all') => {
+    const getEmptyText = () => {
+      if (type === 'upcoming') return 'No upcoming trips'
+      if (type === 'past') return 'No past trips'
+      return 'No trips yet'
+    }
+
     return (
       <div className="text-center py-16 space-y-4">
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-          {type === 'upcoming' ? (
-            <Plane className="w-8 h-8 text-muted-foreground" />
-          ) : (
-            <Receipt className="w-8 h-8 text-muted-foreground" />
-          )}
+          <Briefcase className="w-8 h-8 text-muted-foreground" />
         </div>
         <h2 className="font-display text-xl font-semibold">
-          {type === 'upcoming' ? 'No upcoming trips' : 'No past bookings'}
+          {getEmptyText()}
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          {type === 'upcoming'
-            ? "You don't have any trips planned yet. Start building your dream vacation!"
-            : "You haven't completed any trips yet. Your travel history will appear here."}
+          Start planning your dream vacation!
         </p>
-        {type === 'upcoming' && (
-          <Button onClick={onBack} className="mt-4">
-            Start Planning
-          </Button>
-        )}
+        <Button onClick={onBack} className="mt-4">
+          Explore experiences
+        </Button>
       </div>
     )
   }
@@ -466,8 +484,8 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
           </div>
         </div>
 
-        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as 'upcoming' | 'past')}>
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as 'upcoming' | 'past' | 'all')}>
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="upcoming" className="gap-2">
               <Plane className="w-4 h-4" />
               Upcoming ({upcomingBookings.length})
@@ -475,6 +493,10 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             <TabsTrigger value="past" className="gap-2">
               <Receipt className="w-4 h-4" />
               Past ({pastBookings.length})
+            </TabsTrigger>
+            <TabsTrigger value="all" className="gap-2">
+              <Package className="w-4 h-4" />
+              All ({allBookings.length})
             </TabsTrigger>
           </TabsList>
 
@@ -494,6 +516,16 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             ) : (
               <div className="grid gap-4">
                 {pastBookings.map((booking) => renderBookingCard(booking))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="all" className="space-y-4">
+            {allBookings.length === 0 ? (
+              renderEmptyState('all')
+            ) : (
+              <div className="grid gap-4">
+                {allBookings.map((booking) => renderBookingCard(booking))}
               </div>
             )}
           </TabsContent>
