@@ -23,6 +23,12 @@ import {
   Receipt,
   Plane,
   Package,
+  Briefcase,
+  Copy,
+  Phone,
+  Mail,
+  Navigation,
+  HelpCircle,
 } from 'lucide-react'
 import {
   AlertDialog,
@@ -46,23 +52,42 @@ interface TripsDashboardProps {
 
 export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboardProps) {
   const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', [])
-  const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past'>('upcoming')
+  const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
   const safeBookings = bookings || []
 
   const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  
+  // AC3: Upcoming Tab - status='confirmed' AND trip.start_date >= today
   const upcomingBookings = safeBookings.filter((b) => {
     if (!b.trip.startDate) return false
     const startDate = new Date(b.trip.startDate)
-    return startDate >= now && b.status !== 'cancelled'
+    const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    return b.status === 'confirmed' && startDay >= today
+  }).sort((a, b) => {
+    const aDate = a.trip.startDate ? new Date(a.trip.startDate).getTime() : 0
+    const bDate = b.trip.startDate ? new Date(b.trip.startDate).getTime() : 0
+    return aDate - bDate // nearest first
   })
 
+  // AC4: Past Tab - trip.end_date < today OR status='completed'
   const pastBookings = safeBookings.filter((b) => {
-    if (!b.trip.startDate) return true
-    const startDate = new Date(b.trip.startDate)
-    return startDate < now || b.status === 'cancelled' || b.status === 'completed'
+    if (!b.trip.endDate) {
+      return b.status === 'completed'
+    }
+    const endDate = new Date(b.trip.endDate)
+    const endDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+    return endDay < today || b.status === 'completed'
+  }).sort((a, b) => {
+    const aDate = a.trip.startDate ? new Date(a.trip.startDate).getTime() : 0
+    const bDate = b.trip.startDate ? new Date(b.trip.startDate).getTime() : 0
+    return bDate - aDate // most recent first
   })
+
+  // All bookings
+  const allBookings = safeBookings
 
   const handleCancelBooking = (booking: Booking) => {
     setBookings((current) => {
@@ -90,40 +115,45 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     toast.success('Booking removed from history')
   }
 
-  const handleDownloadReceipt = () => {
+  const handleDownloadReceipt = (_booking: Booking) => {
     toast.success('Receipt downloaded')
   }
 
-  const handleShareTrip = () => {
+  const handleShareTrip = (_booking: Booking) => {
     toast.success('Trip details copied to clipboard')
+  }
+
+  const handleCopyReference = (reference: string) => {
+    navigator.clipboard.writeText(reference)
+    toast.success('Booking reference copied')
   }
 
   const getStatusBadge = (status: Booking['status']) => {
     switch (status) {
       case 'confirmed':
         return (
-          <Badge className="bg-success/10 text-success border-success/20">
+          <Badge className="bg-[#27AE60]/10 text-[#27AE60] border-[#27AE60]/20 border">
             <CheckCircle className="w-3 h-3 mr-1" />
             Confirmed
           </Badge>
         )
       case 'pending':
         return (
-          <Badge variant="outline" className="border-warning text-warning">
+          <Badge className="bg-[#F4D03F]/10 text-[#F4D03F] border-[#F4D03F]/20 border">
             <Clock className="w-3 h-3 mr-1" />
             Pending
           </Badge>
         )
       case 'cancelled':
         return (
-          <Badge variant="outline" className="border-destructive text-destructive">
+          <Badge variant="outline" className="border-gray-400 text-gray-600">
             <XCircle className="w-3 h-3 mr-1" />
             Cancelled
           </Badge>
         )
       case 'completed':
         return (
-          <Badge variant="outline" className="border-muted-foreground text-muted-foreground">
+          <Badge className="bg-[#0D7377]/10 text-[#0D7377] border-[#0D7377]/20 border">
             <CheckCircle className="w-3 h-3 mr-1" />
             Completed
           </Badge>
@@ -235,7 +265,17 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
           </Button>
           <div className="flex-1">
             <h2 className="font-display text-2xl font-bold">{destination}</h2>
-            <p className="text-sm text-muted-foreground">Booking Reference: {booking.reference}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">Booking Reference: {booking.reference}</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => handleCopyReference(booking.reference)}
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            </div>
           </div>
           {getStatusBadge(booking.status)}
         </div>
@@ -276,7 +316,7 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
                 if (!experience) return null
 
                 return (
-                  <Card key={index} className="p-4">
+                  <Card key={index} className="p-4 space-y-4">
                     <div className="flex gap-4">
                       <img
                         src={experience.images[0]}
@@ -303,6 +343,86 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
                             ${item.totalPrice.toFixed(2)}
                           </span>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* AC #4: Operator Contact Information */}
+                    <Separator />
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Operator Contact</p>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="w-3 h-3 text-muted-foreground" />
+                        <a
+                          href="tel:+62361234567"
+                          className="text-primary hover:underline"
+                        >
+                          +62 361 234 567
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Mail className="w-3 h-3 text-muted-foreground" />
+                        <a
+                          href={`mailto:${experience.provider.name.toLowerCase().replace(/\s+/g, '')}@example.com?subject=Booking ${booking.reference}`}
+                          className="text-primary hover:underline"
+                        >
+                          {experience.provider.name.toLowerCase().replace(/\s+/g, '')}@example.com
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* AC #5: Meeting Point Information */}
+                    <Separator />
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Meeting Point</p>
+                      <div className="flex items-start gap-2 text-sm">
+                        <MapPin className="w-3 h-3 text-muted-foreground mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-muted-foreground">{experience.meetingPoint.name}</p>
+                          {experience.meetingPoint.address && (
+                            <p className="text-xs text-muted-foreground">
+                              {experience.meetingPoint.address}
+                            </p>
+                          )}
+                          {experience.meetingPoint.instructions && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {experience.meetingPoint.instructions}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {experience.meetingPoint.lat && experience.meetingPoint.lng && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() =>
+                                window.open(
+                                  `https://maps.google.com/?q=${experience.meetingPoint.lat},${experience.meetingPoint.lng}`,
+                                  '_blank'
+                                )
+                              }
+                            >
+                              <MapPin className="w-3 h-3 mr-1" />
+                              View on Map
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() =>
+                                window.open(
+                                  `https://www.google.com/maps/dir/?api=1&destination=${experience.meetingPoint.lat},${experience.meetingPoint.lng}`,
+                                  '_blank'
+                                )
+                              }
+                            >
+                              <Navigation className="w-3 h-3 mr-1" />
+                              Get Directions
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -347,6 +467,17 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             Share Trip
           </Button>
         </div>
+
+        {/* AC #1: Book Again Button for past/completed bookings */}
+        {(booking.status === 'completed' || (endDate && endDate < new Date())) && (
+          <Button
+            className="w-full bg-[#0D7377] hover:bg-[#0D7377]/90 text-white"
+            onClick={() => onBookAgain(booking.trip)}
+          >
+            <Package className="w-4 h-4 mr-2" />
+            Book Again
+          </Button>
+        )}
 
         {canCancel && (
           <Card className="p-4 bg-destructive/5 border-destructive/20">
@@ -414,33 +545,53 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             </AlertDialogContent>
           </AlertDialog>
         )}
+
+        {/* AC #7: Help Link Access */}
+        <Card className="p-4 bg-primary/5 border-primary/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <HelpCircle className="w-5 h-5 text-primary" />
+              <div>
+                <h4 className="font-semibold">Need Help?</h4>
+                <p className="text-sm text-muted-foreground">
+                  Questions about your booking?
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.info('Support screen coming soon')}
+            >
+              Get Support
+            </Button>
+          </div>
+        </Card>
       </div>
     )
   }
 
-  const renderEmptyState = (type: 'upcoming' | 'past') => {
+  const renderEmptyState = (type: 'upcoming' | 'past' | 'all') => {
+    const getEmptyText = () => {
+      if (type === 'upcoming') return 'No upcoming trips'
+      if (type === 'past') return 'No past trips'
+      return 'No trips yet'
+    }
+
     return (
       <div className="text-center py-16 space-y-4">
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-          {type === 'upcoming' ? (
-            <Plane className="w-8 h-8 text-muted-foreground" />
-          ) : (
-            <Receipt className="w-8 h-8 text-muted-foreground" />
-          )}
+          <Briefcase className="w-8 h-8 text-muted-foreground" />
         </div>
         <h2 className="font-display text-xl font-semibold">
-          {type === 'upcoming' ? 'No upcoming trips' : 'No past bookings'}
+          {getEmptyText()}
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          {type === 'upcoming'
-            ? "You don't have any trips planned yet. Start building your dream vacation!"
-            : "You haven't completed any trips yet. Your travel history will appear here."}
+          Start planning your dream vacation!
         </p>
-        {type === 'upcoming' && (
-          <Button onClick={onBack} className="mt-4">
-            Start Planning
-          </Button>
-        )}
+        <Button onClick={onBack} className="mt-4">
+          Explore experiences
+        </Button>
       </div>
     )
   }
@@ -466,8 +617,8 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
           </div>
         </div>
 
-        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as 'upcoming' | 'past')}>
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as 'upcoming' | 'past' | 'all')}>
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="upcoming" className="gap-2">
               <Plane className="w-4 h-4" />
               Upcoming ({upcomingBookings.length})
@@ -475,6 +626,10 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             <TabsTrigger value="past" className="gap-2">
               <Receipt className="w-4 h-4" />
               Past ({pastBookings.length})
+            </TabsTrigger>
+            <TabsTrigger value="all" className="gap-2">
+              <Package className="w-4 h-4" />
+              All ({allBookings.length})
             </TabsTrigger>
           </TabsList>
 
@@ -494,6 +649,16 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             ) : (
               <div className="grid gap-4">
                 {pastBookings.map((booking) => renderBookingCard(booking))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="all" className="space-y-4">
+            {allBookings.length === 0 ? (
+              renderEmptyState('all')
+            ) : (
+              <div className="grid gap-4">
+                {allBookings.map((booking) => renderBookingCard(booking))}
               </div>
             )}
           </TabsContent>
