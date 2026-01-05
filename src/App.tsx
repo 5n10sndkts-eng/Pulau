@@ -13,6 +13,8 @@ import { ProfileScreen } from './components/ProfileScreen'
 import { VendorLogin } from './components/vendor/VendorLogin'
 import { VendorRegister } from './components/vendor/VendorRegister'
 import { VendorDashboard } from './components/vendor/VendorDashboard'
+import { VendorExperiences } from './components/vendor/VendorExperiences'
+import { VendorBookings } from './components/vendor/VendorBookings'
 import { User, Trip, Experience, UserPreferences, TripItem, Booking, VendorSession } from './lib/types'
 import { getExperienceById, calculateTripTotal, generateDemoBookings } from './lib/helpers'
 import { toast } from 'sonner'
@@ -446,28 +448,28 @@ function App() {
     }
 
     if (currentScreen.type === 'vendorExperiences') {
+      if (!vendorSession) {
+        setCurrentScreen({ type: 'vendorLogin' })
+        return null
+      }
       return (
-        <div className="min-h-screen bg-background p-6">
-          <Button variant="ghost" onClick={() => setCurrentScreen({ type: 'vendorDashboard' })}>
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Dashboard
-          </Button>
-          <h1 className="font-display text-3xl font-bold mt-6 mb-4">My Experiences</h1>
-          <p className="text-muted-foreground">Experience management coming soon...</p>
-        </div>
+        <VendorExperiences
+          session={vendorSession}
+          onBack={() => setCurrentScreen({ type: 'vendorDashboard' })}
+        />
       )
     }
 
     if (currentScreen.type === 'vendorBookings') {
+      if (!vendorSession) {
+        setCurrentScreen({ type: 'vendorLogin' })
+        return null
+      }
       return (
-        <div className="min-h-screen bg-background p-6">
-          <Button variant="ghost" onClick={() => setCurrentScreen({ type: 'vendorDashboard' })}>
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Dashboard
-          </Button>
-          <h1 className="font-display text-3xl font-bold mt-6 mb-4">Bookings</h1>
-          <p className="text-muted-foreground">Booking management coming soon...</p>
-        </div>
+        <VendorBookings
+          session={vendorSession}
+          onBack={() => setCurrentScreen({ type: 'vendorDashboard' })}
+        />
       )
     }
 
