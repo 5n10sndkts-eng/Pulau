@@ -1,0 +1,73 @@
+# Story 3.1: Create Vendor Registration Flow
+
+Status: ready-for-dev
+
+## Story
+
+As a local tour operator,
+I want to register as a vendor on the platform,
+so that I can list my experiences for travelers to book.
+
+## Acceptance Criteria
+
+1. **Given** I am on the vendor registration page (separate route from customer) **When** I submit the vendor registration form **Then** a new vendor account is created in vendors table
+2. vendors table includes: id (UUID), business_name, business_email, hashed_password, owner_first_name, owner_last_name, phone, created_at, verified (boolean), since_year
+3. Business email is validated for uniqueness
+4. Password meets security requirements (min 8 chars, hashed with bcrypt)
+5. Vendor status is set to "pending_verification"
+6. Verification email is sent to business_email
+7. Admin notification is sent for manual vendor approval
+8. I see "Registration received - awaiting approval" message
+
+## Tasks / Subtasks
+
+- [ ] Task 1: Create vendor registration UI (AC: #1, #8)
+  - [ ] Create `src/screens/vendor/VendorRegisterScreen.tsx`
+  - [ ] Build multi-section form: Business Info, Owner Info, Credentials
+  - [ ] Add fields: business_name, business_email, owner_first_name, owner_last_name, phone, since_year, password, confirm_password
+  - [ ] Style with vendor portal branding (slight variation from customer)
+  - [ ] Show success message after registration
+- [ ] Task 2: Create vendor data model (AC: #2)
+  - [ ] Define Vendor type in `src/types/vendor.ts`
+  - [ ] Include all fields: id, business_name, business_email, hashed_password, owner_first_name, owner_last_name, phone, since_year, created_at, verified, status
+  - [ ] Create vendor storage in Spark useKV
+- [ ] Task 3: Implement validation (AC: #3, #4)
+  - [ ] Create Zod schema for vendor registration
+  - [ ] Validate email uniqueness against existing vendors
+  - [ ] Validate password (min 8 chars)
+  - [ ] Validate phone format
+  - [ ] Validate since_year (1900 to current year)
+- [ ] Task 4: Implement registration logic (AC: #1, #4, #5)
+  - [ ] Hash password with bcrypt/alternative
+  - [ ] Generate UUID for vendor id
+  - [ ] Set status = "pending_verification"
+  - [ ] Set verified = false
+  - [ ] Store vendor record
+- [ ] Task 5: Implement notification flow (AC: #6, #7)
+  - [ ] Create mock verification email function
+  - [ ] Create mock admin notification function
+  - [ ] Log notifications to console (development)
+  - [ ] Generate verification token for email
+
+## Dev Notes
+
+- Vendor registration is at `/vendor/register` - completely separate from customer
+- Registration requires manual approval (no auto-verify)
+- Admin approval flow is mocked for MVP
+- since_year is for "Operating since XXXX" display
+
+### References
+
+- [Source: vendor-customer-auth-requirements.md]
+- [Source: epics.md#Story 3.1]
+
+## Dev Agent Record
+
+### Agent Model Used
+
+### Debug Log References
+
+### Completion Notes List
+
+### File List
+
