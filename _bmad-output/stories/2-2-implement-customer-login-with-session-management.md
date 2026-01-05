@@ -1,6 +1,6 @@
 # Story 2.2: Implement Customer Login with Session Management
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,34 +20,34 @@ so that I can access my saved trips and profile.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create login UI (AC: #1, #5)
-  - [ ] Create `src/screens/auth/LoginScreen.tsx`
-  - [ ] Build form with email and password fields
-  - [ ] Add "Remember me" checkbox
-  - [ ] Add "Forgot Password?" link
-  - [ ] Add "Create Account" link to registration
-  - [ ] Style with Bali design system
-- [ ] Task 2: Implement credential verification (AC: #1, #5)
-  - [ ] Create login handler function
-  - [ ] Look up user by email in useKV storage
-  - [ ] Verify password hash matches
-  - [ ] Display "Invalid email or password" for failures
-  - [ ] Rate limit login attempts (3 per minute)
-- [ ] Task 3: Implement session token generation (AC: #2, #3)
-  - [ ] Create JWT generation function with 7-day expiry
-  - [ ] Include user_id and email in token payload
-  - [ ] Store token in localStorage via useKV
-  - [ ] Create session context for app-wide access
-- [ ] Task 4: Handle successful login (AC: #4)
-  - [ ] Set authenticated state in session context
-  - [ ] Navigate to home screen
-  - [ ] Load user profile data
-  - [ ] Show "Welcome back!" toast
-- [ ] Task 5: Implement session refresh (AC: #6, #7)
-  - [ ] Check token expiry on app load
-  - [ ] Refresh token when 1 day remaining
-  - [ ] Clear session and redirect to login on expiry
-  - [ ] Create useAuth hook for session management
+- [x] Task 1: Create login UI (AC: #1, #5)
+  - [x] Create `src/screens/auth/LoginScreen.tsx`
+  - [x] Build form with email and password fields
+  - [x] Add "Remember me" checkbox
+  - [x] Add "Forgot Password?" link
+  - [x] Add "Create Account" link to registration
+  - [x] Style with Bali design system
+- [x] Task 2: Implement credential verification (AC: #1, #5)
+  - [x] Create login handler function
+  - [x] Look up user by email in useKV storage
+  - [x] Verify password hash matches
+  - [x] Display "Invalid email or password" for failures
+  - [x] Rate limit login attempts (3 per minute)
+- [x] Task 3: Implement session token generation (AC: #2, #3)
+  - [x] Create JWT generation function with 7-day expiry
+  - [x] Include user_id and email in token payload
+  - [x] Store token in localStorage via useKV
+  - [x] Create session context for app-wide access
+- [x] Task 4: Handle successful login (AC: #4)
+  - [x] Set authenticated state in session context
+  - [x] Navigate to home screen
+  - [x] Load user profile data
+  - [x] Show "Welcome back!" toast
+- [x] Task 5: Implement session refresh (AC: #6, #7)
+  - [x] Check token expiry on app load
+  - [x] Refresh token when 1 day remaining
+  - [x] Clear session and redirect to login on expiry
+  - [x] Create useAuth hook for session management
 
 ## Dev Notes
 
@@ -65,10 +65,42 @@ so that I can access my saved trips and profile.
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude 3.7 Sonnet (2026-01-05)
 
 ### Debug Log References
+- Implemented simulated JWT for client-side MVP (no real JWT library needed)
+- Used timing-safe comparison and generic error messages to prevent user enumeration
+- Implemented rate limiting (3 attempts per minute) to prevent brute force attacks
+- Created AuthContext with auto-refresh logic
 
 ### Completion Notes List
+1. ✅ Created LoginScreen component with email/password form and "Remember me" functionality
+2. ✅ Implemented session token generation with simulated JWT structure
+3. ✅ Created AuthContext/Provider for app-wide authentication state management
+4. ✅ Implemented credential verification with password hash matching
+5. ✅ Added rate limiting (3 login attempts per minute) to prevent brute force
+6. ✅ Generic "Invalid email or password" error for both wrong email and wrong password (prevents enumeration)
+7. ✅ Auto-refresh logic: checks every hour, refreshes when <1 day remaining, logs out on expiry
+8. ✅ Remember me functionality: 7-day session if checked, 1-day if unchecked
+9. ✅ Created useAuth hook for easy access to auth state throughout app
+10. ✅ All session and auth validation tests passing (16 new tests)
 
 ### File List
+- src/types/session.ts (new: Session, LoginCredentials, JWTPayload types)
+- src/lib/session.ts (new: JWT generation, verification, refresh logic)
+- src/lib/auth-validation.ts (new: Zod login schema)
+- src/contexts/AuthContext.tsx (new: Auth context provider and useAuth hook)
+- src/screens/auth/LoginScreen.tsx (new: login form component)
+- src/__tests__/session.test.ts (new: 11 test cases for session utilities)
+- src/__tests__/auth-validation.test.ts (new: 5 test cases for auth validation)
+
+## Change Log
+
+- 2026-01-05: Initial implementation of customer login with session management
+  - Created login UI with Bali design system styling
+  - Implemented simulated JWT for session tokens (client-side MVP)
+  - Added comprehensive session management with auto-refresh
+  - Implemented rate limiting and security best practices
+  - Created reusable AuthContext for app-wide authentication state
+  - Added 16 test cases for session and validation
 
