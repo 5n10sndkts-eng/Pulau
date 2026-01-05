@@ -1,6 +1,6 @@
 # Story 2.3: Implement Password Reset Flow
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -71,3 +71,37 @@ so that I can regain access to my account.
 
 ### File List
 
+## Dev Agent Record
+
+### Agent Model Used
+Claude 3.7 Sonnet (2026-01-05)
+
+### Debug Log References
+- Implemented single-use reset tokens with 1-hour expiration
+- Always shows success message even if email not found (prevents user enumeration)
+- Invalidates all active sessions after password reset (logout everywhere)
+
+### Completion Notes List
+1. ✅ Created ForgotPasswordScreen with email input
+2. ✅ Implemented reset token generation with UUID and 1-hour expiry
+3. ✅ Created ResetPasswordScreen with token validation
+4. ✅ Implemented password update with hash
+5. ✅ Single-use tokens (deleted after successful reset)
+6. ✅ All existing sessions invalidated on password change
+7. ✅ Security: generic success message prevents email enumeration
+8. ✅ Token validation on mount with user-friendly error messages
+9. ✅ All tests passing (95/95)
+
+### File List
+- src/types/password-reset.ts (new: PasswordResetToken types)
+- src/lib/password-reset.ts (new: token generation and validation)
+- src/screens/auth/ForgotPasswordScreen.tsx (new: forgot password form)
+- src/screens/auth/ResetPasswordScreen.tsx (new: reset password form with token validation)
+
+## Change Log
+
+- 2026-01-05: Initial implementation of password reset flow
+  - Created forgot password and reset password screens
+  - Implemented secure single-use tokens with 1-hour expiration
+  - Added session invalidation on password reset
+  - Implemented anti-enumeration measures (generic success messages)
