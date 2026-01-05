@@ -1,6 +1,6 @@
 # Story 1.3: Set Up Component Architecture with Radix UI
 
-Status: review
+Status: done
 
 ## Story
 

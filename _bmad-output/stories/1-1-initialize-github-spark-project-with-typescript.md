@@ -1,6 +1,6 @@
 # Story 1.1: Initialize GitHub Spark Project with TypeScript
 
-Status: review
+Status: done
 
 ## Story
 

@@ -1,6 +1,6 @@
 # Story 1.4: Configure Animation Library and Icon System
 
-Status: review
+Status: done
 
 ## Story
 
