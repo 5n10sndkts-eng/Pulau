@@ -24,6 +24,11 @@ import {
   Plane,
   Package,
   Briefcase,
+  Copy,
+  Phone,
+  Mail,
+  Navigation,
+  HelpCircle,
 } from 'lucide-react'
 import {
   AlertDialog,
@@ -116,6 +121,11 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
 
   const handleShareTrip = (_booking: Booking) => {
     toast.success('Trip details copied to clipboard')
+  }
+
+  const handleCopyReference = (reference: string) => {
+    navigator.clipboard.writeText(reference)
+    toast.success('Booking reference copied')
   }
 
   const getStatusBadge = (status: Booking['status']) => {
@@ -255,7 +265,17 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
           </Button>
           <div className="flex-1">
             <h2 className="font-display text-2xl font-bold">{destination}</h2>
-            <p className="text-sm text-muted-foreground">Booking Reference: {booking.reference}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">Booking Reference: {booking.reference}</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => handleCopyReference(booking.reference)}
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            </div>
           </div>
           {getStatusBadge(booking.status)}
         </div>
@@ -296,7 +316,7 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
                 if (!experience) return null
 
                 return (
-                  <Card key={index} className="p-4">
+                  <Card key={index} className="p-4 space-y-4">
                     <div className="flex gap-4">
                       <img
                         src={experience.images[0]}
@@ -323,6 +343,86 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
                             ${item.totalPrice.toFixed(2)}
                           </span>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* AC #4: Operator Contact Information */}
+                    <Separator />
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Operator Contact</p>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="w-3 h-3 text-muted-foreground" />
+                        <a
+                          href="tel:+62361234567"
+                          className="text-primary hover:underline"
+                        >
+                          +62 361 234 567
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Mail className="w-3 h-3 text-muted-foreground" />
+                        <a
+                          href={`mailto:${experience.provider.name.toLowerCase().replace(/\s+/g, '')}@example.com?subject=Booking ${booking.reference}`}
+                          className="text-primary hover:underline"
+                        >
+                          {experience.provider.name.toLowerCase().replace(/\s+/g, '')}@example.com
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* AC #5: Meeting Point Information */}
+                    <Separator />
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Meeting Point</p>
+                      <div className="flex items-start gap-2 text-sm">
+                        <MapPin className="w-3 h-3 text-muted-foreground mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-muted-foreground">{experience.meetingPoint.name}</p>
+                          {experience.meetingPoint.address && (
+                            <p className="text-xs text-muted-foreground">
+                              {experience.meetingPoint.address}
+                            </p>
+                          )}
+                          {experience.meetingPoint.instructions && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {experience.meetingPoint.instructions}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {experience.meetingPoint.lat && experience.meetingPoint.lng && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() =>
+                                window.open(
+                                  `https://maps.google.com/?q=${experience.meetingPoint.lat},${experience.meetingPoint.lng}`,
+                                  '_blank'
+                                )
+                              }
+                            >
+                              <MapPin className="w-3 h-3 mr-1" />
+                              View on Map
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() =>
+                                window.open(
+                                  `https://www.google.com/maps/dir/?api=1&destination=${experience.meetingPoint.lat},${experience.meetingPoint.lng}`,
+                                  '_blank'
+                                )
+                              }
+                            >
+                              <Navigation className="w-3 h-3 mr-1" />
+                              Get Directions
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -434,6 +534,28 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
             </AlertDialogContent>
           </AlertDialog>
         )}
+
+        {/* AC #7: Help Link Access */}
+        <Card className="p-4 bg-primary/5 border-primary/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <HelpCircle className="w-5 h-5 text-primary" />
+              <div>
+                <h4 className="font-semibold">Need Help?</h4>
+                <p className="text-sm text-muted-foreground">
+                  Questions about your booking?
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toast.info('Support screen coming soon')}
+            >
+              Get Support
+            </Button>
+          </div>
+        </Card>
       </div>
     )
   }
