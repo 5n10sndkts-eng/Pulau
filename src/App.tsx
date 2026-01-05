@@ -9,6 +9,7 @@ import { CheckoutFlow } from './components/checkout/CheckoutFlow'
 import { TripsDashboard } from './components/TripsDashboard'
 import { SavedScreen } from './components/SavedScreen'
 import { ExploreScreen } from './components/ExploreScreen'
+import { ProfileScreen } from './components/ProfileScreen'
 import { VendorLogin } from './components/vendor/VendorLogin'
 import { VendorRegister } from './components/vendor/VendorRegister'
 import { VendorDashboard } from './components/vendor/VendorDashboard'
@@ -22,6 +23,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Calendar, Package, Building2 } from 'lucide-react'
 
 type Screen =
+  | { type: 'destinationSelector' }
   | { type: 'onboarding' }
   | { type: 'home' }
   | { type: 'category'; categoryId: string }
@@ -338,81 +340,42 @@ function App() {
       const demoBookingsCount = (bookings || []).length
 
       return (
-        <div className="min-h-screen bg-background p-6 pb-24">
-          <h1 className="font-display text-3xl font-bold mb-6">Profile</h1>
-          <div className="space-y-4">
-            <Card 
-              className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => setCurrentScreen({ type: 'trips' })}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-primary" />
+        <>
+          <ProfileScreen
+            user={safeUser}
+            onNavigateToTrips={() => setCurrentScreen({ type: 'trips' })}
+            onNavigateToSaved={() => setCurrentScreen({ type: 'saved' })}
+            onNavigateToVendor={() => setCurrentScreen({ type: 'vendorLogin' })}
+          />
+          {demoBookingsCount === 0 && (
+            <div className="fixed bottom-24 left-0 right-0 p-4 z-40">
+              <Card className="max-w-md mx-auto p-4 bg-accent/10 border-accent/30 shadow-lg">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Package className="w-5 h-5 text-accent" />
                   </div>
-                  <div>
-                    <h3 className="font-display font-semibold">My Trips</h3>
-                    <p className="text-sm text-muted-foreground">
-                      View bookings and travel history
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-1">Try the Demo</h3>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Load sample bookings to explore trips
                     </p>
-                  </div>
-                </div>
-                <ArrowLeft className="w-5 h-5 rotate-180 text-muted-foreground" />
-              </div>
-            </Card>
-
-            {demoBookingsCount === 0 && (
-              <Card className="p-4 bg-accent/5 border-accent/20">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Package className="w-5 h-5 text-accent" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-display font-semibold mb-1">Try the Demo</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Load sample bookings to explore the trips dashboard and see how booking history works.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const demoData = generateDemoBookings()
-                          setBookings(demoData)
-                          toast.success('Demo bookings loaded! Check My Trips.')
-                        }}
-                      >
-                        Load Demo Bookings
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const demoData = generateDemoBookings()
+                        setBookings(demoData)
+                        toast.success('Demo bookings loaded! Check My Trips.')
+                      }}
+                    >
+                      Load Demo
+                    </Button>
                   </div>
                 </div>
               </Card>
-            )}
-            
-            <Card 
-              className="p-4 cursor-pointer hover:bg-muted/50 transition-colors border-2 border-primary/20"
-              onClick={() => setCurrentScreen({ type: 'vendorLogin' })}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold text-primary">Vendor Portal</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Manage your experiences and bookings
-                    </p>
-                  </div>
-                </div>
-                <ArrowLeft className="w-5 h-5 rotate-180 text-muted-foreground" />
-              </div>
-            </Card>
-            
-            <p className="text-muted-foreground mt-8">More profile features coming soon...</p>
-          </div>
-        </div>
+            </div>
+          )}
+        </>
       )
     }
 

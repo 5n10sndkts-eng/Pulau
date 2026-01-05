@@ -115,6 +115,7 @@ export interface UserPreferences {
   travelStyle?: 'adventure' | 'relaxation' | 'culture' | 'mix'
   groupType?: 'solo' | 'couple' | 'friends' | 'family'
   budget?: 'budget' | 'midrange' | 'luxury'
+  destinationId?: string
 }
 
 export interface User {

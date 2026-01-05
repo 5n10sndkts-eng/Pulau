@@ -11,6 +11,36 @@ export const destinations: Destination[] = [
     timezone: 'Asia/Makassar',
     active: true,
   },
+  {
+    id: 'dest_phuket',
+    name: 'Phuket',
+    country: 'Thailand',
+    tagline: 'Pearl of the Andaman',
+    heroImage: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=1200&h=600&fit=crop',
+    currency: 'USD',
+    timezone: 'Asia/Bangkok',
+    active: false,
+  },
+  {
+    id: 'dest_maldives',
+    name: 'Maldives',
+    country: 'Maldives',
+    tagline: 'Paradise Islands',
+    heroImage: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&h=600&fit=crop',
+    currency: 'USD',
+    timezone: 'Indian/Maldives',
+    active: false,
+  },
+  {
+    id: 'dest_santorini',
+    name: 'Santorini',
+    country: 'Greece',
+    tagline: 'Aegean Jewel',
+    heroImage: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&h=600&fit=crop',
+    currency: 'EUR',
+    timezone: 'Europe/Athens',
+    active: false,
+  },
 ]
 
 export const categories: Category[] = [
