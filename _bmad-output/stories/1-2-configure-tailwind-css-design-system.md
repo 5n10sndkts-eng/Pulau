@@ -1,6 +1,6 @@
 # Story 1.2: Configure Tailwind CSS Design System
 
-Status: review
+Status: done
 
 ## Story
 
