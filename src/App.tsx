@@ -7,16 +7,25 @@ import { ExperienceDetail } from './components/ExperienceDetail'
 import { TripBuilder } from './components/TripBuilder'
 import { CheckoutFlow } from './components/checkout/CheckoutFlow'
 import { TripsDashboard } from './components/TripsDashboard'
-import { User, Trip, Experience, UserPreferences, TripItem, Booking } from './lib/types'
+import { SavedScreen } from './components/SavedScreen'
+import { ExploreScreen } from './components/ExploreScreen'
+import { ProfileScreen } from './components/ProfileScreen'
+import { VendorLogin } from './components/vendor/VendorLogin'
+import { VendorRegister } from './components/vendor/VendorRegister'
+import { VendorDashboard } from './components/vendor/VendorDashboard'
+import { VendorExperiences } from './components/vendor/VendorExperiences'
+import { VendorBookings } from './components/vendor/VendorBookings'
+import { User, Trip, Experience, UserPreferences, TripItem, Booking, VendorSession } from './lib/types'
 import { getExperienceById, calculateTripTotal, generateDemoBookings } from './lib/helpers'
 import { toast } from 'sonner'
 import { Toaster } from './components/ui/sonner'
 import { Button } from './components/ui/button'
 import { Card } from './components/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Calendar, Package } from 'lucide-react'
+import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Calendar, Package, Building2 } from 'lucide-react'
 
 type Screen =
+  | { type: 'destinationSelector' }
   | { type: 'onboarding' }
   | { type: 'home' }
   | { type: 'category'; categoryId: string }
@@ -28,6 +37,11 @@ type Screen =
   | { type: 'profile' }
   | { type: 'trips' }
   | { type: 'tripDetail'; tripId: string }
+  | { type: 'vendorLogin' }
+  | { type: 'vendorRegister' }
+  | { type: 'vendorDashboard' }
+  | { type: 'vendorExperiences' }
+  | { type: 'vendorBookings' }
 
 const defaultUser: User = {
   id: 'user_demo',
@@ -54,16 +68,20 @@ function App() {
   const [user, setUser] = useKV<User>('pulau_user', defaultUser)
   const [trip, setTrip] = useKV<Trip>('pulau_current_trip', defaultTrip)
   const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', [])
+  const [vendorSession, setVendorSession] = useKV<VendorSession | null>('pulau_vendor_session', null)
   const [currentScreen, setCurrentScreen] = useState<Screen>({ type: 'onboarding' })
 
   const safeUser = user || defaultUser
   const safeTrip = trip || defaultTrip
 
   useEffect(() => {
-    if (safeUser.hasCompletedOnboarding) {
+    // Check for vendor session first
+    if (vendorSession) {
+      setCurrentScreen({ type: 'vendorDashboard' })
+    } else if (safeUser.hasCompletedOnboarding) {
       setCurrentScreen({ type: 'home' })
     }
-  }, [safeUser.hasCompletedOnboarding])
+  }, [safeUser.hasCompletedOnboarding, vendorSession])
 
   const handleOnboardingComplete = (preferences: UserPreferences, dates?: { start: string; end: string }) => {
     setUser((current) => {
@@ -219,6 +237,17 @@ function App() {
     toast.success('Trip copied! Review and book when ready.')
   }
 
+  const handleVendorLogin = (session: VendorSession) => {
+    setVendorSession(session)
+    setCurrentScreen({ type: 'vendorDashboard' })
+  }
+
+  const handleVendorLogout = () => {
+    setVendorSession(null)
+    setCurrentScreen({ type: 'onboarding' })
+    toast.success('Logged out successfully')
+  }
+
   const renderScreen = () => {
     if (currentScreen.type === 'onboarding') {
       return <Onboarding onComplete={handleOnboardingComplete} />
@@ -286,37 +315,26 @@ function App() {
 
     if (currentScreen.type === 'explore') {
       return (
-        <div className="min-h-screen bg-background p-6 pb-24">
-          <h1 className="font-display text-3xl font-bold mb-6">Explore</h1>
-          <p className="text-muted-foreground">Discovery features coming soon...</p>
-        </div>
+        <ExploreScreen
+          onViewExperience={(id) => setCurrentScreen({ type: 'experience', experienceId: id })}
+        />
       )
     }
 
     if (currentScreen.type === 'saved') {
+      const savedExperiences = safeUser.saved
+        .map(id => getExperienceById(id))
+        .filter((exp): exp is Experience => exp !== undefined)
+
       return (
-        <div className="min-h-screen bg-background p-6 pb-24">
-          <h1 className="font-display text-3xl font-bold mb-6">Saved Experiences</h1>
-          {safeUser.saved.length === 0 ? (
-            <div className="text-center py-16 space-y-4">
-              <div className="text-6xl mb-4">❤️</div>
-              <h2 className="font-display text-xl font-semibold">Save experiences you love</h2>
-              <p className="text-muted-foreground">Tap the heart icon on any experience to save it here</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {safeUser.saved.map((expId) => {
-                const exp = getExperienceById(expId)
-                return exp ? (
-                  <div key={expId} className="p-4 bg-card rounded-lg border">
-                    <h3 className="font-display font-semibold">{exp.title}</h3>
-                    <p className="text-sm text-muted-foreground">{exp.provider.name}</p>
-                  </div>
-                ) : null
-              })}
-            </div>
-          )}
-        </div>
+        <SavedScreen
+          savedExperiences={savedExperiences}
+          onToggleSave={handleToggleSave}
+          onAddToTrip={(experience) => handleQuickAdd(experience)}
+          onViewExperience={(id) => setCurrentScreen({ type: 'experience', experienceId: id })}
+          onNavigateHome={() => setCurrentScreen({ type: 'home' })}
+          tripItemIds={safeTrip.items.map(item => item.experienceId)}
+        />
       )
     }
 
@@ -324,61 +342,42 @@ function App() {
       const demoBookingsCount = (bookings || []).length
 
       return (
-        <div className="min-h-screen bg-background p-6 pb-24">
-          <h1 className="font-display text-3xl font-bold mb-6">Profile</h1>
-          <div className="space-y-4">
-            <Card 
-              className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => setCurrentScreen({ type: 'trips' })}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-primary" />
+        <>
+          <ProfileScreen
+            user={safeUser}
+            onNavigateToTrips={() => setCurrentScreen({ type: 'trips' })}
+            onNavigateToSaved={() => setCurrentScreen({ type: 'saved' })}
+            onNavigateToVendor={() => setCurrentScreen({ type: 'vendorLogin' })}
+          />
+          {demoBookingsCount === 0 && (
+            <div className="fixed bottom-24 left-0 right-0 p-4 z-40">
+              <Card className="max-w-md mx-auto p-4 bg-accent/10 border-accent/30 shadow-lg">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Package className="w-5 h-5 text-accent" />
                   </div>
-                  <div>
-                    <h3 className="font-display font-semibold">My Trips</h3>
-                    <p className="text-sm text-muted-foreground">
-                      View bookings and travel history
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-1">Try the Demo</h3>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Load sample bookings to explore trips
                     </p>
-                  </div>
-                </div>
-                <ArrowLeft className="w-5 h-5 rotate-180 text-muted-foreground" />
-              </div>
-            </Card>
-
-            {demoBookingsCount === 0 && (
-              <Card className="p-4 bg-accent/5 border-accent/20">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Package className="w-5 h-5 text-accent" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-display font-semibold mb-1">Try the Demo</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Load sample bookings to explore the trips dashboard and see how booking history works.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const demoData = generateDemoBookings()
-                          setBookings(demoData)
-                          toast.success('Demo bookings loaded! Check My Trips.')
-                        }}
-                      >
-                        Load Demo Bookings
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const demoData = generateDemoBookings()
+                        setBookings(demoData)
+                        toast.success('Demo bookings loaded! Check My Trips.')
+                      }}
+                    >
+                      Load Demo
+                    </Button>
                   </div>
                 </div>
               </Card>
-            )}
-            
-            <p className="text-muted-foreground mt-8">More profile features coming soon...</p>
-          </div>
-        </div>
+            </div>
+          )}
+        </>
       )
     }
 
@@ -417,10 +416,75 @@ function App() {
       )
     }
 
+    if (currentScreen.type === 'vendorLogin') {
+      return (
+        <VendorLogin
+          onLogin={handleVendorLogin}
+          onNavigateToRegister={() => setCurrentScreen({ type: 'vendorRegister' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorRegister') {
+      return (
+        <VendorRegister
+          onNavigateToLogin={() => setCurrentScreen({ type: 'vendorLogin' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorDashboard') {
+      if (!vendorSession) {
+        setCurrentScreen({ type: 'vendorLogin' })
+        return null
+      }
+      return (
+        <VendorDashboard
+          session={vendorSession}
+          onNavigateToExperiences={() => setCurrentScreen({ type: 'vendorExperiences' })}
+          onNavigateToBookings={() => setCurrentScreen({ type: 'vendorBookings' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorExperiences') {
+      if (!vendorSession) {
+        setCurrentScreen({ type: 'vendorLogin' })
+        return null
+      }
+      return (
+        <VendorExperiences
+          session={vendorSession}
+          onBack={() => setCurrentScreen({ type: 'vendorDashboard' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorBookings') {
+      if (!vendorSession) {
+        setCurrentScreen({ type: 'vendorLogin' })
+        return null
+      }
+      return (
+        <VendorBookings
+          session={vendorSession}
+          onBack={() => setCurrentScreen({ type: 'vendorDashboard' })}
+        />
+      )
+    }
+
     return null
   }
 
-  const showBottomNav = currentScreen.type !== 'onboarding' && currentScreen.type !== 'checkout' && currentScreen.type !== 'trips' && currentScreen.type !== 'tripDetail'
+  const showBottomNav = currentScreen.type !== 'onboarding' 
+    && currentScreen.type !== 'checkout' 
+    && currentScreen.type !== 'trips' 
+    && currentScreen.type !== 'tripDetail'
+    && currentScreen.type !== 'vendorLogin'
+    && currentScreen.type !== 'vendorRegister'
+    && currentScreen.type !== 'vendorDashboard'
+    && currentScreen.type !== 'vendorExperiences'
+    && currentScreen.type !== 'vendorBookings'
 
   return (
     <div className="relative font-body">
