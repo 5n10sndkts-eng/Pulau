@@ -224,17 +224,29 @@ function App() {
   }
 
   const handleBookAgain = (tripData: Trip) => {
-    const newTrip = {
+    // AC #2, #3, #4, #5: Create new trip with copied items
+    const newTrip: Trip = {
       ...tripData,
-      id: `trip_${Date.now()}`,
-      status: 'planning' as const,
+      id: `trip_${Date.now()}`, // New unique ID
+      status: 'planning', // AC #4: Reset status to planning
+      startDate: undefined, // AC #4: Clear dates
+      endDate: undefined, // AC #4: Clear dates
       bookingReference: undefined,
       bookedAt: undefined,
+      cancelledAt: undefined,
+      cancellationReason: undefined,
+      // AC #5: Copy items but clear scheduled dates
+      items: tripData.items.map(item => ({
+        ...item,
+        date: undefined, // AC #5: Clear scheduled dates
+        time: undefined,
+      })),
     }
     
     setTrip(newTrip)
     setCurrentScreen({ type: 'trip' })
-    toast.success('Trip copied! Review and book when ready.')
+    // AC #7: User feedback with actionable message
+    toast.success('Trip copied! Set your new dates.')
   }
 
   const handleVendorLogin = (session: VendorSession) => {

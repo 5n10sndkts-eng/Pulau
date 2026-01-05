@@ -468,6 +468,17 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
           </Button>
         </div>
 
+        {/* AC #1: Book Again Button for past/completed bookings */}
+        {(booking.status === 'completed' || (endDate && endDate < new Date())) && (
+          <Button
+            className="w-full bg-[#0D7377] hover:bg-[#0D7377]/90 text-white"
+            onClick={() => onBookAgain(booking.trip)}
+          >
+            <Package className="w-4 h-4 mr-2" />
+            Book Again
+          </Button>
+        )}
+
         {canCancel && (
           <Card className="p-4 bg-destructive/5 border-destructive/20">
             <div className="flex items-start gap-3">
