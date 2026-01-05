@@ -1,4 +1,4 @@
-import { Destination, Category, Experience } from './types'
+import { Destination, Category, Experience, Vendor } from './types'
 
 export const destinations: Destination[] = [
   {
@@ -1064,5 +1064,50 @@ export const experiences: Experience[] = [
       },
     ],
     tags: ['toprated', 'group'],
+  },
+]
+
+export const vendors: Vendor[] = [
+  {
+    id: 'prov_001',
+    businessName: "Wayan's Dive Shop",
+    businessEmail: 'wayan@divesbali.com',
+    ownerFirstName: 'Wayan',
+    ownerLastName: 'Surya',
+    phone: '+62 812-3456-7890',
+    sinceYear: 1998,
+    verified: true,
+    status: 'active',
+    createdAt: '2024-01-15T08:00:00Z',
+    photo: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
+    bio: "Wayan learned to freedive from his father at age 7 in the waters off Lovina. After working as a dive instructor across Indonesia for 15 years, he returned home to start his own operation with his wife Ketut.",
+  },
+  {
+    id: 'prov_002',
+    businessName: 'Bali Trekking Adventures',
+    businessEmail: 'info@balitrekking.com',
+    ownerFirstName: 'Made',
+    ownerLastName: 'Putra',
+    phone: '+62 813-9876-5432',
+    sinceYear: 2010,
+    verified: true,
+    status: 'active',
+    createdAt: '2024-02-20T10:30:00Z',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+    bio: 'Made has been guiding treks on Mount Batur for over a decade, sharing his deep knowledge of Balinese culture and nature.',
+  },
+  {
+    id: 'prov_demo',
+    businessName: 'Demo Vendor Account',
+    businessEmail: 'demo@vendor.pulau',
+    ownerFirstName: 'Demo',
+    ownerLastName: 'Vendor',
+    phone: '+62 800-0000-0000',
+    sinceYear: 2025,
+    verified: true,
+    status: 'active',
+    createdAt: '2025-01-01T00:00:00Z',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
+    bio: 'Demo vendor account for testing purposes.',
   },
 ]

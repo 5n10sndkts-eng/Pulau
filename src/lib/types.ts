@@ -129,6 +129,35 @@ export interface User {
   hasCompletedOnboarding?: boolean
 }
 
+export interface Vendor {
+  id: string
+  businessName: string
+  businessEmail: string
+  ownerFirstName: string
+  ownerLastName: string
+  phone: string
+  sinceYear: number
+  verified: boolean
+  status: 'pending_verification' | 'active' | 'suspended'
+  createdAt: string
+  photo?: string
+  bio?: string
+}
+
+export interface VendorSession {
+  vendorId: string
+  businessName: string
+  verified: boolean
+  role: 'vendor'
+}
+
+export interface VendorStats {
+  totalExperiences: number
+  totalBookingsThisMonth: number
+  revenueThisMonth: number
+  averageRating: number
+}
+
 export type FilterType = 'all' | 'beginner' | 'halfday' | 'fullday' | 'private' | 'group' | 'under50' | 'toprated'
 
 /**
@@ -165,6 +194,11 @@ export type Screen =
   | { type: 'saved' }
   | { type: 'profile' }
   | { type: 'bookingDetail'; bookingId: string }
+  | { type: 'vendorLogin' }
+  | { type: 'vendorRegister' }
+  | { type: 'vendorDashboard' }
+  | { type: 'vendorExperiences' }
+  | { type: 'vendorBookings' }
 
 /**
  * Record Type Examples for Type-Safe Key-Value Mappings

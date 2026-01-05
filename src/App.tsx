@@ -7,14 +7,17 @@ import { ExperienceDetail } from './components/ExperienceDetail'
 import { TripBuilder } from './components/TripBuilder'
 import { CheckoutFlow } from './components/checkout/CheckoutFlow'
 import { TripsDashboard } from './components/TripsDashboard'
-import { User, Trip, Experience, UserPreferences, TripItem, Booking } from './lib/types'
+import { VendorLogin } from './components/vendor/VendorLogin'
+import { VendorRegister } from './components/vendor/VendorRegister'
+import { VendorDashboard } from './components/vendor/VendorDashboard'
+import { User, Trip, Experience, UserPreferences, TripItem, Booking, VendorSession } from './lib/types'
 import { getExperienceById, calculateTripTotal, generateDemoBookings } from './lib/helpers'
 import { toast } from 'sonner'
 import { Toaster } from './components/ui/sonner'
 import { Button } from './components/ui/button'
 import { Card } from './components/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Calendar, Package } from 'lucide-react'
+import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Calendar, Package, Building2 } from 'lucide-react'
 
 type Screen =
   | { type: 'onboarding' }
@@ -28,6 +31,11 @@ type Screen =
   | { type: 'profile' }
   | { type: 'trips' }
   | { type: 'tripDetail'; tripId: string }
+  | { type: 'vendorLogin' }
+  | { type: 'vendorRegister' }
+  | { type: 'vendorDashboard' }
+  | { type: 'vendorExperiences' }
+  | { type: 'vendorBookings' }
 
 const defaultUser: User = {
   id: 'user_demo',
@@ -54,16 +62,20 @@ function App() {
   const [user, setUser] = useKV<User>('pulau_user', defaultUser)
   const [trip, setTrip] = useKV<Trip>('pulau_current_trip', defaultTrip)
   const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', [])
+  const [vendorSession, setVendorSession] = useKV<VendorSession | null>('pulau_vendor_session', null)
   const [currentScreen, setCurrentScreen] = useState<Screen>({ type: 'onboarding' })
 
   const safeUser = user || defaultUser
   const safeTrip = trip || defaultTrip
 
   useEffect(() => {
-    if (safeUser.hasCompletedOnboarding) {
+    // Check for vendor session first
+    if (vendorSession) {
+      setCurrentScreen({ type: 'vendorDashboard' })
+    } else if (safeUser.hasCompletedOnboarding) {
       setCurrentScreen({ type: 'home' })
     }
-  }, [safeUser.hasCompletedOnboarding])
+  }, [safeUser.hasCompletedOnboarding, vendorSession])
 
   const handleOnboardingComplete = (preferences: UserPreferences, dates?: { start: string; end: string }) => {
     setUser((current) => {
@@ -217,6 +229,17 @@ function App() {
     setTrip(newTrip)
     setCurrentScreen({ type: 'trip' })
     toast.success('Trip copied! Review and book when ready.')
+  }
+
+  const handleVendorLogin = (session: VendorSession) => {
+    setVendorSession(session)
+    setCurrentScreen({ type: 'vendorDashboard' })
+  }
+
+  const handleVendorLogout = () => {
+    setVendorSession(null)
+    setCurrentScreen({ type: 'onboarding' })
+    toast.success('Logged out successfully')
   }
 
   const renderScreen = () => {
@@ -376,6 +399,26 @@ function App() {
               </Card>
             )}
             
+            <Card 
+              className="p-4 cursor-pointer hover:bg-muted/50 transition-colors border-2 border-primary/20"
+              onClick={() => setCurrentScreen({ type: 'vendorLogin' })}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-semibold text-primary">Vendor Portal</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Manage your experiences and bookings
+                    </p>
+                  </div>
+                </div>
+                <ArrowLeft className="w-5 h-5 rotate-180 text-muted-foreground" />
+              </div>
+            </Card>
+            
             <p className="text-muted-foreground mt-8">More profile features coming soon...</p>
           </div>
         </div>
@@ -417,10 +460,75 @@ function App() {
       )
     }
 
+    if (currentScreen.type === 'vendorLogin') {
+      return (
+        <VendorLogin
+          onLogin={handleVendorLogin}
+          onNavigateToRegister={() => setCurrentScreen({ type: 'vendorRegister' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorRegister') {
+      return (
+        <VendorRegister
+          onNavigateToLogin={() => setCurrentScreen({ type: 'vendorLogin' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorDashboard') {
+      if (!vendorSession) {
+        setCurrentScreen({ type: 'vendorLogin' })
+        return null
+      }
+      return (
+        <VendorDashboard
+          session={vendorSession}
+          onNavigateToExperiences={() => setCurrentScreen({ type: 'vendorExperiences' })}
+          onNavigateToBookings={() => setCurrentScreen({ type: 'vendorBookings' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'vendorExperiences') {
+      return (
+        <div className="min-h-screen bg-background p-6">
+          <Button variant="ghost" onClick={() => setCurrentScreen({ type: 'vendorDashboard' })}>
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Dashboard
+          </Button>
+          <h1 className="font-display text-3xl font-bold mt-6 mb-4">My Experiences</h1>
+          <p className="text-muted-foreground">Experience management coming soon...</p>
+        </div>
+      )
+    }
+
+    if (currentScreen.type === 'vendorBookings') {
+      return (
+        <div className="min-h-screen bg-background p-6">
+          <Button variant="ghost" onClick={() => setCurrentScreen({ type: 'vendorDashboard' })}>
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Dashboard
+          </Button>
+          <h1 className="font-display text-3xl font-bold mt-6 mb-4">Bookings</h1>
+          <p className="text-muted-foreground">Booking management coming soon...</p>
+        </div>
+      )
+    }
+
     return null
   }
 
-  const showBottomNav = currentScreen.type !== 'onboarding' && currentScreen.type !== 'checkout' && currentScreen.type !== 'trips' && currentScreen.type !== 'tripDetail'
+  const showBottomNav = currentScreen.type !== 'onboarding' 
+    && currentScreen.type !== 'checkout' 
+    && currentScreen.type !== 'trips' 
+    && currentScreen.type !== 'tripDetail'
+    && currentScreen.type !== 'vendorLogin'
+    && currentScreen.type !== 'vendorRegister'
+    && currentScreen.type !== 'vendorDashboard'
+    && currentScreen.type !== 'vendorExperiences'
+    && currentScreen.type !== 'vendorBookings'
 
   return (
     <div className="relative font-body">
