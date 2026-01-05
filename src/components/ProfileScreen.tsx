@@ -13,7 +13,6 @@ import {
   Info, 
   LogOut,
   ChevronRight,
-  MapPin,
   Building2
 } from 'lucide-react'
 
@@ -22,13 +21,15 @@ interface ProfileScreenProps {
   onNavigateToTrips: () => void
   onNavigateToSaved: () => void
   onNavigateToVendor: () => void
+  onLogout?: () => void
 }
 
 export function ProfileScreen({ 
   user, 
   onNavigateToTrips, 
   onNavigateToSaved,
-  onNavigateToVendor 
+  onNavigateToVendor,
+  onLogout
 }: ProfileScreenProps) {
   const memberSince = new Date(2025, 0, 1).toLocaleDateString('en-US', { 
     month: 'long', 
@@ -199,7 +200,10 @@ export function ProfileScreen({
         ))}
 
         {/* Log Out Button */}
-        <Card className="p-4 cursor-pointer hover:bg-destructive/5 transition-colors border-destructive/20">
+        <Card 
+          className="p-4 cursor-pointer hover:bg-destructive/5 transition-colors border-destructive/20"
+          onClick={onLogout}
+        >
           <div className="flex items-center gap-3 text-destructive">
             <LogOut className="w-5 h-5" />
             <span className="font-semibold">Log Out</span>

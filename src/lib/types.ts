@@ -128,6 +128,8 @@ export interface User {
   currency: string
   language: string
   hasCompletedOnboarding?: boolean
+  emailVerified?: boolean
+  createdAt?: string
 }
 
 export interface Vendor {

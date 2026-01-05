@@ -10,6 +10,9 @@ import { TripsDashboard } from './components/TripsDashboard'
 import { SavedScreen } from './components/SavedScreen'
 import { ExploreScreen } from './components/ExploreScreen'
 import { ProfileScreen } from './components/ProfileScreen'
+import { CustomerLogin } from './components/auth/CustomerLogin'
+import { CustomerRegister } from './components/auth/CustomerRegister'
+import { PasswordReset } from './components/auth/PasswordReset'
 import { VendorLogin } from './components/vendor/VendorLogin'
 import { VendorRegister } from './components/vendor/VendorRegister'
 import { VendorDashboard } from './components/vendor/VendorDashboard'
@@ -22,9 +25,12 @@ import { Toaster } from './components/ui/sonner'
 import { Button } from './components/ui/button'
 import { Card } from './components/ui/card'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Calendar, Package, Building2 } from 'lucide-react'
+import { Home, Compass, PlusCircle, Heart, UserCircle, ArrowLeft, Package } from 'lucide-react'
 
 type Screen =
+  | { type: 'customerLogin' }
+  | { type: 'customerRegister' }
+  | { type: 'passwordReset' }
   | { type: 'destinationSelector' }
   | { type: 'onboarding' }
   | { type: 'home' }
@@ -69,7 +75,7 @@ function App() {
   const [trip, setTrip] = useKV<Trip>('pulau_current_trip', defaultTrip)
   const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', [])
   const [vendorSession, setVendorSession] = useKV<VendorSession | null>('pulau_vendor_session', null)
-  const [currentScreen, setCurrentScreen] = useState<Screen>({ type: 'onboarding' })
+  const [currentScreen, setCurrentScreen] = useState<Screen>({ type: 'customerLogin' })
 
   const safeUser = user || defaultUser
   const safeTrip = trip || defaultTrip
@@ -78,10 +84,14 @@ function App() {
     // Check for vendor session first
     if (vendorSession) {
       setCurrentScreen({ type: 'vendorDashboard' })
-    } else if (safeUser.hasCompletedOnboarding) {
+    } else if (safeUser.hasCompletedOnboarding && safeUser.id !== 'user_demo') {
+      // User is authenticated and has completed onboarding
       setCurrentScreen({ type: 'home' })
+    } else if (safeUser.id !== 'user_demo' && !safeUser.hasCompletedOnboarding) {
+      // User is authenticated but hasn't completed onboarding
+      setCurrentScreen({ type: 'onboarding' })
     }
-  }, [safeUser.hasCompletedOnboarding, vendorSession])
+  }, [safeUser.hasCompletedOnboarding, safeUser.id, vendorSession])
 
   const handleOnboardingComplete = (preferences: UserPreferences, dates?: { start: string; end: string }) => {
     setUser((current) => {
@@ -254,13 +264,56 @@ function App() {
     setCurrentScreen({ type: 'vendorDashboard' })
   }
 
-  const handleVendorLogout = () => {
-    setVendorSession(null)
+  const handleCustomerLogin = (authenticatedUser: User) => {
+    setUser(authenticatedUser)
+    if (authenticatedUser.hasCompletedOnboarding) {
+      setCurrentScreen({ type: 'home' })
+    } else {
+      setCurrentScreen({ type: 'onboarding' })
+    }
+  }
+
+  const handleCustomerRegister = (newUser: User) => {
+    setUser(newUser)
     setCurrentScreen({ type: 'onboarding' })
+  }
+
+  const handleCustomerLogout = () => {
+    setUser(defaultUser)
+    setTrip(defaultTrip)
+    setCurrentScreen({ type: 'customerLogin' })
     toast.success('Logged out successfully')
   }
 
   const renderScreen = () => {
+    if (currentScreen.type === 'customerLogin') {
+      return (
+        <CustomerLogin
+          onLoginSuccess={handleCustomerLogin}
+          onNavigateToRegister={() => setCurrentScreen({ type: 'customerRegister' })}
+          onNavigateToPasswordReset={() => setCurrentScreen({ type: 'passwordReset' })}
+          onNavigateToVendor={() => setCurrentScreen({ type: 'vendorLogin' })}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'customerRegister') {
+      return (
+        <CustomerRegister
+          onNavigateToLogin={() => setCurrentScreen({ type: 'customerLogin' })}
+          onRegisterSuccess={handleCustomerRegister}
+        />
+      )
+    }
+
+    if (currentScreen.type === 'passwordReset') {
+      return (
+        <PasswordReset
+          onBack={() => setCurrentScreen({ type: 'customerLogin' })}
+        />
+      )
+    }
+
     if (currentScreen.type === 'onboarding') {
       return <Onboarding onComplete={handleOnboardingComplete} />
     }
@@ -360,6 +413,7 @@ function App() {
             onNavigateToTrips={() => setCurrentScreen({ type: 'trips' })}
             onNavigateToSaved={() => setCurrentScreen({ type: 'saved' })}
             onNavigateToVendor={() => setCurrentScreen({ type: 'vendorLogin' })}
+            onLogout={handleCustomerLogout}
           />
           {demoBookingsCount === 0 && (
             <div className="fixed bottom-24 left-0 right-0 p-4 z-40">
