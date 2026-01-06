@@ -20,6 +20,7 @@ import {
   Minus,
   Plus,
   ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 
@@ -78,13 +79,13 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      <div className="relative">
-        <div className="relative h-80 bg-gray-200 overflow-hidden">
+      <section className="relative" aria-label="Experience details">
+        <div className="relative h-80 bg-gray-200 overflow-hidden" role="region" aria-label="Image gallery">
           <AnimatePresence initial={false} custom={direction}>
             <motion.img
               key={currentImageIndex}
               src={experience.images[currentImageIndex]}
-              alt={`${experience.title} - Image ${currentImageIndex + 1}`}
+              alt={`${experience.title} - Image ${currentImageIndex + 1} of ${experience.images.length}`}
               className="absolute w-full h-full object-cover"
               custom={direction}
               variants={variants}
@@ -110,17 +111,18 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
             />
           </AnimatePresence>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" aria-hidden="true" />
 
           {currentImageIndex > 0 && (
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               onClick={() => paginate(-1)}
+              aria-label="Previous image"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             </motion.button>
           )}
 
@@ -129,10 +131,11 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               onClick={() => paginate(1)}
+              aria-label="Next image"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5" aria-hidden="true" />
             </motion.button>
           )}
 
@@ -141,28 +144,31 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
             size="icon"
             className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm hover:bg-white z-10"
             onClick={onBack}
+            aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Button>
 
           <motion.button
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center z-10 hover:bg-white transition-colors"
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center z-10 hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             onClick={onToggleSave}
             whileTap={{ scale: 0.9 }}
+            aria-label={isSaved ? 'Remove from saved' : 'Save experience'}
+            aria-pressed={isSaved}
           >
             <motion.div
               animate={isSaved ? { scale: [1, 1.2, 1] } : {}}
               transition={{ duration: 0.3 }}
             >
-              <Heart className={`w-6 h-6 ${isSaved ? 'fill-accent text-accent' : 'text-foreground'}`} />
+              <Heart className={`w-6 h-6 ${isSaved ? 'fill-accent text-accent' : 'text-foreground'}`} aria-hidden="true" />
             </motion.div>
           </motion.button>
 
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10" role="group" aria-label="Image indicators">
             {experience.images.map((_, idx) => (
               <motion.button
                 key={idx}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                   idx === currentImageIndex ? 'bg-white w-6' : 'bg-white/50 w-2'
                 }`}
                 onClick={() => {
@@ -172,11 +178,13 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
                 }}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
+                aria-label={`Go to image ${idx + 1}`}
+                aria-current={idx === currentImageIndex ? 'true' : 'false'}
               />
             ))}
           </div>
 
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-medium z-10">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-medium z-10" aria-live="polite" aria-atomic="true">
             {currentImageIndex + 1} / {experience.images.length}
           </div>
         </div>
@@ -367,7 +375,7 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
             </Card>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }
