@@ -1,15 +1,13 @@
-import { VendorSession } from '@/lib/types'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Calendar, Users, DollarSign, Package } from 'lucide-react'
 
 interface VendorBookingsProps {
-  session: VendorSession
   onBack: () => void
 }
 
-export function VendorBookings({ session, onBack }: VendorBookingsProps) {
+export function VendorBookings({ onBack }: VendorBookingsProps) {
   // Mock bookings data
   const mockBookings = [
     {
