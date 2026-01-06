@@ -161,3 +161,166 @@ Note: Icon names updated to match Lucide React library naming conventions.
 - Trip timeline shows simplified single-column layout on mobile with expand/collapse
 - Checkout steps stack vertically with sticky progress bar
 - Touch targets minimum 44x44px, increased tap padding on small interactive elements
+
+---
+
+## Technical Architecture
+
+**Last Updated**: January 6, 2026 (Post-Implementation Review)
+
+### Platform & Framework
+- **Platform**: React Web Application (Single Page Application)
+- **Framework**: React 19 with TypeScript 5.7.2
+- **Build Tool**: Vite 6.0.5 with Fast Refresh (HMR enabled)
+- **Target Environment**: Modern web browsers (Chrome, Firefox, Safari, Edge)
+
+**Note**: Early planning documents referenced React Native/Expo mobile architecture. The actual implementation is a React web application optimized for desktop and mobile browsers.
+
+### State Management & Data Storage
+- **Primary Data Store**: GitHub Spark KV (Key-Value) Store
+- **State Management**: React hooks (useState, useEffect, useContext)
+- **Data Access**: `useKV` hook from GitHub Spark SDK (@github-spark)
+- **Data Structure**: 
+  - Trips stored in `pulau_trips` KV key as Trip[] array
+  - Bookings stored in `pulau_bookings` KV key as Booking[] array
+  - All data embedded in objects (no database joins needed)
+  - Client-side filtering and sorting via JavaScript array methods
+
+**Note**: Planning documents referenced Supabase database with PostgreSQL, database transactions, and SQL queries. The actual implementation uses GitHub Spark's KV store with client-side data manipulation.
+
+### UI Component Library
+- **Component Framework**: shadcn/ui (Radix UI primitives with custom styling)
+- **Styling**: Tailwind CSS 4.0.0-alpha.37 (CSS-first, no JIT compiler)
+- **Icons**: Lucide React (rounded style icons, 24px default)
+- **Animations**: Framer Motion for transitions and micro-interactions
+- **Toast Notifications**: Sonner for non-blocking user feedback
+
+**Key Components Used**:
+- Card, Button, Dialog, Sheet, Tabs, Badge, Separator, ScrollArea
+- Form inputs with validation states
+- Custom trip timeline and price calculator components
+
+### TypeScript Configuration
+- **Strict Mode**: Enabled with 82 known non-blocking errors (documented)
+- **Null Safety Utilities**: Custom `safeGet()` and `assertDefined()` helpers
+- **Type Guards**: User-defined type predicates for runtime validation
+- **Module Resolution**: Path aliases (@/ for src/)
+
+### File Structure
+```
+src/
+├── components/          # React components
+│   ├── ui/             # shadcn/ui components
+│   ├── TripsDashboard.tsx
+│   └── ...
+├── lib/                # Utilities and helpers
+│   ├── null-safety.ts  # Type safety utilities
+│   └── utils.ts        # General utilities
+├── __tests__/          # Vitest test suites (141 tests)
+└── App.tsx             # Main application entry
+```
+
+**Note**: Planning documents referenced `app/` directory with Next.js-style routing. Actual implementation uses `src/` directory with client-side routing.
+
+### Build & Development
+- **Package Manager**: npm
+- **Development Server**: Vite dev server with HMR
+- **Testing**: Vitest with 141 tests across 8 suites (100% passing)
+- **Linting**: ESLint with React Hooks rules (4 non-blocking warnings)
+- **Type Checking**: TypeScript compiler with strict mode
+
+### Browser APIs Used
+- **Clipboard**: `navigator.clipboard.writeText()` for copying booking references
+- **External Links**: `window.open()` for maps, email (mailto:), phone (tel:)
+- **Local Storage**: Browser localStorage for preference persistence
+- **Web APIs**: No native mobile APIs (e.g., no Expo clipboard, Linking, or device APIs)
+
+### Performance Optimizations
+- **Code Splitting**: Component-level lazy loading
+- **Image Optimization**: Lazy loading with loading states
+- **Fast Refresh**: CVA variants extracted to separate files for HMR compatibility
+- **Memoization**: React.memo and useMemo for expensive computations
+
+### Deployment Target
+- **Target Platform**: Web browsers (responsive design for mobile/desktop)
+- **No Mobile App Store**: Not a native iOS/Android application
+- **Progressive Enhancement**: Works on modern browsers, degrades gracefully
+
+---
+
+## Architecture Decisions & Rationale
+
+### Why React Web Instead of React Native?
+- **GitHub Spark Limitation**: Spark SDK designed for web applications
+- **Rapid Prototyping**: Web deployment faster than app store submissions
+- **Broader Reach**: Works across all devices without installation
+
+### Why KV Store Instead of Supabase?
+- **GitHub Spark Integration**: Native KV store included with Spark SDK
+- **Simplicity**: No database schema, migrations, or connection management
+- **Prototyping Speed**: Instant data persistence without backend setup
+- **Demo-Friendly**: Easy to reset and populate with sample data
+
+### Why Tailwind CSS 4 Alpha?
+- **Modern CSS**: Uses CSS variables and native cascade layers
+- **Performance**: No JIT compiler overhead, pure CSS output
+- **Maintainability**: Clean class-based styling without CSS-in-JS complexity
+
+### Trade-offs Accepted
+1. **Client-Side Filtering**: All data loaded into memory (acceptable for MVP scale)
+2. **No Real-Time Sync**: KV store updates on read/write (no WebSocket subscriptions)
+3. **Limited Offline Support**: Requires active internet connection
+4. **No Native Features**: Can't access device camera, notifications, etc.
+
+---
+
+## Implementation Status (as of January 6, 2026)
+
+### Completed Stories (8 total)
+- ✅ Epic 1: Foundation & Setup (5 stories)
+- ✅ Epic 11: Booking Management (3 stories - History, Detail, Book Again)
+
+### Test Coverage
+- **Total Tests**: 141 passing (8 test suites)
+- **Coverage**: All core features have comprehensive tests
+- **Test Framework**: Vitest with @testing-library/react
+
+### Build Health
+- ✅ Build: Passing
+- ✅ Tests: 141/141 passing
+- ⚠️ TypeScript: 82 known errors (documented, non-blocking)
+- ✅ ESLint: 0 errors, 4 warnings (React Hooks)
+
+### Remaining Work
+- **Stories Awaiting Implementation**: 99 stories (Status: ready-for-dev)
+- **Epics Partially Complete**: Epic 11 (3/6 stories done)
+- **Epics Not Started**: Epics 2-10, 12-19
+
+---
+
+## Documentation Standards
+
+### Story Documentation Format
+All story documentation should reflect actual implementation:
+- ✅ Use React Web terminology (not React Native)
+- ✅ Reference KV store (not Supabase database)
+- ✅ Use correct file paths (`src/` not `app/`)
+- ✅ Reference web APIs (`navigator.clipboard` not `expo-clipboard`)
+- ✅ Keep test counts updated
+- ✅ Use correct PRD path (`_bmad-output/planning-artifacts/prd/pulau-prd.md`)
+
+### Common Documentation Errors to Avoid
+- ❌ Claiming "React Native Tab View" (use "shadcn/ui Tabs")
+- ❌ Showing Supabase queries (use "KV store with useKV hook")
+- ❌ Referencing `app/(tabs)/` paths (use `src/components/`)
+- ❌ Using `expo-clipboard` or `Linking` (use browser APIs)
+- ❌ Claiming database transactions (use "immutable state updates")
+
+### Reference Story Examples
+Corrected story documentation can be found in:
+- `_bmad-output/stories/1-1-initialize-github-spark-project-with-typescript.md`
+- `_bmad-output/stories/11-1-create-booking-history-screen.md`
+- `_bmad-output/stories/11-2-build-booking-detail-view.md`
+- `_bmad-output/stories/11-3-implement-book-again-functionality.md`
+
+Use these as templates for future story creation.
