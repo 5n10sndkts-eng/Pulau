@@ -100,6 +100,7 @@ export interface Trip {
   bookedAt?: string
   cancelledAt?: string
   cancellationReason?: string
+  shareToken?: string
 }
 
 export interface Booking {
@@ -224,3 +225,17 @@ export type Screen =
 export type CategoryMap = Record<string, Category>
 export type ExperienceMap = Record<string, Experience>
 export type TripItemsByDate = Record<string, TripItem[]>
+
+export interface PaymentMethod {
+  id: string
+  userId: string
+  paymentToken: string
+  lastFour: string
+  cardBrand: 'visa' | 'mastercard' | 'amex' | 'discover'
+  expiryMonth: number
+  expiryYear: number
+  isDefault: boolean
+  cardholderName: string
+  createdAt: string
+  deletedAt?: string
+}
