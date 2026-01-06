@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Experience, ExperienceAvailability } from '@/lib/types'
+import { Experience } from '@/lib/types'
 import { formatPrice, getCountryFlag } from '@/lib/helpers'
 import { AvailabilityCalendar } from '@/components/AvailabilityCalendar'
 import {
@@ -349,7 +349,7 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
             <AvailabilityCalendar
               experienceId={experience.id}
               selectedDate={selectedDate}
-              onDateSelect={(date, availability) => {
+              onDateSelect={(date) => {
                 setSelectedDate(date)
               }}
             />

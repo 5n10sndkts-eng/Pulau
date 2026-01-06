@@ -14,7 +14,6 @@ import {
   AlertTitle,
 } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { 
   CheckCircle2, 
   XCircle, 
@@ -116,8 +115,6 @@ export function PublishExperienceModal({
       onPublish(experience.id)
       toast.success('Experience is now live!')
       onClose()
-    } catch (error) {
-      toast.error('Failed to publish experience')
     } finally {
       setIsPublishing(false)
     }
@@ -134,8 +131,6 @@ export function PublishExperienceModal({
       onUnpublish(experience.id)
       toast.success('Experience deactivated')
       onClose()
-    } catch (error) {
-      toast.error('Failed to deactivate experience')
     } finally {
       setIsPublishing(false)
     }

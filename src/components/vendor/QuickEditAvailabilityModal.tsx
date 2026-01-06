@@ -62,7 +62,7 @@ export function QuickEditAvailabilityModal({
       }
       setShowConflictWarning(false)
     }
-  }, [selectedDate, isOpen])
+  }, [selectedDate, isOpen, safeAvailability])
 
   const checkBookingConflicts = () => {
     if (!selectedDate) return []
@@ -134,8 +134,6 @@ export function QuickEditAvailabilityModal({
       // Close modal
       onClose()
       setShowConflictWarning(false)
-    } catch (error) {
-      toast.error('Update failed. Try again.')
     } finally {
       setIsSaving(false)
     }

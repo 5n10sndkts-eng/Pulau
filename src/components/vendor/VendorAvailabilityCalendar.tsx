@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { ExperienceAvailability, VendorSession } from '@/lib/types'
+import { ExperienceAvailability } from '@/lib/types'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,13 +27,11 @@ import { toast } from 'sonner'
 
 interface VendorAvailabilityCalendarProps {
   experienceId: string
-  session: VendorSession
   onBack: () => void
 }
 
 export function VendorAvailabilityCalendar({ 
   experienceId, 
-  session, 
   onBack 
 }: VendorAvailabilityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -57,7 +55,6 @@ export function VendorAvailabilityCalendar({
     const year = currentMonth.getFullYear()
     const month = currentMonth.getMonth()
     
-    const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
     
     const dates: Date[] = []
@@ -153,7 +150,6 @@ export function VendorAvailabilityCalendar({
     }
 
     // Merge with existing, replacing duplicates
-    const existingDates = new Set(safeAvailability.map(a => a.date))
     const filtered = safeAvailability.filter(a => {
       const inNewRange = new Date(a.date) >= start && new Date(a.date) <= end
       return !inNewRange || !recurringDays[new Date(a.date).getDay()]
