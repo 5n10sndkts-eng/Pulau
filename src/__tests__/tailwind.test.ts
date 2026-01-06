@@ -22,14 +22,16 @@ describe('Tailwind CSS Configuration', () => {
     expect(tailwindConfig).toContain('Deep Teal')
   })
 
-  it('should have Warm Coral accent color', () => {
+  it('should have Warm Coral secondary color', () => {
     expect(tailwindConfig).toContain('oklch(0.68 0.17 25)')
     expect(tailwindConfig).toContain('Warm Coral')
+    expect(tailwindConfig).toContain('coral:')
   })
 
-  it('should have Golden Sand highlight color', () => {
+  it('should have Golden Sand secondary color for highlights', () => {
     expect(tailwindConfig).toContain('oklch(0.87 0.12 85)')
     expect(tailwindConfig).toContain('Golden Sand')
+    expect(tailwindConfig).toContain('sand:')
   })
 
   it('should have Soft Green success color', () => {
@@ -57,6 +59,11 @@ describe('Tailwind CSS Configuration', () => {
   it('should have Inter body font', () => {
     expect(tailwindConfig).toContain('Inter')
     expect(tailwindConfig).toContain('sans:')
+  })
+
+  it('should have Caveat accent font for special callouts', () => {
+    expect(tailwindConfig).toContain('Caveat')
+    expect(tailwindConfig).toContain('accent:')
   })
 })
 

@@ -180,7 +180,7 @@ export function ExploreScreen({ onViewExperience, onSearch }: ExploreScreenProps
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="h-6 w-6 text-accent" />
+              <AlertCircle className="h-6 w-6 text-coral" />
               <h2 className="font-display text-2xl font-bold">Limited Availability</h2>
             </div>
             <Button variant="ghost" size="sm">
@@ -199,7 +199,7 @@ export function ExploreScreen({ onViewExperience, onSearch }: ExploreScreenProps
                 <ExperienceCard
                   experience={exp}
                   badge={
-                    <Badge className="absolute top-3 left-3 bg-accent text-white gap-1 animate-pulse">
+                    <Badge className="absolute top-3 left-3 bg-coral text-white gap-1 animate-pulse">
                       <AlertCircle className="h-3 w-3" />
                       Only 3 spots left!
                     </Badge>

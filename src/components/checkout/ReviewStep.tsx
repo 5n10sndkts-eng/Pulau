@@ -124,7 +124,7 @@ export function ReviewStep({ trip, onBack, onContinue }: ReviewStepProps) {
         )}
       </div>
 
-      <Card className="p-5 bg-accent/5 border-accent">
+      <Card className="p-5 bg-coral/5 border-coral">
         <div className="space-y-3">
           <div className="flex justify-between text-sm">
             <span>Subtotal ({trip.items.length} experiences)</span>

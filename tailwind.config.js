@@ -34,12 +34,12 @@ const defaultTheme = {
         DEFAULT: "oklch(0.48 0.09 210)", // Deep Teal #0D7377
         foreground: "oklch(1 0 0)", // White text
       },
-      accent: {
-        DEFAULT: "oklch(0.68 0.17 25)", // Warm Coral #FF6B6B
+      coral: {
+        DEFAULT: "oklch(0.68 0.17 25)", // Warm Coral #FF6B6B (secondary/accent color)
         foreground: "oklch(1 0 0)", // White text
       },
-      highlight: {
-        DEFAULT: "oklch(0.87 0.12 85)", // Golden Sand #F4D03F
+      sand: {
+        DEFAULT: "oklch(0.87 0.12 85)", // Golden Sand #F4D03F (secondary color for highlights)
         foreground: "oklch(0.25 0 0)", // Charcoal text
       },
       success: {

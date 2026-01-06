@@ -28,24 +28,24 @@ export function DesignSystemTest({ className = '' }: DesignSystemTestProps) {
           </div>
 
           <div className="space-y-2">
-            <div className="h-20 bg-accent rounded-card flex items-center justify-center">
-              <span className="text-accent-foreground font-sans text-sm">
-                Accent
+            <div className="h-20 bg-coral rounded-card flex items-center justify-center">
+              <span className="text-coral-foreground font-sans text-sm">
+                Coral
               </span>
             </div>
             <p className="font-sans text-xs text-foreground-secondary">
-              Warm Coral
+              Warm Coral (Secondary)
             </p>
           </div>
 
           <div className="space-y-2">
-            <div className="h-20 bg-highlight rounded-card flex items-center justify-center">
-              <span className="text-highlight-foreground font-sans text-sm">
-                Highlight
+            <div className="h-20 bg-sand rounded-card flex items-center justify-center">
+              <span className="text-sand-foreground font-sans text-sm">
+                Sand
               </span>
             </div>
             <p className="font-sans text-xs text-foreground-secondary">
-              Golden Sand
+              Golden Sand (Secondary)
             </p>
           </div>
 
@@ -89,10 +89,10 @@ export function DesignSystemTest({ className = '' }: DesignSystemTestProps) {
           <div className="bg-primary text-primary-foreground px-6 py-3 rounded-card">
             Card (12px)
           </div>
-          <div className="bg-accent text-accent-foreground px-6 py-3 rounded-button">
+          <div className="bg-coral text-coral-foreground px-6 py-3 rounded-button">
             Button (8px)
           </div>
-          <div className="bg-highlight text-highlight-foreground px-6 py-3 rounded-pill">
+          <div className="bg-sand text-sand-foreground px-6 py-3 rounded-pill">
             Pill (24px)
           </div>
         </div>

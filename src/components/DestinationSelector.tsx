@@ -94,7 +94,7 @@ export function DestinationSelector({ onSelectDestination }: DestinationSelector
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40" />
-                      <Badge className="absolute top-3 right-3 bg-accent text-white">
+                      <Badge className="absolute top-3 right-3 bg-coral text-white">
                         Coming Soon
                       </Badge>
                     </div>

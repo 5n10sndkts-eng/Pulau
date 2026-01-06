@@ -165,8 +165,8 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
                 </p>
               </div>
             </div>
-            <Alert className="bg-accent/5 border-accent">
-              <Sparkles className="h-4 w-4 text-accent" />
+            <Alert className="bg-coral/5 border-coral">
+              <Sparkles className="h-4 w-4 text-coral" />
               <AlertDescription>
                 Your booking confirmations will arrive within 1 hour. Local operators may contact you to confirm
                 pickup details.

@@ -81,7 +81,7 @@ export function SavedScreen({
                     }}
                     className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg"
                   >
-                    <Heart className="h-5 w-5 fill-accent text-accent" />
+                    <Heart className="h-5 w-5 fill-coral text-coral" />
                   </button>
                   
                   {experience.tags?.includes('toprated') && (
