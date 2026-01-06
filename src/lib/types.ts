@@ -73,6 +73,8 @@ export interface Experience {
   whatToBring: string[]
   reviews: Review[]
   tags?: string[]
+  status?: 'draft' | 'active' | 'inactive'
+  publishedAt?: string
 }
 
 export interface TripItem {
@@ -203,6 +205,8 @@ export type Screen =
   | { type: 'vendorDashboard' }
   | { type: 'vendorExperiences' }
   | { type: 'vendorBookings' }
+  | { type: 'vendorExperienceEdit'; experienceId: string }
+  | { type: 'vendorExperienceAvailability'; experienceId: string }
 
 /**
  * Record Type Examples for Type-Safe Key-Value Mappings
@@ -238,4 +242,13 @@ export interface PaymentMethod {
   cardholderName: string
   createdAt: string
   deletedAt?: string
+}
+
+export interface ExperienceAvailability {
+  id: string
+  experienceId: string
+  date: string
+  slotsAvailable: number
+  slotsTotal: number
+  status: 'available' | 'blocked'
 }
