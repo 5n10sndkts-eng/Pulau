@@ -562,59 +562,70 @@ function App() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {renderScreen()}
+          <main id="main-content" role="main">
+            {renderScreen()}
+          </main>
         </motion.div>
       </AnimatePresence>
 
       {showBottomNav && (
-        <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t shadow-lg z-50">
+        <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t shadow-lg z-50" aria-label="Main navigation">
           <div className="flex items-center justify-around h-16 max-w-screen-lg mx-auto">
             <button
-              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 ${
+              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 currentScreen.type === 'home' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
               onClick={() => handleTabChange('home')}
+              aria-label="Trip planner"
+              aria-current={currentScreen.type === 'home' ? 'page' : undefined}
             >
-              <Home className={`w-6 h-6 ${currentScreen.type === 'home' ? 'fill-current' : ''}`} />
+              <Home className={`w-6 h-6 ${currentScreen.type === 'home' ? 'fill-current' : ''}`} aria-hidden="true" />
               <span className="text-xs font-medium">Trip</span>
             </button>
             <button
-              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 ${
+              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 currentScreen.type === 'explore' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
               onClick={() => handleTabChange('explore')}
+              aria-label="Explore experiences"
+              aria-current={currentScreen.type === 'explore' ? 'page' : undefined}
             >
-              <Compass className={`w-6 h-6 ${currentScreen.type === 'explore' ? 'fill-current' : ''}`} />
+              <Compass className={`w-6 h-6 ${currentScreen.type === 'explore' ? 'fill-current' : ''}`} aria-hidden="true" />
               <span className="text-xs font-medium">Explore</span>
             </button>
             <button
-              className="flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95"
+              className="flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               onClick={() => setCurrentScreen({ type: 'home' })}
+              aria-label="Quick add experiences"
             >
               <div className="w-14 h-14 -mt-7 bg-gradient-to-br from-accent to-accent/80 text-accent-foreground rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow">
-                <PlusCircle className="w-8 h-8" />
+                <PlusCircle className="w-8 h-8" aria-hidden="true" />
               </div>
             </button>
             <button
-              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 ${
+              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 currentScreen.type === 'saved' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
               onClick={() => handleTabChange('saved')}
+              aria-label="Saved experiences"
+              aria-current={currentScreen.type === 'saved' ? 'page' : undefined}
             >
-              <Heart className={`w-6 h-6 ${currentScreen.type === 'saved' ? 'fill-current' : ''}`} />
+              <Heart className={`w-6 h-6 ${currentScreen.type === 'saved' ? 'fill-current' : ''}`} aria-hidden="true" />
               <span className="text-xs font-medium">Saved</span>
             </button>
             <button
-              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 ${
+              className={`flex flex-col items-center gap-1 px-4 py-2 transition-all hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 currentScreen.type === 'profile' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
               onClick={() => handleTabChange('profile')}
+              aria-label="Profile and settings"
+              aria-current={currentScreen.type === 'profile' ? 'page' : undefined}
             >
-              <UserCircle className={`w-6 h-6 ${currentScreen.type === 'profile' ? 'fill-current' : ''}`} />
+              <UserCircle className={`w-6 h-6 ${currentScreen.type === 'profile' ? 'fill-current' : ''}`} aria-hidden="true" />
               <span className="text-xs font-medium">Profile</span>
             </button>
           </div>
-        </div>
+        </nav>
       )}
 
       <Toaster />
