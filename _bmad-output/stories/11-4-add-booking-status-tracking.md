@@ -64,108 +64,203 @@ So that I know if they're confirmed or need attention.
 ## Tasks / Subtasks
 
 ### Task 1: Create StatusBadge Component (AC: #1, #2, #3, #4, #5)
-- [ ] Create StatusBadge component in components/booking/StatusBadge.tsx
-- [ ] Implement color mapping for each status type
+- [ ] Create StatusBadge component in `src/components/booking/StatusBadge.tsx`
+- [ ] Implement color mapping for each status type using Tailwind CSS classes
 - [ ] Style badge with rounded corners, padding, and proper typography
-- [ ] Add icon support for each status (optional)
+- [ ] Add Lucide React icon support for each status (CheckCircle, Clock, XCircle)
 - [ ] Make component reusable across booking cards and details
+- [ ] Add TypeScript interface for StatusBadgeProps with strict status typing
 
-### Task 2: Update Database Schema (AC: #6, #8)
-- [ ] Create or verify bookings.status enum with values: confirmed, pending, cancelled, completed
-- [ ] Add status column to bookings table if not exists
-- [ ] Create booking_status_history table with columns: id, booking_id, old_status, new_status, changed_at, reason
-- [ ] Add indexes on status for filtering queries
-- [ ] Create migration script for schema changes
+### Task 2: Update Booking Type Definitions (AC: #6, #8)
+- [ ] Update `BookingStatus` type in `src/lib/types.ts` with union: 'confirmed' | 'pending' | 'cancelled' | 'completed'
+- [ ] Add `status` field to `Booking` interface with `BookingStatus` type
+- [ ] Create `BookingStatusHistory` interface with: booking_id, old_status, new_status, changed_at, reason
+- [ ] Add status field to KV store booking records with default value 'pending'
+- [ ] Update all booking-related TypeScript types to include status
 
 ### Task 3: Implement Status Update Logic (AC: #7)
-- [ ] Create updateBookingStatus function in services/booking.service.ts
-- [ ] Add automatic status update to 'confirmed' after payment success
-- [ ] Implement scheduler/cron to set 'completed' after trip.end_date passes
+- [ ] Create `updateBookingStatus` function in `src/lib/booking-service.ts`
+- [ ] Implement KV store update to change booking status
+- [ ] Add automatic status update to 'confirmed' after payment success hook
+- [ ] Create client-side utility to mark trips as 'completed' based on end_date
 - [ ] Add status update to 'cancelled' in cancellation flow
-- [ ] Ensure all status updates are transactional
+- [ ] Ensure all status updates maintain data consistency in KV store
 
 ### Task 4: Build Status History Logging (AC: #8)
-- [ ] Create logStatusChange function to insert into booking_status_history
-- [ ] Call logStatusChange whenever updateBookingStatus is invoked
+- [ ] Create `logStatusChange` function to store status history in KV store
+- [ ] Use KV key pattern: `booking_status_history:{bookingId}:{timestamp}`
+- [ ] Call `logStatusChange` whenever `updateBookingStatus` is invoked
 - [ ] Include reason parameter (e.g., "Payment completed", "Trip ended", "User cancelled")
-- [ ] Add timestamp and user context to logs
-- [ ] Create query function to retrieve status history for a booking
+- [ ] Add timestamp and user context (from useUser hook) to logs
+- [ ] Create query function to retrieve status history array for a booking
 
 ### Task 5: Integrate StatusBadge in UI (AC: #1)
-- [ ] Add StatusBadge to BookingCard component in booking history
-- [ ] Add StatusBadge to BookingDetailScreen header
-- [ ] Ensure badge renders correctly on both light and dark themes
-- [ ] Test badge appearance on various screen sizes
-- [ ] Add accessibility labels for screen readers
+- [ ] Add StatusBadge to BookingCard component in `src/components/TripsDashboard.tsx`
+- [ ] Add StatusBadge to booking detail view header
+- [ ] Ensure badge renders correctly with Tailwind dark mode classes
+- [ ] Test badge appearance on mobile and desktop viewports
+- [ ] Add aria-label attributes for screen readers
+- [ ] Verify badge colors meet WCAG contrast requirements
 
 ### Task 6: Create Automated Status Updater (AC: #7)
-- [ ] Create edge function or cron job to check for completed trips daily
-- [ ] Query bookings with status 'confirmed' and trip.end_date < today
-- [ ] Batch update statuses to 'completed'
+- [ ] Create React hook `useBookingStatusUpdater` to check for completed trips
+- [ ] Query bookings from KV store with status 'confirmed' and trip.end_date < today
+- [ ] Batch update statuses to 'completed' using KV store writes
 - [ ] Log all automated updates to status history
-- [ ] Handle errors and retry failed updates
+- [ ] Run check on component mount and periodically (e.g., every 5 minutes)
+- [ ] Handle errors gracefully with toast notifications
 
 ### Task 7: Add Status Filtering and Queries
-- [ ] Update booking queries to include status field
-- [ ] Add status-based filtering in booking history tabs
-- [ ] Create indexes for efficient status queries
-- [ ] Test query performance with large datasets
-- [ ] Consider caching frequently accessed status data
+- [ ] Update `getBookings` function to filter by status from KV store
+- [ ] Add status-based filtering tabs in booking history component
+- [ ] Implement client-side filtering for quick status changes
+- [ ] Optimize KV store queries by using status-based key prefixes
+- [ ] Add loading states during status filter changes
 
 ## Dev Notes
 
 ### Status Badge Component Example
 ```typescript
+// src/components/booking/StatusBadge.tsx
+import { CheckCircle, Clock, XCircle } from 'lucide-react';
+import type { BookingStatus } from '@/lib/types';
+
 interface StatusBadgeProps {
-  status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
-  size?: 'small' | 'medium' | 'large';
+  status: BookingStatus;
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
-const STATUS_CONFIG = {
-  confirmed: { color: '#27AE60', label: 'Confirmed', icon: 'check-circle' },
-  pending: { color: '#F4D03F', label: 'Pending', icon: 'clock' },
-  cancelled: { color: '#95A5A6', label: 'Cancelled', icon: 'x-circle' },
-  completed: { color: '#0D7377', label: 'Completed', icon: 'check-circle' }
+const STATUS_CONFIG: Record<BookingStatus, { 
+  label: string; 
+  bgClass: string; 
+  textClass: string;
+  icon: typeof CheckCircle;
+}> = {
+  confirmed: { 
+    label: 'Confirmed', 
+    bgClass: 'bg-green-100 dark:bg-green-900/30', 
+    textClass: 'text-green-800 dark:text-green-200',
+    icon: CheckCircle
+  },
+  pending: { 
+    label: 'Pending', 
+    bgClass: 'bg-yellow-100 dark:bg-yellow-900/30', 
+    textClass: 'text-yellow-800 dark:text-yellow-200',
+    icon: Clock
+  },
+  cancelled: { 
+    label: 'Cancelled', 
+    bgClass: 'bg-gray-100 dark:bg-gray-800', 
+    textClass: 'text-gray-600 dark:text-gray-400',
+    icon: XCircle
+  },
+  completed: { 
+    label: 'Completed', 
+    bgClass: 'bg-teal-100 dark:bg-teal-900/30', 
+    textClass: 'text-teal-800 dark:text-teal-200',
+    icon: CheckCircle
+  }
 };
+
+export function StatusBadge({ status, size = 'md', className = '' }: StatusBadgeProps) {
+  const config = STATUS_CONFIG[status];
+  const Icon = config.icon;
+  
+  return (
+    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bgClass} ${config.textClass} ${className}`}>
+      <Icon className="w-4 h-4" />
+      <span className="text-sm font-medium">{config.label}</span>
+    </div>
+  );
+}
 ```
 
-### Database Schema
-```sql
--- bookings.status enum
-CREATE TYPE booking_status AS ENUM ('confirmed', 'pending', 'cancelled', 'completed');
+### KV Store Schema Patterns
+```typescript
+// Booking record with status
+interface Booking {
+  id: string;
+  userId: string;
+  experienceId: string;
+  status: BookingStatus; // 'confirmed' | 'pending' | 'cancelled' | 'completed'
+  createdAt: string;
+  updatedAt: string;
+  // ... other fields
+}
 
-ALTER TABLE bookings ADD COLUMN status booking_status DEFAULT 'pending';
+// Status history entry
+interface BookingStatusHistory {
+  bookingId: string;
+  oldStatus: BookingStatus;
+  newStatus: BookingStatus;
+  reason: string;
+  changedAt: string;
+  changedBy: string; // user ID
+}
 
--- booking_status_history table
-CREATE TABLE booking_status_history (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  booking_id UUID REFERENCES bookings(id),
-  old_status booking_status,
-  new_status booking_status,
-  reason TEXT,
-  changed_at TIMESTAMPTZ DEFAULT NOW(),
-  changed_by UUID REFERENCES auth.users(id)
-);
+// KV storage keys
+// bookings:{userId}:{bookingId} → Booking
+// booking_status_history:{bookingId}:{timestamp} → BookingStatusHistory
 ```
 
 ### Automated Status Update
-- Use Supabase Edge Functions or pg_cron for scheduled jobs
-- Run daily at 00:00 UTC to check for completed trips
-- Consider time zones when marking trips as completed
-- Send notifications when status changes (optional)
+```typescript
+// src/hooks/useBookingStatusUpdater.ts
+import { useEffect } from 'react';
+import { useKV } from '@github-spark/app';
+import { toast } from 'sonner';
+
+export function useBookingStatusUpdater() {
+  const kv = useKV();
+  
+  useEffect(() => {
+    const checkCompletedTrips = async () => {
+      try {
+        // Get all confirmed bookings
+        const bookings = await kv.get<Booking[]>('bookings:*:*');
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Find trips that should be marked completed
+        const toComplete = bookings?.filter(
+          b => b.status === 'confirmed' && b.endDate < today
+        ) ?? [];
+        
+        // Batch update statuses
+        for (const booking of toComplete) {
+          await updateBookingStatus(booking.id, 'completed', 'Trip ended');
+        }
+        
+        if (toComplete.length > 0) {
+          toast.success(`Marked ${toComplete.length} trip(s) as completed`);
+        }
+      } catch (error) {
+        console.error('Failed to update booking statuses:', error);
+      }
+    };
+    
+    // Run on mount and every 5 minutes
+    checkCompletedTrips();
+    const interval = setInterval(checkCompletedTrips, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [kv]);
+}
+```
 
 ### Testing Considerations
 - Test all status transitions (pending → confirmed → completed)
 - Test cancellation flow (confirmed → cancelled)
-- Verify status history logs are created correctly
-- Test automated completion for trips ending today
-- Check badge appearance on different backgrounds
-- Validate enum constraints in database
+- Verify status history entries are created in KV store
+- Test automated completion for trips with past end dates
+- Check badge appearance on light and dark backgrounds
+- Verify TypeScript type safety for status values
+- Test status filtering performance with many bookings
+- Validate WCAG contrast ratios for badge colors
 
 ## References
 
 - [Source: epics.md#Epic 11 - Story 11.4]
-- [Source: prd/pulau-prd.md#Booking Management]
+- [Source: planning-artifacts/prd/pulau-prd.md#Booking Management]
 - [Related: Story 11.1 - Create Booking History Screen]
 - [Related: Story 11.2 - Build Booking Detail View]
 - [Related: Story 11.6 - Implement Booking Cancellation Flow]
@@ -180,3 +275,23 @@ CREATE TABLE booking_status_history (
 ### Completion Notes List
 
 ### File List
+
+---
+
+## Template Fix Notes (2026-01-06)
+
+**Issues Fixed:**
+1. ✅ Database schema references → KV store patterns
+2. ✅ SQL code examples → TypeScript/KV interfaces
+3. ✅ Supabase Edge Functions → Client-side React hooks
+4. ✅ File paths updated to `src/` directory structure
+5. ✅ Added Lucide React icons (CheckCircle, Clock, XCircle)
+6. ✅ Added Tailwind CSS class examples with dark mode
+7. ✅ Updated PRD reference path
+8. ✅ Replaced database tables → KV key patterns
+9. ✅ Removed PostgreSQL-specific features (pg_cron, SQL migrations)
+10. ✅ Added TypeScript type safety throughout
+
+**Root Cause:** Story was templated from React Native/Supabase project but implemented as React Web with GitHub Spark KV store.
+
+**Verification:** Story now accurately reflects React Web + KV store architecture as documented in `_bmad-output/planning-artifacts/prd/pulau-prd.md` and `_bmad-output/architecture-decision-records.md`.
