@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Experience } from '@/lib/types'
 import { formatPrice, getCountryFlag } from '@/lib/helpers'
+import { AvailabilityCalendar } from '@/components/AvailabilityCalendar'
 import {
   ArrowLeft,
   Heart,
@@ -36,6 +37,7 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [guests, setGuests] = useState(2)
   const [[page, direction], setPage] = useState([0, 0])
+  const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined)
 
   const totalPrice = experience.price.amount * guests
 
@@ -340,6 +342,17 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
                 </Card>
               ))}
             </div>
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="font-display text-xl font-semibold">Check Availability</h2>
+            <AvailabilityCalendar
+              experienceId={experience.id}
+              selectedDate={selectedDate}
+              onDateSelect={(date) => {
+                setSelectedDate(date)
+              }}
+            />
           </div>
 
           <div className="space-y-3">

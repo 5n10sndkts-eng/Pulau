@@ -70,13 +70,13 @@ development_status:
   epic-4-retrospective: optional
 
   # Epic 5: Experience Data Model & Vendor Management (6 stories)
-  epic-5: in-progress
+  epic-5: done
   5-1-design-and-create-experiences-database-schema: done
   5-2-build-vendor-experience-creation-form: done
   5-3-implement-experience-image-upload: done
   5-4-add-experience-editing-capabilities: done
-  5-5-build-availability-calendar-management: backlog
-  5-6-implement-experience-publishing-workflow: backlog
+  5-5-build-availability-calendar-management: done
+  5-6-implement-experience-publishing-workflow: done
   epic-5-retrospective: optional
 
   # Epic 6: Experience Discovery & Browse (10 stories)
@@ -174,9 +174,9 @@ development_status:
   epic-14-retrospective: optional
 
   # Epic 15: Real-time Availability & Messaging (5 stories)
-  epic-15: in-progress
-  15-1-display-real-time-availability-on-experience-pages: backlog
-  15-2-enable-vendor-calendar-quick-updates: backlog
+  epic-15: done
+  15-1-display-real-time-availability-on-experience-pages: done
+  15-2-enable-vendor-calendar-quick-updates: done
   15-3-create-messaging-thread-list: done
   15-4-build-messaging-conversation-view: done
   15-5-implement-pre-booking-questions: done
