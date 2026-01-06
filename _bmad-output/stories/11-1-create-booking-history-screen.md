@@ -1,6 +1,6 @@
 # Story 11.1: Create Booking History Screen
 
-Status: review
+Status: done
 
 ## Story
 

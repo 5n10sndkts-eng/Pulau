@@ -1,6 +1,6 @@
 # Story 11.2: Build Booking Detail View
 
-Status: review
+Status: done
 
 ## Story
 
