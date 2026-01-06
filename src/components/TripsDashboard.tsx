@@ -115,11 +115,11 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     toast.success('Booking removed from history')
   }
 
-  const handleDownloadReceipt = (_booking: Booking) => {
+  const handleDownloadReceipt = () => {
     toast.success('Receipt downloaded')
   }
 
-  const handleShareTrip = (_booking: Booking) => {
+  const handleShareTrip = () => {
     toast.success('Trip details copied to clipboard')
   }
 

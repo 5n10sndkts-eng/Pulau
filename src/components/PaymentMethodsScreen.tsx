@@ -178,7 +178,7 @@ export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
     setDeleteConfirm(null)
   }
 
-  const getCardIcon = (brand: PaymentMethod['cardBrand']) => {
+  const getCardIcon = () => {
     return <CreditCard className="h-6 w-6" />
   }
 
@@ -211,7 +211,7 @@ export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
             <Card key={method.id}>
               <CardContent className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-4">
-                  {getCardIcon(method.cardBrand)}
+                  {getCardIcon()}
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">

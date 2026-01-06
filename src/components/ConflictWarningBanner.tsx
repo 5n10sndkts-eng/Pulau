@@ -4,14 +4,12 @@ import type { Conflict } from '@/lib/conflictDetection'
 
 interface ConflictWarningBannerProps {
   conflict: Conflict
-  currentExperienceId: string
   otherExperienceTitle: string
   onTap: () => void
 }
 
 export function ConflictWarningBanner({
   conflict,
-  currentExperienceId,
   otherExperienceTitle,
   onTap,
 }: ConflictWarningBannerProps) {

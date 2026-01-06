@@ -17,7 +17,18 @@ import { toast } from 'sonner'
 
 interface VendorExperienceFormProps {
   onBack: () => void
-  onSave: (data: any) => void
+  onSave: (data: ExperienceData) => void
+}
+
+interface ExperienceData {
+  title: string
+  category: string
+  description: string
+  price: number
+  duration: string
+  groupSize: { min: number; max: number }
+  images: string[]
+  included: string[]
 }
 
 export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormProps) {

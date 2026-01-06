@@ -100,11 +100,10 @@ export function MessagingThreadList({ onSelectThread, onBack }: MessagingThreadL
 }
 
 interface MessagingConversationViewProps {
-  threadId: string
   onBack: () => void
 }
 
-export function MessagingConversationView({ threadId, onBack }: MessagingConversationViewProps) {
+export function MessagingConversationView({ onBack }: MessagingConversationViewProps) {
   const [newMessage, setNewMessage] = useState('')
   const [messages, setMessages] = useState<Message[]>([
     {

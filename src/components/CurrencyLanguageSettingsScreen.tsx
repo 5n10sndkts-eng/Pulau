@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { DollarSign, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'

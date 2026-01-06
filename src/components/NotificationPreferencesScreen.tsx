@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Bell, Mail, MessageSquare, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'

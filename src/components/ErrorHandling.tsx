@@ -1,26 +1,20 @@
 import { useState, useEffect } from 'react'
 import { WifiOff, RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { toast } from 'sonner'
 
 interface NetworkStatusProps {
   children: React.ReactNode
 }
 
 export function NetworkStatusWrapper({ children }: NetworkStatusProps) {
-  const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [showBanner, setShowBanner] = useState(false)
 
   useEffect(() => {
     const handleOnline = () => {
-      setIsOnline(true)
       setShowBanner(false)
       toast.success('Connection restored')
     }
 
     const handleOffline = () => {
-      setIsOnline(false)
       setShowBanner(true)
       toast.error('No internet connection')
     }

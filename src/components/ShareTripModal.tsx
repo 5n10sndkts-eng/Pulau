@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Share2, Copy, ExternalLink } from 'lucide-react'
+import { Copy, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -36,7 +36,7 @@ export function ShareTripModal({ isOpen, onClose, trip, onUpdateTrip }: ShareTri
     try {
       await navigator.clipboard.writeText(url)
       toast.success('Link copied to clipboard!')
-    } catch (error) {
+    } catch {
       toast.error('Failed to copy link')
     }
   }
