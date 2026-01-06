@@ -56,37 +56,48 @@ describe('Button Component', () => {
   })
 
   it('should have default variant using primary color', () => {
-    const buttonFile = readFileSync(
-      resolve(__dirname, '../../src/components/ui/button.tsx'),
+    // Variants are now in button.variants.ts
+    const buttonVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/button.variants.ts'),
       'utf-8'
     )
-    expect(buttonFile).toContain('bg-primary')
-    expect(buttonFile).toContain('text-primary-foreground')
+    expect(buttonVariantsFile).toContain('bg-primary')
+    expect(buttonVariantsFile).toContain('text-primary-foreground')
   })
 
   it('should have outline variant', () => {
-    const buttonFile = readFileSync(
-      resolve(__dirname, '../../src/components/ui/button.tsx'),
+    // Variants are now in button.variants.ts
+    const buttonVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/button.variants.ts'),
       'utf-8'
     )
-    expect(buttonFile).toContain('outline:')
+    expect(buttonVariantsFile).toContain('outline:')
   })
 
   it('should have ghost variant', () => {
-    const buttonFile = readFileSync(
-      resolve(__dirname, '../../src/components/ui/button.tsx'),
+    // Variants are now in button.variants.ts
+    const buttonVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/button.variants.ts'),
       'utf-8'
     )
-    expect(buttonFile).toContain('ghost:')
+    expect(buttonVariantsFile).toContain('ghost:')
   })
 
   it('should use class-variance-authority', () => {
+    // Check button.variants.ts for CVA usage
+    const buttonVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/button.variants.ts'),
+      'utf-8'
+    )
+    expect(buttonVariantsFile).toContain('from "class-variance-authority"')
+    expect(buttonVariantsFile).toContain('cva(')
+    
+    // Check button.tsx imports from variants file
     const buttonFile = readFileSync(
       resolve(__dirname, '../../src/components/ui/button.tsx'),
       'utf-8'
     )
-    expect(buttonFile).toContain('from "class-variance-authority"')
-    expect(buttonFile).toContain('cva(')
+    expect(buttonFile).toContain('from "./button.variants"')
   })
 
   it('should use Radix UI Slot for polymorphic behavior', () => {

@@ -26,32 +26,35 @@ describe('Framer Motion Configuration', () => {
   })
 
   it('should have animation variants configured', () => {
-    const motionFile = readFileSync(
-      resolve(__dirname, '../../src/components/ui/motion.tsx'),
+    // Variants are now in motion.variants.ts
+    const motionVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/motion.variants.ts'),
       'utf-8'
     )
-    expect(motionFile).toContain('quickAddVariants')
-    expect(motionFile).toContain('heartPopVariants')
-    expect(motionFile).toContain('pageTransitionVariants')
+    expect(motionVariantsFile).toContain('quickAddVariants')
+    expect(motionVariantsFile).toContain('heartPopVariants')
+    expect(motionVariantsFile).toContain('pageTransitionVariants')
   })
 
   it('should have spring physics configured', () => {
-    const motionFile = readFileSync(
-      resolve(__dirname, '../../src/components/ui/motion.tsx'),
+    // Spring physics now in motion.variants.ts
+    const motionVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/motion.variants.ts'),
       'utf-8'
     )
-    expect(motionFile).toContain('stiffness: 400')
-    expect(motionFile).toContain('damping: 17')
+    expect(motionVariantsFile).toContain('stiffness: 400')
+    expect(motionVariantsFile).toContain('damping: 17')
   })
 
   it('should have correct animation timings from PRD', () => {
-    const motionFile = readFileSync(
-      resolve(__dirname, '../../src/components/ui/motion.tsx'),
+    // Animation timings now in motion.variants.ts
+    const motionVariantsFile = readFileSync(
+      resolve(__dirname, '../../src/components/ui/motion.variants.ts'),
       'utf-8'
     )
-    expect(motionFile).toContain('0.15') // Quick Add 150ms
-    expect(motionFile).toContain('0.2') // Heart pop 200ms
-    expect(motionFile).toContain('0.3') // Page transition 300ms
+    expect(motionVariantsFile).toContain('0.15') // Quick Add 150ms
+    expect(motionVariantsFile).toContain('0.2') // Heart pop 200ms
+    expect(motionVariantsFile).toContain('0.3') // Page transition 300ms
   })
 })
 

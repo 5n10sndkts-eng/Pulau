@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { ExperienceAvailability, Booking } from '@/lib/types'
 import {
@@ -46,8 +46,8 @@ export function QuickEditAvailabilityModal({
   const [conflictingBookings, setConflictingBookings] = useState<Booking[]>([])
   const [isSaving, setIsSaving] = useState(false)
 
-  const safeAvailability = availabilityData || []
-  const safeBookings = bookingsData || []
+  const safeAvailability = useMemo(() => availabilityData || [], [availabilityData])
+  const safeBookings = useMemo(() => bookingsData || [], [bookingsData])
 
   useEffect(() => {
     if (selectedDate && isOpen) {
