@@ -121,7 +121,8 @@ Animations serve as functional signifiers and moments of delight—purposeful, n
 - Skeleton for loading states matching card dimensions
 - Toast (Sonner) for quick confirmations like "Added to trip" and "Saved to wishlist"
 - Progress indicator for checkout flow steps
-- Icons from Phosphor (rounded, 2px stroke): Waves, Bicycle, Buildings, ForkKnife, Van, Heart, MagnifyingGlass, Plus, User, MapPin
+- Icons from Lucide React (rounded style, customizable stroke): Home, Compass, Heart, User, MapPin, Plus, Search, Filter, Share, Calendar, X, Check, AlertCircle, Star, ChevronRight
+  - Note: Originally specified Phosphor, but implementation uses Lucide React which provides equivalent functionality with similar visual style and better React integration
 
 **Customizations**:
 - Custom trip timeline component with connecting lines between day cards
@@ -137,10 +138,12 @@ Animations serve as functional signifiers and moments of delight—purposeful, n
 - Images: Lazy load with skeleton, error with placeholder gradient, zoom on tap in detail view
 
 **Icon Selection**:
-- Navigation: House (home), Compass (explore), PlusCircle (quick add), Heart (saved), User (profile)
-- Categories: Waves (water), Bicycle (land), Buildings (culture), ForkKnife (food), Van (transport), Bed (stays)
-- Actions: MagnifyingGlass (search), FunnelSimple (filter), ShareNetwork (share), Calendar (dates), MapPin (location)
-- UI: CaretRight (chevron), X (close), Check (success), Warning (alert), Star (rating)
+- Navigation: Home, Compass, PlusCircle, Heart, UserCircle (profile)
+- Categories: Waves (water), Bike (land), Building2 (culture), UtensilsCrossed (food), Car (transport), Bed (stays)
+- Actions: Search, Filter, Share2, Calendar, MapPin (location)
+- UI: ChevronRight, X (close), Check (success), AlertCircle, Star (rating)
+
+Note: Icon names updated to match Lucide React library naming conventions.
 
 **Spacing**: 
 - Card padding: 20px

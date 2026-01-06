@@ -1,6 +1,6 @@
 /**
  * Animation and Icon System Tests
- * Validates Framer Motion and Phosphor icons configuration
+ * Validates Framer Motion and Lucide React icons configuration
  */
 
 import { describe, it, expect } from 'vitest'
@@ -79,21 +79,24 @@ describe('Reduced Motion Support', () => {
   })
 })
 
-describe('Phosphor Icons Configuration', () => {
-  it('should have @phosphor-icons/react installed', () => {
+describe('Icon System Configuration', () => {
+  it('should have lucide-react installed', () => {
     const packageJson = JSON.parse(
       readFileSync(resolve(__dirname, '../../package.json'), 'utf-8')
     )
-    expect(packageJson.dependencies['@phosphor-icons/react']).toBe('^2.1.7')
+    expect(packageJson.dependencies['lucide-react']).toBeDefined()
+    expect(packageJson.dependencies['lucide-react']).toContain('^0.5')
   })
 
-  it('should have Phosphor icon proxy configured in Vite', () => {
-    const viteConfig = readFileSync(
-      resolve(__dirname, '../../vite.config.ts'),
+  it('should use Lucide icons in App.tsx', () => {
+    const appFile = readFileSync(
+      resolve(__dirname, '../App.tsx'),
       'utf-8'
     )
-    expect(viteConfig).toContain('vitePhosphorIconProxyPlugin')
-    expect(viteConfig).toContain('createIconImportProxy')
+    expect(appFile).toContain("from 'lucide-react'")
+    expect(appFile).toContain('Home')
+    expect(appFile).toContain('Compass')
+    expect(appFile).toContain('Heart')
   })
 })
 
