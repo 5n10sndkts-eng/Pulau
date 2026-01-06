@@ -9,7 +9,7 @@ This document catalogs all React components in the Pulau application, organized 
 | Category | Count | Description |
 |----------|-------|-------------|
 | Screen Components | 9 | Top-level screen views |
-| Feature Components | 7 | Domain-specific features |
+| Feature Components | 11 | Domain-specific features |
 | UI Components | 46 | Reusable UI primitives |
 | Utility Components | 4 | Helper/wrapper components |
 
@@ -42,6 +42,15 @@ This document catalogs all React components in the Pulau application, organized 
 ---
 
 ## Feature Components
+
+### Standalone Feature Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `AvailabilityCalendar` | `src/components/AvailabilityCalendar.tsx` | Customer-facing availability display (60-day view) |
+| `VendorAvailabilityCalendar` | `src/components/vendor/VendorAvailabilityCalendar.tsx` | Vendor calendar management (12-month view) |
+| `QuickEditAvailabilityModal` | `src/components/vendor/QuickEditAvailabilityModal.tsx` | Mobile-friendly quick availability edit |
+| `PublishExperienceModal` | `src/components/vendor/PublishExperienceModal.tsx` | Experience publishing workflow with validation |
 
 ### Embedded in Screen Components
 

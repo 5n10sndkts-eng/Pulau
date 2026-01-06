@@ -109,6 +109,9 @@ App.tsx (Screen Router)
 | Trip Canvas Building | ✅ | `TripBuilder.tsx` |
 | Experience Discovery | ✅ | `CategoryBrowser.tsx` |
 | Detailed Experience Pages | ✅ | `ExperienceDetail.tsx` |
+| Real-time Availability Calendar | ✅ | `AvailabilityCalendar.tsx` |
+| Vendor Availability Management | ✅ | `vendor/VendorAvailabilityCalendar.tsx` |
+| Experience Publishing | ✅ | `vendor/PublishExperienceModal.tsx` |
 | Multi-Step Checkout | ✅ | `checkout/` |
 | Onboarding | ✅ | `Onboarding.tsx` |
 | Trip Dashboard | ✅ | `TripsDashboard.tsx` |
