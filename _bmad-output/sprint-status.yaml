@@ -183,13 +183,13 @@ development_status:
   epic-15-retrospective: optional
 
   # Epic 16: Mobile-First Responsive Design (6 stories)
-  epic-16: in-progress
+  epic-16: done
   16-1-implement-mobile-first-breakpoint-system: done
   16-2-ensure-touch-target-compliance: done
   16-3-implement-bottom-navigation-with-safe-areas: done
   16-4-apply-bali-inspired-design-system: done
   16-5-implement-physics-based-animations: done
-  16-6-ensure-wcag-2-1-aa-accessibility: backlog
+  16-6-ensure-wcag-2-1-aa-accessibility: done
   epic-16-retrospective: optional
 
   # Epic 17: Edge Cases & Error Handling (5 stories)
