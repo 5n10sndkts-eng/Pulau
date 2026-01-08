@@ -6,19 +6,22 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { UserCircle, Building2 } from 'lucide-react'
 import { User } from '@/lib/types'
+import { authService } from '@/lib/authService'
 
 interface CustomerLoginProps {
   onLoginSuccess: (user: User) => void
   onNavigateToRegister: () => void
   onNavigateToPasswordReset: () => void
   onNavigateToVendor: () => void
+  onGuestEntry: () => void
 }
 
-export function CustomerLogin({ 
-  onLoginSuccess, 
+export function CustomerLogin({
+  onLoginSuccess,
   onNavigateToRegister,
   onNavigateToPasswordReset,
-  onNavigateToVendor
+  onNavigateToVendor,
+  onGuestEntry
 }: CustomerLoginProps) {
   const [formData, setFormData] = useState({
     email: '',
@@ -26,6 +29,7 @@ export function CustomerLogin({
   })
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [authError, setAuthError] = useState<string | null>(null)
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -59,8 +63,9 @@ export function CustomerLogin({
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setAuthError(null)
 
     if (!validateForm()) {
       return
@@ -68,33 +73,24 @@ export function CustomerLogin({
 
     setIsLoading(true)
 
-    // Simulate login delay
-    setTimeout(() => {
-      // Mock login - in production this would call an API
-      console.log('Customer login attempt:', {
-        email: formData.email,
-        password: '[HIDDEN]',
-      })
-      
-      // Create mock authenticated user
-      const authenticatedUser: User = {
-        id: `user_${Date.now()}`,
-        email: formData.email,
-        firstName: 'Demo',
-        lastName: 'User',
-        preferences: {},
-        saved: [],
-        currency: 'USD',
-        language: 'en',
-        hasCompletedOnboarding: true, // Set to true since they're logging in
-        emailVerified: true,
-        createdAt: new Date().toISOString(),
-      }
-      
-      setIsLoading(false)
+    try {
+      const user = await authService.login(formData.email, formData.password)
       toast.success('Welcome back!')
-      onLoginSuccess(authenticatedUser)
-    }, 1000)
+      onLoginSuccess(user)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Login failed'
+      // Map Supabase error messages to user-friendly ones
+      if (message.includes('Invalid login credentials')) {
+        setAuthError('Invalid email or password. Please try again.')
+      } else if (message.includes('Email not confirmed')) {
+        setAuthError('Please verify your email address before signing in.')
+      } else {
+        setAuthError(message)
+      }
+      toast.error('Login failed')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -111,6 +107,12 @@ export function CustomerLogin({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {authError && (
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{authError}</p>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input
@@ -184,15 +186,32 @@ export function CustomerLogin({
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={onNavigateToVendor}
-        >
-          <Building2 className="h-4 w-4 mr-2" />
-          Vendor Portal
-        </Button>
+        <div className="space-y-4">
+          <Button
+            variant="outline"
+            className="w-full h-auto py-4 border-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5 group"
+            onClick={onGuestEntry}
+          >
+            <div className="flex flex-col items-center gap-1">
+              <span className="font-semibold text-lg text-primary group-hover:text-primary transition-colors">
+                Build Your Dream Vacation
+              </span>
+              <span className="text-xs text-muted-foreground">
+                No account needed • Try it now
+              </span>
+            </div>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full text-muted-foreground hover:text-foreground"
+            onClick={onNavigateToVendor}
+          >
+            <Building2 className="h-4 w-4 mr-2" />
+            Vendor Portal
+          </Button>
+        </div>
       </Card>
-    </div>
+    </div >
   )
 }

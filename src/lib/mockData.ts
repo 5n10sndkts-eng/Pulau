@@ -1,4 +1,4 @@
-import { Destination, Category, Experience, Vendor } from './types'
+import { Destination, Category, Experience, Vendor, ExperienceCategory, Difficulty, PricePer, ExperienceStatus } from './types'
 
 export const destinations: Destination[] = [
   {
@@ -45,42 +45,42 @@ export const destinations: Destination[] = [
 
 export const categories: Category[] = [
   {
-    id: 'water_adventures',
+    id: ExperienceCategory.WaterAdventures,
     name: 'Water Adventures',
     icon: 'waves',
     tagline: 'Boat trips, snorkeling, diving',
     image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
   },
   {
-    id: 'land_explorations',
+    id: ExperienceCategory.LandExplorations,
     name: 'Land Explorations',
     icon: 'bicycle',
     tagline: 'Bikes, scooters, guided treks',
     image: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=800&h=600&fit=crop',
   },
   {
-    id: 'culture_experiences',
+    id: ExperienceCategory.CultureExperiences,
     name: 'Culture & Experiences',
     icon: 'temple',
     tagline: 'Temples, ceremonies, cooking classes',
     image: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&h=600&fit=crop',
   },
   {
-    id: 'food_nightlife',
+    id: ExperienceCategory.FoodNightlife,
     name: 'Food & Nightlife',
     icon: 'utensils',
     tagline: 'Local warungs to beach clubs',
     image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=800&h=600&fit=crop',
   },
   {
-    id: 'transportation',
+    id: ExperienceCategory.Transportation,
     name: 'Getting Around',
     icon: 'car',
     tagline: 'Transfers, drivers, day trips',
     image: 'https://images.unsplash.com/photo-1586339277861-560376e85e32?w=800&h=600&fit=crop',
   },
   {
-    id: 'stays',
+    id: ExperienceCategory.Stays,
     name: 'Destinations & Stays',
     icon: 'home',
     tagline: 'Where will you wake up?',
@@ -92,7 +92,7 @@ export const experiences: Experience[] = [
   {
     id: 'exp_001',
     title: 'Sunrise Snorkeling at Menjangan Island',
-    category: 'water_adventures',
+    category: ExperienceCategory.WaterAdventures,
     subcategory: 'snorkeling',
     destination: 'dest_bali',
     provider: {
@@ -109,12 +109,13 @@ export const experiences: Experience[] = [
     price: {
       amount: 65,
       currency: 'USD',
-      per: 'person',
+      per: PricePer.Person,
     },
     duration: '6 hours',
+    durationHours: 6,
     startTime: '05:00',
     groupSize: { min: 2, max: 8 },
-    difficulty: 'Easy',
+    difficulty: Difficulty.Easy,
     languages: ['English', 'Indonesian'],
     images: [
       'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=800&fit=crop',

@@ -1,13 +1,16 @@
-import { VendorSession } from '@/lib/types'
-import { experiences } from '@/lib/mockData'
+import { useState, useEffect } from 'react'
+import { VendorSession, Experience } from '@/lib/types'
+import { validateExperienceForPublishing, ValidationResult } from '@/lib/publishValidation'
+import { PublishExperienceModal } from './PublishExperienceModal'
+import { toast } from 'sonner'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Plus, 
-  ArrowLeft, 
-  Edit, 
-  Eye, 
+import { vendorService } from '@/lib/vendorService'
+import {
+  Plus,
+  ArrowLeft,
+  Edit,
   MoreVertical,
   DollarSign,
   Users,
@@ -18,13 +21,94 @@ import {
 interface VendorExperiencesProps {
   session: VendorSession
   onBack: () => void
+  onNavigateToCreate: () => void
+  onNavigateToEdit: (id: string) => void
+  onNavigateToAvailability: (id: string) => void
 }
 
-export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
-  // Get vendor's experiences
-  const vendorExperiences = experiences.filter(
-    exp => exp.provider.id === session.vendorId
-  )
+export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavigateToEdit, onNavigateToAvailability }: VendorExperiencesProps) {
+  const [experiences, setExperiences] = useState<Experience[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const [publishModalOpen, setPublishModalOpen] = useState(false)
+  const [selectedExpId, setSelectedExpId] = useState<string | null>(null)
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null)
+  const [isPublishing, setIsPublishing] = useState(false)
+
+  useEffect(() => {
+    loadExperiences()
+  }, [session.vendorId])
+
+  const loadExperiences = async () => {
+    try {
+      setIsLoading(true)
+      const data = await vendorService.getVendorExperiences(session.vendorId)
+      setExperiences(data)
+    } catch (error) {
+      console.error('Failed to load experiences:', error)
+      toast.error('Failed to load experiences')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handlePublishClick = (experience: Experience) => {
+    const result = validateExperienceForPublishing(experience)
+    setValidationResult(result)
+    setSelectedExpId(experience.id)
+    setPublishModalOpen(true)
+  }
+
+  const handleConfirmPublish = async () => {
+    if (!selectedExpId) return
+
+    setIsPublishing(true)
+
+    try {
+      await vendorService.updateExperienceStatus(selectedExpId, 'active')
+
+      setExperiences(prev => prev.map(exp => {
+        if (exp.id === selectedExpId) {
+          return {
+            ...exp,
+            status: 'active',
+            publishedAt: new Date().toISOString()
+          }
+        }
+        return exp
+      }))
+
+      setPublishModalOpen(false)
+      toast.success('Experience published successfully!', {
+        description: 'It is now visible to travelers.'
+      })
+    } catch (e) {
+      toast.error('Failed to publish experience')
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+
+  const handleDeactivate = async (id: string) => {
+    try {
+      await vendorService.updateExperienceStatus(id, 'draft') // Using draft as inactive state equivalent
+
+      setExperiences(prev => prev.map(exp => {
+        if (exp.id === id) {
+          return {
+            ...exp,
+            status: 'draft'
+          }
+        }
+        return exp
+      }))
+      toast('Experience deactivated', {
+        description: 'It is no longer visible to travelers.'
+      })
+    } catch (e) {
+      toast.error('Failed to deactivate experience')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,12 +127,12 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
             <div>
               <h1 className="text-3xl font-display font-bold">My Experiences</h1>
               <p className="text-white/80 mt-1">
-                {vendorExperiences.length} {vendorExperiences.length === 1 ? 'experience' : 'experiences'} listed
+                {experiences.length} {experiences.length === 1 ? 'experience' : 'experiences'} listed
               </p>
             </div>
             <Button
               className="bg-white text-primary hover:bg-white/90"
-              onClick={() => alert('Create new experience coming soon')}
+              onClick={onNavigateToCreate}
             >
               <Plus className="h-5 w-5 mr-2" />
               Add New Experience
@@ -58,7 +142,9 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
       </div>
 
       <div className="max-w-7xl mx-auto p-6">
-        {vendorExperiences.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-12">Loading experiences...</div>
+        ) : experiences.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="max-w-md mx-auto space-y-4">
               <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -70,7 +156,7 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
               </p>
               <Button
                 size="lg"
-                onClick={() => alert('Create new experience coming soon')}
+                onClick={onNavigateToCreate}
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Create Your First Experience
@@ -79,7 +165,7 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
           </Card>
         ) : (
           <div className="space-y-4">
-            {vendorExperiences.map((experience) => (
+            {experiences.map((experience) => (
               <Card key={experience.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="flex flex-col md:flex-row">
                   {/* Image */}
@@ -89,8 +175,9 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
                       alt={experience.title}
                       className="w-full h-full object-cover"
                     />
-                    <Badge className="absolute top-3 right-3 bg-green-600 text-white">
-                      Active
+                    <Badge className={`absolute top-3 right-3 text-white ${experience.status === 'active' ? 'bg-green-600' : 'bg-gray-500'
+                      }`}>
+                      {experience.status === 'active' ? 'Active' : 'Draft'}
                     </Badge>
                   </div>
 
@@ -143,31 +230,46 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => alert('Edit experience coming soon')}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => alert('View as customer coming soon')}
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Preview
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => alert('Manage availability coming soon')}
-                      >
-                        <Clock className="h-4 w-4 mr-2" />
-                        Availability
-                      </Button>
+                    <div className="flex md:flex-col gap-2">
+                      {experience.status === 'active' ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDeactivate(experience.id)}
+                        >
+                          Deactivate
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          onClick={() => handlePublishClick(experience)}
+                        >
+                          Publish
+                        </Button>
+                      )}
+
+                      <div className="flex gap-2 w-full">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => onNavigateToEdit(experience.id)}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => onNavigateToAvailability(experience.id)}
+                        >
+                          <Clock className="h-4 w-4 mr-2" />
+                          Availability
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -176,6 +278,14 @@ export function VendorExperiences({ session, onBack }: VendorExperiencesProps) {
           </div>
         )}
       </div>
+
+      <PublishExperienceModal
+        isOpen={publishModalOpen}
+        onClose={() => setPublishModalOpen(false)}
+        onConfirm={handleConfirmPublish}
+        validationResult={validationResult}
+        isPublishing={isPublishing}
+      />
     </div>
   )
 }

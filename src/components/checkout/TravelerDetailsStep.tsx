@@ -61,7 +61,7 @@ export function TravelerDetailsStep({ trip, initialData, onBack, onContinue }: T
     value: string
   ) => {
     const updated = [...additionalTravelers]
-    updated[index] = { ...updated[index], [field]: value }
+    updated[index] = { ...updated[index], [field]: value } as Omit<TravelerInfo, 'email' | 'phone' | 'countryCode'>
     setAdditionalTravelers(updated)
   }
 
@@ -84,7 +84,7 @@ export function TravelerDetailsStep({ trip, initialData, onBack, onContinue }: T
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 space-y-6">
       <div className="flex items-center gap-4">
-        <Button type="button" variant="ghost" size="icon" onClick={onBack}>
+        <Button type="button" variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>

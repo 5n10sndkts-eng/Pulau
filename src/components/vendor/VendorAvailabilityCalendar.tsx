@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -15,9 +15,9 @@ import {
 } from '@/components/ui/dialog'
 import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
-import { 
-  ArrowLeft, 
-  ChevronLeft, 
+import {
+  ArrowLeft,
+  ChevronLeft,
   ChevronRight,
   Calendar,
   Plus,
@@ -30,9 +30,9 @@ interface VendorAvailabilityCalendarProps {
   onBack: () => void
 }
 
-export function VendorAvailabilityCalendar({ 
-  experienceId, 
-  onBack 
+export function VendorAvailabilityCalendar({
+  experienceId,
+  onBack
 }: VendorAvailabilityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [availabilityData, setAvailabilityData] = useKV<ExperienceAvailability[]>(
@@ -54,14 +54,14 @@ export function VendorAvailabilityCalendar({
   const getMonthDates = () => {
     const year = currentMonth.getFullYear()
     const month = currentMonth.getMonth()
-    
+
     const lastDay = new Date(year, month + 1, 0)
-    
+
     const dates: Date[] = []
     for (let d = 1; d <= lastDay.getDate(); d++) {
       dates.push(new Date(year, month, d))
     }
-    
+
     return dates
   }
 
@@ -76,24 +76,24 @@ export function VendorAvailabilityCalendar({
     if (!availability || availability.status === 'blocked') {
       return 'bg-gray-200 text-gray-600'
     }
-    
+
     if (availability.slotsAvailable === 0) {
       return 'bg-red-100 text-red-700'
     }
-    
+
     const percentage = (availability.slotsAvailable / availability.slotsTotal) * 100
-    
+
     if (percentage > 50) {
       return 'bg-green-100 text-green-700'
     }
-    
+
     return 'bg-yellow-100 text-yellow-700'
   }
 
   const handleDateClick = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0]
+    const dateStr = date.toISOString().split('T')[0] ?? '' // CHECK: added ?? ''
     const availability = getAvailabilityForDate(date)
-    
+
     setEditingDate(dateStr)
     setEditSlots(availability?.slotsTotal || 10)
     setEditBlocked(availability?.status === 'blocked')
@@ -113,7 +113,7 @@ export function VendorAvailabilityCalendar({
 
     const updatedData = safeAvailability.filter(a => a.date !== editingDate)
     updatedData.push(newAvailability)
-    
+
     setAvailabilityData(updatedData)
     setEditingDate(null)
     toast.success('Availability updated')
@@ -132,10 +132,10 @@ export function VendorAvailabilityCalendar({
     const current = new Date(start)
     while (current <= end) {
       const dayOfWeek = current.getDay()
-      
+
       if (recurringDays[dayOfWeek]) {
-        const dateStr = current.toISOString().split('T')[0]
-        
+        const dateStr = current.toISOString().split('T')[0] ?? '' // CHECK: added ?? ''
+
         newAvailability.push({
           id: `avail_${experienceId}_${dateStr}`,
           experienceId,
@@ -145,7 +145,7 @@ export function VendorAvailabilityCalendar({
           status: 'available'
         })
       }
-      
+
       current.setDate(current.getDate() + 1)
     }
 
@@ -154,7 +154,7 @@ export function VendorAvailabilityCalendar({
       const inNewRange = new Date(a.date) >= start && new Date(a.date) <= end
       return !inNewRange || !recurringDays[new Date(a.date).getDay()]
     })
-    
+
     setAvailabilityData([...filtered, ...newAvailability])
     setShowRecurringModal(false)
     toast.success(`${newAvailability.length} dates updated`)
@@ -169,7 +169,7 @@ export function VendorAvailabilityCalendar({
   const goToNextMonth = () => {
     const newMonth = new Date(currentMonth)
     newMonth.setMonth(currentMonth.getMonth() + 1)
-    
+
     // Limit to 12 months from now
     const maxDate = new Date()
     maxDate.setMonth(maxDate.getMonth() + 12)
@@ -184,7 +184,7 @@ export function VendorAvailabilityCalendar({
 
   const getMonthStartOffset = () => {
     if (monthDates.length === 0) return 0
-    return monthDates[0].getDay()
+    return monthDates[0]?.getDay() ?? 0 // CHECK: added safe access
   }
 
   return (
@@ -213,9 +213,9 @@ export function VendorAvailabilityCalendar({
             {/* Actions */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={goToPreviousMonth}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -223,9 +223,9 @@ export function VendorAvailabilityCalendar({
                 <span className="font-display text-xl font-semibold min-w-[200px] text-center">
                   {monthName}
                 </span>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={goToNextMonth}
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -261,8 +261,8 @@ export function VendorAvailabilityCalendar({
             <div className="grid grid-cols-7 gap-2">
               {/* Day names */}
               {dayNames.map(day => (
-                <div 
-                  key={day} 
+                <div
+                  key={day}
                   className="text-center text-sm font-medium text-muted-foreground py-2"
                 >
                   {day}
@@ -310,9 +310,9 @@ export function VendorAvailabilityCalendar({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Edit Availability - {editingDate && new Date(editingDate).toLocaleDateString('en-US', { 
+              Edit Availability - {editingDate && new Date(editingDate).toLocaleDateString('en-US', {
                 weekday: 'long',
-                month: 'long', 
+                month: 'long',
                 day: 'numeric',
                 year: 'numeric'
               })}

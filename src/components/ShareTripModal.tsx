@@ -77,7 +77,7 @@ export function ShareTripModal({ isOpen, onClose, trip, onUpdateTrip }: ShareTri
             Copy Link
           </Button>
 
-          {navigator.share && (
+          {typeof navigator.share === 'function' && (
             <Button onClick={handleNativeShare} className="w-full justify-start" variant="outline">
               <ExternalLink className="mr-2 h-4 w-4" />
               Share via...

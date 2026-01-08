@@ -1,11 +1,26 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { PremiumContainer } from '@/components/ui/premium-container'
 import { toast } from 'sonner'
-import { UserCircle, ArrowLeft, Mail } from 'lucide-react'
-import { User, UserPreferences } from '@/lib/types'
+import { UserCircle, ArrowLeft, ShieldCheck } from 'lucide-react'
+import { User } from '@/lib/types'
+import { authService } from '@/lib/authService'
+import { motion } from 'framer-motion'
+import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants'
+import { z } from 'zod'
+
+const registrationSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+})
 
 interface CustomerRegisterProps {
   onNavigateToLogin: () => void
@@ -20,12 +35,13 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
     password: '',
     confirmPassword: '',
   })
+
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [authError, setAuthError] = useState<string | null>(null)
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    // Clear error for this field when user starts typing
     if (errors[field]) {
       setErrors(prev => {
         const newErrors = { ...prev }
@@ -35,215 +51,191 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
     }
   }
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {}
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!formData.email) {
-      newErrors.email = 'Email is required'
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address'
-    }
-
-    // First name validation
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required'
-    }
-
-    // Last name validation
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required'
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required'
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
-    }
-
-    // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setAuthError(null)
 
-    if (!validateForm()) {
+    // Zod Validation
+    const result = registrationSchema.safeParse(formData)
+    if (!result.success) {
+      const formattedErrors: Record<string, string> = {}
+      result.error.issues.forEach(issue => {
+        formattedErrors[issue.path[0] as string] = issue.message
+      })
+      setErrors(formattedErrors)
       return
     }
 
     setIsLoading(true)
 
-    // Simulate registration delay
-    setTimeout(() => {
-      // Generate new user ID
-      const userId = `user_${Date.now()}`
-      
-      // Create new user object
-      const newUser: User = {
-        id: userId,
-        email: formData.email,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        preferences: {} as UserPreferences,
-        saved: [],
-        currency: 'USD',
-        language: 'en',
+    try {
+      const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`
+      const user = await authService.register(fullName, formData.email, formData.password)
+
+      // Enhance user with first/last name
+      const enhancedUser: User = {
+        ...user,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
         hasCompletedOnboarding: false,
-        emailVerified: false,
-        createdAt: new Date().toISOString(),
       }
 
-      console.log('New customer registration:', {
-        ...formData,
-        password: '[HIDDEN]',
-        userId,
-      })
-      
+      toast.success('Welcome to Pulau! Check your email to verify your account.')
+      onRegisterSuccess(enhancedUser)
+    } catch (error) {
+      console.error('Registration error:', error)
+      const message = error instanceof Error ? error.message : 'Registration failed'
+      // Map Supabase error messages to user-friendly ones
+      if (message.includes('User already registered')) {
+        setAuthError('This email is already registered. Please sign in instead.')
+      } else if (message.includes('Password should be at least')) {
+        setAuthError('Password must be at least 6 characters.')
+      } else {
+        setAuthError(message)
+      }
+      toast.error('Registration failed')
+    } finally {
       setIsLoading(false)
-      toast.success('Account created successfully!')
-      
-      // Call success callback which will trigger onboarding
-      onRegisterSuccess(newUser)
-    }, 1000)
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-8">
-        <button
-          onClick={onNavigateToLogin}
-          className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <PremiumContainer variant="glass" className="w-full max-w-md p-8">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="space-y-6"
         >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to login
-        </button>
-
-        <div className="flex flex-col items-center mb-8">
-          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <UserCircle className="h-8 w-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-display font-bold mb-2">Create Account</h1>
-          <p className="text-muted-foreground text-center">
-            Join Pulau to start planning your dream Bali vacation
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                type="text"
-                placeholder="John"
-                value={formData.firstName}
-                onChange={(e) => handleChange('firstName', e.target.value)}
-                className={errors.firstName ? 'border-destructive' : ''}
-              />
-              {errors.firstName && (
-                <p className="text-xs text-destructive">{errors.firstName}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                type="text"
-                placeholder="Doe"
-                value={formData.lastName}
-                onChange={(e) => handleChange('lastName', e.target.value)}
-                className={errors.lastName ? 'border-destructive' : ''}
-              />
-              {errors.lastName && (
-                <p className="text-xs text-destructive">{errors.lastName}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="john@example.com"
-              value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-              className={errors.email ? 'border-destructive' : ''}
-            />
-            {errors.email && (
-              <p className="text-xs text-destructive">{errors.email}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Minimum 8 characters"
-              value={formData.password}
-              onChange={(e) => handleChange('password', e.target.value)}
-              className={errors.password ? 'border-destructive' : ''}
-            />
-            {errors.password && (
-              <p className="text-xs text-destructive">{errors.password}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Re-enter your password"
-              value={formData.confirmPassword}
-              onChange={(e) => handleChange('confirmPassword', e.target.value)}
-              className={errors.confirmPassword ? 'border-destructive' : ''}
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-destructive">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
+          <motion.button
+            variants={fadeInUp}
+            onClick={onNavigateToLogin}
+            className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
-          </Button>
-        </form>
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to login
+          </motion.button>
 
-        <div className="mt-6 text-center text-sm">
-          <p className="text-muted-foreground">
-            Already have an account?{' '}
-            <button
-              onClick={onNavigateToLogin}
-              className="text-primary hover:underline font-medium"
-            >
-              Sign in
-            </button>
-          </p>
-        </div>
-
-        <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-          <div className="flex items-start gap-2 text-sm text-muted-foreground">
-            <Mail className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <p>
-              You'll receive a verification email after registration. 
-              Please check your inbox to verify your account.
+          <motion.div variants={fadeInUp} className="flex flex-col items-center">
+            <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
+              <UserCircle className="h-10 w-10 text-primary" />
+            </div>
+            <h1 className="text-3xl font-display font-bold mb-2 tracking-tight">Create Account</h1>
+            <p className="text-muted-foreground text-center text-balance">
+              Join the future of premium Bali travel planning
             </p>
-          </div>
-        </div>
-      </Card>
+          </motion.div>
+
+          <motion.form variants={fadeInUp} onSubmit={handleSubmit} className="space-y-5">
+            {authError && (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <p className="text-sm text-destructive">{authError}</p>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="Kadek"
+                  value={formData.firstName}
+                  onChange={(e) => handleChange('firstName', e.target.value)}
+                  className={errors.firstName ? 'border-destructive ring-destructive/20' : ''}
+                />
+                {errors.firstName && <p className="text-xs font-semibold text-destructive mt-1">{errors.firstName}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Sastra"
+                  value={formData.lastName}
+                  onChange={(e) => handleChange('lastName', e.target.value)}
+                  className={errors.lastName ? 'border-destructive ring-destructive/20' : ''}
+                />
+                {errors.lastName && <p className="text-xs font-semibold text-destructive mt-1">{errors.lastName}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="bali.explorer@gmail.com"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className={errors.email ? 'border-destructive ring-destructive/20' : ''}
+              />
+              {errors.email && <p className="text-xs font-semibold text-destructive mt-1">{errors.email}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="At least 8 characters"
+                value={formData.password}
+                onChange={(e) => handleChange('password', e.target.value)}
+                className={errors.password ? 'border-destructive ring-destructive/20' : ''}
+              />
+              {errors.password && <p className="text-xs font-semibold text-destructive mt-1">{errors.password}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="Verify password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                className={errors.confirmPassword ? 'border-destructive ring-destructive/20' : ''}
+              />
+              {errors.confirmPassword && <p className="text-xs font-semibold text-destructive mt-1">{errors.confirmPassword}</p>}
+            </div>
+
+            <Button
+              type="submit"
+              variant="premium"
+              className="w-full mt-2"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+          </motion.form>
+
+          <motion.div variants={fadeInUp} className="text-center pt-2">
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{' '}
+              <button
+                onClick={onNavigateToLogin}
+                className="text-primary hover:underline font-bold"
+              >
+                Sign in
+              </button>
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={fadeInUp}
+            className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-start gap-4"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <ShieldCheck className="w-5 h-5 text-primary" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-bold text-primary uppercase tracking-wider">Secure Authentication</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Your account is protected by Supabase Auth with industry-standard encryption. We never store your plain-text password.
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </PremiumContainer>
     </div>
   )
 }

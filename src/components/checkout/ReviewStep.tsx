@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Trip } from '@/lib/types'
 import { getExperienceById, formatPrice, getDayLabel } from '@/lib/helpers'
+import { checkForConflicts } from '@/lib/helpers'
 import { ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
@@ -21,17 +22,20 @@ export function ReviewStep({ trip, onBack, onContinue }: ReviewStepProps) {
       if (!itemsByDate[item.date]) {
         itemsByDate[item.date] = []
       }
-      itemsByDate[item.date].push(item)
+      itemsByDate[item.date]!.push(item)
     }
   })
 
   const sortedDates = Object.keys(itemsByDate).sort()
-  const hasConflicts = false
+
+  // Real-time conflict detection
+  const conflicts = checkForConflicts(trip.items)
+  const hasConflicts = conflicts.length > 0
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
@@ -41,10 +45,14 @@ export function ReviewStep({ trip, onBack, onContinue }: ReviewStepProps) {
       </div>
 
       {hasConflicts ? (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="border-destructive/50 bg-destructive/5 animate-in fade-in slide-in-from-top-4 duration-500">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Some activities overlap in your schedule. Please adjust times before continuing.
+          <AlertDescription className="space-y-1">
+            <p className="font-semibold">Scheduling Conflict Detected</p>
+            <p className="text-sm opacity-90 text-destructive-foreground">
+              You have {conflicts.length} overlapping {conflicts.length === 1 ? 'activity' : 'activities'} in your schedule.
+              Please adjust times in the trip builder before continuing.
+            </p>
           </AlertDescription>
         </Alert>
       ) : (
@@ -62,11 +70,11 @@ export function ReviewStep({ trip, onBack, onContinue }: ReviewStepProps) {
                 <p className="font-display font-bold text-sm text-primary">DAY {index + 1}</p>
                 <p className="text-sm text-muted-foreground">{getDayLabel(date)}</p>
               </div>
-              <Badge variant="outline">{itemsByDate[date].length} activities</Badge>
+              <Badge variant="outline">{itemsByDate[date]?.length || 0} activities</Badge>
             </div>
 
             <div className="space-y-3">
-              {itemsByDate[date].map((item, itemIndex) => {
+              {itemsByDate[date]?.map((item, itemIndex) => {
                 const experience = getExperienceById(item.experienceId)
                 if (!experience) return null
 
@@ -142,8 +150,13 @@ export function ReviewStep({ trip, onBack, onContinue }: ReviewStepProps) {
         </div>
       </Card>
 
-      <Button size="lg" className="w-full" onClick={onContinue}>
-        Continue to Traveler Details
+      <Button
+        size="lg"
+        className="w-full"
+        onClick={onContinue}
+        disabled={hasConflicts}
+      >
+        {hasConflicts ? 'Resolve Conflicts to Continue' : 'Continue to Traveler Details'}
       </Button>
     </div>
   )

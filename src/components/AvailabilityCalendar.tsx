@@ -12,10 +12,10 @@ interface AvailabilityCalendarProps {
   selectedDate?: string
 }
 
-export function AvailabilityCalendar({ 
-  experienceId, 
+export function AvailabilityCalendar({
+  experienceId,
   onDateSelect,
-  selectedDate 
+  selectedDate
 }: AvailabilityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [availabilityData] = useKV<ExperienceAvailability[]>(
@@ -30,13 +30,13 @@ export function AvailabilityCalendar({
     const dates: Date[] = []
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
+
     for (let i = 0; i < 60; i++) {
       const date = new Date(today)
       date.setDate(today.getDate() + i)
       dates.push(date)
     }
-    
+
     return dates
   }
 
@@ -46,8 +46,8 @@ export function AvailabilityCalendar({
   const getMonthDates = () => {
     const year = currentMonth.getFullYear()
     const month = currentMonth.getMonth()
-    
-    return dates.filter(date => 
+
+    return dates.filter(date =>
       date.getFullYear() === year && date.getMonth() === month
     )
   }
@@ -98,7 +98,7 @@ export function AvailabilityCalendar({
   const handleDateClick = (date: Date, availability: ExperienceAvailability | null) => {
     const status = getDateStatus(availability)
     if (status.canSelect && onDateSelect) {
-      const dateStr = date.toISOString().split('T')[0]
+      const dateStr = date.toISOString().split('T')[0] ?? ''
       onDateSelect(dateStr, availability)
     }
   }
@@ -106,7 +106,7 @@ export function AvailabilityCalendar({
   const goToPreviousMonth = () => {
     const newMonth = new Date(currentMonth)
     newMonth.setMonth(currentMonth.getMonth() - 1)
-    
+
     // Don't go before current month
     const today = new Date()
     if (newMonth >= new Date(today.getFullYear(), today.getMonth(), 1)) {
@@ -117,7 +117,7 @@ export function AvailabilityCalendar({
   const goToNextMonth = () => {
     const newMonth = new Date(currentMonth)
     newMonth.setMonth(currentMonth.getMonth() + 1)
-    
+
     // Don't go beyond 60 days
     const maxDate = new Date()
     maxDate.setDate(maxDate.getDate() + 60)
@@ -137,7 +137,7 @@ export function AvailabilityCalendar({
   // Get first day of month offset
   const getMonthStartOffset = () => {
     if (monthDates.length === 0) return 0
-    return monthDates[0].getDay()
+    return monthDates[0]?.getDay() ?? 0
   }
 
   return (
@@ -147,9 +147,9 @@ export function AvailabilityCalendar({
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg font-semibold">Availability</h3>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={goToPreviousMonth}
               disabled={currentMonth.getMonth() === new Date().getMonth()}
             >
@@ -158,9 +158,9 @@ export function AvailabilityCalendar({
             <span className="text-sm font-medium min-w-[140px] text-center">
               {monthName}
             </span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={goToNextMonth}
             >
               <ChevronRight className="h-4 w-4" />
@@ -192,8 +192,8 @@ export function AvailabilityCalendar({
         <div className="grid grid-cols-7 gap-1">
           {/* Day names */}
           {getDayNames().map(day => (
-            <div 
-              key={day} 
+            <div
+              key={day}
               className="text-center text-xs font-medium text-muted-foreground py-2"
             >
               {day}
@@ -224,9 +224,9 @@ export function AvailabilityCalendar({
                   ${status.color}
                   ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}
                 `}
-                aria-label={`${date.toLocaleDateString('en-US', { 
-                  month: 'short', 
-                  day: 'numeric' 
+                aria-label={`${date.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric'
                 })}, ${status.label}${availability ? `, ${availability.slotsAvailable} spots left` : ''}`}
                 aria-selected={isSelected}
                 role="button"
@@ -243,16 +243,16 @@ export function AvailabilityCalendar({
             {(() => {
               const selected = dates.find(d => d.toISOString().split('T')[0] === selectedDate)
               const availability = selected ? getAvailabilityForDate(selected) : null
-              
+
               if (!selected) return null
 
               return (
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">
-                      {selected.toLocaleDateString('en-US', { 
+                      {selected.toLocaleDateString('en-US', {
                         weekday: 'long',
-                        month: 'long', 
+                        month: 'long',
                         day: 'numeric',
                         year: 'numeric'
                       })}
@@ -265,12 +265,12 @@ export function AvailabilityCalendar({
                   </div>
                   {availability && availability.status === 'available' && (
                     <Badge variant={
-                      (availability.slotsAvailable / availability.slotsTotal) > 0.5 
-                        ? 'default' 
+                      (availability.slotsAvailable / availability.slotsTotal) > 0.5
+                        ? 'default'
                         : 'secondary'
                     }>
-                      {(availability.slotsAvailable / availability.slotsTotal) > 0.5 
-                        ? 'Available' 
+                      {(availability.slotsAvailable / availability.slotsTotal) > 0.5
+                        ? 'Available'
                         : 'Limited'}
                     </Badge>
                   )}

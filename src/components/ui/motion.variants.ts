@@ -35,5 +35,40 @@ export const pageTransitionVariants = {
 export const springPhysics = {
   type: 'spring' as const,
   stiffness: 400,
-  damping: 17,
+  damping: 25,
+}
+
+export const springBouncy = {
+  type: 'spring' as const,
+  stiffness: 400,
+  damping: 15,
+  mass: 1,
+}
+
+export const springGentle = {
+  type: 'spring' as const,
+  stiffness: 100,
+  damping: 20,
+}
+
+// Layout Animations
+export const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: springPhysics },
+  exit: { opacity: 0, y: 10, transition: { duration: 0.2 } },
+}
+
+export const staggerContainer = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+}
+
+export const scaleIn = {
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: 1, scale: 1, transition: springBouncy },
 }

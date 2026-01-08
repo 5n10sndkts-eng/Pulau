@@ -45,13 +45,14 @@ import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 
 interface TripsDashboardProps {
+  bookings: Booking[]
+  onUpdateBookings: (bookings: Booking[]) => void
   onBack: () => void
   onViewTrip: (trip: Trip) => void
   onBookAgain: (trip: Trip) => void
 }
 
-export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboardProps) {
-  const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', [])
+export function TripsDashboard({ bookings = [], onUpdateBookings, onBack, onViewTrip, onBookAgain }: TripsDashboardProps) {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
@@ -59,7 +60,7 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
 
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  
+
   // AC3: Upcoming Tab - status='confirmed' AND trip.start_date >= today
   const upcomingBookings = safeBookings.filter((b) => {
     if (!b.trip.startDate) return false
@@ -90,36 +91,35 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
   const allBookings = safeBookings
 
   const handleCancelBooking = (booking: Booking) => {
-    setBookings((current) => {
-      const updated = (current || []).map((b) =>
-        b.id === booking.id
-          ? {
-              ...b,
-              status: 'cancelled' as const,
-              trip: {
-                ...b.trip,
-                status: 'cancelled' as const,
-                cancelledAt: new Date().toISOString(),
-              },
-            }
-          : b
-      )
-      return updated
-    })
+    const updated = (bookings || []).map((b) =>
+      b.id === booking.id
+        ? {
+          ...b,
+          status: 'cancelled' as const,
+          trip: {
+            ...b.trip,
+            status: 'cancelled' as const,
+            cancelledAt: new Date().toISOString(),
+          },
+        }
+        : b
+    )
+    onUpdateBookings(updated)
     toast.success('Booking cancelled successfully')
     setSelectedBooking(null)
   }
 
   const handleDeleteBooking = (bookingId: string) => {
-    setBookings((current) => (current || []).filter((b) => b.id !== bookingId))
+    const updated = (bookings || []).filter((b) => b.id !== bookingId)
+    onUpdateBookings(updated)
     toast.success('Booking removed from history')
   }
 
-  const handleDownloadReceipt = () => {
+  const handleDownloadReceipt = (booking?: Booking) => {
     toast.success('Receipt downloaded')
   }
 
-  const handleShareTrip = () => {
+  const handleShareTrip = (booking?: Booking) => {
     toast.success('Trip details copied to clipboard')
   }
 
@@ -260,7 +260,7 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => setSelectedBooking(null)}>
+          <Button variant="ghost" size="icon" onClick={() => setSelectedBooking(null)} aria-label="Close booking details">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
@@ -608,7 +608,7 @@ export function TripsDashboard({ onBack, onViewTrip, onBookAgain }: TripsDashboa
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-4xl mx-auto p-6">
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          <Button variant="ghost" size="icon" onClick={onBack} aria-label="Go back to profile">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>

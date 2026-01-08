@@ -48,22 +48,22 @@ const formatCardNumber = (value: string): string => {
 const luhnCheck = (cardNumber: string): boolean => {
   const cleaned = cardNumber.replace(/\s/g, '')
   if (!/^\d+$/.test(cleaned)) return false
-  
+
   let sum = 0
   let isEven = false
-  
+
   for (let i = cleaned.length - 1; i >= 0; i--) {
-    let digit = parseInt(cleaned[i])
-    
+    let digit = parseInt(cleaned[i]!)
+
     if (isEven) {
       digit *= 2
       if (digit > 9) digit -= 9
     }
-    
+
     sum += digit
     isEven = !isEven
   }
-  
+
   return sum % 10 === 0
 }
 
@@ -75,11 +75,11 @@ export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
     currency: 'USD',
     language: 'en',
   })
-  
+
   const [paymentMethods, setPaymentMethods] = useKV<PaymentMethod[]>('paymentMethods', [])
   const [showAddCard, setShowAddCard] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
-  
+
   const [cardNumber, setCardNumber] = useState('')
   const [cardholderName, setCardholderName] = useState('')
   const [expiryMonth, setExpiryMonth] = useState('')
@@ -91,32 +91,32 @@ export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
 
   const handleAddCard = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!cardNumber || cardNumber.replace(/\s/g, '').length < 13) {
       newErrors.cardNumber = 'Card number is required'
     } else if (!luhnCheck(cardNumber)) {
       newErrors.cardNumber = 'Invalid card number'
     }
-    
+
     if (!cardholderName.trim()) {
       newErrors.cardholderName = 'Cardholder name is required'
     }
-    
+
     const monthNum = parseInt(expiryMonth)
     const yearNum = parseInt(expiryYear)
     const currentYear = new Date().getFullYear() % 100
     const currentMonth = new Date().getMonth() + 1
-    
+
     if (!expiryMonth || monthNum < 1 || monthNum > 12) {
       newErrors.expiry = 'Invalid month'
     } else if (!expiryYear || yearNum < currentYear || (yearNum === currentYear && monthNum < currentMonth)) {
       newErrors.expiry = 'Card is expired'
     }
-    
+
     if (!cvv || cvv.length < 3 || cvv.length > 4) {
       newErrors.cvv = 'Invalid CVV'
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
@@ -125,7 +125,7 @@ export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
     const cleaned = cardNumber.replace(/\s/g, '')
     const lastFour = cleaned.slice(-4)
     const cardBrand = detectCardBrand(cardNumber)
-    
+
     const newMethod: PaymentMethod = {
       id: `pm_${Date.now()}`,
       userId: (user || { id: '' }).id,
@@ -168,8 +168,8 @@ export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
   const handleDelete = (id: string) => {
     setPaymentMethods((current) => {
       const base = current || []
-      return base.map(pm => 
-        pm.id === id 
+      return base.map(pm =>
+        pm.id === id
           ? { ...pm, deletedAt: new Date().toISOString() }
           : pm
       )

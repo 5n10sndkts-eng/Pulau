@@ -28,192 +28,208 @@
 # - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
 
-generated: 2026-01-05
+generated: 2026-01-08
+last_updated: 2026-01-08
 project: Pulau
 project_key: pulau
 tracking_system: file-system
-story_location: "_bmad-output/stories"
+story_location: "_bmad-output/stories/done"
+
+# ARCHITECTURE DECISIONS:
+# ======================
+# - ADR-001: MVP uses KV store, Supabase deferred to Epic 20
+# - Story 5.1 (database schema) DEFERRED per ADR-001 - MVP uses mock data
+# - Epic 20 (Backend Integration) is DRAFT status - not yet started
 
 development_status:
   # Epic 1: Foundation & Technical Infrastructure (5 stories)
   epic-1: done
-  1-1-initialize-github-spark-project-with-typescript: done
-  1-2-configure-tailwind-css-design-system: done
-  1-3-set-up-component-architecture-with-radix-ui: done
-  1-4-configure-animation-library-and-icon-system: done
-  1-5-establish-typescript-type-safety-patterns: done
+  epic-01/1-1-initialize-github-spark-project-with-typescript: done
+  epic-01/1-2-configure-tailwind-css-design-system: done
+  epic-01/1-3-set-up-component-architecture-with-radix-ui: done
+  epic-01/1-4-configure-animation-library-and-icon-system: done
+  epic-01/1-5-establish-typescript-type-safety-patterns: done
   epic-1-retrospective: optional
 
   # Epic 2: User Authentication & Profile Management (6 stories)
   epic-2: done
-  2-1-implement-customer-registration-flow: done
-  2-2-implement-customer-login-with-session-management: done
-  2-3-implement-password-reset-flow: done
-  2-4-create-user-profile-management-interface: done
-  2-5-implement-saved-payment-methods: done
-  2-6-enable-cross-device-profile-sync-with-spark-kv: done
+  epic-02/2-1-implement-customer-registration-flow: done
+  epic-02/2-2-implement-customer-login-with-session-management: done
+  epic-02/2-3-implement-password-reset-flow: done
+  epic-02/2-4-create-user-profile-management-interface: done
+  epic-02/2-5-implement-saved-payment-methods: done
+  epic-02/2-6-enable-cross-device-profile-sync-with-spark-kv: done
   epic-2-retrospective: optional
 
   # Epic 3: Vendor Portal & Authentication (3 stories)
   epic-3: done
-  3-1-create-vendor-registration-flow: done
-  3-2-implement-vendor-login-and-portal-access: done
-  3-3-build-vendor-dashboard-landing-page: done
+  epic-03/3-1-create-vendor-registration-flow: done
+  epic-03/3-2-implement-vendor-login-and-portal-access: done
+  epic-03/3-3-build-vendor-dashboard-landing-page: done
   epic-3-retrospective: optional
 
   # Epic 4: Onboarding & Personalization (4 stories)
   epic-4: done
-  4-1-create-onboarding-welcome-screen: done
-  4-2-build-travel-preference-selection-screen: done
-  4-3-add-optional-trip-dates-screen: done
-  4-4-implement-personalized-recommendations-engine: done
+  epic-04/4-1-create-onboarding-welcome-screen: done
+  epic-04/4-2-build-travel-preference-selection-screen: done
+  epic-04/4-3-add-optional-trip-dates-screen: done
+  epic-04/4-4-implement-personalized-recommendations-engine: done
   epic-4-retrospective: optional
 
-  # Epic 5: Experience Data Model & Vendor Management (6 stories)
+  # Epic 5: Experience Data Model & Vendor Management (6 stories - 1 deferred)
   epic-5: done
-  5-1-design-and-create-experiences-database-schema: done
-  5-2-build-vendor-experience-creation-form: done
-  5-3-implement-experience-image-upload: done
-  5-4-add-experience-editing-capabilities: done
-  5-5-build-availability-calendar-management: done
-  5-6-implement-experience-publishing-workflow: done
+  epic-05/5-1-design-and-create-experiences-database-schema: deferred  # Per ADR-001 - MVP uses mock data
+  epic-05/5-2-build-vendor-experience-creation-form: done
+  epic-05/5-3-implement-experience-image-upload: done
+  epic-05/5-4-add-experience-editing-capabilities: done
+  epic-05/5-5-build-availability-calendar-management: done
+  epic-05/5-6-implement-experience-publishing-workflow: done
   epic-5-retrospective: optional
 
   # Epic 6: Experience Discovery & Browse (10 stories)
   epic-6: done
-  6-1-create-home-screen-with-category-grid: done
-  6-2-build-category-browse-screen-with-experience-list: done
-  6-3-implement-horizontal-filter-chips: done
-  6-4-add-experience-search-functionality: done
-  6-5-create-detailed-experience-page: done
-  6-6-display-whats-included-section: done
-  6-7-show-operator-profile-on-experience-page: done
-  6-8-display-reviews-and-ratings: done
-  6-9-add-meeting-point-information: done
-  6-10-show-cancellation-policy-and-policies: done
+  epic-06/6-1-create-home-screen-with-category-grid: done
+  epic-06/6-2-build-category-browse-screen-with-experience-list: done
+  epic-06/6-3-implement-horizontal-filter-chips: done
+  epic-06/6-4-add-experience-search-functionality: done
+  epic-06/6-5-create-detailed-experience-page: done
+  epic-06/6-6-display-whats-included-section: done
+  epic-06/6-7-show-operator-profile-on-experience-page: done
+  epic-06/6-8-display-reviews-and-ratings: done
+  epic-06/6-9-add-meeting-point-information: done
+  epic-06/6-10-show-cancellation-policy-and-policies: done
   epic-6-retrospective: optional
 
   # Epic 7: Wishlist & Saved Experiences (3 stories)
   epic-7: done
-  7-1-implement-heart-icon-save-toggle: done
-  7-2-create-saved-wishlist-screen: done
-  7-3-quick-add-from-wishlist-to-trip: done
+  epic-07/7-1-implement-heart-icon-save-toggle: done
+  epic-07/7-2-create-saved-wishlist-screen: done
+  epic-07/7-3-quick-add-from-wishlist-to-trip: done
   epic-7-retrospective: optional
 
   # Epic 8: Trip Canvas & Itinerary Building (10 stories)
   epic-8: done
-  8-1-create-trip-data-model-and-persistence: done
-  8-2-build-trip-canvas-home-view: done
-  8-3-implement-quick-add-experience-to-trip: done
-  8-4-create-detailed-trip-builder-screen: done
-  8-5-build-calendar-view-toggle: done
-  8-6-implement-item-scheduling-drag-to-date: done
-  8-7-add-guest-count-adjustment-per-item: done
-  8-8-implement-remove-item-from-trip: done
-  8-9-handle-date-not-set-flow: done
-  8-10-real-time-price-calculation-display: done
+  epic-08/8-1-create-trip-data-model-and-persistence: done
+  epic-08/8-2-build-trip-canvas-home-view: done
+  epic-08/8-3-implement-quick-add-experience-to-trip: done
+  epic-08/8-4-create-detailed-trip-builder-screen: done
+  epic-08/8-5-build-calendar-view-toggle: done
+  epic-08/8-6-implement-item-scheduling-drag-to-date: done
+  epic-08/8-7-add-guest-count-adjustment-per-item: done
+  epic-08/8-8-implement-remove-item-from-trip: done
+  epic-08/8-9-handle-date-not-set-flow: done
+  epic-08/8-10-real-time-price-calculation-display: done
   epic-8-retrospective: optional
 
   # Epic 9: Scheduling & Conflict Detection (4 stories)
   epic-9: done
-  9-1-implement-time-conflict-detection-algorithm: done
-  9-2-display-conflict-warning-banners: done
-  9-3-provide-smart-conflict-resolution-suggestions: done
-  9-4-create-shareable-trip-links: done
+  epic-09/9-1-implement-time-conflict-detection-algorithm: done
+  epic-09/9-2-display-conflict-warning-banners: done
+  epic-09/9-3-provide-smart-conflict-resolution-suggestions: done
+  epic-09/9-4-create-shareable-trip-links: done
   epic-9-retrospective: optional
 
   # Epic 10: Multi-Step Checkout & Booking (8 stories)
   epic-10: done
-  10-1-create-checkout-flow-navigation: done
-  10-2-build-step-1-trip-review-screen: done
-  10-3-build-step-2-traveler-details-form: done
-  10-4-build-step-3-payment-screen: done
-  10-5-implement-payment-processing: done
-  10-6-build-step-4-confirmation-screen: done
-  10-7-implement-form-validation-with-zod: done
-  10-8-session-persistence-for-incomplete-bookings: done
+  epic-10/10-1-create-checkout-flow-navigation: done
+  epic-10/10-2-build-step-1-trip-review-screen: done
+  epic-10/10-3-build-step-2-traveler-details-form: done
+  epic-10/10-4-build-step-3-payment-screen: done
+  epic-10/10-5-implement-payment-processing: done
+  epic-10/10-6-build-step-4-confirmation-screen: done
+  epic-10/10-7-implement-form-validation-with-zod: done
+  epic-10/10-8-session-persistence-for-incomplete-bookings: done
   epic-10-retrospective: optional
 
   # Epic 11: Booking Management & History (6 stories)
   epic-11: done
-  11-1-create-booking-history-screen: done
-  11-2-build-booking-detail-view: done
-  11-3-implement-book-again-functionality: done
-  11-4-add-booking-status-tracking: done
-  11-5-create-active-trip-mode: done
-  11-6-implement-booking-cancellation-flow: done
+  epic-11/11-1-create-booking-history-screen: done
+  epic-11/11-2-build-booking-detail-view: done
+  epic-11/11-3-implement-book-again-functionality: done
+  epic-11/11-4-add-booking-status-tracking: done
+  epic-11/11-5-create-active-trip-mode: done
+  epic-11/11-6-implement-booking-cancellation-flow: done
   epic-11-retrospective: optional
 
   # Epic 12: Explore & Discovery Features (6 stories)
   epic-12: done
-  12-1-build-explore-screen-layout: done
-  12-2-create-trending-experiences-section: done
-  12-3-create-hidden-gems-section: done
-  12-4-create-limited-availability-alerts: done
-  12-5-create-destination-guides-section: done
-  12-6-create-traveler-stories-section: done
+  epic-12/12-1-build-explore-screen-layout: done
+  epic-12/12-2-create-trending-experiences-section: done
+  epic-12/12-3-create-hidden-gems-section: done
+  epic-12/12-4-create-limited-availability-alerts: done
+  epic-12/12-5-create-destination-guides-section: done
+  epic-12/12-6-create-traveler-stories-section: done
   epic-12-retrospective: optional
 
   # Epic 13: Profile & Settings Management (7 stories)
   epic-13: done
-  13-1-build-profile-screen-layout: done
-  13-2-create-edit-profile-screen: done
-  13-3-build-payment-methods-management: done
-  13-4-implement-notification-preferences: done
-  13-5-add-currency-and-language-settings: done
-  13-6-create-help-and-support-screen: done
-  13-7-add-about-terms-and-privacy-pages: done
+  epic-13/13-1-build-profile-screen-layout: done
+  epic-13/13-2-create-edit-profile-screen: done
+  epic-13/13-3-build-payment-methods-management: done
+  epic-13/13-4-implement-notification-preferences: done
+  epic-13/13-5-add-currency-and-language-settings: done
+  epic-13/13-6-create-help-and-support-screen: done
+  epic-13/13-7-add-about-terms-and-privacy-pages: done
   epic-13-retrospective: optional
 
   # Epic 14: Vendor Analytics & Revenue Tracking (4 stories)
   epic-14: done
-  14-1-build-vendor-analytics-dashboard: done
-  14-2-create-revenue-chart-visualization: done
-  14-3-display-experience-performance-table: done
-  14-4-implement-conversion-funnel-view: done
+  epic-14/14-1-build-vendor-analytics-dashboard: done
+  epic-14/14-2-create-revenue-chart-visualization: done
+  epic-14/14-3-display-experience-performance-table: done
+  epic-14/14-4-implement-conversion-funnel-view: done
   epic-14-retrospective: optional
 
   # Epic 15: Real-time Availability & Messaging (5 stories)
   epic-15: done
-  15-1-display-real-time-availability-on-experience-pages: done
-  15-2-enable-vendor-calendar-quick-updates: done
-  15-3-create-messaging-thread-list: done
-  15-4-build-messaging-conversation-view: done
-  15-5-implement-pre-booking-questions: done
+  epic-15/15-1-display-real-time-availability-on-experience-pages: done
+  epic-15/15-2-enable-vendor-calendar-quick-updates: done
+  epic-15/15-3-create-messaging-thread-list: done
+  epic-15/15-4-build-messaging-conversation-view: done
+  epic-15/15-5-implement-pre-booking-questions: done
   epic-15-retrospective: optional
 
-  # Epic 16: Mobile-First Responsive Design (6 stories)
+  # Epic 16: Mobile-First Responsive Design (5 stories)
   epic-16: done
-  16-1-implement-mobile-first-breakpoint-system: done
-  16-2-ensure-touch-target-compliance: done
-  16-3-implement-bottom-navigation-with-safe-areas: done
-  16-4-apply-bali-inspired-design-system: done
-  16-5-implement-physics-based-animations: done
-  16-6-ensure-wcag-2-1-aa-accessibility: done
+  epic-16/16-1-implement-mobile-first-breakpoint-system: done
+  epic-16/16-2-ensure-touch-target-compliance: done
+  epic-16/16-3-apply-bali-inspired-design-system: done
+  epic-16/16-4-implement-physics-based-animations: done
+  epic-16/16-5-ensure-wcag-2-1-aa-accessibility: done
   epic-16-retrospective: optional
 
   # Epic 17: Edge Cases & Error Handling (5 stories)
   epic-17: done
-  17-1-create-empty-state-components: done
-  17-2-implement-network-interruption-handling: done
-  17-3-handle-sold-out-experiences: done
-  17-4-implement-error-boundaries: done
-  17-5-create-consistent-error-messaging: done
+  epic-17/17-1-create-empty-state-components: done
+  epic-17/17-2-implement-network-interruption-handling: done
+  epic-17/17-3-handle-sold-out-experiences: done
+  epic-17/17-4-implement-error-boundaries: done
+  epic-17/17-5-create-consistent-error-messaging: done
   epic-17-retrospective: optional
 
   # Epic 18: Bottom Navigation & Screen Architecture (4 stories)
   epic-18: done
-  18-1-implement-discriminated-union-screen-routing: done
-  18-2-build-bottom-tab-navigation-component: done
-  18-3-implement-quick-add-category-modal: done
-  18-4-handle-deep-screens-with-back-navigation: done
+  epic-18/18-1-implement-discriminated-union-screen-routing: done
+  epic-18/18-2-build-bottom-tab-navigation-component: done
+  epic-18/18-3-implement-quick-add-category-modal: done
+  epic-18/18-4-handle-deep-screens-with-back-navigation: done
   epic-18-retrospective: optional
 
   # Epic 19: Multi-Destination Scalability (5 stories)
   epic-19: done
-  19-1-create-destinations-data-model: done
-  19-2-implement-destination-selector: done
-  19-3-apply-per-destination-configuration: done
-  19-4-prepare-experience-schema-for-multi-destination: done
-  19-5-create-future-destination-teaser: done
+  epic-19/19-1-create-destinations-data-model: done
+  epic-19/19-2-implement-destination-selector: done
+  epic-19/19-3-apply-per-destination-configuration: done
+  epic-19/19-4-prepare-experience-schema-for-multi-destination: done
+  epic-19/19-5-create-future-destination-teaser: done
   epic-19-retrospective: optional
+
+  # Epic 20: Backend Integration - Supabase (5 stories)
+  # Phase 2: Production deployment - migrating from KV store to Supabase
+  epic-20: in-progress
+  epic-20/20-1-setup-and-initialization: done
+  epic-20/20-2-database-schema-ddl: done
+  epic-20/20-3-auth-migration: done
+  epic-20/20-4-rls-policies-security: done
+  epic-20/20-5-data-layer-refactor: backlog
+  epic-20-retrospective: optional

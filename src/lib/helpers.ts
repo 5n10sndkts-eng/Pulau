@@ -1,20 +1,87 @@
 import { Experience, FilterType, TripItem, Booking } from './types'
 import { experiences } from './mockData'
 
-export function getExperiencesByCategory(categoryId: string): Experience[] {
-  return experiences.filter((exp) => exp.category === categoryId)
+export function getExperiencesByCategory(categoryId: string, pool: Experience[] = experiences): Experience[] {
+  return pool.filter((exp) => exp.category === categoryId)
 }
 
-export function getExperienceById(id: string): Experience | undefined {
-  return experiences.find((exp) => exp.id === id)
+export function getExperienceById(id: string, pool: Experience[] = experiences): Experience | undefined {
+  return pool.find((exp) => exp.id === id)
 }
 
 export function filterExperiences(exps: Experience[], filter: FilterType): Experience[] {
   if (filter === 'all') return exps
 
   return exps.filter((exp) => {
+    if (filter === 'under50') return exp.price.amount < 50
+    if (filter === 'toprated') return exp.provider.rating >= 4.8
     if (!exp.tags) return false
     return exp.tags.includes(filter)
+  })
+}
+
+/**
+ * Enhanced search with weighted relevance
+ */
+export function searchExperiences(query: string, pool: Experience[]): Experience[] {
+  const normalizedQuery = query.toLowerCase().trim()
+  if (!normalizedQuery) return pool
+
+  return pool
+    .map(exp => {
+      let score = 0
+      const title = exp.title.toLowerCase()
+      const desc = exp.description.toLowerCase()
+      const category = exp.category.toLowerCase()
+
+      // Exact title match (highest weight)
+      if (title === normalizedQuery) score += 20 // Boost exact match
+      else if (title.includes(normalizedQuery)) score += 10
+      // Category match
+      if (category.includes(normalizedQuery)) score += 8
+      // Search term at start of title
+      if (title.startsWith(normalizedQuery)) score += 5
+      // Description match
+      if (desc.includes(normalizedQuery)) score += 3
+
+      return { exp, score }
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.exp)
+}
+
+/**
+ * Multi-criteria filter engine
+ */
+export function filterExperiencesAdvanced(
+  exps: Experience[],
+  criteria: {
+    difficulty?: string[],
+    duration?: string[], // 'half', 'full'
+    priceRange?: [number, number],
+  }
+): Experience[] {
+  return exps.filter(exp => {
+    // 1. Difficulty
+    if (criteria.difficulty && criteria.difficulty.length > 0) {
+      if (!criteria.difficulty.includes(exp.difficulty.toLowerCase())) return false
+    }
+
+    // 2. Duration
+    if (criteria.duration && criteria.duration.length > 0) {
+      const isFull = exp.duration.toLowerCase().includes('full') || exp.durationHours! >= 6
+      const type = isFull ? 'full' : 'half'
+      if (!criteria.duration.includes(type)) return false
+    }
+
+    // 3. Price
+    if (criteria.priceRange) {
+      const [min, max] = criteria.priceRange
+      if (exp.price.amount < min || exp.price.amount > max) return false
+    }
+
+    return true
   })
 }
 
@@ -42,20 +109,20 @@ export function formatDate(dateString: string): string {
 
 export function formatDateRange(startDate?: string, endDate?: string): string {
   if (!startDate || !endDate) return 'Set your dates'
-  
+
   const start = new Date(startDate)
   const end = new Date(endDate)
-  
+
   const startMonth = start.toLocaleDateString('en-US', { month: 'short' })
   const endMonth = end.toLocaleDateString('en-US', { month: 'short' })
   const startDay = start.getDate()
   const endDay = end.getDate()
   const year = end.getFullYear()
-  
+
   if (startMonth === endMonth) {
     return `${startMonth} ${startDay}-${endDay}, ${year}`
   }
-  
+
   return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`
 }
 
@@ -74,16 +141,17 @@ export function getDayLabel(date: string): string {
 
 export function getRecommendedExperiences(
   categoryId: string,
-  travelStyle?: string,
-  groupType?: string
+  travelStyles?: string[],
+  groupType?: string,
+  pool: Experience[] = experiences
 ): Experience[] {
-  const categoryExps = getExperiencesByCategory(categoryId)
-  
+  const categoryExps = getExperiencesByCategory(categoryId, pool)
+
   return categoryExps.filter((exp) => {
-    if (travelStyle === 'relaxation' && categoryId === 'water_adventures') {
+    if (travelStyles?.includes('relaxation') && categoryId === 'water_adventures') {
       return exp.tags?.includes('beginner') || exp.subcategory === 'snorkeling'
     }
-    if (travelStyle === 'adventure' && categoryId === 'land_explorations') {
+    if (travelStyles?.includes('adventure') && categoryId === 'land_explorations') {
       return exp.difficulty === 'Moderate'
     }
     if (groupType === 'couple' && categoryId === 'food_nightlife') {
@@ -91,6 +159,289 @@ export function getRecommendedExperiences(
     }
     return true
   })
+}
+
+// Enhanced recommendation with scoring
+export interface PreferenceSection {
+  id: string
+  title: string
+  subtitle: string
+  emoji: string
+  experiences: Experience[]
+}
+
+export function scoreExperienceForPreferences(
+  exp: Experience,
+  travelStyles?: string[],
+  groupType?: string,
+  budget?: string
+): number {
+  let score = 0
+
+  // Budget matching
+  if (budget === 'budget' && exp.price.amount < 50) score += 3
+  if (budget === 'midrange' && exp.price.amount >= 50 && exp.price.amount < 100) score += 3
+  if (budget === 'luxury' && exp.price.amount >= 100) score += 3
+
+  // Group type matching
+  if (groupType === 'solo' && exp.groupSize.min === 1) score += 2
+  if (groupType === 'couple' && (exp.tags?.includes('private') || exp.groupSize.max <= 4)) score += 2
+  if (groupType === 'friends' && exp.tags?.includes('group')) score += 2
+  if (groupType === 'family' && exp.difficulty === 'Easy') score += 2
+
+  // Travel style matching
+  if (travelStyles?.includes('adventure') && (exp.difficulty === 'Moderate' || exp.category === 'land_explorations')) score += 3
+  if (travelStyles?.includes('relaxation') && (exp.tags?.includes('beginner') || exp.category === 'stays')) score += 3
+  if (travelStyles?.includes('culture') && exp.category === 'culture_experiences') score += 3
+  if (travelStyles?.includes('wellness') && (exp.tags?.includes('yoga') || exp.tags?.includes('spa') || exp.tags?.includes('wellness'))) score += 3
+
+  // Boost top-rated
+  if (exp.provider.rating >= 4.8) score += 2
+  if (exp.provider.rating >= 4.9) score += 1
+
+  return score
+}
+
+export function getPersonalizedExperiences(
+  travelStyles?: string[],
+  groupType?: string,
+  budget?: string,
+  limit = 6,
+  pool: Experience[] = experiences
+): Experience[] {
+  const scored = pool.map(exp => ({
+    experience: exp,
+    score: scoreExperienceForPreferences(exp, travelStyles, groupType, budget)
+  }))
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(item => item.experience)
+}
+
+export function getPreferenceBasedSections(
+  travelStyles?: string[],
+  groupType?: string,
+  budget?: string,
+  pool: Experience[] = experiences
+): PreferenceSection[] {
+  const sections: PreferenceSection[] = []
+
+  // Perfect for You (always show if any preferences set)
+  if ((travelStyles && travelStyles.length > 0) || groupType || budget) {
+    sections.push({
+      id: 'perfect_for_you',
+      title: 'Perfect for You',
+      subtitle: 'Based on your preferences',
+      emoji: '✨',
+      experiences: getPersonalizedExperiences(travelStyles, groupType, budget, 4, pool)
+    })
+  }
+
+  // Group type specific sections
+  if (groupType === 'solo') {
+    sections.push({
+      id: 'solo_adventures',
+      title: 'Great for Solo Travelers',
+      subtitle: 'No minimum group size required',
+      emoji: '🎒',
+      experiences: pool
+        .filter(exp => exp.groupSize.min === 1)
+        .slice(0, 4)
+    })
+  }
+
+  if (groupType === 'couple') {
+    sections.push({
+      id: 'romantic_escapes',
+      title: 'Romantic Escapes',
+      subtitle: 'Perfect for couples',
+      emoji: '💕',
+      experiences: pool
+        .filter(exp => exp.tags?.includes('private') || exp.groupSize.max <= 4)
+        .slice(0, 4)
+    })
+  }
+
+  if (groupType === 'friends') {
+    sections.push({
+      id: 'group_adventures',
+      title: 'Fun with Friends',
+      subtitle: 'Group-friendly experiences',
+      emoji: '👥',
+      experiences: pool
+        .filter(exp => exp.tags?.includes('group') || exp.groupSize.max >= 6)
+        .slice(0, 4)
+    })
+  }
+
+  if (groupType === 'family') {
+    sections.push({
+      id: 'family_friendly',
+      title: 'Family-Friendly Fun',
+      subtitle: 'Great for all ages',
+      emoji: '👨‍👩‍👧',
+      experiences: experiences
+        .filter(exp => exp.difficulty === 'Easy' || exp.tags?.includes('beginner'))
+        .slice(0, 4)
+    })
+  }
+
+  // Budget sections
+  if (budget === 'budget') {
+    sections.push({
+      id: 'budget_picks',
+      title: 'Budget-Friendly Picks',
+      subtitle: 'Great experiences under $50',
+      emoji: '💰',
+      experiences: pool
+        .filter(exp => exp.price.amount < 50)
+        .sort((a, b) => a.price.amount - b.price.amount)
+        .slice(0, 4)
+    })
+  }
+
+  if (budget === 'luxury') {
+    sections.push({
+      id: 'luxury_experiences',
+      title: 'Luxury Experiences',
+      subtitle: 'Premium adventures',
+      emoji: '💎',
+      experiences: pool
+        .filter(exp => exp.price.amount >= 80)
+        .sort((a, b) => b.provider.rating - a.provider.rating)
+        .slice(0, 4)
+    })
+  }
+
+  // Travel style sections
+  if (travelStyles?.includes('adventure')) {
+    sections.push({
+      id: 'adventure_calls',
+      title: 'Adventure Awaits',
+      subtitle: 'For thrill seekers',
+      emoji: '⛰️',
+      experiences: pool
+        .filter(exp => exp.difficulty === 'Moderate' || exp.category === 'land_explorations' || exp.category === 'water_adventures')
+        .slice(0, 4)
+    })
+  }
+
+  if (travelStyles?.includes('relaxation')) {
+    sections.push({
+      id: 'relaxation_mode',
+      title: 'Relax & Unwind',
+      subtitle: 'Take it easy',
+      emoji: '🌴',
+      experiences: experiences
+        .filter(exp => exp.difficulty === 'Easy' || exp.tags?.includes('beginner'))
+        .slice(0, 4)
+    })
+  }
+
+  if (travelStyles?.includes('culture')) {
+    sections.push({
+      id: 'cultural_immersion',
+      title: 'Cultural Immersion',
+      subtitle: 'Discover local traditions',
+      emoji: '🏛️',
+      experiences: pool
+        .filter(exp => exp.category === 'culture_experiences')
+        .slice(0, 4)
+    })
+  }
+
+  if (travelStyles?.includes('wellness')) {
+    sections.push({
+      id: 'wellness_retreats',
+      title: 'Wellness & Zen',
+      subtitle: 'Mindful Bali experiences',
+      emoji: '🧘',
+      experiences: pool
+        .filter(exp => exp.tags?.includes('yoga') || exp.tags?.includes('spa') || exp.tags?.includes('wellness'))
+        .slice(0, 4)
+    })
+  }
+
+  return sections
+}
+
+export function generateTripFromPreferences(
+  preferences: import('./types').UserPreferences,
+  dates?: { start: string; end: string }
+): import('./types').Trip {
+  // 1. Get personalized recommendations based on weighted scoring
+  const recommendedExperiences = getPersonalizedExperiences(
+    preferences.travelStyles,
+    preferences.groupType,
+    preferences.budget,
+    10, // Get top 10 candidates
+    experiences // Use default mock pool for trip generation for now, or update this signature to accept pool if needed
+  )
+
+  // 2. Select 3-4 distinct experiences to avoid repetition
+  // Simple heuristic: Take top 3 unique categories if possible
+  const selectedExperiences: Experience[] = []
+  const usedCategories = new Set<string>()
+
+  for (const exp of recommendedExperiences) {
+    if (selectedExperiences.length >= 4) break
+
+    // Try to diversify categories, but fill up if needed
+    if (!usedCategories.has(exp.category) || selectedExperiences.length < 2) {
+      selectedExperiences.push(exp)
+      usedCategories.add(exp.category)
+    }
+  }
+
+  // If we still don't have enough, just take from the top
+  if (selectedExperiences.length < 3) {
+    for (const exp of recommendedExperiences) {
+      if (!selectedExperiences.find(e => e.id === exp.id)) {
+        selectedExperiences.push(exp)
+        if (selectedExperiences.length >= 3) break
+      }
+    }
+  }
+
+  // 3. Create trip items
+  const items: TripItem[] = selectedExperiences.map((exp, index) => {
+    // Basic day scheduling logic if dates provided
+    let itemDate = undefined
+    if (dates) {
+      const start = new Date(dates.start)
+      // Spread activities over days (Day 1, Day 2...)
+      const scheduleDate = new Date(start)
+      scheduleDate.setDate(start.getDate() + (index % 3))
+      itemDate = scheduleDate.toISOString().split('T')[0]
+    }
+
+    return {
+      experienceId: exp.id,
+      guests: 2, // Default to 2 for now, or match group type logic
+      totalPrice: exp.price.amount * 2,
+      date: itemDate,
+      time: exp.duration.includes('Full Day') ? '09:00' : '10:00' // Default start times
+    }
+  })
+
+  // 4. Calculate totals
+  const { subtotal, serviceFee, total } = calculateTripTotal(items)
+
+  return {
+    id: `trip_${Date.now()}`,
+    userId: 'user_demo', // Will be overwritten if logged in
+    destination: 'dest_bali',
+    startDate: dates?.start,
+    endDate: dates?.end,
+    travelers: 2,
+    status: 'planning',
+    items,
+    subtotal,
+    serviceFee,
+    total
+  }
 }
 
 export function generateBookingReference(): string {
@@ -108,7 +459,7 @@ export function generateDemoBookings(): Booking[] {
   pastDate1.setDate(now.getDate() - 60)
   const pastDate2 = new Date(now)
   pastDate2.setDate(now.getDate() - 30)
-  
+
   const futureDate1 = new Date(now)
   futureDate1.setDate(now.getDate() + 30)
   const futureDate2 = new Date(now)
@@ -220,4 +571,74 @@ export function getCountryFlag(countryCode: string): string {
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength) + '...'
+}
+
+export interface Conflict {
+  itemA: TripItem
+  itemB: TripItem
+  message: string
+}
+
+export function checkForConflicts(items: TripItem[]): Conflict[] {
+  const conflicts: Conflict[] = []
+  const itemsWithTime = items.filter((i): i is TripItem & { date: string; time: string } => !!i.date && !!i.time)
+
+  for (let i = 0; i < itemsWithTime.length; i++) {
+    for (let j = i + 1; j < itemsWithTime.length; j++) {
+      const itemA = itemsWithTime[i]!
+      const itemB = itemsWithTime[j]!
+
+      if (itemA.date !== itemB.date) continue
+
+      const expA = getExperienceById(itemA.experienceId, experiences)
+      const expB = getExperienceById(itemB.experienceId, experiences)
+      if (!expA || !expB) continue
+
+      const durationA = expA.duration.includes('Full') ? 8 : 2
+      const durationB = expB.duration.includes('Full') ? 8 : 2
+
+      const startA = parseInt(itemA.time.split(':')[0]) + parseInt(itemA.time.split(':')[1]) / 60
+      const endA = startA + durationA
+
+      const startB = parseInt(itemB.time.split(':')[0]) + parseInt(itemB.time.split(':')[1]) / 60
+      const endB = startB + durationB
+
+      if (startA < endB && startB < endA) {
+        conflicts.push({
+          itemA,
+          itemB,
+          message: `Overlap detected between "${truncateText(expA.title, 20)}" and "${truncateText(expB.title, 20)}"`
+        })
+      }
+    }
+  }
+  return conflicts
+}
+
+export function findNextAvailableSlot(
+  items: TripItem[],
+  date: string,
+  durationHours: number = 2
+): string | null {
+  const existingItems = items.filter((i): i is TripItem & { date: string; time: string } => i.date === date && !!i.time)
+
+  for (let hour = 8; hour <= 18; hour++) {
+    const slotStart = hour
+    const slotEnd = hour + durationHours
+
+    const hasOverlap = existingItems.some(item => {
+      const exp = getExperienceById(item.experienceId, experiences)
+      const itemDur = exp?.duration.includes('Full') ? 8 : 2
+      const itemStart = parseInt(item.time.split(':')[0]) + parseInt(item.time.split(':')[1]) / 60
+      const itemEnd = itemStart + itemDur
+
+      return slotStart < itemEnd && itemStart < slotEnd
+    })
+
+    if (!hasOverlap) {
+      return `${hour.toString().padStart(2, '0')}:00`
+    }
+  }
+
+  return null
 }

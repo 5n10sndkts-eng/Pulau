@@ -46,4 +46,18 @@ export function MotionWrapper({ children }: MotionWrapperProps) {
   )
 }
 
+// Viewport-aware container for scroll animations
+export function MotionViewport({ children, ...props }: HTMLMotionProps<'div'>) {
+  return (
+    <motion.div
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true, margin: "-50px" }}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 export { motion, type HTMLMotionProps }

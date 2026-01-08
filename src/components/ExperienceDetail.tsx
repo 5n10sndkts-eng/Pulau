@@ -1,29 +1,35 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Experience } from '@/lib/types'
-import { formatPrice, getCountryFlag } from '@/lib/helpers'
+import { formatPrice } from '@/lib/helpers'
+import { Skeleton } from '@/components/ui/skeleton'
 import { AvailabilityCalendar } from '@/components/AvailabilityCalendar'
+import { SoldOutOverlay } from '@/components/ErrorHandling'
 import {
   ArrowLeft,
   Heart,
   Clock,
   Users,
   BarChart3,
-  Languages,
   Check,
   X,
   Star,
   MapPin,
   Shield,
-  Minus,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
+  Share2,
+  Info,
+  CalendarDays,
 } from 'lucide-react'
-import { motion, AnimatePresence, PanInfo } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { PremiumContainer } from '@/components/ui/premium-container'
+import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants'
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+import { HostProfile } from '@/components/HostProfile'
+import { ReviewList } from '@/components/ReviewList'
 
 interface ExperienceDetailProps {
   experience: Experience
@@ -36,359 +42,328 @@ interface ExperienceDetailProps {
 export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, onAddToTrip }: ExperienceDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [guests, setGuests] = useState(2)
-  const [[page, direction], setPage] = useState([0, 0])
   const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined)
+  const [showWaitlist, setShowWaitlist] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const totalPrice = experience.price.amount * guests
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 900)
+    return () => clearTimeout(timer)
+  }, [])
 
-  const handleAddToTrip = () => {
-    onAddToTrip(guests, totalPrice)
-  }
+  const totalPrice = useMemo(() => experience.price.amount * guests, [experience.price.amount, guests])
 
-  const swipeConfidenceThreshold = 10000
-  const swipePower = (offset: number, velocity: number) => {
-    return Math.abs(offset) * velocity
-  }
-
-  const paginate = (newDirection: number) => {
-    const newIndex = currentImageIndex + newDirection
-    if (newIndex >= 0 && newIndex < experience.images.length) {
-      setCurrentImageIndex(newIndex)
-      setPage([page + newDirection, newDirection])
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: experience.title,
+          text: `Check out this amazing experience: ${experience.title} in Bali!`,
+          url: window.location.href,
+        })
+      } catch (err) {
+        console.error('Error sharing:', err)
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href)
+      toast.success('Link copied to clipboard!')
     }
   }
 
-  const variants = {
-    enter: (direction: number) => {
-      return {
-        x: direction > 0 ? 1000 : -1000,
-        opacity: 0,
-      }
-    },
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => {
-      return {
-        zIndex: 0,
-        x: direction < 0 ? 1000 : -1000,
-        opacity: 0,
-      }
-    },
+  const handleWaitlist = () => {
+    toast.success("You've been added to the waitlist! We'll notify you if spots open up.")
+    setShowWaitlist(false)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background font-body">
+        {/* Skeleton Hero */}
+        <div className="relative h-[50vh] overflow-hidden bg-muted">
+          <Skeleton className="absolute inset-0 w-full h-full" />
+          <div className="absolute top-6 left-6 z-20">
+            <Skeleton className="w-11 h-11 rounded-full" />
+          </div>
+        </div>
+
+        <PremiumContainer className="relative -mt-20 z-10 pb-20">
+          <div className="bg-background rounded-[2rem] p-8 md:p-12 shadow-2xl space-y-8">
+            <div className="space-y-4">
+              <Skeleton className="h-10 w-3/4" />
+              <div className="flex gap-4">
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-6 w-32" />
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <div className="lg:col-span-2 space-y-8">
+                <div className="grid grid-cols-3 gap-4">
+                  <Skeleton className="h-24 rounded-2xl" />
+                  <Skeleton className="h-24 rounded-2xl" />
+                  <Skeleton className="h-24 rounded-2xl" />
+                </div>
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-1/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+              <div className="lg:col-span-1">
+                <Skeleton className="h-96 w-full rounded-2xl" />
+              </div>
+            </div>
+          </div>
+        </PremiumContainer>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      <section className="relative" aria-label="Experience details">
-        <div className="relative h-80 bg-gray-200 overflow-hidden" role="region" aria-label="Image gallery">
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.img
-              key={currentImageIndex}
-              src={experience.images[currentImageIndex]}
-              alt={`${experience.title} - Image ${currentImageIndex + 1} of ${experience.images.length}`}
-              className="absolute w-full h-full object-cover"
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: 'spring', stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 },
-              }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={1}
-              onDragEnd={(e, { offset, velocity }: PanInfo) => {
-                const swipe = swipePower(offset.x, velocity.x)
+    <div className="min-h-screen bg-background font-body">
+      {/* Immersive Header / Hero */}
+      <section className="relative h-[50vh] overflow-hidden bg-muted">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImageIndex}
+            src={experience.images[currentImageIndex]}
+            alt={experience.title}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+          />
+        </AnimatePresence>
 
-                if (swipe < -swipeConfidenceThreshold) {
-                  paginate(1)
-                } else if (swipe > swipeConfidenceThreshold) {
-                  paginate(-1)
-                }
-              }}
-            />
-          </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-black/30" />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" aria-hidden="true" />
-
-          {currentImageIndex > 0 && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              onClick={() => paginate(-1)}
-              aria-label="Previous image"
-            >
-              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
-            </motion.button>
-          )}
-
-          {currentImageIndex < experience.images.length - 1 && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              onClick={() => paginate(1)}
-              aria-label="Next image"
-            >
-              <ChevronRight className="w-5 h-5" aria-hidden="true" />
-            </motion.button>
-          )}
-
+        {/* Top Controls */}
+        <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm hover:bg-white z-10"
+            className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/40"
             onClick={onBack}
             aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
 
-          <motion.button
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center z-10 hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            onClick={onToggleSave}
-            whileTap={{ scale: 0.9 }}
-            aria-label={isSaved ? 'Remove from saved' : 'Save experience'}
-            aria-pressed={isSaved}
-          >
-            <motion.div
-              animate={isSaved ? { scale: [1, 1.2, 1] } : {}}
-              transition={{ duration: 0.3 }}
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white hover:bg-white/40"
+              onClick={handleShare}
+              aria-label="Share experience"
             >
-              <Heart className={`w-6 h-6 ${isSaved ? 'fill-accent text-accent' : 'text-foreground'}`} aria-hidden="true" />
-            </motion.div>
-          </motion.button>
-
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10" role="group" aria-label="Image indicators">
-            {experience.images.map((_, idx) => (
-              <motion.button
-                key={idx}
-                className={`h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
-                  idx === currentImageIndex ? 'bg-white w-6' : 'bg-white/50 w-2'
-                }`}
-                onClick={() => {
-                  const newDirection = idx > currentImageIndex ? 1 : -1
-                  setCurrentImageIndex(idx)
-                  setPage([idx, newDirection])
-                }}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label={`Go to image ${idx + 1}`}
-                aria-current={idx === currentImageIndex ? 'true' : 'false'}
-              />
-            ))}
-          </div>
-
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-medium z-10" aria-live="polite" aria-atomic="true">
-            {currentImageIndex + 1} / {experience.images.length}
+              <Share2 className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "w-11 h-11 rounded-full backdrop-blur-md border border-white/20 transition-all",
+                isSaved ? "bg-accent text-white border-accent" : "bg-white/20 text-white hover:bg-white/40"
+              )}
+              onClick={onToggleSave}
+              aria-label={isSaved ? "Remove from saved" : "Save experience"}
+            >
+              <Heart className={cn("w-5 h-5", isSaved && "fill-current")} />
+            </Button>
           </div>
         </div>
 
-        <div className="px-6 py-6 space-y-6">
-          <div>
-            <h1 className="font-display text-2xl font-bold mb-4">{experience.title}</h1>
-            <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <span>{experience.duration}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-muted-foreground" />
-                <span>
-                  {experience.groupSize.min}-{experience.groupSize.max} guests
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-muted-foreground" />
-                <span>{experience.difficulty}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Languages className="w-4 h-4 text-muted-foreground" />
-                <span>{experience.languages.join(', ')}</span>
-              </div>
-            </div>
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 z-20" role="tablist" aria-label="Image gallery">
+          {experience.images.map((_, idx) => (
+            <button
+              key={idx}
+              role="tab"
+              aria-selected={idx === currentImageIndex}
+              aria-label={`Go to image ${idx + 1}`}
+              onClick={() => setCurrentImageIndex(idx)}
+              className="group focus:outline-none"
+            >
+              <motion.div
+                className={cn(
+                  "h-1.5 rounded-full transition-all",
+                  idx === currentImageIndex ? "bg-white w-8" : "bg-white/40 w-1.5 group-hover:bg-white/60"
+                )}
+                animate={{ width: idx === currentImageIndex ? 32 : 6 }}
+              />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Content Section */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="relative z-10 -mt-10 bg-background rounded-t-[40px] px-6 pt-10 pb-40"
+      >
+        {/* Title & Stats */}
+        <motion.div variants={fadeInUp} className="space-y-4">
+          <div className="flex justify-between items-start gap-4">
+            <h1 className="font-display text-3xl font-bold leading-tight flex-1">{experience.title}</h1>
+            <Badge variant="outline" className="shrink-0 mt-2 px-3 py-1 border-primary/20 text-primary uppercase text-[10px] font-bold tracking-widest">
+              {experience.category.replace('_', ' ')}
+            </Badge>
           </div>
 
-          <Card className="p-6 sticky top-4 z-10 shadow-lg border-2">
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">From</p>
-                <p className="font-display text-3xl font-bold">
-                  {formatPrice(experience.price.amount)}{' '}
-                  <span className="text-base font-normal text-muted-foreground">/ {experience.price.per}</span>
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="font-medium">Guests</span>
-                <div className="flex items-center gap-3">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => setGuests(Math.max(experience.groupSize.min, guests - 1))}
-                    disabled={guests <= experience.groupSize.min}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="font-bold text-lg w-8 text-center">{guests}</span>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => setGuests(Math.min(experience.groupSize.max, guests + 1))}
-                    disabled={guests >= experience.groupSize.max}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <Button size="lg" className="w-full" onClick={handleAddToTrip}>
-                Add to Trip - {formatPrice(totalPrice)}
-              </Button>
-
-              <p className="text-xs text-center text-muted-foreground">Free cancellation up to 24 hours before</p>
+          <div className="flex flex-wrap gap-5 text-sm text-muted-foreground pt-2">
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 fill-golden text-golden" aria-hidden="true" />
+              <span className="font-bold text-foreground">{experience.provider.rating}</span>
+              <span>({experience.provider.reviewCount})</span>
             </div>
-          </Card>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" aria-hidden="true" />
+              <span>{experience.duration}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" aria-hidden="true" />
+              <span>{experience.difficulty}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4" aria-hidden="true" />
+              <span>Max {experience.groupSize.max}</span>
+            </div>
+          </div>
+        </motion.div>
 
-          <div className="space-y-3">
-            <h2 className="font-display text-xl font-semibold">About This Experience</h2>
-            {experience.description.split('\n\n').map((para, idx) => (
-              <p key={idx} className="text-foreground/90 leading-relaxed">
-                {para}
-              </p>
+        <Separator className="my-8 opacity-50" />
+
+        {/* Description */}
+        <motion.div variants={fadeInUp} className="space-y-4">
+          <h2 className="font-display text-xl font-bold flex items-center gap-2">
+            <Info className="w-5 h-5 text-primary" />
+            About the Experience
+          </h2>
+          <div className="text-foreground/80 leading-relaxed text-sm space-y-4">
+            {experience.description.split('\n\n').map((p, i) => (
+              <p key={i}>{p}</p>
             ))}
           </div>
+        </motion.div>
 
-          <div className="space-y-3">
-            <h2 className="font-display text-xl font-semibold">What's Included</h2>
-            <div className="space-y-2">
-              {experience.included.map((item, idx) => (
-                <div key={idx} className="flex gap-3">
-                  <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                  <span className="text-foreground/90">{item}</span>
-                </div>
-              ))}
+        {/* What's Included */}
+        <motion.div variants={fadeInUp} className="mt-10 space-y-6">
+          <div className="grid gap-6">
+            <div className="space-y-4">
+              <h2 className="font-display text-xl font-bold">What's Included</h2>
+              <div className="grid gap-3">
+                {experience.included.map((item, i) => (
+                  <div key={i} className="flex gap-3 text-sm">
+                    <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {experience.notIncluded.length > 0 && (
-              <>
-                <h3 className="font-display font-semibold mt-4">Not Included</h3>
-                <div className="space-y-2">
-                  {experience.notIncluded.map((item, idx) => (
-                    <div key={idx} className="flex gap-3">
-                      <X className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{item}</span>
+              <div className="space-y-4">
+                <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-widest">Not Included</h3>
+                <div className="grid gap-3">
+                  {experience.notIncluded.map((item, i) => (
+                    <div key={i} className="flex gap-3 text-sm text-muted-foreground opacity-70">
+                      <X className="w-4 h-4 mt-0.5 shrink-0" />
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>
-              </>
+              </div>
             )}
           </div>
+        </motion.div>
 
-          <Separator />
+        {/* Provider Section */}
+        <HostProfile provider={experience.provider} />
 
-          <Card className="p-6 bg-secondary/50">
-            <div className="flex gap-4">
-              <img src={experience.provider.photo} alt={experience.provider.name} className="w-16 h-16 rounded-full object-cover" />
-              <div className="flex-1">
-                <h3 className="font-display text-lg font-semibold">{experience.provider.name}</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {experience.provider.verified ? '✓ Verified Partner • ' : ''}Family operated since {experience.provider.since}
-                </p>
-                <p className="text-sm leading-relaxed">{experience.provider.bio}</p>
-                <div className="flex gap-2 mt-3">
-                  <Badge variant="secondary">Local Business</Badge>
-                  <Badge variant="secondary">Responds {experience.provider.responseTime}</Badge>
-                </div>
-              </div>
-            </div>
-          </Card>
+        {/* Reviews Section */}
+        <section className="mt-12">
+          <ReviewList
+            reviews={experience.reviews}
+            rating={experience.provider.rating}
+            reviewCount={experience.provider.reviewCount}
+          />
+        </section>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-xl font-semibold">What Travelers Say</h2>
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 fill-golden text-golden" />
-                <span className="font-bold text-lg">{experience.provider.rating}</span>
-                <span className="text-muted-foreground">({experience.provider.reviewCount} reviews)</span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {experience.reviews.slice(0, 3).map((review) => (
-                <Card key={review.id} className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-semibold">
-                        {review.author} {getCountryFlag(review.country)}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{review.date}</p>
-                    </div>
-                    <div className="flex">
-                      {[...Array(review.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-golden text-golden" />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-sm leading-relaxed">{review.text}</p>
-                  <p className="text-xs text-muted-foreground mt-2">{review.helpful} people found this helpful</p>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <h2 className="font-display text-xl font-semibold">Check Availability</h2>
-            <AvailabilityCalendar
-              experienceId={experience.id}
-              selectedDate={selectedDate}
-              onDateSelect={(date) => {
+        {/* Availability */}
+        <motion.div variants={fadeInUp} className="mt-12 space-y-4 relative">
+          <h2 className="font-display text-xl font-bold flex items-center gap-2">
+            <CalendarDays className="w-5 h-5 text-primary" />
+            Check Availability
+          </h2>
+          <AvailabilityCalendar
+            experienceId={experience.id}
+            selectedDate={selectedDate}
+            onDateSelect={(date) => {
+              if (date === '2024-08-15') { // Mock sold out date
+                setShowWaitlist(true)
+              } else {
                 setSelectedDate(date)
-              }}
-            />
-          </div>
+              }
+            }}
+          />
+          {showWaitlist && (
+            <div className="absolute inset-0 z-50">
+              <SoldOutOverlay onWaitlist={handleWaitlist} onViewSimilar={() => setShowWaitlist(false)} />
+            </div>
+          )}
+        </motion.div>
 
-          <div className="space-y-3">
-            <h2 className="font-display text-xl font-semibold">Where You'll Meet</h2>
-            <Card className="p-4">
-              <div className="aspect-video bg-muted rounded-lg mb-3 flex items-center justify-center">
-                <MapPin className="w-12 h-12 text-muted-foreground" />
-              </div>
-              <h3 className="font-semibold mb-1">{experience.meetingPoint.name}</h3>
-              {experience.meetingPoint.address && (
-                <p className="text-sm text-muted-foreground mb-2">{experience.meetingPoint.address}</p>
-              )}
-              <p className="text-sm">{experience.meetingPoint.instructions}</p>
-            </Card>
-          </div>
-
-          <div className="space-y-3">
-            <h2 className="font-display text-xl font-semibold">Good to Know</h2>
-            <Card className="p-4 space-y-3">
+        {/* Good to Know */}
+        <motion.div variants={fadeInUp} className="mt-12 space-y-6">
+          <h2 className="font-display text-xl font-bold">Good to Know</h2>
+          <Card className="p-5 border-none bg-primary/5 rounded-2xl space-y-4">
+            <div className="flex gap-3">
+              <Shield className="w-5 h-5 text-primary shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1 flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  Cancellation Policy
-                </h3>
-                <p className="text-sm text-muted-foreground">{experience.cancellation}</p>
+                <p className="text-sm font-bold">Cancellation Policy</p>
+                <p className="text-xs text-muted-foreground">{experience.cancellation}</p>
               </div>
-              {experience.whatToBring.length > 0 && (
+            </div>
+            {experience.whatToBring.length > 0 && (
+              <div className="flex gap-3 pt-2">
+                <MapPin className="w-5 h-5 text-primary shrink-0" />
                 <div>
-                  <h3 className="font-semibold mb-2">What to Bring</h3>
-                  <p className="text-sm text-muted-foreground">{experience.whatToBring.join(', ')}</p>
+                  <p className="text-sm font-bold">What to Bring</p>
+                  <p className="text-xs text-muted-foreground">{experience.whatToBring.join(', ')}</p>
                 </div>
-              )}
-            </Card>
+              </div>
+            )}
+          </Card>
+        </motion.div>
+      </motion.div>
+
+      {/* Sticky Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-gradient-to-t from-background via-background to-transparent pointer-events-none">
+        <PremiumContainer variant="glass" className="pointer-events-auto max-w-lg mx-auto flex items-center justify-between p-4 rounded-3xl shadow-2xl border-white/20 backdrop-blur-2xl">
+          <div className="space-y-0.5">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Price</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-display font-bold">{formatPrice(totalPrice)}</span>
+              <span className="text-[10px] text-muted-foreground">/ {guests} guests</span>
+            </div>
           </div>
-        </div>
-      </section>
+          <Button
+            size="lg"
+            className="rounded-2xl px-8 font-bold h-14 shadow-lg shadow-primary/25"
+            onClick={() => onAddToTrip(guests, totalPrice)}
+          >
+            Add to Trip
+          </Button>
+        </PremiumContainer>
+      </div>
     </div>
   )
 }

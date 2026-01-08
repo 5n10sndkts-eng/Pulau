@@ -9,8 +9,37 @@ export interface Destination {
   active: boolean
 }
 
+// --- Enums ---
+export enum ExperienceCategory {
+  WaterAdventures = 'water_adventures',
+  LandExplorations = 'land_explorations',
+  CultureExperiences = 'culture_experiences',
+  FoodNightlife = 'food_nightlife',
+  Transportation = 'transportation',
+  Stays = 'stays'
+}
+
+export enum ExperienceStatus {
+  Draft = 'draft',
+  Active = 'active',
+  Inactive = 'inactive',
+  SoldOut = 'sold_out'
+}
+
+export enum Difficulty {
+  Easy = 'Easy',
+  Moderate = 'Moderate',
+  Challenging = 'Challenging'
+}
+
+export enum PricePer {
+  Person = 'person',
+  Vehicle = 'vehicle',
+  Group = 'group'
+}
+
 export interface Category {
-  id: string
+  id: ExperienceCategory | string
   name: string
   icon: string
   tagline: string
@@ -50,19 +79,20 @@ export interface MeetingPoint {
 export interface Experience {
   id: string
   title: string
-  category: string
+  category: ExperienceCategory | string
   subcategory: string
-  destination: string
-  provider: Provider
+  destination: string // destination_id or object
+  provider: Provider // vendor_id or hydrated object
   price: {
     amount: number
     currency: string
-    per: string
+    per: PricePer | string
   }
-  duration: string
+  duration: string // formatted string "2 hours"
+  durationHours?: number // numeric for DB
   startTime?: string
   groupSize: { min: number; max: number }
-  difficulty: string
+  difficulty: Difficulty | string
   languages: string[]
   images: string[]
   description: string
@@ -73,8 +103,65 @@ export interface Experience {
   whatToBring: string[]
   reviews: Review[]
   tags?: string[]
-  status?: 'draft' | 'active' | 'inactive'
+  status?: ExperienceStatus | 'draft' | 'active' | 'inactive'
+  vendorId?: string
+  createdAt?: string
+  updatedAt?: string
   publishedAt?: string
+}
+
+// --- Database Schema Records (Story 5.1) ---
+
+export interface ExperienceRecord {
+  id: string
+  vendorId: string
+  title: string
+  category: ExperienceCategory
+  subcategory: string
+  destinationId: string
+  description: string
+  priceAmount: number
+  priceCurrency: string
+  pricePer: PricePer
+  durationHours: number
+  startTime?: string // HH:mm
+  groupSizeMin: number
+  groupSizeMax: number
+  difficulty: Difficulty
+  languages: string[]
+  status: ExperienceStatus
+  meetingPointName?: string
+  meetingPointAddress?: string
+  meetingPointLat?: number
+  meetingPointLng?: number
+  meetingPointInstructions?: string
+  cancellationPolicy?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ExperienceImageRecord {
+  id: string
+  experienceId: string
+  imageUrl: string
+  displayOrder: number
+  createdAt: string
+}
+
+export interface ExperienceInclusionRecord {
+  id: string
+  experienceId: string
+  itemText: string
+  isIncluded: boolean // true = included, false = excluded/what to bring
+  createdAt: string
+}
+
+export interface ExperienceAvailabilityRecord {
+  id: string
+  experienceId: string
+  date: string // YYYY-MM-DD
+  slotsAvailable: number
+  status: 'available' | 'blocked' | 'sold_out'
 }
 
 export interface TripItem {
@@ -103,6 +190,7 @@ export interface Trip {
   cancelledAt?: string
   cancellationReason?: string
   shareToken?: string
+  name?: string
 }
 
 export interface Booking {
@@ -115,7 +203,7 @@ export interface Booking {
 }
 
 export interface UserPreferences {
-  travelStyle?: 'adventure' | 'relaxation' | 'culture' | 'mix'
+  travelStyles?: ('adventure' | 'relaxation' | 'culture' | 'wellness')[]
   groupType?: 'solo' | 'couple' | 'friends' | 'family'
   budget?: 'budget' | 'midrange' | 'luxury'
   destinationId?: string
@@ -123,13 +211,16 @@ export interface UserPreferences {
 
 export interface User {
   id: string
+  name: string
+  email: string
+  avatar?: string
   firstName?: string
   lastName?: string
-  email?: string
-  preferences: UserPreferences
-  saved: string[]
-  currency: string
-  language: string
+  preferences?: UserPreferences
+  saved?: string[]
+  currency?: string
+  language?: string
+
   hasCompletedOnboarding?: boolean
   emailVerified?: boolean
   createdAt?: string
@@ -194,6 +285,8 @@ export type Screen =
   | { type: 'home' }
   | { type: 'category'; categoryId: string }
   | { type: 'experience'; experienceId: string }
+  | { type: 'trip' }
+  | { type: 'tripDetail'; tripId: string }
   | { type: 'tripBuilder' }
   | { type: 'checkout'; tripId: string }
   | { type: 'explore' }
@@ -206,7 +299,14 @@ export type Screen =
   | { type: 'vendorExperiences' }
   | { type: 'vendorBookings' }
   | { type: 'vendorExperienceEdit'; experienceId: string }
+  | { type: 'vendorExperienceCreate' }
+  | { type: 'vendorExperienceImages'; experienceId: string }
   | { type: 'vendorExperienceAvailability'; experienceId: string }
+  | { type: 'customerLogin' }
+  | { type: 'customerRegister' }
+  | { type: 'passwordReset' }
+  | { type: 'onboarding' }
+  | { type: 'trips' }
 
 /**
  * Record Type Examples for Type-Safe Key-Value Mappings

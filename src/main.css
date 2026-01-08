@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
 @import './styles/theme.css';
-@import './index.css';
 @import "tw-animate-css";
 /*
   ---break---
@@ -19,6 +18,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -32,30 +32,49 @@
   ---break---
 */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 1rem;
+  --background: oklch(0.99 0.01 180);
+  --foreground: oklch(0.25 0.02 196);
+
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.25 0.02 196);
+
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --popover-foreground: oklch(0.25 0.02 196);
+
+  /* Bali Premium Palette */
+  --primary: oklch(0.48 0.081 196.43);
+  /* Deep Teal */
+  --primary-foreground: oklch(0.99 0 0);
+
+  --secondary: oklch(0.95 0.02 196);
+  --secondary-foreground: oklch(0.48 0.081 196.43);
+
+  --muted: oklch(0.96 0.01 196);
+  --muted-foreground: oklch(0.55 0.02 196);
+
+  --accent: oklch(0.681 0.178 20.37);
+  /* Warm Coral */
+  --accent-foreground: oklch(0.99 0 0);
+
+  --destructive: oklch(0.60 0.22 28);
+
+  --border: oklch(0.92 0.01 196);
+  --input: oklch(0.90 0.01 196);
+  --ring: oklch(0.48 0.081 196.43);
+
+  --success: oklch(0.655 0.164 154.51);
+  /* Soft Green */
+  --warning: oklch(0.852 0.171 89.26);
+  /* Golden Sand */
+  --golden: oklch(0.852 0.171 89.26);
+
+  --chart-1: var(--primary);
+  --chart-2: var(--accent);
+  --chart-3: var(--success);
+  --chart-4: var(--warning);
+  --chart-5: oklch(0.6 0.15 250);
+  /* Sidebar Compatibility */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -142,6 +161,14 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-golden: var(--golden);
+
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -181,6 +208,54 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+    background-image:
+      radial-gradient(circle at 0% 0%, oklch(0.48 0.081 196.43 / 0.03) 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, oklch(0.681 0.178 20.37 / 0.03) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/40 backdrop-blur-xl border border-white/20 shadow-xl;
+  }
+
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-primary via-accent to-primary animate-gradient-slow;
+    background-size: 200% 200%;
+  }
+}
+
+@theme {
+  --animate-gradient-slow: gradient-shift 12s ease infinite;
+
+  @keyframes gradient-shift {
+
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
   }
 }

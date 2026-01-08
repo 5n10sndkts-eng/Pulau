@@ -67,6 +67,76 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 
 **Sold Out Experiences** - "Currently unavailable" badge on cards; waitlist signup option; similar alternatives suggested
 
+---
+
+## Extended Features (Phase 2+)
+
+The following features were identified during architecture and epic planning. They extend the core product but are **deferred to post-MVP phases**.
+
+### User Authentication & Profile (Phase 2)
+
+**Customer Authentication**
+- Functionality: Secure account creation, login, password reset, and session management
+- Purpose: Enable personalized experiences, saved data, and cross-device sync
+- Trigger: User taps "Sign Up" or "Login" on welcome screen
+- Progression: Welcome → Registration form → Email/password entry → Account created (KV store) → Redirect to onboarding
+- Success: Users can create accounts and login; sessions persist across browser refreshes
+- MVP Note: Uses mock auth service with KV storage; production requires Epic 20 (Supabase)
+
+**Customer Profile & Payment Methods**
+- Functionality: Profile editing, saved payment methods, notification preferences
+- Purpose: Streamline repeat bookings and personalize experience
+- Trigger: User navigates to Profile tab
+- Progression: Profile → Edit name/photo → Manage saved cards → Set notification preferences
+- Success: Profile updates persist; payment methods securely tokenized
+
+### Vendor Portal (Phase 3)
+
+**Vendor Authentication**
+- Functionality: Separate vendor registration, login, and dashboard access
+- Purpose: Enable local operators to manage their listings
+- Trigger: Vendor navigates to vendor.pulau.app or "Partner with Us"
+- Progression: Vendor signup → Business verification → Dashboard access
+- Success: Vendors can access separate portal with their own auth flow
+- Note: Requires production backend (Supabase) for secure vendor data isolation
+
+**Vendor Experience Management**
+- Functionality: Create, edit, publish experiences with photos, pricing, availability
+- Purpose: Enable vendors to self-serve their listings
+- Trigger: Vendor clicks "Add New Experience" in dashboard
+- Progression: Create form → Upload photos → Set pricing → Define availability → Publish
+- Success: Vendors can manage listings without admin intervention
+
+**Vendor Analytics**
+- Functionality: Revenue tracking, booking metrics, conversion funnels
+- Purpose: Help vendors optimize their listings
+- Trigger: Vendor views Analytics tab in dashboard
+- Success: Vendors understand their performance and can take action
+
+### Real-Time Features (Phase 3)
+
+**Real-Time Availability**
+- Functionality: Live availability updates on experience pages
+- Purpose: Prevent double-bookings and show accurate slot counts
+- Trigger: User views experience detail page
+- Success: Availability reflects current state within 1 second
+
+**Vendor-Customer Messaging**
+- Functionality: In-app messaging between travelers and operators
+- Purpose: Enable pre-booking questions and special requests
+- Trigger: User taps "Message Operator" on experience page
+- Success: Messages delivered in real-time; thread history preserved
+
+### Future Scalability (Phase 4)
+
+**Multi-Destination Architecture**
+- Functionality: Support for destinations beyond Bali
+- Purpose: Scale platform to additional markets
+- Trigger: User selects destination from selector
+- Success: Each destination has own experiences, currency, timezone
+
+---
+
 ## Design Direction
 
 The design should evoke the feeling of planning an adventure through a luxury travel magazine—aspirational yet authentic, polished yet warm. Think Cereal magazine meets Airbnb Experiences. Every interaction should feel considered, every image should inspire, every detail should build trust. The interface disappears into the content, letting Bali's natural beauty do the heavy lifting while providing effortless navigation.

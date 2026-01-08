@@ -5,8 +5,10 @@ import { Badge } from '@/components/ui/badge'
 import { Heart, Star, Plus, MapPin, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 
+import { experiences } from '@/lib/mockData'
+
 interface SavedScreenProps {
-  savedExperiences: Experience[]
+  savedIds?: string[]
   onToggleSave: (experienceId: string) => void
   onAddToTrip: (experience: Experience) => void
   onViewExperience: (experienceId: string) => void
@@ -15,18 +17,20 @@ interface SavedScreenProps {
 }
 
 export function SavedScreen({
-  savedExperiences,
+  savedIds = [],
   onToggleSave,
   onAddToTrip,
   onViewExperience,
   onNavigateHome,
   tripItemIds,
 }: SavedScreenProps) {
+  const savedExperiences = experiences.filter((e) => savedIds?.includes(e.id))
+
   if (savedExperiences.length === 0) {
     return (
       <div className="min-h-screen bg-background p-6 pb-24">
         <h1 className="font-display text-3xl font-bold mb-6">Saved Experiences</h1>
-        <motion.div 
+        <motion.div
           className="text-center py-16 space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,7 +69,7 @@ export function SavedScreen({
               transition={{ delay: index * 0.05 }}
             >
               <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div 
+                <div
                   className="relative cursor-pointer group"
                   onClick={() => onViewExperience(experience.id)}
                 >
@@ -83,7 +87,7 @@ export function SavedScreen({
                   >
                     <Heart className="h-5 w-5 fill-coral text-coral" />
                   </button>
-                  
+
                   {experience.tags?.includes('toprated') && (
                     <Badge className="absolute top-3 left-3 bg-yellow-500 text-white">
                       Top Rated
@@ -93,7 +97,7 @@ export function SavedScreen({
 
                 <div className="p-4 space-y-3">
                   <div>
-                    <h3 
+                    <h3
                       className="font-display font-semibold text-lg line-clamp-2 cursor-pointer hover:text-primary transition-colors"
                       onClick={() => onViewExperience(experience.id)}
                     >

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Trip } from '@/lib/types'
 import { ReviewStep } from './ReviewStep'
 import { TravelerDetailsStep } from './TravelerDetailsStep'
@@ -39,16 +40,45 @@ interface CheckoutFlowProps {
 }
 
 export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
-  const [currentStep, setCurrentStep] = useState<CheckoutStep>('review')
-  const [bookingData, setBookingData] = useState<Partial<BookingData>>({
+  const [session, setSession] = useKV<Partial<BookingData> & {
+    currentStep: CheckoutStep,
+    completedSteps: CheckoutStep[]
+  }>('pulau_checkout_session', {
+    currentStep: 'review',
+    completedSteps: [],
     additionalTravelers: [],
     specialRequests: '',
     paymentMethod: 'card',
     termsAccepted: false,
   })
 
+  const currentStep = session?.currentStep || 'review'
+  const completedSteps = session?.completedSteps || []
+
+  const updateSession = (updates: Partial<NonNullable<typeof session>>) => {
+    setSession((prev) => {
+      const base = prev || {
+        currentStep: 'review' as CheckoutStep,
+        completedSteps: [] as CheckoutStep[],
+        additionalTravelers: [],
+        specialRequests: '',
+        paymentMethod: 'card' as const,
+        termsAccepted: false,
+      }
+      const next = { ...base, ...updates }
+      return {
+        ...next,
+        currentStep: next.currentStep || 'review',
+        completedSteps: next.completedSteps || []
+      }
+    })
+  }
+
   const handleReviewContinue = () => {
-    setCurrentStep('details')
+    updateSession({
+      currentStep: 'details',
+      completedSteps: [...new Set([...completedSteps, 'review' as CheckoutStep])]
+    })
   }
 
   const handleDetailsContinue = (data: {
@@ -56,8 +86,11 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
     additionalTravelers: Omit<TravelerInfo, 'email' | 'phone' | 'countryCode'>[]
     specialRequests: string
   }) => {
-    setBookingData((prev) => ({ ...prev, ...data }))
-    setCurrentStep('payment')
+    updateSession({
+      ...data,
+      currentStep: 'payment',
+      completedSteps: [...new Set([...completedSteps, 'details' as CheckoutStep])]
+    })
   }
 
   const handlePaymentContinue = (data: {
@@ -66,22 +99,33 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
     cardDetails?: BookingData['cardDetails']
     termsAccepted: boolean
   }) => {
-    setBookingData((prev) => ({ ...prev, ...data }))
-    
+    updateSession({ ...data })
+
     setTimeout(() => {
       const bookingRef = `PUL-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`
-      setCurrentStep('confirmation')
+      updateSession({
+        currentStep: 'confirmation',
+        completedSteps: [...new Set([...completedSteps, 'payment' as CheckoutStep])]
+      })
       onComplete(bookingRef)
+      // We keep the session for the confirmation screen but it should be cleared when leaving
     }, 1500)
   }
 
   const handleStepBack = () => {
     if (currentStep === 'details') {
-      setCurrentStep('review')
+      updateSession({ currentStep: 'review' })
     } else if (currentStep === 'payment') {
-      setCurrentStep('details')
+      updateSession({ currentStep: 'details' })
     } else if (currentStep === 'review') {
       onBack()
+    }
+  }
+
+  const handleStepClick = (stepId: CheckoutStep) => {
+    // Only allow navigating to current or completed steps
+    if (stepId === currentStep || completedSteps.includes(stepId)) {
+      updateSession({ currentStep: stepId })
     }
   }
 
@@ -89,7 +133,11 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
     <div className="min-h-screen bg-background pb-24">
       {currentStep !== 'confirmation' && (
         <div className="sticky top-0 z-10 bg-card border-b">
-          <CheckoutProgress currentStep={currentStep} />
+          <CheckoutProgress
+            currentStep={currentStep}
+            completedSteps={completedSteps}
+            onStepClick={handleStepClick}
+          />
         </div>
       )}
 
@@ -101,9 +149,9 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
         <TravelerDetailsStep
           trip={trip}
           initialData={{
-            leadTraveler: bookingData.leadTraveler,
-            additionalTravelers: bookingData.additionalTravelers || [],
-            specialRequests: bookingData.specialRequests || '',
+            leadTraveler: session?.leadTraveler,
+            additionalTravelers: session?.additionalTravelers || [],
+            specialRequests: session?.specialRequests || '',
           }}
           onBack={handleStepBack}
           onContinue={handleDetailsContinue}
@@ -113,7 +161,7 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
       {currentStep === 'payment' && (
         <PaymentStep
           trip={trip}
-          bookingData={bookingData as BookingData}
+          bookingData={session as BookingData}
           onBack={handleStepBack}
           onContinue={handlePaymentContinue}
         />
@@ -122,7 +170,7 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
       {currentStep === 'confirmation' && (
         <ConfirmationStep
           trip={trip}
-          bookingData={bookingData as BookingData}
+          bookingData={session as BookingData}
           bookingRef={`PUL-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`}
         />
       )}

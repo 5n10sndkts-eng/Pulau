@@ -8,6 +8,7 @@ import { getExperiencesByCategory, filterExperiences, formatPrice, getRecommende
 import { categories } from '@/lib/mockData'
 import { ArrowLeft, Search, Clock, Users, Star, Heart, Plus } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { PerfectForYouBadge } from '@/components/ui/PerfectForYouBadge'
 
 interface CategoryBrowserProps {
   categoryId: string
@@ -44,19 +45,24 @@ export function CategoryBrowser({
   const allExperiences = getExperiencesByCategory(categoryId)
   const filteredExps = filterExperiences(allExperiences, activeFilter)
 
-  const recommendedExp = userPreferences
-    ? getRecommendedExperiences(categoryId, userPreferences.travelStyle, userPreferences.groupType)[0]
-    : null
+  const recommendedExps = userPreferences
+    ? getRecommendedExperiences(categoryId, userPreferences.travelStyles, userPreferences.groupType)
+    : []
+
+  // Top 3 IDs are "recommended"
+  const recommendedIds = recommendedExps.slice(0, 3).map(e => e.id)
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="sticky top-0 z-10 bg-card border-b">
         <div className="flex items-center gap-4 p-4">
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          <Button variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="font-display text-2xl font-bold flex-1">{category?.name}</h1>
-          <Button variant="ghost" size="icon">
+          <h1 className="font-display text-xl font-bold flex-1 text-center">
+            {categories.find(c => c.id === categoryId)?.name || 'Category'}
+          </h1>
+          <Button variant="ghost" size="icon" aria-label="Filter options">
             <Search className="w-5 h-5" />
           </Button>
         </div>
@@ -79,24 +85,7 @@ export function CategoryBrowser({
       </div>
 
       <div className="p-4 space-y-6">
-        {recommendedExp && activeFilter === 'all' && (
-          <Card className="p-4 bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-            <div className="flex items-start gap-2 mb-3">
-              <Star className="w-5 h-5 text-golden fill-golden" />
-              <div className="flex-1">
-                <h3 className="font-display font-semibold">Perfect for you</h3>
-                <p className="text-sm text-muted-foreground">Based on your preferences</p>
-              </div>
-            </div>
-            <ExperienceCard
-              experience={recommendedExp}
-              isSaved={savedExperiences.includes(recommendedExp.id)}
-              onSelect={() => onExperienceSelect(recommendedExp.id)}
-              onQuickAdd={() => onQuickAdd(recommendedExp)}
-              onToggleSave={() => onToggleSave(recommendedExp.id)}
-            />
-          </Card>
-        )}
+        {/* Recommended section removed in favor of badges on list items */}
 
         {filteredExps.length === 0 ? (
           <div className="text-center py-16 space-y-4">
@@ -114,6 +103,7 @@ export function CategoryBrowser({
                 key={exp.id}
                 experience={exp}
                 isSaved={savedExperiences.includes(exp.id)}
+                isRecommended={recommendedIds.includes(exp.id)}
                 onSelect={() => onExperienceSelect(exp.id)}
                 onQuickAdd={() => onQuickAdd(exp)}
                 onToggleSave={() => onToggleSave(exp.id)}
@@ -129,12 +119,14 @@ export function CategoryBrowser({
 function ExperienceCard({
   experience,
   isSaved,
+  isRecommended,
   onSelect,
   onQuickAdd,
   onToggleSave,
 }: {
   experience: Experience
   isSaved: boolean
+  isRecommended?: boolean
   onSelect: () => void
   onQuickAdd: () => void
   onToggleSave: () => void
@@ -149,16 +141,19 @@ function ExperienceCard({
       <Card className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
         <div className="relative" onClick={onSelect}>
           <div className="overflow-hidden">
-            <motion.img 
-              src={experience.images[0]} 
-              alt={experience.title} 
+            <motion.img
+              src={experience.images[0]}
+              alt={experience.title}
               className="w-full aspect-video object-cover"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             />
           </div>
-          <div className="absolute top-3 left-3">
-            <Badge variant="secondary" className="bg-white/95 backdrop-blur-sm shadow-sm">
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
+            {isRecommended && (
+              <PerfectForYouBadge />
+            )}
+            <Badge variant="secondary" className="bg-white/95 backdrop-blur-sm shadow-sm self-start">
               {experience.provider.name}
             </Badge>
           </div>
@@ -211,7 +206,7 @@ function ExperienceCard({
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide">From</p>
               <p className="font-display text-2xl font-bold">
-                {formatPrice(experience.price.amount)} 
+                {formatPrice(experience.price.amount)}
                 <span className="text-sm font-normal text-muted-foreground ml-1">/ {experience.price.per}</span>
               </p>
             </div>

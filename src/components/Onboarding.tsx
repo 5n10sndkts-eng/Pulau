@@ -1,10 +1,27 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { PremiumContainer } from '@/components/ui/premium-container'
 import { Calendar } from '@/components/ui/calendar'
 import { UserPreferences } from '@/lib/types'
-import { Mountain, Heart, Sparkles, Grid2X2, User, Users, UsersRound, Baby, Wallet, Gem, TrendingUp } from 'lucide-react'
-import { motion } from 'framer-motion'
+import {
+  Mountain,
+  Heart,
+  Sparkles,
+  Palmtree,
+  User,
+  Users,
+  UsersRound,
+  Baby,
+  Wallet,
+  Gem,
+  TrendingUp,
+  Check,
+  ArrowRight,
+  ArrowLeft
+} from 'lucide-react'
+import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
+import { fadeInUp, staggerContainer, scaleIn } from '@/components/ui/motion.variants'
 
 interface OnboardingProps {
   onComplete: (preferences: UserPreferences, dates?: { start: string; end: string }) => void
@@ -12,12 +29,22 @@ interface OnboardingProps {
 
 export function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(1)
-  const [preferences, setPreferences] = useState<UserPreferences>({})
+  const [preferences, setPreferences] = useState<UserPreferences>({
+    travelStyles: [],
+    groupType: undefined,
+    budget: undefined
+  })
+
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
 
-  const handleTravelStyleSelect = (style: 'adventure' | 'relaxation' | 'culture' | 'mix') => {
-    setPreferences({ ...preferences, travelStyle: style })
+  const handleTravelStyleSelect = (style: 'adventure' | 'relaxation' | 'culture' | 'wellness') => {
+    const current = preferences.travelStyles || []
+    if (current.includes(style)) {
+      setPreferences({ ...preferences, travelStyles: current.filter(s => s !== style) })
+    } else {
+      setPreferences({ ...preferences, travelStyles: [...current, style] })
+    }
   }
 
   const handleGroupTypeSelect = (type: 'solo' | 'couple' | 'friends' | 'family') => {
@@ -28,289 +55,258 @@ export function Onboarding({ onComplete }: OnboardingProps) {
     setPreferences({ ...preferences, budget })
   }
 
-  const handleContinue = () => {
-    if (step < 3) {
-      setStep(step + 1)
-    } else {
-      const dates =
-        startDate && endDate
-          ? {
-              start: startDate.toISOString().split('T')[0],
-              end: endDate.toISOString().split('T')[0],
-            }
-          : undefined
-      onComplete(preferences, dates)
+  const handleNext = () => {
+    if (step === 1 && (!preferences.travelStyles || preferences.travelStyles.length === 0)) {
+      toast.error('Please select at least one travel style')
+      return
     }
+    if (step === 2 && !preferences.groupType) {
+      toast.error('Who are you traveling with?')
+      return
+    }
+    setStep(prev => prev + 1)
   }
 
-  const handleSkipDates = () => {
-    onComplete(preferences)
-  }
+  const handleBack = () => setStep(prev => prev - 1)
 
-  if (step === 1) {
-    return (
-      <motion.div 
-        className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center p-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <div className="max-w-2xl w-full space-y-8 text-center">
-          <motion.div 
-            className="space-y-4"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <motion.div 
-              className="text-7xl mb-6"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            >
-              🏝️
-            </motion.div>
-            <motion.h1 
-              className="font-display text-5xl font-bold text-foreground"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              Welcome to Pulau
-            </motion.h1>
-            <motion.p 
-              className="font-display text-2xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              Build Your Bali Dream
-            </motion.p>
-            <motion.p 
-              className="text-lg text-muted-foreground max-w-md mx-auto"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              Discover authentic local experiences and create your perfect Bali adventure, one experience at a time.
-            </motion.p>
-          </motion.div>
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            <Button onClick={handleContinue} size="lg" className="text-lg px-12 py-6 h-auto shadow-xl">
-              Get Started
-            </Button>
-          </motion.div>
-        </div>
-      </motion.div>
-    )
-  }
+  const handleFinish = () => {
+    if (!preferences.budget) {
+      toast.error('Please select a budget level')
+      return
+    }
 
-  if (step === 2) {
-    return (
-      <div className="min-h-screen bg-background p-4 py-8">
-        <div className="max-w-3xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="font-display text-3xl font-bold">Tell us about your style</h2>
-            <p className="text-muted-foreground">Help us recommend the perfect experiences for you</p>
-          </div>
+    const dates = startDate && endDate
+      ? {
+        start: startDate.toISOString().split('T')[0] || '',
+        end: endDate.toISOString().split('T')[0] || '',
+      }
+      : undefined
 
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h3 className="font-display text-xl font-semibold">Travel Style</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.travelStyle === 'adventure' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleTravelStyleSelect('adventure')}
-                >
-                  <div className="text-center space-y-2">
-                    <Mountain className="w-8 h-8 mx-auto text-primary" />
-                    <p className="font-medium">Adventure</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.travelStyle === 'relaxation' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleTravelStyleSelect('relaxation')}
-                >
-                  <div className="text-center space-y-2">
-                    <Heart className="w-8 h-8 mx-auto text-accent" />
-                    <p className="font-medium">Relaxation</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.travelStyle === 'culture' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleTravelStyleSelect('culture')}
-                >
-                  <div className="text-center space-y-2">
-                    <Sparkles className="w-8 h-8 mx-auto text-golden" />
-                    <p className="font-medium">Culture</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.travelStyle === 'mix' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleTravelStyleSelect('mix')}
-                >
-                  <div className="text-center space-y-2">
-                    <Grid2X2 className="w-8 h-8 mx-auto text-primary" />
-                    <p className="font-medium">Mix of Everything</p>
-                  </div>
-                </Card>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-display text-xl font-semibold">Group Type</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.groupType === 'solo' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleGroupTypeSelect('solo')}
-                >
-                  <div className="text-center space-y-2">
-                    <User className="w-8 h-8 mx-auto text-primary" />
-                    <p className="font-medium">Solo</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.groupType === 'couple' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleGroupTypeSelect('couple')}
-                >
-                  <div className="text-center space-y-2">
-                    <Users className="w-8 h-8 mx-auto text-accent" />
-                    <p className="font-medium">Couple</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.groupType === 'friends' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleGroupTypeSelect('friends')}
-                >
-                  <div className="text-center space-y-2">
-                    <UsersRound className="w-8 h-8 mx-auto text-primary" />
-                    <p className="font-medium">Friends</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.groupType === 'family' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleGroupTypeSelect('family')}
-                >
-                  <div className="text-center space-y-2">
-                    <Baby className="w-8 h-8 mx-auto text-golden" />
-                    <p className="font-medium">Family</p>
-                  </div>
-                </Card>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-display text-xl font-semibold">Budget Feel</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.budget === 'budget' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleBudgetSelect('budget')}
-                >
-                  <div className="text-center space-y-2">
-                    <Wallet className="w-8 h-8 mx-auto text-primary" />
-                    <p className="font-medium">Budget-Conscious</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.budget === 'midrange' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleBudgetSelect('midrange')}
-                >
-                  <div className="text-center space-y-2">
-                    <TrendingUp className="w-8 h-8 mx-auto text-accent" />
-                    <p className="font-medium">Mid-Range</p>
-                  </div>
-                </Card>
-                <Card
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                    preferences.budget === 'luxury' ? 'ring-2 ring-primary bg-primary/5' : ''
-                  }`}
-                  onClick={() => handleBudgetSelect('luxury')}
-                >
-                  <div className="text-center space-y-2">
-                    <Gem className="w-8 h-8 mx-auto text-golden" />
-                    <p className="font-medium">Luxury</p>
-                  </div>
-                </Card>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-center pt-4">
-            <Button onClick={handleContinue} size="lg" className="px-12">
-              Continue
-            </Button>
-          </div>
-        </div>
-      </div>
-    )
+    onComplete(preferences, dates)
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 py-8">
-      <div className="max-w-2xl mx-auto space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="font-display text-3xl font-bold">When are you visiting?</h2>
-          <p className="text-muted-foreground">Select your arrival and departure dates</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
+      <AnimatePresence mode="wait">
+        {step === 1 && (
+          <motion.div
+            key="step1"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            exit={{ opacity: 0, x: -20 }}
+            className="w-full max-w-2xl"
+          >
+            <PremiumContainer variant="glass" className="p-8 md:p-12">
+              <motion.div variants={fadeInUp} className="text-center mb-10">
+                <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-3 block">Step 1 of 3</span>
+                <h1 className="text-4xl font-display font-bold mb-4">Your Bali Style?</h1>
+                <p className="text-muted-foreground text-lg">Select the vibes that speak to your soul</p>
+              </motion.div>
 
-        <Card className="p-6">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Arrival Date</label>
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-                disabled={(date) => date < new Date()}
-                className="rounded-md border"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Departure Date</label>
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setEndDate}
-                disabled={(date) => !startDate || date <= startDate}
-                className="rounded-md border"
-              />
-            </div>
-          </div>
-        </Card>
+              <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-4 mb-10">
+                {[
+                  { id: 'adventure', label: 'Adventure', icon: Mountain, color: 'text-primary' },
+                  { id: 'relaxation', label: 'Relaxation', icon: Heart, color: 'text-accent' },
+                  { id: 'culture', label: 'Culture', icon: Sparkles, color: 'text-golden' },
+                  { id: 'wellness', label: 'Wellness', icon: Palmtree, color: 'text-success' },
+                ].map((style) => (
+                  <button
+                    key={style.id}
+                    onClick={() => handleTravelStyleSelect(style.id as any)}
+                    className={`relative p-8 rounded-3xl border-2 transition-all duration-300 group overflow-hidden ${preferences.travelStyles?.includes(style.id as any)
+                      ? 'border-primary bg-primary/5 shadow-xl'
+                      : 'border-muted/20 bg-card/50 hover:border-primary/30 hover:bg-card hover:-translate-y-1'
+                      }`}
+                  >
+                    <div className="flex flex-col items-center gap-4 relative z-10">
+                      <div className={`p-4 rounded-2xl bg-background shadow-premium transition-transform duration-300 group-hover:scale-110 ${style.color}`}>
+                        <style.icon className="w-8 h-8" />
+                      </div>
+                      <span className="font-display font-bold text-lg">{style.label}</span>
+                    </div>
+                    {preferences.travelStyles?.includes(style.id as any) && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute top-4 right-4 bg-primary text-primary-foreground rounded-full p-1"
+                      >
+                        <Check className="w-3 h-3" />
+                      </motion.div>
+                    )}
+                  </button>
+                ))}
+              </motion.div>
 
-        <div className="flex flex-col gap-4">
-          <Button onClick={handleContinue} size="lg" disabled={!startDate || !endDate}>
-            Complete Setup
-          </Button>
-          <Button onClick={handleSkipDates} variant="ghost" size="lg">
-            Skip for now - Just browsing
-          </Button>
-        </div>
-      </div>
+              <motion.div variants={fadeInUp} className="flex justify-end">
+                <Button
+                  onClick={handleNext}
+                  variant="premium"
+                  size="lg"
+                  className="rounded-full px-10 h-14 text-lg"
+                >
+                  Continue
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </motion.div>
+            </PremiumContainer>
+          </motion.div>
+        )}
+
+        {step === 2 && (
+          <motion.div
+            key="step2"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            exit={{ opacity: 0, x: -20 }}
+            className="w-full max-w-2xl"
+          >
+            <PremiumContainer variant="glass" className="p-8 md:p-12">
+              <motion.div variants={fadeInUp} className="text-center mb-10">
+                <div className="flex items-center justify-between mb-6">
+                  <button onClick={handleBack} className="p-3 rounded-full hover:bg-muted/10 transition-colors">
+                    <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+                  </button>
+                  <span className="text-primary font-bold text-xs uppercase tracking-[0.2em]">Step 2 of 3</span>
+                  <div className="w-11" /> {/* Spacer */}
+                </div>
+                <h1 className="text-4xl font-display font-bold mb-4">Travel Party?</h1>
+                <p className="text-muted-foreground text-lg">Who are you exploring paradise with?</p>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-4 mb-10">
+                {[
+                  { id: 'solo', label: 'Solo', icon: User, color: 'text-primary' },
+                  { id: 'couple', label: 'Couple', icon: Users, color: 'text-accent' },
+                  { id: 'friends', label: 'Friends', icon: UsersRound, color: 'text-primary' },
+                  { id: 'family', label: 'Family', icon: Baby, color: 'text-golden' },
+                ].map((group) => (
+                  <button
+                    key={group.id}
+                    onClick={() => handleGroupTypeSelect(group.id as any)}
+                    className={`p-8 rounded-3xl border-2 transition-all duration-300 group ${preferences.groupType === group.id
+                      ? 'border-primary bg-primary/5 shadow-xl'
+                      : 'border-muted/20 bg-card/50 hover:border-primary/30 hover:bg-card hover:-translate-y-1'
+                      }`}
+                  >
+                    <div className="flex flex-col items-center gap-4">
+                      <div className={`p-4 rounded-2xl bg-background shadow-premium transition-transform duration-300 group-hover:scale-110 ${group.color}`}>
+                        <group.icon className="w-8 h-8" />
+                      </div>
+                      <span className="font-display font-bold text-lg">{group.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </motion.div>
+
+              <motion.div variants={fadeInUp} className="flex justify-end">
+                <Button
+                  onClick={handleNext}
+                  variant="premium"
+                  size="lg"
+                  className="rounded-full px-10 h-14 text-lg"
+                >
+                  Continue
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </motion.div>
+            </PremiumContainer>
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div
+            key="step3"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            exit={{ opacity: 0, x: -20 }}
+            className="w-full max-w-4xl"
+          >
+            <PremiumContainer variant="glass" className="p-8 md:p-12">
+              <motion.div variants={fadeInUp} className="text-center mb-10">
+                <div className="flex items-center justify-between mb-6">
+                  <button onClick={handleBack} className="p-3 rounded-full hover:bg-muted/10 transition-colors">
+                    <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+                  </button>
+                  <span className="text-primary font-bold text-xs uppercase tracking-[0.2em]">Final Step</span>
+                  <div className="w-11" />
+                </div>
+                <h1 className="text-4xl font-display font-bold mb-4">Budget & Dates</h1>
+                <p className="text-muted-foreground text-lg">Define your dream's scope</p>
+              </motion.div>
+
+              <div className="grid md:grid-cols-2 gap-12 mb-12">
+                <motion.div variants={fadeInUp} className="space-y-6">
+                  <h3 className="text-xl font-display font-bold flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-primary" />
+                    Budget Level
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    {[
+                      { id: 'budget', label: 'Budget-Conscious', icon: Wallet, color: 'text-success' },
+                      { id: 'midrange', label: 'Balanced', icon: TrendingUp, color: 'text-accent' },
+                      { id: 'luxury', label: 'Luxury', icon: Gem, color: 'text-golden' },
+                    ].map((budget) => (
+                      <button
+                        key={budget.id}
+                        onClick={() => handleBudgetSelect(budget.id as any)}
+                        className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all group ${preferences.budget === budget.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted/10 bg-card/30 hover:bg-card hover:border-primary/20'
+                          }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <budget.icon className={`w-5 h-5 ${budget.color}`} />
+                          <span className="font-bold">{budget.label}</span>
+                        </div>
+                        {preferences.budget === budget.id && <Check className="w-5 h-5 text-primary" />}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+
+                <motion.div variants={fadeInUp} className="space-y-6">
+                  <h3 className="text-xl font-display font-bold flex items-center gap-2">
+                    <Palmtree className="w-5 h-5 text-primary" />
+                    Trip Dates (Optional)
+                  </h3>
+                  <div className="glass-dark p-4 rounded-3xl border border-white/10 shadow-inner">
+                    <Calendar
+                      mode="range"
+                      selected={{ from: startDate, to: endDate }}
+                      onSelect={(range) => {
+                        setStartDate(range?.from)
+                        setEndDate(range?.to)
+                      }}
+                      disabled={(date) => date < new Date()}
+                      className="mx-auto"
+                    />
+                  </div>
+                </motion.div>
+              </div>
+
+              <motion.div variants={fadeInUp} className="flex flex-col items-center gap-4">
+                <Button
+                  onClick={handleFinish}
+                  variant="premium"
+                  size="lg"
+                  className="rounded-full px-16 h-16 text-xl w-full md:w-auto shadow-xl"
+                >
+                  Complete Setup
+                </Button>
+                <button
+                  onClick={handleFinish}
+                  className="text-muted-foreground text-sm hover:text-primary transition-colors font-medium border-b border-transparent hover:border-primary"
+                >
+                  Skip dates for now — manually plan later
+                </button>
+              </motion.div>
+            </PremiumContainer>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

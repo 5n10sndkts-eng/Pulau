@@ -4,9 +4,10 @@ import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { VendorSession } from '@/lib/types'
-import { vendors } from '@/lib/mockData'
 import { toast } from 'sonner'
 import { Building2, LogIn } from 'lucide-react'
+import { authService } from '@/lib/authService'
+import { vendorService } from '@/lib/vendorService'
 
 interface VendorLoginProps {
   onLogin: (session: VendorSession) => void
@@ -18,17 +19,25 @@ export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps)
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate authentication delay
-    setTimeout(() => {
-      // Mock authentication - find vendor by email
-      const vendor = vendors.find(v => v.businessEmail === email)
+    try {
+      // 1. Authenticate User
+      const user = await authService.login(email, password)
+
+      if (!user) {
+        toast.error('Invalid credentials')
+        setIsLoading(false)
+        return
+      }
+
+      // 2. Fetch Vendor Profile
+      const vendor = await vendorService.getVendorByUserId(user.id)
 
       if (!vendor) {
-        toast.error('Invalid credentials')
+        toast.error('No vendor account found for this user')
         setIsLoading(false)
         return
       }
@@ -45,19 +54,7 @@ export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps)
         return
       }
 
-      // Mock password check (in real app would verify hashed password)
-      // For demo, accept any password for demo vendor, 'password' for others
-      const isValidPassword = 
-        (vendor.id === 'prov_demo' && password.length > 0) ||
-        (password === 'password')
-
-      if (!isValidPassword) {
-        toast.error('Invalid credentials')
-        setIsLoading(false)
-        return
-      }
-
-      // Create vendor session
+      // 3. Create Session
       const session: VendorSession = {
         vendorId: vendor.id,
         businessName: vendor.businessName,
@@ -67,8 +64,12 @@ export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps)
 
       toast.success(`Welcome back, ${vendor.businessName}!`)
       onLogin(session)
+    } catch (err) {
+      console.error('Login error:', err)
+      toast.error('An error occurred during login')
+    } finally {
       setIsLoading(false)
-    }, 800)
+    }
   }
 
   return (

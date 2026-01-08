@@ -70,7 +70,7 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 space-y-6">
       <div className="flex items-center gap-4">
-        <Button type="button" variant="ghost" size="icon" onClick={onBack}>
+        <Button type="button" variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
@@ -162,9 +162,8 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           <button
             type="button"
             onClick={() => setPaymentMethod('card')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-              paymentMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-            }`}
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+              }`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -189,9 +188,8 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           <button
             type="button"
             onClick={() => setPaymentMethod('paypal')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-              paymentMethod === 'paypal' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-            }`}
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'paypal' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+              }`}
           >
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
@@ -204,15 +202,14 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           <button
             type="button"
             onClick={() => setPaymentMethod('applepay')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-              paymentMethod === 'applepay'
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'applepay'
                 ? 'border-primary bg-primary/5'
                 : 'border-border hover:border-primary/50'
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded bg-black flex items-center justify-center text-white text-xs font-bold">
-                
+
               </div>
               <span className="font-semibold">Apple Pay</span>
             </div>

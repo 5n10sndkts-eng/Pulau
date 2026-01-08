@@ -1,54 +1,57 @@
-import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useState, useEffect } from 'react'
 import { Camera, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import type { User as UserType } from '@/lib/types'
+import { useAuth } from '@/contexts/AuthContext'
+import { User as UserType } from '@/lib/types'
 
 interface EditProfileScreenProps {
   onBack: () => void
 }
 
 export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
-  const [user, setUser] = useKV<UserType>('user', {
-    id: '',
-    preferences: {},
-    saved: [],
-    currency: 'USD',
-    language: 'en',
-  })
+  const { user, updateUser } = useAuth()
 
-  const safeUser = user || {
-    id: '',
-    preferences: {},
-    saved: [],
-    currency: 'USD',
-    language: 'en',
-  }
-
-  const [firstName, setFirstName] = useState(safeUser.firstName || '')
-  const [lastName, setLastName] = useState(safeUser.lastName || '')
-  const [email, setEmail] = useState(safeUser.email || '')
+  // Initialize form state from user props
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
 
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || user.name.split(' ')[0] || '')
+      // improve last name extraction
+      setLastName(user.lastName || user.name.split(' ').slice(1).join(' ') || '')
+      setEmail(user.email || '')
+    }
+  }, [user])
+
   const handleSave = () => {
-    setUser((current) => {
-      const base = current || {
-        id: '',
-        preferences: {},
-        saved: [],
-        currency: 'USD',
-        language: 'en',
-      }
-      return {
-        ...base,
-        firstName,
-        lastName,
-        email,
-      }
-    })
+    if (!user) return
+
+    const updatedUser: UserType = {
+      ...user,
+      firstName,
+      lastName,
+      name: `${firstName} ${lastName}`.trim(),
+      email, // Email change usually requires verification, but allowing update here for simplicity
+    }
+
+    updateUser(updatedUser)
     toast.success('Profile updated')
     onBack()
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Please log in to edit your profile.</p>
+        <Button onClick={onBack} variant="link">Go Back</Button>
+      </div>
+    )
   }
 
   return (
@@ -68,8 +71,12 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
       <div className="container max-w-2xl space-y-6 py-6">
         <div className="flex justify-center">
           <div className="relative">
-            <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center">
-              <User className="h-12 w-12 text-muted-foreground" />
+            <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-12 w-12 text-muted-foreground" />
+              )}
             </div>
             <Button
               size="sm"
@@ -110,9 +117,10 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@example.com"
+            // Disable email editing if complex flow needed, but user might want to simple edit here
             />
             <p className="text-xs text-muted-foreground">
-              Contact support to change your email address
+              Contact support to change your email address securely.
             </p>
           </div>
 
