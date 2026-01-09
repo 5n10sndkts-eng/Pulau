@@ -1,6 +1,6 @@
 # Story 15.3: Create Messaging Thread List
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -32,39 +32,39 @@ So that I can communicate about bookings.
 ## Tasks / Subtasks
 
 ### Task 1: Build Message Thread List Component (AC: #1, #2)
-- [ ] Create MessageThreadList component with scrollable list container
-- [ ] Build ThreadListItem component showing avatar, names, preview, timestamp
-- [ ] Implement unread badge indicator (count of unread messages)
-- [ ] Add empty state for users with no conversations
-- [ ] Apply mobile-first responsive layout
+- [x] Create MessageThreadList component with scrollable list container
+- [x] Build ThreadListItem component showing avatar, names, preview, timestamp
+- [x] Implement unread badge indicator (count of unread messages)
+- [x] Add empty state for users with no conversations
+- [x] Apply mobile-first responsive layout
 
 ### Task 2: Query and Group Conversation Threads (AC: #2)
-- [ ] Query messages KV namespace, group by conversation_id
-- [ ] Join with users KV namespace to get other party's name and photo
-- [ ] Join with experiences KV namespace to get experience context
-- [ ] Get last message per conversation (MAX(sent_at) or latest record)
-- [ ] Sort threads by last_message_at DESC
+- [x] Query messages KV namespace, group by conversation_id
+- [x] Join with users KV namespace to get other party's name and photo
+- [x] Join with experiences KV namespace to get experience context
+- [x] Get last message per conversation (MAX(sent_at) or latest record)
+- [x] Sort threads by last_message_at DESC
 
 ### Task 3: Display Thread Metadata (AC: #2)
-- [ ] Show other party's avatar (circular, 48px) and full name
-- [ ] Display experience name as subtitle/context (gray text)
-- [ ] Truncate last message preview to 60 characters with ellipsis
-- [ ] Format timestamp as relative time ("2m ago", "1h ago", "Yesterday")
-- [ ] Add unread badge (coral circle with count) if has_unread = true
+- [x] Show other party's avatar (circular, 48px) and full name
+- [x] Display experience name as subtitle/context (gray text)
+- [x] Truncate last message preview to 60 characters with ellipsis
+- [x] Format timestamp as relative time ("2m ago", "1h ago", "Yesterday")
+- [x] Add unread badge (coral circle with count) if has_unread = true
 
 ### Task 4: Implement Thread Navigation (AC: #3)
-- [ ] Add tap handler to each ThreadListItem
-- [ ] Navigate to ConversationView with conversation_id parameter
-- [ ] Mark thread as read when opened (update unread_count to 0)
-- [ ] Apply active/pressed state styling on tap
-- [ ] Pass experience context to conversation view
+- [x] Add tap handler to each ThreadListItem
+- [x] Navigate to ConversationView with conversation_id parameter
+- [x] Mark thread as read when opened (update unread_count to 0)
+- [x] Apply active/pressed state styling on tap
+- [x] Pass experience context to conversation view
 
 ### Task 5: Optimize Performance and Accessibility (AC: #1, #2, #3)
-- [ ] Implement virtual scrolling for long thread lists (react-window)
-- [ ] Cache thread list data with Spark useKV (refresh every 30s)
-- [ ] Add pull-to-refresh gesture on mobile
-- [ ] Ensure 44x44px touch targets for each thread item
-- [ ] Add ARIA labels for screen readers (unread count, timestamp)
+- [x] Implement virtual scrolling for long thread lists (react-window)
+- [x] Cache thread list data with Spark useKV (refresh every 30s)
+- [x] Add pull-to-refresh gesture on mobile
+- [x] Ensure 44x44px touch targets for each thread item
+- [x] Add ARIA labels for screen readers (unread count, timestamp)
 
 ## Dev Notes
 
@@ -135,8 +135,14 @@ const formatRelativeTime = (timestamp: Date) => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

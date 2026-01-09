@@ -597,10 +597,12 @@ export function checkForConflicts(items: TripItem[]): Conflict[] {
       const durationA = expA.duration.includes('Full') ? 8 : 2
       const durationB = expB.duration.includes('Full') ? 8 : 2
 
-      const startA = parseInt(itemA.time.split(':')[0]) + parseInt(itemA.time.split(':')[1]) / 60
+      const [hoursA, minsA] = itemA.time.split(':')
+      const startA = parseInt(hoursA ?? '0') + parseInt(minsA ?? '0') / 60
       const endA = startA + durationA
 
-      const startB = parseInt(itemB.time.split(':')[0]) + parseInt(itemB.time.split(':')[1]) / 60
+      const [hoursB, minsB] = itemB.time.split(':')
+      const startB = parseInt(hoursB ?? '0') + parseInt(minsB ?? '0') / 60
       const endB = startB + durationB
 
       if (startA < endB && startB < endA) {
@@ -629,7 +631,8 @@ export function findNextAvailableSlot(
     const hasOverlap = existingItems.some(item => {
       const exp = getExperienceById(item.experienceId, experiences)
       const itemDur = exp?.duration.includes('Full') ? 8 : 2
-      const itemStart = parseInt(item.time.split(':')[0]) + parseInt(item.time.split(':')[1]) / 60
+      const [hrs, mins] = item.time.split(':')
+      const itemStart = parseInt(hrs ?? '0') + parseInt(mins ?? '0') / 60
       const itemEnd = itemStart + itemDur
 
       return slotStart < itemEnd && itemStart < slotEnd

@@ -1,6 +1,6 @@
 # Story 6.6: Display "What's Included" Section
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -21,34 +21,34 @@ so that I know what I'm paying for.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create WhatsIncluded component (AC: #1, #5)
-  - [ ] Create `src/components/experience/WhatsIncluded.tsx`
-  - [ ] Accept experienceId or inclusions array as prop
-  - [ ] White card background with shadow
-  - [ ] 20px padding, 12px border radius
-  - [ ] Section header: "What's Included" (bold, 20px)
-- [ ] Task 2: Build Included items list (AC: #1, #2, #4)
-  - [ ] Filter inclusions where is_included = true
-  - [ ] Display each item with green checkmark icon (Check)
-  - [ ] Checkmark color: success green (#27AE60)
-  - [ ] Item text next to icon
-  - [ ] Vertical list layout
-- [ ] Task 3: Build Not Included items list (AC: #1, #3, #4)
-  - [ ] Add "Not Included" subheader
-  - [ ] Filter inclusions where is_included = false
-  - [ ] Display each item with X icon
-  - [ ] X icon color: muted gray or coral
-  - [ ] Clear visual separation from included items
-- [ ] Task 4: Handle data and ordering (AC: #2, #3, #6)
-  - [ ] Fetch experience_inclusions by experience_id
-  - [ ] Separate into included/excluded arrays
-  - [ ] Maintain order from created_at or display_order
-  - [ ] Handle empty states (no inclusions/exclusions)
-- [ ] Task 5: Style and layout
-  - [ ] Vertical spacing between items (12px)
-  - [ ] Divider between included and not included sections
-  - [ ] Icon aligned left, text wraps as needed
-  - [ ] Responsive padding on mobile
+- [x] Task 1: Create WhatsIncluded component (AC: #1, #5)
+  - [x] Create `src/components/experience/WhatsIncluded.tsx`
+  - [x] Accept experienceId or inclusions array as prop
+  - [x] White card background with shadow
+  - [x] 20px padding, 12px border radius
+  - [x] Section header: "What's Included" (bold, 20px)
+- [x] Task 2: Build Included items list (AC: #1, #2, #4)
+  - [x] Filter inclusions where is_included = true
+  - [x] Display each item with green checkmark icon (Check)
+  - [x] Checkmark color: success green (#27AE60)
+  - [x] Item text next to icon
+  - [x] Vertical list layout
+- [x] Task 3: Build Not Included items list (AC: #1, #3, #4)
+  - [x] Add "Not Included" subheader
+  - [x] Filter inclusions where is_included = false
+  - [x] Display each item with X icon
+  - [x] X icon color: muted gray or coral
+  - [x] Clear visual separation from included items
+- [x] Task 4: Handle data and ordering (AC: #2, #3, #6)
+  - [x] Fetch experience_inclusions by experience_id
+  - [x] Separate into included/excluded arrays
+  - [x] Maintain order from created_at or display_order
+  - [x] Handle empty states (no inclusions/exclusions)
+- [x] Task 5: Style and layout
+  - [x] Vertical spacing between items (12px)
+  - [x] Divider between included and not included sections
+  - [x] Icon aligned left, text wraps as needed
+  - [x] Responsive padding on mobile
 
 ## Dev Notes
 
@@ -66,9 +66,15 @@ so that I know what I'm paying for.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

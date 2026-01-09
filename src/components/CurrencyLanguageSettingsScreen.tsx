@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { DollarSign, Globe } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -11,6 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
+import { isRtl } from '@/lib/i18n'
 import type { User } from '@/lib/types'
 
 interface CurrencyLanguageSettingsScreenProps {
@@ -25,61 +28,70 @@ const currencies = [
   { code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp' },
   { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' },
   { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+  { code: 'SAR', name: 'Saudi Riyal', symbol: 'ر.س' },
 ]
 
 const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'id', name: 'Bahasa Indonesia' },
-  { code: 'zh', name: '中文 (Chinese)' },
-  { code: 'ja', name: '日本語 (Japanese)' },
-  { code: 'ko', name: '한국어 (Korean)' },
-  { code: 'es', name: 'Español (Spanish)' },
-  { code: 'fr', name: 'Français (French)' },
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'zh', name: 'Chinese', nativeName: '中文' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+  { code: 'fr', name: 'French', nativeName: 'Français' },
+  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
+  { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+  { code: 'ko', name: 'Korean', nativeName: '한국어' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español' },
 ]
 
 export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSettingsScreenProps) {
-  const [user, setUser] = useKV<User>('user', {
-    id: '',
-    preferences: {},
-    saved: [],
-    currency: 'USD',
-    language: 'en',
-  })
+  const { t, i18n } = useTranslation()
 
-  const safeUser = user || {
+  const defaultUser: User = {
     id: '',
+    name: '',
+    email: '',
     preferences: {},
     saved: [],
     currency: 'USD',
     language: 'en',
   }
 
+  const [user, setUser] = useKV<User>('user', defaultUser)
+
+  const safeUser = user || defaultUser
+
+  // Sync i18n language with user preference on mount
+  useEffect(() => {
+    if (safeUser.language && safeUser.language !== i18n.language) {
+      i18n.changeLanguage(safeUser.language)
+    }
+  }, [safeUser.language, i18n])
+
+  // Update document direction for RTL languages
+  useEffect(() => {
+    const dir = isRtl(i18n.language) ? 'rtl' : 'ltr'
+    document.documentElement.dir = dir
+    document.documentElement.lang = i18n.language
+  }, [i18n.language])
+
   const handleCurrencyChange = (currency: string) => {
     setUser((current) => {
-      const base = current || {
-        id: '',
-        preferences: {},
-        saved: [],
-        currency: 'USD',
-        language: 'en',
-      }
+      const base = current || defaultUser
       return { ...base, currency }
     })
-    toast.success('Currency updated')
+    toast.success(t('settings.currencyUpdated'))
   }
 
   const handleLanguageChange = (language: string) => {
     setUser((current) => {
-      const base = current || {
-        id: '',
-        preferences: {},
-        saved: [],
-        currency: 'USD',
-        language: 'en',
-      }
+      const base = current || defaultUser
       return { ...base, language }
     })
-    toast.success('Language updated')
+    // Change i18n language immediately
+    i18n.changeLanguage(language)
+    // Store in localStorage for persistence
+    localStorage.setItem('pulau-language', language)
+    toast.success(t('settings.languageUpdated'))
   }
 
   return (
@@ -87,9 +99,9 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
       <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
         <div className="container flex items-center gap-4 py-4">
           <Button variant="ghost" size="sm" onClick={onBack}>
-            ← Back
+            ← {t('common.back')}
           </Button>
-          <h1 className="font-display text-2xl font-semibold">Currency & Language</h1>
+          <h1 className="font-display text-2xl font-semibold">{t('profile.currencyLanguage')}</h1>
         </div>
       </div>
 
@@ -99,17 +111,17 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
             <div className="flex items-center gap-3">
               <DollarSign className="h-6 w-6 text-primary" />
               <div>
-                <CardTitle>Currency</CardTitle>
-                <CardDescription>Choose your preferred currency for pricing</CardDescription>
+                <CardTitle>{t('settings.currency')}</CardTitle>
+                <CardDescription>{t('settings.currencyDescription')}</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="currency">Preferred Currency</Label>
+              <Label htmlFor="currency">{t('settings.preferredCurrency')}</Label>
               <Select value={safeUser.currency} onValueChange={handleCurrencyChange}>
                 <SelectTrigger id="currency">
-                  <SelectValue placeholder="Select currency" />
+                  <SelectValue placeholder={t('settings.preferredCurrency')} />
                 </SelectTrigger>
                 <SelectContent>
                   {currencies.map((currency) => (
@@ -120,7 +132,7 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
-                Prices will be displayed in your selected currency
+                {t('settings.priceDisplayNote')}
               </p>
             </div>
           </CardContent>
@@ -131,28 +143,28 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
             <div className="flex items-center gap-3">
               <Globe className="h-6 w-6 text-primary" />
               <div>
-                <CardTitle>Language</CardTitle>
-                <CardDescription>Choose your preferred language</CardDescription>
+                <CardTitle>{t('settings.language')}</CardTitle>
+                <CardDescription>{t('settings.languageDescription')}</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="language">Preferred Language</Label>
+              <Label htmlFor="language">{t('settings.preferredLanguage')}</Label>
               <Select value={safeUser.language} onValueChange={handleLanguageChange}>
                 <SelectTrigger id="language">
-                  <SelectValue placeholder="Select language" />
+                  <SelectValue placeholder={t('settings.preferredLanguage')} />
                 </SelectTrigger>
                 <SelectContent>
                   {languages.map((language) => (
                     <SelectItem key={language.code} value={language.code}>
-                      {language.name}
+                      {language.nativeName} ({language.name})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
-                The app interface will be displayed in your selected language
+                {t('settings.languageDisplayNote')}
               </p>
             </div>
           </CardContent>

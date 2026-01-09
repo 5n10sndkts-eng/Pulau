@@ -1,6 +1,6 @@
 # Story 13.2: Create Edit Profile Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -47,49 +47,49 @@ So that my account details are current.
 ## Tasks / Subtasks
 
 ### Task 1: Create EditProfile Component (AC: #1, #2)
-- [ ] Create `EditProfile` component in `src/pages/EditProfile.tsx`
-- [ ] Pre-populate form with current user data from KV store
-- [ ] Add "Save Changes" button at bottom of form
-- [ ] Add back/cancel button using React Router navigation
-- [ ] Set page title to "Edit Profile" (using document.title or header component)
+- [x] Create `EditProfile` component in `src/pages/EditProfile.tsx`
+- [x] Pre-populate form with current user data from KV store
+- [x] Add "Save Changes" button at bottom of form
+- [x] Add back/cancel button using React Router navigation
+- [x] Set page title to "Edit Profile" (using document.title or header component)
 
 ### Task 2: Build Form with React Hook Form (AC: #2)
-- [ ] Set up React Hook Form with Zod validation
-- [ ] Create form fields: firstName, lastName, phoneNumber
-- [ ] Display email field as read-only with helper text "Contact support to change email"
-- [ ] Add validation rules (required fields, phone format)
-- [ ] Show validation errors inline using Tailwind error states
+- [x] Set up React Hook Form with Zod validation
+- [x] Create form fields: firstName, lastName, phoneNumber
+- [x] Display email field as read-only with helper text "Contact support to change email"
+- [x] Add validation rules (required fields, phone format)
+- [x] Show validation errors inline using Tailwind error states
 
 ### Task 3: Implement Photo Selection (AC: #3)
-- [ ] Add HTML file input with `accept="image/*"` for photo selection
-- [ ] Create Radix UI DropdownMenu with options: "Upload Photo", "Remove Photo"
-- [ ] Handle file input change event to read selected image
-- [ ] Add camera capture option with `capture="user"` attribute (mobile)
-- [ ] Show current profile photo with overlay button to trigger dropdown
+- [x] Add HTML file input with `accept="image/*"` for photo selection
+- [x] Create Radix UI DropdownMenu with options: "Upload Photo", "Remove Photo"
+- [x] Handle file input change event to read selected image
+- [x] Add camera capture option with `capture="user"` attribute (mobile)
+- [x] Show current profile photo with overlay button to trigger dropdown
 
 ### Task 4: Add Photo Processing and Storage (AC: #4)
-- [ ] Convert selected image to base64 data URL for preview
-- [ ] Implement client-side image cropping to square aspect ratio using Canvas API
-- [ ] Resize image to 500x500px for optimization
-- [ ] Store base64 image data in KV store under key `user:profile:photo:{userId}`
-- [ ] Show upload progress indicator during processing
-- [ ] Update profilePhotoUrl in user profile data after processing
+- [x] Convert selected image to base64 data URL for preview
+- [x] Implement client-side image cropping to square aspect ratio using Canvas API
+- [x] Resize image to 500x500px for optimization
+- [x] Store base64 image data in KV store under key `user:profile:photo:{userId}`
+- [x] Show upload progress indicator during processing
+- [x] Update profilePhotoUrl in user profile data after processing
 
 ### Task 5: Implement Save Functionality (AC: #5)
-- [ ] Create updateProfile function using useKV hook
-- [ ] Validate form before saving using React Hook Form validation
-- [ ] Update KV store with key `user:profile:{userId}` with new values
-- [ ] Handle update errors with toast notification component
-- [ ] Show success toast "Profile updated" using Radix UI Toast
-- [ ] Navigate back to profile screen using `navigate('/profile')`
-- [ ] Trigger re-fetch of profile data to refresh display
+- [x] Create updateProfile function using useKV hook
+- [x] Validate form before saving using React Hook Form validation
+- [x] Update KV store with key `user:profile:{userId}` with new values
+- [x] Handle update errors with toast notification component
+- [x] Show success toast "Profile updated" using Radix UI Toast
+- [x] Navigate back to profile screen using `navigate('/profile')`
+- [x] Trigger re-fetch of profile data to refresh display
 
 ### Task 6: Add Loading and Error States
-- [ ] Show skeleton placeholders while loading current profile data from KV
-- [ ] Display loading spinner during save operation
-- [ ] Handle network errors gracefully with error boundaries
-- [ ] Show validation errors for each field with Tailwind error styling
-- [ ] Prevent double-submission during save with disabled button state
+- [x] Show skeleton placeholders while loading current profile data from KV
+- [x] Display loading spinner during save operation
+- [x] Handle network errors gracefully with error boundaries
+- [x] Show validation errors for each field with Tailwind error styling
+- [x] Prevent double-submission during save with disabled button state
 
 ## Dev Notes
 
@@ -424,8 +424,14 @@ const EditProfile = () => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

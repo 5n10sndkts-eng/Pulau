@@ -1,6 +1,6 @@
 # Story 9.3: Provide Smart Conflict Resolution Suggestions
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -29,39 +29,39 @@ So that I can quickly fix my itinerary.
 ## Tasks / Subtasks
 
 ### Task 1: Create ConflictResolutionSheet component (AC: #1)
-- [ ] Build bottom sheet component using shadcn/ui Sheet
-- [ ] Display conflict details: both item names and overlap duration
-- [ ] List 4 resolution options as action buttons
-- [ ] Style with clear visual hierarchy
-- [ ] Add "Cancel" button to close without action
+- [x] Build bottom sheet component using shadcn/ui Sheet
+- [x] Display conflict details: both item names and overlap duration
+- [x] List 4 resolution options as action buttons
+- [x] Style with clear visual hierarchy
+- [x] Add "Cancel" button to close without action
 
 ### Task 2: Implement time suggestion algorithm (AC: #1)
-- [ ] Create findNextAvailableSlot function
-- [ ] Calculate time gaps in the day's schedule
-- [ ] Find first gap that fits the item's duration
-- [ ] Suggest moving to gap start time
-- [ ] Handle case: no available slots (suggest next day)
+- [x] Create findNextAvailableSlot function
+- [x] Calculate time gaps in the day's schedule
+- [x] Find first gap that fits the item's duration
+- [x] Suggest moving to gap start time
+- [x] Handle case: no available slots (suggest next day)
 
 ### Task 3: Build resolution action handlers (AC: #2)
-- [ ] Implement moveToSuggestedTime: update item's scheduled_time
-- [ ] Implement moveTo AnotherDay: show date picker
-- [ ] Implement removeFromTrip: delete item from trip
-- [ ] Each action updates trip via useTripManagement
-- [ ] Close bottom sheet after action applied
+- [x] Implement moveToSuggestedTime: update item's scheduled_time
+- [x] Implement moveTo AnotherDay: show date picker
+- [x] Implement removeFromTrip: delete item from trip
+- [x] Each action updates trip via useTripManagement
+- [x] Close bottom sheet after action applied
 
 ### Task 4: Re-run conflict detection after resolution (AC: #2)
-- [ ] Trigger conflict detection after any schedule change
-- [ ] Remove resolved conflict from conflicts array
-- [ ] Check if new conflicts were created by resolution
-- [ ] Display updated conflict banners or success state
-- [ ] Show toast: "Conflict resolved" or "New conflict detected"
+- [x] Trigger conflict detection after any schedule change
+- [x] Remove resolved conflict from conflicts array
+- [x] Check if new conflicts were created by resolution
+- [x] Display updated conflict banners or success state
+- [x] Show toast: "Conflict resolved" or "New conflict detected"
 
 ### Task 5: Add suggested time formatting and validation (AC: #1)
-- [ ] Format suggested times in 12-hour format (e.g., "3:00 PM")
-- [ ] Validate suggestions: ensure within reasonable hours (6 AM - 11 PM)
-- [ ] Show duration needed in suggestion text
-- [ ] Handle multiple conflicts for same item
-- [ ] Provide fallback if no good suggestions available
+- [x] Format suggested times in 12-hour format (e.g., "3:00 PM")
+- [x] Validate suggestions: ensure within reasonable hours (6 AM - 11 PM)
+- [x] Show duration needed in suggestion text
+- [x] Handle multiple conflicts for same item
+- [x] Provide fallback if no good suggestions available
 
 ## Dev Notes
 
@@ -186,8 +186,14 @@ ConflictResolutionSheet
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

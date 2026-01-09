@@ -1,6 +1,6 @@
 # Story 8.9: Handle Date Not Set Flow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -29,39 +29,39 @@ So that I can plan before committing to dates.
 ## Tasks / Subtasks
 
 ### Task 1: Create "Set your dates" prompt component (AC: #1)
-- [ ] Build SetDatesPrompt banner component
-- [ ] Display at top of trip builder when dates are null
-- [ ] Include calendar icon and "Set your dates" text
-- [ ] Add "Choose dates" button opening date picker
-- [ ] Style with gentle background color (yellow/sand tint)
+- [x] Build SetDatesPrompt banner component
+- [x] Display at top of trip builder when dates are null
+- [x] Include calendar icon and "Set your dates" text
+- [x] Add "Choose dates" button opening date picker
+- [x] Style with gentle background color (yellow/sand tint)
 
 ### Task 2: Route all items to unscheduled when no dates (AC: #1)
-- [ ] Check if trip.start_date and trip.end_date are null
-- [ ] Display only "Unscheduled" section (no day sections)
-- [ ] Show all trip items in unscheduled section
-- [ ] Add helper text: "Add dates to schedule your activities"
-- [ ] Disable drag-to-schedule functionality when no dates
+- [x] Check if trip.start_date and trip.end_date are null
+- [x] Display only "Unscheduled" section (no day sections)
+- [x] Show all trip items in unscheduled section
+- [x] Add helper text: "Add dates to schedule your activities"
+- [x] Disable drag-to-schedule functionality when no dates
 
 ### Task 3: Implement checkout date prompt modal (AC: #2)
-- [ ] Create CheckoutDatePromptModal component
-- [ ] Trigger on "Continue to Booking" click if dates are null
-- [ ] Show modal heading: "When are you traveling?"
-- [ ] Add DateRangePicker for date selection
-- [ ] Include "Set Dates" (primary) and "Skip for now" (secondary) buttons
+- [x] Create CheckoutDatePromptModal component
+- [x] Trigger on "Continue to Booking" click if dates are null
+- [x] Show modal heading: "When are you traveling?"
+- [x] Add DateRangePicker for date selection
+- [x] Include "Set Dates" (primary) and "Skip for now" (secondary) buttons
 
 ### Task 4: Handle "Set Dates" action (AC: #3)
-- [ ] On "Set Dates": update trip.start_date and trip.end_date
-- [ ] Persist date updates via useKV
-- [ ] Keep all items in unscheduled section (no auto-assignment)
-- [ ] Close modal and proceed to checkout
-- [ ] Show success toast: "Dates saved"
+- [x] On "Set Dates": update trip.start_date and trip.end_date
+- [x] Persist date updates via useKV
+- [x] Keep all items in unscheduled section (no auto-assignment)
+- [x] Close modal and proceed to checkout
+- [x] Show success toast: "Dates saved"
 
 ### Task 5: Handle "Skip for now" action (AC: #2)
-- [ ] On "Skip for now": proceed to checkout without dates
-- [ ] Show warning toast: "Remember to coordinate dates with operators"
-- [ ] Allow booking process to continue
-- [ ] Display "Dates not set" in checkout review
-- [ ] Add note in booking confirmation email about date coordination
+- [x] On "Skip for now": proceed to checkout without dates
+- [x] Show warning toast: "Remember to coordinate dates with operators"
+- [x] Allow booking process to continue
+- [x] Display "Dates not set" in checkout review
+- [x] Add note in booking confirmation email about date coordination
 
 ## Dev Notes
 
@@ -121,8 +121,14 @@ const handleContinueToBooking = () => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

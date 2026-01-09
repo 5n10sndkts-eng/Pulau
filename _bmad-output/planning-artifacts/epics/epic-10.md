@@ -2,13 +2,17 @@
 
 **Goal:** Travelers complete secure bookings through guided 4-step checkout (Review → Traveler Details → Payment → Confirmation) with form validation, session persistence, payment processing, and success animations.
 
+**Phase:** Phase 1 (MVP)
+**Dependencies:** Epic 8 (Trip Builder), Epic 2 (Mock Auth)
+**Storage:** **Spark KV Store** (`pulau_bookings_{userId}`)
+
 ### Story 10.1: Create Checkout Flow Navigation
 As a traveler ready to book, I want a clear multi-step checkout process, so that I can complete my booking with confidence.
 
 **Acceptance Criteria:**
 - **Given** checkout initiates **Then** I see a 4-step progress indicator at the top
 - **And** I can navigate back to completed steps but cannot skip ahead
-- **And** checkout state persists through page refreshes
+- **And** checkout state persists through page refreshes using KV store
 
 ### Story 10.2: Build Step 1 - Trip Review Screen
 As a traveler in checkout, I want to review my complete trip before providing details, so that I can confirm my selections.
@@ -22,7 +26,7 @@ As a traveler in checkout, I want to review my complete trip before providing de
 As a traveler in checkout, I want to enter my contact and traveler information, so that operators can reach me.
 
 **Acceptance Criteria:**
-- **Given** Step 2 (Traveler Details) **Then** form displays required contact fields (pre-filled if logged in)
+- **Given** Step 2 (Traveler Details) **Then** form displays required contact fields (pre-filled if logged in via Epic 2)
 - **And** form uses Zod validation for required fields
 - **And** validation errors display inline; "Continue" button enables ONLY when valid
 
@@ -34,39 +38,24 @@ As a traveler in checkout, I want to enter payment information securely, so that
 - **When** adding new card **Then** brand detection (Visa/MC) and auto-formatting apply
 - **And** CVV re-entry is required for saved cards
 
-### Story 10.5: Implement Payment Processing
+### Story 10.5: Implement Payment Processing (Mock)
 As a traveler submitting payment, I want my payment processed securely, so that my booking is confirmed.
 
-**MVP Note:** For MVP, payment processing is **mocked**. The system simulates a 2-second delay and always succeeds. Real payment gateway integration (Stripe) is deferred to Epic 20 (Backend Integration).
+**MVP Note:** Payment processing is **mocked**. Real payment gateway integration (Stripe) is **deferred** (see Backlog).
 
 **Acceptance Criteria:**
 
 *Happy Path:*
 - **Given** "Pay" button tapped **When** processing **Then** button shows spinner with "Processing..."; all inputs disabled
 - **And** payment token generated (mock: simulated 2-second delay)
-- **And** booking record created in `pulau_bookings_{userId}` KV namespace with 'pending' status
+- **And** booking record created in KV namespace `pulau_bookings_{userId}` with 'pending' status
 - **When** mock payment succeeds **Then** status updates to 'confirmed'
 - **And** a unique booking reference `PL-{YYYYMMDD}-{UUID.slice(0,8)}` is generated
 - **And** user is redirected to Step 4 (Confirmation)
 
 *Error Cases:*
-- **Given** payment gateway returns "card_declined" **Then** error displays "Your card was declined. Please try a different card."
-- **Given** payment gateway returns "insufficient_funds" **Then** error displays "Insufficient funds. Please try a different card."
-- **Given** payment gateway returns "expired_card" **Then** error displays "This card has expired. Please update your card details."
-- **Given** payment gateway times out (>30 seconds) **Then** error displays "Payment timed out. Please try again."
-- **Given** network error during payment **Then** error displays "Unable to process payment. Please check your connection and try again."
-- **And** in all error cases, booking remains in 'pending' status and user can retry
+- **Given** payment gateway returns error **Then** booking remains in 'pending' status and user can retry
 - **And** form data is preserved; user does not need to re-enter card details
-
-*Edge Cases:*
-- **Given** user navigates away during processing **Then** booking status remains 'pending'
-- **Given** user returns to pending booking **Then** option to "Complete Payment" or "Cancel" is shown
-- **And** pending bookings older than 24 hours are automatically expired
-
-*Security (Production only - Epic 20):*
-- Card numbers are tokenized via Stripe; raw card data never stored
-- CVV is validated but never persisted
-- All payment requests use HTTPS with TLS 1.3
 
 ### Story 10.6: Build Step 4 - Confirmation Screen
 As a traveler who completed booking, I want to see my booking confirmation, so that I know my reservation is secured.
@@ -74,7 +63,6 @@ As a traveler who completed booking, I want to see my booking confirmation, so t
 **Acceptance Criteria:**
 - **Given** Step 4 (Confirmation) **Then** confetti burst animation plays with success heading
 - **And** displays booking reference, summary, and action buttons (View My Trips, Back Home)
-- **And** confirmation email is triggered
 
 ### Story 10.7: Implement Form Validation with Zod
 As a developer, I want consistent form validation across checkout, so that user input is validated reliably.

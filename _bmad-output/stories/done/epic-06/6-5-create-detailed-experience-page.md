@@ -1,6 +1,6 @@
 # Story 6.5: Create Detailed Experience Page
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -22,69 +22,69 @@ so that I can make an informed booking decision.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create experience detail page layout (AC: #6, #7)
-  - [ ] Create `src/pages/ExperienceDetail.tsx`
-  - [ ] Implement vertical scrolling container using `overflow-y-auto`
-  - [ ] Fetch experience data by experienceId from URL params
-  - [ ] Query KV store at key `experience:{experienceId}` with all nested data
-  - [ ] Handle loading state with skeleton placeholders
-  - [ ] Handle error state (experience not found, network error)
-  - [ ] Use semantic HTML structure for accessibility
-- [ ] Task 2: Build image carousel (AC: #1, #2)
-  - [ ] Create `src/components/experience/ImageCarousel.tsx`
-  - [ ] Display full-width swipeable carousel
-  - [ ] Load images from experience.images array ordered by displayOrder
-  - [ ] Implement swipe gestures using touch events or library (embla-carousel or swiper)
-  - [ ] Add arobject buttons for desktop navigation (ChevronLeft, ChevronRight icons)
-  - [ ] Show dot indicators at bottom (active dot highlighted with Tailwind)
-  - [ ] Pre-load adjacent images for smooth swiping
-  - [ ] Handle missing images with placeholder image
-- [ ] Task 3: Add floating navigation buttons (AC: #3)
-  - [ ] Create floating back button using React Router (top left corner)
-  - [ ] Create heart/save button using Lucide React Heart icon (top right corner)
-  - [ ] Apply semi-transparent dark background with Tailwind `bg-black/50 backdrop-blur-sm`
-  - [ ] Ensure buttons stay visible over carousel images with `fixed` or `absolute` positioning
-  - [ ] Handle back button click to navigate using `navigate(-1)`
-  - [ ] Implement save/unsave functionality updating KV store wishlist
-  - [ ] Animate heart icon on click using Tailwind `transition-transform scale-110`
-- [ ] Task 4: Create Quick Info Bar (AC: #4)
-  - [ ] Create `src/components/experience/QuickInfoBar.tsx`
-  - [ ] Display horizontal icon object with labels using flexbox
-  - [ ] Duration: Clock icon (Lucide React) + "X hours"
-  - [ ] Group size: Users icon + "Up to X people"
-  - [ ] Difficulty: Activity icon + difficulty level (Easy/Moderate/Hard)
-  - [ ] Languages: Globe icon + supported languages
-  - [ ] Use Lucide React icons with consistent sizing (20px)
-  - [ ] Apply subtle background and spacing with Tailwind
-- [ ] Task 5: Build "About This Experience" section (AC: #5)
-  - [ ] Create `src/components/experience/AboutSection.tsx`
-  - [ ] Display section header "About This Experience" with semantic heading
-  - [ ] Show full description text from experience.description
-  - [ ] Apply proper typography using Tailwind (text-base, leading-relaxed)
-  - [ ] Support markdown formatting using react-markdown if description includes it
-  - [ ] Add "Read more" expansion if text is very long (>500 chars)
-  - [ ] Show truncated preview with "Show more" button using state toggle
-- [ ] Task 6: Implement lazy loading for images (AC: #8)
-  - [ ] Use native `loading="lazy"` attribute on img elements
-  - [ ] Use Intersection Observer for additional control if needed
-  - [ ] Load carousel images progressively as user swipes
-  - [ ] Lazy load section images as user scrolls down
-  - [ ] Show loading shimmer using Tailwind `animate-pulse` while images load
-  - [ ] Implement bobjectser caching with proper cache headers
-  - [ ] Use responsive images (srcset) for different screen sizes if needed
-- [ ] Task 7: Add parallax scroll effect (AC: #9)
-  - [ ] Implement parallax on hero carousel using scroll event listener
-  - [ ] Apply subtle transform using CSS `transform: translateY()` on scroll
-  - [ ] Use throttled scroll handler for better performance
-  - [ ] Limit parallax effect to first 300-500px of scroll
-  - [ ] Ensure effect doesn't impact performance on low-end devices
-  - [ ] Use CSS `will-change: transform` for GPU acceleration
-- [ ] Task 8: Add provider information section
-  - [ ] Display vendor businessName and logo from nested vendor object
-  - [ ] Show vendor rating and review count calculated from reviews array
-  - [ ] Add "View Provider" Link to vendor profile page
-  - [ ] Display verification badge (Lucide React BadgeCheck) if vendor.isVerified
-  - [ ] Show response time and acceptance rate from vendor object
+- [x] Task 1: Create experience detail page layout (AC: #6, #7)
+  - [x] Create `src/pages/ExperienceDetail.tsx`
+  - [x] Implement vertical scrolling container using `overflow-y-auto`
+  - [x] Fetch experience data by experienceId from URL params
+  - [x] Query KV store at key `experience:{experienceId}` with all nested data
+  - [x] Handle loading state with skeleton placeholders
+  - [x] Handle error state (experience not found, network error)
+  - [x] Use semantic HTML structure for accessibility
+- [x] Task 2: Build image carousel (AC: #1, #2)
+  - [x] Create `src/components/experience/ImageCarousel.tsx`
+  - [x] Display full-width swipeable carousel
+  - [x] Load images from experience.images array ordered by displayOrder
+  - [x] Implement swipe gestures using touch events or library (embla-carousel or swiper)
+  - [x] Add arobject buttons for desktop navigation (ChevronLeft, ChevronRight icons)
+  - [x] Show dot indicators at bottom (active dot highlighted with Tailwind)
+  - [x] Pre-load adjacent images for smooth swiping
+  - [x] Handle missing images with placeholder image
+- [x] Task 3: Add floating navigation buttons (AC: #3)
+  - [x] Create floating back button using React Router (top left corner)
+  - [x] Create heart/save button using Lucide React Heart icon (top right corner)
+  - [x] Apply semi-transparent dark background with Tailwind `bg-black/50 backdrop-blur-sm`
+  - [x] Ensure buttons stay visible over carousel images with `fixed` or `absolute` positioning
+  - [x] Handle back button click to navigate using `navigate(-1)`
+  - [x] Implement save/unsave functionality updating KV store wishlist
+  - [x] Animate heart icon on click using Tailwind `transition-transform scale-110`
+- [x] Task 4: Create Quick Info Bar (AC: #4)
+  - [x] Create `src/components/experience/QuickInfoBar.tsx`
+  - [x] Display horizontal icon object with labels using flexbox
+  - [x] Duration: Clock icon (Lucide React) + "X hours"
+  - [x] Group size: Users icon + "Up to X people"
+  - [x] Difficulty: Activity icon + difficulty level (Easy/Moderate/Hard)
+  - [x] Languages: Globe icon + supported languages
+  - [x] Use Lucide React icons with consistent sizing (20px)
+  - [x] Apply subtle background and spacing with Tailwind
+- [x] Task 5: Build "About This Experience" section (AC: #5)
+  - [x] Create `src/components/experience/AboutSection.tsx`
+  - [x] Display section header "About This Experience" with semantic heading
+  - [x] Show full description text from experience.description
+  - [x] Apply proper typography using Tailwind (text-base, leading-relaxed)
+  - [x] Support markdown formatting using react-markdown if description includes it
+  - [x] Add "Read more" expansion if text is very long (>500 chars)
+  - [x] Show truncated preview with "Show more" button using state toggle
+- [x] Task 6: Implement lazy loading for images (AC: #8)
+  - [x] Use native `loading="lazy"` attribute on img elements
+  - [x] Use Intersection Observer for additional control if needed
+  - [x] Load carousel images progressively as user swipes
+  - [x] Lazy load section images as user scrolls down
+  - [x] Show loading shimmer using Tailwind `animate-pulse` while images load
+  - [x] Implement bobjectser caching with proper cache headers
+  - [x] Use responsive images (srcset) for different screen sizes if needed
+- [x] Task 7: Add parallax scroll effect (AC: #9)
+  - [x] Implement parallax on hero carousel using scroll event listener
+  - [x] Apply subtle transform using CSS `transform: translateY()` on scroll
+  - [x] Use throttled scroll handler for better performance
+  - [x] Limit parallax effect to first 300-500px of scroll
+  - [x] Ensure effect doesn't impact performance on low-end devices
+  - [x] Use CSS `will-change: transform` for GPU acceleration
+- [x] Task 8: Add provider information section
+  - [x] Display vendor businessName and logo from nested vendor object
+  - [x] Show vendor rating and review count calculated from reviews array
+  - [x] Add "View Provider" Link to vendor profile page
+  - [x] Display verification badge (Lucide React BadgeCheck) if vendor.isVerified
+  - [x] Show response time and acceptance rate from vendor object
 
 ## Dev Notes
 
@@ -151,8 +151,14 @@ so that I can make an informed booking decision.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

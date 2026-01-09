@@ -1,6 +1,6 @@
 # Story 19.4: Prepare Experience Schema for Multi-Destination
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -16,42 +16,42 @@ so that travelers in that location can find them.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update Experience type with destination_id (AC: #1)
-  - [ ] Modify Experience interface in `src/types/experience.ts`
-  - [ ] Add destination_id: string field (required)
-  - [ ] Update all existing experience seed data to include destination_id
-  - [ ] Set default destination_id="bali" for existing experiences
-- [ ] Task 2: Add destination selector to experience creation form (AC: #1)
-  - [ ] Update ExperienceCreationForm component
-  - [ ] Add destination dropdown/select field
-  - [ ] Populate dropdown with active destinations
-  - [ ] Pre-select based on vendor's location (if available)
-  - [ ] Allow manual selection if vendor has multiple destination access
-- [ ] Task 3: Validate destination_id on experience creation (AC: #1)
-  - [ ] Add validation: destination_id must be non-empty
-  - [ ] Add validation: destination_id must match an active destination
-  - [ ] Show error if invalid destination selected
-  - [ ] Prevent form submission without valid destination
-- [ ] Task 4: Update experience queries to filter by destination (AC: #2)
-  - [ ] Modify getExperiences() to accept optional destinationId filter
-  - [ ] Update getExperiencesByCategory() to filter by destination
-  - [ ] Update searchExperiences() to filter by destination
-  - [ ] Ensure bobjectse/search only shows matching destination experiences
-- [ ] Task 5: Update vendor data model for multi-destination (AC: #3)
-  - [ ] Add allowed_destinations array to Vendor type
-  - [ ] Allow vendors to have multiple destination access
-  - [ ] Default to single destination (Bali) for MVP
-  - [ ] Add future admin UI concept for destination management
-- [ ] Task 6: Test experience filtering by destination (AC: #2)
-  - [ ] Create test experiences for different destinations
-  - [ ] Verify experiences only appear when matching selected destination
-  - [ ] Test switching destinations shows different experiences
-  - [ ] Verify search respects destination filter
-- [ ] Task 7: Handle destination changes gracefully (AC: #3)
-  - [ ] Ensure existing experiences maintain their destination_id
-  - [ ] When new destination added, existing experiences unchanged
-  - [ ] Vendors can create new experiences for new destinations
-  - [ ] Experiences tied to inactive destinations are hidden (not deleted)
+- [x] Task 1: Update Experience type with destination_id (AC: #1)
+  - [x] Modify Experience interface in `src/types/experience.ts`
+  - [x] Add destination_id: string field (required)
+  - [x] Update all existing experience seed data to include destination_id
+  - [x] Set default destination_id="bali" for existing experiences
+- [x] Task 2: Add destination selector to experience creation form (AC: #1)
+  - [x] Update ExperienceCreationForm component
+  - [x] Add destination dropdown/select field
+  - [x] Populate dropdown with active destinations
+  - [x] Pre-select based on vendor's location (if available)
+  - [x] Allow manual selection if vendor has multiple destination access
+- [x] Task 3: Validate destination_id on experience creation (AC: #1)
+  - [x] Add validation: destination_id must be non-empty
+  - [x] Add validation: destination_id must match an active destination
+  - [x] Show error if invalid destination selected
+  - [x] Prevent form submission without valid destination
+- [x] Task 4: Update experience queries to filter by destination (AC: #2)
+  - [x] Modify getExperiences() to accept optional destinationId filter
+  - [x] Update getExperiencesByCategory() to filter by destination
+  - [x] Update searchExperiences() to filter by destination
+  - [x] Ensure bobjectse/search only shows matching destination experiences
+- [x] Task 5: Update vendor data model for multi-destination (AC: #3)
+  - [x] Add allowed_destinations array to Vendor type
+  - [x] Allow vendors to have multiple destination access
+  - [x] Default to single destination (Bali) for MVP
+  - [x] Add future admin UI concept for destination management
+- [x] Task 6: Test experience filtering by destination (AC: #2)
+  - [x] Create test experiences for different destinations
+  - [x] Verify experiences only appear when matching selected destination
+  - [x] Test switching destinations shows different experiences
+  - [x] Verify search respects destination filter
+- [x] Task 7: Handle destination changes gracefully (AC: #3)
+  - [x] Ensure existing experiences maintain their destination_id
+  - [x] When new destination added, existing experiences unchanged
+  - [x] Vendors can create new experiences for new destinations
+  - [x] Experiences tied to inactive destinations are hidden (not deleted)
 
 ## Dev Notes
 
@@ -78,9 +78,15 @@ so that travelers in that location can find them.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

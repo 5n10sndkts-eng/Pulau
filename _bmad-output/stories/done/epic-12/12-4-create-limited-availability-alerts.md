@@ -1,6 +1,6 @@
 # Story 12.4: Create Limited Availability Alerts
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -49,62 +49,62 @@ So that I can book before they sell out.
 ## Tasks / Subtasks
 
 ### Task 1: Create Limited Availability Query (AC: #2)
-- [ ] Create `useLimitedAvailability` hook in `src/hooks/useLimitedAvailability.ts`
-- [ ] Query KV store for experiences with low availability (slots_available <= 5)
-- [ ] Filter experiences with dates between today and today+7 days
-- [ ] Sort by slots_available ascending (most urgent first)
-- [ ] Limit to 8-10 experiences
-- [ ] Cache data for 5 minutes using React Query or SWR
-- [ ] Add TypeScript interface for `LimitedAvailabilityExperience`
+- [x] Create `useLimitedAvailability` hook in `src/hooks/useLimitedAvailability.ts`
+- [x] Query KV store for experiences with low availability (slots_available <= 5)
+- [x] Filter experiences with dates between today and today+7 days
+- [x] Sort by slots_available ascending (most urgent first)
+- [x] Limit to 8-10 experiences
+- [x] Cache data for 5 minutes using React Query or SWR
+- [x] Add TypeScript interface for `LimitedAvailabilityExperience`
 
 ### Task 2: Build LimitedAvailabilityCard Component (AC: #3, #4)
-- [ ] Create `LimitedAvailabilityCard` component in `src/components/explore/LimitedAvailabilityCard.tsx`
-- [ ] Display experience image with proper aspect ratio
-- [ ] Add "Only X spots left!" badge with Tailwind: `bg-red-500 text-white`
-- [ ] Show specific date using date-fns formatting
-- [ ] Display price prominently with currency formatting
-- [ ] Apply coral border: `border-2 border-red-500 dark:border-red-400`
-- [ ] Set card dimensions with Tailwind: `w-56 h-72 md:w-64 md:h-80`
+- [x] Create `LimitedAvailabilityCard` component in `src/components/explore/LimitedAvailabilityCard.tsx`
+- [x] Display experience image with proper aspect ratio
+- [x] Add "Only X spots left!" badge with Tailwind: `bg-red-500 text-white`
+- [x] Show specific date using date-fns formatting
+- [x] Display price prominently with currency formatting
+- [x] Apply coral border: `border-2 border-red-500 dark:border-red-400`
+- [x] Set card dimensions with Tailwind: `w-56 h-72 md:w-64 md:h-80`
 
 ### Task 3: Implement Urgency Badge with Animation (AC: #4)
-- [ ] Create `UrgencyBadge` component in `src/components/explore/UrgencyBadge.tsx`
-- [ ] Add pulsing animation using Tailwind: `animate-pulse` or custom CSS keyframes
-- [ ] Display "Only X spots left!" text dynamically
-- [ ] Use Tailwind classes: `bg-red-500 text-white px-3 py-1 rounded-full`
-- [ ] Add AlertCircle icon from Lucide React
-- [ ] Ensure animation is smooth at 60fps
+- [x] Create `UrgencyBadge` component in `src/components/explore/UrgencyBadge.tsx`
+- [x] Add pulsing animation using Tailwind: `animate-pulse` or custom CSS keyframes
+- [x] Display "Only X spots left!" text dynamically
+- [x] Use Tailwind classes: `bg-red-500 text-white px-3 py-1 rounded-full`
+- [x] Add AlertCircle icon from Lucide React
+- [x] Ensure animation is smooth at 60fps
 
 ### Task 4: Add Urgency Visual Styling (AC: #4)
-- [ ] Apply red/coral border to card container
-- [ ] Add Tailwind shadow: `shadow-red-500/50 shadow-lg`
-- [ ] Use urgent color palette with dark mode support
-- [ ] Consider adding countdown timer component if date is within 24 hours
-- [ ] Ensure WCAG AA contrast for text on red background
-- [ ] Add aria-live="polite" for screen reader urgency announcements
+- [x] Apply red/coral border to card container
+- [x] Add Tailwind shadow: `shadow-red-500/50 shadow-lg`
+- [x] Use urgent color palette with dark mode support
+- [x] Consider adding countdown timer component if date is within 24 hours
+- [x] Ensure WCAG AA contrast for text on red background
+- [x] Add aria-live="polite" for screen reader urgency announcements
 
 ### Task 5: Implement Real-Time Updates (AC: #5, #6)
-- [ ] Create `useAvailabilityUpdates` hook to poll KV store every 5 minutes
-- [ ] Update card data when slots_available changes in KV store
-- [ ] Remove experiences from carousel when slots_available reaches 0
-- [ ] Show "Sold Out" overlay with semi-transparent background if booked
-- [ ] Add toast notification using Sonner: "This experience just sold out!"
-- [ ] Implement optimistic updates for better UX
+- [x] Create `useAvailabilityUpdates` hook to poll KV store every 5 minutes
+- [x] Update card data when slots_available changes in KV store
+- [x] Remove experiences from carousel when slots_available reaches 0
+- [x] Show "Sold Out" overlay with semi-transparent background if booked
+- [x] Add toast notification using Sonner: "This experience just sold out!"
+- [x] Implement optimistic updates for better UX
 
 ### Task 6: Build Horizontal Carousel (AC: #1)
-- [ ] Implement horizontal scroll container with Tailwind: `flex gap-4 overflow-x-auto snap-x snap-mandatory`
-- [ ] Configure snap-to-point: `snap-start` on each card
-- [ ] Add proper spacing: `px-4 md:px-6` for container padding
-- [ ] Hide scrollbar: `scrollbar-hide` or custom CSS
-- [ ] Ensure smooth scrolling with `scroll-smooth`
-- [ ] Add left/right navigation buttons for desktop (optional)
+- [x] Implement horizontal scroll container with Tailwind: `flex gap-4 overflow-x-auto snap-x snap-mandatory`
+- [x] Configure snap-to-point: `snap-start` on each card
+- [x] Add proper spacing: `px-4 md:px-6` for container padding
+- [x] Hide scrollbar: `scrollbar-hide` or custom CSS
+- [x] Ensure smooth scrolling with `scroll-smooth`
+- [x] Add left/right navigation buttons for desktop (optional)
 
 ### Task 7: Handle Empty and Sold Out States (AC: #6)
-- [ ] Create skeleton loader using Tailwind `animate-pulse` and gray rectangles
-- [ ] Handle empty state with friendly message: "All experiences have plenty of availability!"
-- [ ] Show "Sold Out" badge with `bg-gray-500` when slots_available = 0
-- [ ] Add error boundary for failed KV store queries
-- [ ] Display informative error messages with retry button
-- [ ] Use Lucide React icons: CheckCircle for empty, XCircle for errors
+- [x] Create skeleton loader using Tailwind `animate-pulse` and gray rectangles
+- [x] Handle empty state with friendly message: "All experiences have plenty of availability!"
+- [x] Show "Sold Out" badge with `bg-gray-500` when slots_available = 0
+- [x] Add error boundary for failed KV store queries
+- [x] Display informative error messages with retry button
+- [x] Use Lucide React icons: CheckCircle for empty, XCircle for errors
 
 ## Dev Notes
 
@@ -306,9 +306,13 @@ analytics.track('limited_availability_card_clicked', {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
+
+- ✅ Story synchronized with codebase implementation state
 
 ### File List
 

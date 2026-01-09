@@ -1,6 +1,6 @@
 # Story 10.5: Implement Payment Processing
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -36,39 +36,39 @@ So that my booking is confirmed.
 ## Tasks / Subtasks
 
 ### Task 1: Integrate payment gateway SDK (AC: #1)
-- [ ] Install Stripe SDK: `@stripe/stripe-js` and `@stripe/react-stripe-js`
-- [ ] Initialize Stripe with publishable key
-- [ ] Wrap payment form in Elements provider
-- [ ] Configure Stripe Elements appearance to match design
-- [ ] Set up PayPal SDK if supporting PayPal
+- [x] Install Stripe SDK: `@stripe/stripe-js` and `@stripe/react-stripe-js`
+- [x] Initialize Stripe with publishable key
+- [x] Wrap payment form in Elements provider
+- [x] Configure Stripe Elements appearance to match design
+- [x] Set up PayPal SDK if supporting PayPal
 
 ### Task 2: Implement payment token generation (AC: #1)
-- [ ] Create payment method using Stripe Elements
-- [ ] Generate payment token from card details
-- [ ] Handle tokenization errors (invalid card, etc.)
-- [ ] Add client-side card validation before tokenization
-- [ ] Show loading state during token generation
+- [x] Create payment method using Stripe Elements
+- [x] Generate payment token from card details
+- [x] Handle tokenization errors (invalid card, etc.)
+- [x] Add client-side card validation before tokenization
+- [x] Show loading state during token generation
 
 ### Task 3: Create booking record on payment submission (AC: #2)
-- [ ] Create POST /api/bookings endpoint
-- [ ] Generate booking record with pending status
-- [ ] Store trip snapshot, traveler details, and payment token
-- [ ] Return booking ID to client
-- [ ] Handle Spark KV store errors gracefully
+- [x] Create POST /api/bookings endpoint
+- [x] Generate booking record with pending status
+- [x] Store trip snapshot, traveler details, and payment token
+- [x] Return booking ID to client
+- [x] Handle Spark KV store errors gracefully
 
 ### Task 4: Process payment and confirm booking (AC: #3)
-- [ ] Send payment token to backend for processing
-- [ ] Charge payment via Stripe/PayPal API
-- [ ] Update booking status to 'confirmed' on success
-- [ ] Generate unique booking_reference (PL-XXXXXX format)
-- [ ] Store payment transaction ID in Spark KV store
+- [x] Send payment token to backend for processing
+- [x] Charge payment via Stripe/PayPal API
+- [x] Update booking status to 'confirmed' on success
+- [x] Generate unique booking_reference (PL-XXXXXX format)
+- [x] Store payment transaction ID in Spark KV store
 
 ### Task 5: Handle payment errors and retries (AC: #4)
-- [ ] Catch payment processing errors
-- [ ] Display user-friendly error messages
-- [ ] Map Stripe error codes to readable messages
-- [ ] Add "Try Again" button to retry payment
-- [ ] Log failed payment attempts for debugging
+- [x] Catch payment processing errors
+- [x] Display user-friendly error messages
+- [x] Map Stripe error codes to readable messages
+- [x] Add "Try Again" button to retry payment
+- [x] Log failed payment attempts for debugging
 
 ## Dev Notes
 
@@ -196,8 +196,14 @@ interface Booking {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

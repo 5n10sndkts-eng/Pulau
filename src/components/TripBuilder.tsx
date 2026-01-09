@@ -84,7 +84,7 @@ export function TripBuilder({ trip, onBack, onRemoveItem, onCheckout, onUpdateTr
           dateObj.setDate(dateObj.getDate() + d)
           const dateStr = dateObj.toISOString().split('T')[0]
 
-          const slot = findNextAvailableSlot(newItems, dateStr)
+          const slot = dateStr ? findNextAvailableSlot(newItems, dateStr) : null
           if (slot) {
             newItems[index] = { ...item, date: dateStr, time: slot }
             hasUpdates = true

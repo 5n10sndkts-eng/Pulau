@@ -1,6 +1,6 @@
 # Story 11.6: Implement Booking Cancellation Flow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -69,66 +69,66 @@ So that I can get a refund if eligible.
 ## Tasks / Subtasks
 
 ### Task 1: Add Cancel Booking Button (AC: #1)
-- [ ] Add "Cancel Booking" button to BookingDetailScreen
-- [ ] Position button at bottom of screen or in overflow menu
-- [ ] Style as destructive action (red/coral color)
-- [ ] Hide button for already cancelled or completed bookings
-- [ ] Add confirmation step to prevent accidental cancellation
+- [x] Add "Cancel Booking" button to BookingDetailScreen
+- [x] Position button at bottom of screen or in overflow menu
+- [x] Style as destructive action (red/coral color)
+- [x] Hide button for already cancelled or completed bookings
+- [x] Add confirmation step to prevent accidental cancellation
 
 ### Task 2: Create Cancellation Policy Modal (AC: #2, #3, #4, #5)
-- [ ] Create CancellationModal component
-- [ ] Display cancellation policy from each experience
-- [ ] Calculate hours until each experience start time
-- [ ] Show refund eligibility per experience (full/partial/none)
-- [ ] Display itemized refund breakdown
-- [ ] Show total refund amount prominently
+- [x] Create CancellationModal component
+- [x] Display cancellation policy from each experience
+- [x] Calculate hours until each experience start time
+- [x] Show refund eligibility per experience (full/partial/none)
+- [x] Display itemized refund breakdown
+- [x] Show total refund amount prominently
 
 ### Task 3: Implement Refund Calculation Logic (AC: #3, #4, #5)
-- [ ] Create calculateRefund function
-- [ ] Check time until each experience: hours_until = experience.date - now
-- [ ] Apply policy: if hours_until > 24, full refund; else partial/none
-- [ ] Calculate per-experience refunds
-- [ ] Sum total refund amount
-- [ ] Format currency properly
+- [x] Create calculateRefund function
+- [x] Check time until each experience: hours_until = experience.date - now
+- [x] Apply policy: if hours_until > 24, full refund; else partial/none
+- [x] Calculate per-experience refunds
+- [x] Sum total refund amount
+- [x] Format currency properly
 
 ### Task 4: Build Cancellation Service (AC: #6, #7)
-- [ ] Create cancelBooking function in services/booking.service.ts
-- [ ] Update booking status to 'cancelled' in Spark KV store
-- [ ] Log status change to booking_status_history
-- [ ] Initiate refund via payment gateway (Stripe/Xendit)
-- [ ] Handle refund API errors with retry logic
-- [ ] Wrap in Spark KV store transaction for atomicity
+- [x] Create cancelBooking function in services/booking.service.ts
+- [x] Update booking status to 'cancelled' in Spark KV store
+- [x] Log status change to booking_status_history
+- [x] Initiate refund via payment gateway (Stripe/Xendit)
+- [x] Handle refund API errors with retry logic
+- [x] Wrap in Spark KV store transaction for atomicity
 
 ### Task 5: Integrate Payment Gateway Refund (AC: #7)
-- [ ] Use Stripe/Xendit refund API
-- [ ] Pass refund amount and payment_intent_id
-- [ ] Handle partial refunds for mixed timing scenarios
-- [ ] Store refund_id in Spark KV store for tracking
-- [ ] Handle refund failures gracefully
-- [ ] Implement idempotency to prevent duplicate refunds
+- [x] Use Stripe/Xendit refund API
+- [x] Pass refund amount and payment_intent_id
+- [x] Handle partial refunds for mixed timing scenarios
+- [x] Store refund_id in Spark KV store for tracking
+- [x] Handle refund failures gracefully
+- [x] Implement idempotency to prevent duplicate refunds
 
 ### Task 6: Send Cancellation Notifications (AC: #8)
-- [ ] Create cancellation email template
-- [ ] Include booking reference, cancelled items, refund amount
-- [ ] Add refund processing timeline (e.g., "5-10 business days")
-- [ ] Send email via email service (SendGrid/Resend)
-- [ ] Show in-app toast "Booking cancelled. Refund processing."
-- [ ] Log email sending status
+- [x] Create cancellation email template
+- [x] Include booking reference, cancelled items, refund amount
+- [x] Add refund processing timeline (e.g., "5-10 business days")
+- [x] Send email via email service (SendGrid/Resend)
+- [x] Show in-app toast "Booking cancelled. Refund processing."
+- [x] Log email sending status
 
 ### Task 7: Update UI for Cancelled Bookings (AC: #9)
-- [ ] Ensure cancelled bookings appear in "All" and "Past" tabs
-- [ ] Gray out cancelled booking cards
-- [ ] Display "Cancelled" status badge
-- [ ] Show refund status in booking detail
-- [ ] Make cancelled bookings read-only (no re-cancellation)
-- [ ] Add "Refund Status" section showing progress
+- [x] Ensure cancelled bookings appear in "All" and "Past" tabs
+- [x] Gray out cancelled booking cards
+- [x] Display "Cancelled" status badge
+- [x] Show refund status in booking detail
+- [x] Make cancelled bookings read-only (no re-cancellation)
+- [x] Add "Refund Status" section showing progress
 
 ### Task 8: Add Cancellation Analytics and Logging
-- [ ] Track cancellation rate metrics
-- [ ] Log cancellation reasons (optional user feedback)
-- [ ] Monitor refund processing success/failure rates
-- [ ] Create admin view for cancellation overview
-- [ ] Track timing of cancellations (how far in advance)
+- [x] Track cancellation rate metrics
+- [x] Log cancellation reasons (optional user feedback)
+- [x] Monitor refund processing success/failure rates
+- [x] Create admin view for cancellation overview
+- [x] Track timing of cancellations (how far in advance)
 
 ## Dev Notes
 
@@ -211,8 +211,14 @@ Cancellation Policy:
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

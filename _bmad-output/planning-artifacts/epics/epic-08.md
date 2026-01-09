@@ -2,6 +2,10 @@
 
 **Goal:** Travelers visually build custom trip itineraries by adding experiences with calendar/list view toggle, real-time pricing calculation, date management, unscheduled items section, and offline persistence.
 
+**Phase:** Phase 1 (MVP)
+**Dependencies:** Epic 1 (Foundation), Epic 6 (Discovery)
+**Storage:** **Spark KV Store** (`pulau_users_{id}.trips`)
+
 ### Story 8.1: Create Trip Data Model and Persistence
 As a developer, I want a trip data model with Spark KV persistence, so that trip data survives page refreshes and offline use.
 

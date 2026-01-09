@@ -73,7 +73,8 @@ export function ConflictResolutionSheet({
 }: ConflictResolutionSheetProps) {
   if (!conflict) return null
 
-  const [itemAId, itemBId] = conflict.itemIds
+  const itemAId = conflict.itemId1
+  const itemBId = conflict.itemId2
   const itemA = items.find(i => i.experienceId === itemAId)
   const itemB = items.find(i => i.experienceId === itemBId)
   const expA = getExperience(itemAId)

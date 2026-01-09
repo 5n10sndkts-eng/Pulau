@@ -1,6 +1,6 @@
 # Story 19.1: Create Destinations Data Model
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -17,38 +17,38 @@ so that the platform can support multiple locations.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Define Destination TypeScript type (AC: #1)
-  - [ ] Create `src/types/destination.ts`
-  - [ ] Define Destination interface with all fields
-  - [ ] Include field types: id (string/UUID), name (string), slug (string), country (string), currency (string), timezone (string), language_default (string), description (string), hero_image_url (string), is_active (boolean), created_at (Date), updated_at (Date)
-  - [ ] Export type for use across application
-- [ ] Task 2: Create destinations data structure (AC: #1, #4)
-  - [ ] Create `src/data/destinations.ts`
-  - [ ] Define destinations array (or useKV storage)
-  - [ ] Add helper functions: getDestinationBySlug(slug), getActiveDestinations()
-  - [ ] Ensure slug-based lookup is efficient (Map or index)
-- [ ] Task 3: Add Bali seed data (AC: #3)
-  - [ ] Create Bali destination object with all required fields
-  - [ ] Set: name="Bali", slug="bali", country="Indonesia"
-  - [ ] Set: currency="USD", timezone="Asia/Makassar", language_default="en"
-  - [ ] Add description and hero_image_url
-  - [ ] Set is_active=true
-  - [ ] Add to destinations array/storage
-- [ ] Task 4: Update Experience type to include destination (AC: #2)
-  - [ ] Add destination_id field to Experience type (`src/types/experience.ts`)
-  - [ ] Make destination_id required (all experiences must have destination)
-  - [ ] Update existing experience seed data to include destination_id="bali"
-  - [ ] Add TypeScript validation that destination_id exists
-- [ ] Task 5: Create destination utility functions
-  - [ ] Create `src/utils/destinations.ts`
-  - [ ] Add formatCurrency(amount, destination) for destination-specific formatting
-  - [ ] Add formatDateTime(date, destination) for timezone-aware formatting
-  - [ ] Add getDestinationCurrency(destinationId) helper
-- [ ] Task 6: Test data model (AC: #1-4)
-  - [ ] Verify all destination fields are properly typed
-  - [ ] Test getDestinationBySlug("bali") returns correct data
-  - [ ] Test getActiveDestinations() returns only active destinations
-  - [ ] Verify experience queries can filter by destination_id
+- [x] Task 1: Define Destination TypeScript type (AC: #1)
+  - [x] Create `src/types/destination.ts`
+  - [x] Define Destination interface with all fields
+  - [x] Include field types: id (string/UUID), name (string), slug (string), country (string), currency (string), timezone (string), language_default (string), description (string), hero_image_url (string), is_active (boolean), created_at (Date), updated_at (Date)
+  - [x] Export type for use across application
+- [x] Task 2: Create destinations data structure (AC: #1, #4)
+  - [x] Create `src/data/destinations.ts`
+  - [x] Define destinations array (or useKV storage)
+  - [x] Add helper functions: getDestinationBySlug(slug), getActiveDestinations()
+  - [x] Ensure slug-based lookup is efficient (Map or index)
+- [x] Task 3: Add Bali seed data (AC: #3)
+  - [x] Create Bali destination object with all required fields
+  - [x] Set: name="Bali", slug="bali", country="Indonesia"
+  - [x] Set: currency="USD", timezone="Asia/Makassar", language_default="en"
+  - [x] Add description and hero_image_url
+  - [x] Set is_active=true
+  - [x] Add to destinations array/storage
+- [x] Task 4: Update Experience type to include destination (AC: #2)
+  - [x] Add destination_id field to Experience type (`src/types/experience.ts`)
+  - [x] Make destination_id required (all experiences must have destination)
+  - [x] Update existing experience seed data to include destination_id="bali"
+  - [x] Add TypeScript validation that destination_id exists
+- [x] Task 5: Create destination utility functions
+  - [x] Create `src/utils/destinations.ts`
+  - [x] Add formatCurrency(amount, destination) for destination-specific formatting
+  - [x] Add formatDateTime(date, destination) for timezone-aware formatting
+  - [x] Add getDestinationCurrency(destinationId) helper
+- [x] Task 6: Test data model (AC: #1-4)
+  - [x] Verify all destination fields are properly typed
+  - [x] Test getDestinationBySlug("bali") returns correct data
+  - [x] Test getActiveDestinations() returns only active destinations
+  - [x] Verify experience queries can filter by destination_id
 
 ## Dev Notes
 
@@ -76,9 +76,15 @@ so that the platform can support multiple locations.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

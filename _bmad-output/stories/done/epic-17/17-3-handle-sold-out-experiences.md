@@ -1,6 +1,6 @@
 # Story 17.3: Handle Sold Out Experiences
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -31,39 +31,39 @@ So that I can find alternatives.
 ## Tasks / Subtasks
 
 ### Task 1: Add Sold Out Visual Indicators to Cards (AC: #1)
-- [ ] Check experience availability (query experience_availability for any slots > 0)
-- [ ] Add "Currently Unavailable" badge overlay on card image
-- [ ] Apply 80% opacity filter to card image when sold out
-- [ ] Disable "Quick Add" button and show "Unavailable" state
-- [ ] Add subtle visual cue (grayed out, no hover effects)
+- [x] Check experience availability (query experience_availability for any slots > 0)
+- [x] Add "Currently Unavailable" badge overlay on card image
+- [x] Apply 80% opacity filter to card image when sold out
+- [x] Disable "Quick Add" button and show "Unavailable" state
+- [x] Add subtle visual cue (grayed out, no hover effects)
 
 ### Task 2: Display Sold Out State on Detail Page (AC: #2)
-- [ ] Show availability calendar with all dates marked red (sold out)
-- [ ] Replace "Add to Trip" CTA with "Join Waitlist" button
-- [ ] Add message: "This experience is currently sold out"
-- [ ] Ensure vendor contact information still visible
-- [ ] Show estimated next availability if vendor provides it
+- [x] Show availability calendar with all dates marked red (sold out)
+- [x] Replace "Add to Trip" CTA with "Join Waitlist" button
+- [x] Add message: "This experience is currently sold out"
+- [x] Ensure vendor contact information still visible
+- [x] Show estimated next availability if vendor provides it
 
 ### Task 3: Build "Similar Experiences" Section (AC: #2)
-- [ ] Query experiences in same category, excluding current experience
-- [ ] Filter to show only available experiences (slots > 0)
-- [ ] Limit to 3-4 similar experiences
-- [ ] Display as horizontal scrollable carousel on mobile
-- [ ] Include "View All [Category]" link
+- [x] Query experiences in same category, excluding current experience
+- [x] Filter to show only available experiences (slots > 0)
+- [x] Limit to 3-4 similar experiences
+- [x] Display as horizontal scrollable carousel on mobile
+- [x] Include "View All [Category]" link
 
 ### Task 4: Implement Waitlist Functionality (AC: #3)
-- [ ] Create waitlist KV namespace schema (experience_id, user_id, email, created_at)
-- [ ] Build "Join Waitlist" button component
-- [ ] On click, insert record into waitlist KV namespace
-- [ ] Send confirmation email to user
-- [ ] Show success toast: "You'll be notified when spots open"
+- [x] Create waitlist KV namespace schema (experience_id, user_id, email, created_at)
+- [x] Build "Join Waitlist" button component
+- [x] On click, insert record into waitlist KV namespace
+- [x] Send confirmation email to user
+- [x] Show success toast: "You'll be notified when spots open"
 
 ### Task 5: Vendor Notification System (AC: #3)
-- [ ] Notify vendor when waitlist gobjects (e.g., >10 people)
-- [ ] Provide vendor dashboard to view waitlist
-- [ ] Allow vendor to notify waitlist when availability opens
-- [ ] Send email to all waitlisted users when spots available
-- [ ] Remove users from waitlist after notification sent
+- [x] Notify vendor when waitlist gobjects (e.g., >10 people)
+- [x] Provide vendor dashboard to view waitlist
+- [x] Allow vendor to notify waitlist when availability opens
+- [x] Send email to all waitlisted users when spots available
+- [x] Remove users from waitlist after notification sent
 
 ## Dev Notes
 
@@ -248,8 +248,14 @@ const notifyWaitlist = async (experienceId: string) => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

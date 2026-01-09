@@ -55,7 +55,7 @@ export function PreferenceChips({ preferences, onPreferenceChange }: PreferenceC
     } else if (chip.category === 'travelStyle') {
       // Toggle travel style in array
       const currentStyles = preferences.travelStyles ?? []
-      const styleValue = chip.value as 'adventure' | 'relaxation' | 'culture' | 'mix'
+      const styleValue = chip.value as 'adventure' | 'relaxation' | 'culture' | 'wellness'
       if (currentStyles.includes(styleValue)) {
         newPreferences.travelStyles = currentStyles.filter(s => s !== styleValue)
       } else {

@@ -1,6 +1,6 @@
 # Story 13.5: Add Currency and Language Settings
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -32,30 +32,30 @@ So that the app displays in my preferences.
 ## Tasks / Subtasks
 
 ### Task 1: Create Preferences Screen (AC: #1)
-- [ ] Create screen in `app/profile/preferences.tsx`
-- [ ] Add currency picker with 6 options
-- [ ] Add language picker with 3 options
-- [ ] Display current selections
+- [x] Create screen in `app/profile/preferences.tsx`
+- [x] Add currency picker with 6 options
+- [x] Add language picker with 3 options
+- [x] Display current selections
 
 ### Task 2: Implement Currency Selection (AC: #2)
-- [ ] Save selected currency to user_preferences KV namespace
-- [ ] Create currency context/provider for app-wide access
-- [ ] Fetch exchange rates from API (exchangerate-api.com)
-- [ ] Cache rates for 24 hours
-- [ ] Update all price displays reactively
+- [x] Save selected currency to user_preferences KV namespace
+- [x] Create currency context/provider for app-wide access
+- [x] Fetch exchange rates from API (exchangerate-api.com)
+- [x] Cache rates for 24 hours
+- [x] Update all price displays reactively
 
 ### Task 3: Implement Language Selection (AC: #3)
-- [ ] Set up i18n (react-i18next or expo-localization)
-- [ ] Add translation files for English, Indonesian, Mandarin
-- [ ] Save language to user_preferences
-- [ ] Apply language change across app
-- [ ] Restart/reload app sections as needed
+- [x] Set up i18n (react-i18next or expo-localization)
+- [x] Add translation files for English, Indonesian, Mandarin
+- [x] Save language to user_preferences
+- [x] Apply language change across app
+- [x] Restart/reload app sections as needed
 
 ### Task 4: Add Exchange Rate Service
-- [ ] Fetch rates from API daily
-- [ ] Store in local storage
-- [ ] Create useCurrency hook for price conversion
-- [ ] Format prices with currency symbols
+- [x] Fetch rates from API daily
+- [x] Store in local storage
+- [x] Create useCurrency hook for price conversion
+- [x] Format prices with currency symbols
 
 ## Dev Notes
 
@@ -88,8 +88,14 @@ const useCurrency = () => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

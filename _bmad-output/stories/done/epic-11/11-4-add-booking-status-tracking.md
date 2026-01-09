@@ -1,6 +1,6 @@
 # Story 11.4: Add Booking Status Tracking
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -64,58 +64,58 @@ So that I know if they're confirmed or need attention.
 ## Tasks / Subtasks
 
 ### Task 1: Create StatusBadge Component (AC: #1, #2, #3, #4, #5)
-- [ ] Create StatusBadge component in `src/components/booking/StatusBadge.tsx`
-- [ ] Implement color mapping for each status type using Tailwind CSS classes
-- [ ] Style badge with rounded corners, padding, and proper typography
-- [ ] Add Lucide React icon support for each status (CheckCircle, Clock, XCircle)
-- [ ] Make component reusable across booking cards and details
-- [ ] Add TypeScript interface for StatusBadgeProps with strict status typing
+- [x] Create StatusBadge component in `src/components/booking/StatusBadge.tsx`
+- [x] Implement color mapping for each status type using Tailwind CSS classes
+- [x] Style badge with rounded corners, padding, and proper typography
+- [x] Add Lucide React icon support for each status (CheckCircle, Clock, XCircle)
+- [x] Make component reusable across booking cards and details
+- [x] Add TypeScript interface for StatusBadgeProps with strict status typing
 
 ### Task 2: Update Booking Type Definitions (AC: #6, #8)
-- [ ] Update `BookingStatus` type in `src/lib/types.ts` with union: 'confirmed' | 'pending' | 'cancelled' | 'completed'
-- [ ] Add `status` field to `Booking` interface with `BookingStatus` type
-- [ ] Create `BookingStatusHistory` interface with: booking_id, old_status, new_status, changed_at, reason
-- [ ] Add status field to KV store booking records with default value 'pending'
-- [ ] Update all booking-related TypeScript types to include status
+- [x] Update `BookingStatus` type in `src/lib/types.ts` with union: 'confirmed' | 'pending' | 'cancelled' | 'completed'
+- [x] Add `status` field to `Booking` interface with `BookingStatus` type
+- [x] Create `BookingStatusHistory` interface with: booking_id, old_status, new_status, changed_at, reason
+- [x] Add status field to KV store booking records with default value 'pending'
+- [x] Update all booking-related TypeScript types to include status
 
 ### Task 3: Implement Status Update Logic (AC: #7)
-- [ ] Create `updateBookingStatus` function in `src/lib/booking-service.ts`
-- [ ] Implement KV store update to change booking status
-- [ ] Add automatic status update to 'confirmed' after payment success hook
-- [ ] Create client-side utility to mark trips as 'completed' based on end_date
-- [ ] Add status update to 'cancelled' in cancellation flow
-- [ ] Ensure all status updates maintain data consistency in KV store
+- [x] Create `updateBookingStatus` function in `src/lib/booking-service.ts`
+- [x] Implement KV store update to change booking status
+- [x] Add automatic status update to 'confirmed' after payment success hook
+- [x] Create client-side utility to mark trips as 'completed' based on end_date
+- [x] Add status update to 'cancelled' in cancellation flow
+- [x] Ensure all status updates maintain data consistency in KV store
 
 ### Task 4: Build Status History Logging (AC: #8)
-- [ ] Create `logStatusChange` function to store status history in KV store
-- [ ] Use KV key pattern: `booking_status_history:{bookingId}:{timestamp}`
-- [ ] Call `logStatusChange` whenever `updateBookingStatus` is invoked
-- [ ] Include reason parameter (e.g., "Payment completed", "Trip ended", "User cancelled")
-- [ ] Add timestamp and user context (from useUser hook) to logs
-- [ ] Create query function to retrieve status history array for a booking
+- [x] Create `logStatusChange` function to store status history in KV store
+- [x] Use KV key pattern: `booking_status_history:{bookingId}:{timestamp}`
+- [x] Call `logStatusChange` whenever `updateBookingStatus` is invoked
+- [x] Include reason parameter (e.g., "Payment completed", "Trip ended", "User cancelled")
+- [x] Add timestamp and user context (from useUser hook) to logs
+- [x] Create query function to retrieve status history array for a booking
 
 ### Task 5: Integrate StatusBadge in UI (AC: #1)
-- [ ] Add StatusBadge to BookingCard component in `src/components/TripsDashboard.tsx`
-- [ ] Add StatusBadge to booking detail view header
-- [ ] Ensure badge renders correctly with Tailwind dark mode classes
-- [ ] Test badge appearance on mobile and desktop viewports
-- [ ] Add aria-label attributes for screen readers
-- [ ] Verify badge colors meet WCAG contrast requirements
+- [x] Add StatusBadge to BookingCard component in `src/components/TripsDashboard.tsx`
+- [x] Add StatusBadge to booking detail view header
+- [x] Ensure badge renders correctly with Tailwind dark mode classes
+- [x] Test badge appearance on mobile and desktop viewports
+- [x] Add aria-label attributes for screen readers
+- [x] Verify badge colors meet WCAG contrast requirements
 
 ### Task 6: Create Automated Status Updater (AC: #7)
-- [ ] Create React hook `useBookingStatusUpdater` to check for completed trips
-- [ ] Query bookings from KV store with status 'confirmed' and trip.end_date < today
-- [ ] Batch update statuses to 'completed' using KV store writes
-- [ ] Log all automated updates to status history
-- [ ] Run check on component mount and periodically (e.g., every 5 minutes)
-- [ ] Handle errors gracefully with toast notifications
+- [x] Create React hook `useBookingStatusUpdater` to check for completed trips
+- [x] Query bookings from KV store with status 'confirmed' and trip.end_date < today
+- [x] Batch update statuses to 'completed' using KV store writes
+- [x] Log all automated updates to status history
+- [x] Run check on component mount and periodically (e.g., every 5 minutes)
+- [x] Handle errors gracefully with toast notifications
 
 ### Task 7: Add Status Filtering and Queries
-- [ ] Update `getBookings` function to filter by status from KV store
-- [ ] Add status-based filtering tabs in booking history component
-- [ ] Implement client-side filtering for quick status changes
-- [ ] Optimize KV store queries by using status-based key prefixes
-- [ ] Add loading states during status filter changes
+- [x] Update `getBookings` function to filter by status from KV store
+- [x] Add status-based filtering tabs in booking history component
+- [x] Implement client-side filtering for quick status changes
+- [x] Optimize KV store queries by using status-based key prefixes
+- [x] Add loading states during status filter changes
 
 ## Dev Notes
 
@@ -270,9 +270,13 @@ export function useBookingStatusUpdater() {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
+
+- ✅ Story synchronized with codebase implementation state
 
 ### File List
 

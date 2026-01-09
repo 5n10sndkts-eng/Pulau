@@ -1,6 +1,6 @@
 # Story 6.10: Show Cancellation Policy and Policies
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -19,34 +19,34 @@ so that I know my options if plans change.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create GoodToKnow component (AC: #1, #2)
-  - [ ] Create `src/components/experience/GoodToKnow.tsx`
-  - [ ] Accept policy data as props
-  - [ ] Section header: "Good to Know" (20px, bold)
-  - [ ] White card background with padding
-- [ ] Task 2: Display Cancellation Policy (AC: #1)
-  - [ ] Subheader: "Cancellation Policy" with calendar X icon
-  - [ ] Display friendly policy text
-  - [ ] Highlight key terms (e.g., "24 hours", "Full refund")
-  - [ ] Handle missing policy with default text
-- [ ] Task 3: Display What to Bring (AC: #1, #3)
-  - [ ] Subheader: "What to Bring" with backpack icon
-  - [ ] Parse comma-separated items
-  - [ ] Display as bulleted list
-  - [ ] Each item on own line
-  - [ ] Handle empty list gracefully
-- [ ] Task 4: Display Health & Safety (AC: #1, #3)
-  - [ ] Subheader: "Health & Safety" with shield icon
-  - [ ] Display safety notes text
-  - [ ] Parse into bullet points if multiple items
-  - [ ] Consider icon for COVID or special notes
-  - [ ] Only show section if notes exist
-- [ ] Task 5: Style and layout (AC: #2)
-  - [ ] Clear visual hierarchy
-  - [ ] Section dividers between subsections
-  - [ ] Icon + title alignment
-  - [ ] Sufficient spacing for readability
-  - [ ] Mobile-friendly padding
+- [x] Task 1: Create GoodToKnow component (AC: #1, #2)
+  - [x] Create `src/components/experience/GoodToKnow.tsx`
+  - [x] Accept policy data as props
+  - [x] Section header: "Good to Know" (20px, bold)
+  - [x] White card background with padding
+- [x] Task 2: Display Cancellation Policy (AC: #1)
+  - [x] Subheader: "Cancellation Policy" with calendar X icon
+  - [x] Display friendly policy text
+  - [x] Highlight key terms (e.g., "24 hours", "Full refund")
+  - [x] Handle missing policy with default text
+- [x] Task 3: Display What to Bring (AC: #1, #3)
+  - [x] Subheader: "What to Bring" with backpack icon
+  - [x] Parse comma-separated items
+  - [x] Display as bulleted list
+  - [x] Each item on own line
+  - [x] Handle empty list gracefully
+- [x] Task 4: Display Health & Safety (AC: #1, #3)
+  - [x] Subheader: "Health & Safety" with shield icon
+  - [x] Display safety notes text
+  - [x] Parse into bullet points if multiple items
+  - [x] Consider icon for COVID or special notes
+  - [x] Only show section if notes exist
+- [x] Task 5: Style and layout (AC: #2)
+  - [x] Clear visual hierarchy
+  - [x] Section dividers between subsections
+  - [x] Icon + title alignment
+  - [x] Sufficient spacing for readability
+  - [x] Mobile-friendly padding
 
 ## Dev Notes
 
@@ -64,9 +64,15 @@ so that I know my options if plans change.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

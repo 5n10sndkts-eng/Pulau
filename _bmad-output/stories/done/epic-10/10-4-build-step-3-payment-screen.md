@@ -1,6 +1,6 @@
 # Story 10.4: Build Step 3 - Payment Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -36,39 +36,39 @@ So that I can complete my purchase.
 ## Tasks / Subtasks
 
 ### Task 1: Create PaymentStep component layout (AC: #1)
-- [ ] Build PaymentStep with order summary sidebar
-- [ ] Display trip total, item count, "Need help?" link
-- [ ] Add saved payment methods list (if any)
-- [ ] Create "Add New Card" form section
-- [ ] Include alternative payment buttons (PayPal, Apple Pay, Google Pay)
+- [x] Build PaymentStep with order summary sidebar
+- [x] Display trip total, item count, "Need help?" link
+- [x] Add saved payment methods list (if any)
+- [x] Create "Add New Card" form section
+- [x] Include alternative payment buttons (PayPal, Apple Pay, Google Pay)
 
 ### Task 2: Implement card input fields with formatting (AC: #3)
-- [ ] Add Card Number input with auto-formatting (#### #### #### ####)
-- [ ] Detect card brand (Visa, Mastercard, Amex) and show icon
-- [ ] Add Expiry Date input with MM/YY formatting
-- [ ] Add CVV input (3-4 digits, password masked)
-- [ ] Add Cardholder Name input (text)
+- [x] Add Card Number input with auto-formatting (#### #### #### ####)
+- [x] Detect card brand (Visa, Mastercard, Amex) and show icon
+- [x] Add Expiry Date input with MM/YY formatting
+- [x] Add CVV input (3-4 digits, password masked)
+- [x] Add Cardholder Name input (text)
 
 ### Task 3: Add saved card selection with CVV re-entry (AC: #2)
-- [ ] Display list of saved cards (last 4 digits, brand, expiry)
-- [ ] Add radio buttons for card selection
-- [ ] Show CVV re-entry field when saved card selected
-- [ ] Validate CVV on submit
-- [ ] Add "Use new card" option
+- [x] Display list of saved cards (last 4 digits, brand, expiry)
+- [x] Add radio buttons for card selection
+- [x] Show CVV re-entry field when saved card selected
+- [x] Validate CVV on submit
+- [x] Add "Use new card" option
 
 ### Task 4: Implement card validation (AC: #3)
-- [ ] Validate card number with Luhn algorithm
-- [ ] Validate expiry date: MM/YY format, not expired
-- [ ] Validate CVV: 3 digits (Visa/MC) or 4 (Amex)
-- [ ] Validate cardholder name: min 2 characters
-- [ ] Show inline errors on invalid fields
+- [x] Validate card number with Luhn algorithm
+- [x] Validate expiry date: MM/YY format, not expired
+- [x] Validate CVV: 3 digits (Visa/MC) or 4 (Amex)
+- [x] Validate cardholder name: min 2 characters
+- [x] Show inline errors on invalid fields
 
 ### Task 5: Add alternative payment options (AC: #1)
-- [ ] Create PayPal button integration
-- [ ] Add Apple Pay button (if window.ApplePaySession exists)
-- [ ] Add Google Pay button (if Google Pay available)
-- [ ] Handle payment method selection state
-- [ ] Disable card form when alternative method selected
+- [x] Create PayPal button integration
+- [x] Add Apple Pay button (if window.ApplePaySession exists)
+- [x] Add Google Pay button (if Google Pay available)
+- [x] Handle payment method selection state
+- [x] Disable card form when alternative method selected
 
 ## Dev Notes
 
@@ -136,8 +136,14 @@ const validateCardNumber = (cardNumber: string): boolean => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

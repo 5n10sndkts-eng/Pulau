@@ -70,6 +70,8 @@ const luhnCheck = (cardNumber: string): boolean => {
 export function PaymentMethodsScreen({ onBack }: PaymentMethodsScreenProps) {
   const [user] = useKV<User>('user', {
     id: '',
+    name: '',
+    email: '',
     preferences: {},
     saved: [],
     currency: 'USD',

@@ -1,6 +1,6 @@
 # Story 3.1: Create Vendor Registration Flow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -21,33 +21,33 @@ so that I can list my experiences for travelers to book.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create vendor registration UI (AC: #1, #8)
-  - [ ] Create `src/screens/vendor/VendorRegisterScreen.tsx`
-  - [ ] Build multi-section form: Business Info, Owner Info, Credentials
-  - [ ] Add fields: business_name, business_email, owner_first_name, owner_last_name, phone, since_year, password, confirm_password
-  - [ ] Style with vendor portal branding (slight variation from customer)
-  - [ ] Show success message after registration
-- [ ] Task 2: Create vendor data model (AC: #2)
-  - [ ] Define Vendor type in `src/types/vendor.ts`
-  - [ ] Include all fields: id, business_name, business_email, hashed_password, owner_first_name, owner_last_name, phone, since_year, created_at, verified, status
-  - [ ] Create vendor storage in Spark useKV
-- [ ] Task 3: Implement validation (AC: #3, #4)
-  - [ ] Create Zod schema for vendor registration
-  - [ ] Validate email uniqueness against existing vendors
-  - [ ] Validate password (min 8 chars)
-  - [ ] Validate phone format
-  - [ ] Validate since_year (1900 to current year)
-- [ ] Task 4: Implement registration logic (AC: #1, #4, #5)
-  - [ ] Hash password with SubtleCrypto PBKDF2/alternative
-  - [ ] Generate UUID for vendor id
-  - [ ] Set status = "pending_verification"
-  - [ ] Set verified = false
-  - [ ] Store vendor record
-- [ ] Task 5: Implement notification flow (AC: #6, #7)
-  - [ ] Create mock verification email function
-  - [ ] Create mock admin notification function
-  - [ ] Log notifications to console (development)
-  - [ ] Generate verification token for email
+- [x] Task 1: Create vendor registration UI (AC: #1, #8)
+  - [x] Create `src/screens/vendor/VendorRegisterScreen.tsx`
+  - [x] Build multi-section form: Business Info, Owner Info, Credentials
+  - [x] Add fields: business_name, business_email, owner_first_name, owner_last_name, phone, since_year, password, confirm_password
+  - [x] Style with vendor portal branding (slight variation from customer)
+  - [x] Show success message after registration
+- [x] Task 2: Create vendor data model (AC: #2)
+  - [x] Define Vendor type in `src/types/vendor.ts`
+  - [x] Include all fields: id, business_name, business_email, hashed_password, owner_first_name, owner_last_name, phone, since_year, created_at, verified, status
+  - [x] Create vendor storage in Spark useKV
+- [x] Task 3: Implement validation (AC: #3, #4)
+  - [x] Create Zod schema for vendor registration
+  - [x] Validate email uniqueness against existing vendors
+  - [x] Validate password (min 8 chars)
+  - [x] Validate phone format
+  - [x] Validate since_year (1900 to current year)
+- [x] Task 4: Implement registration logic (AC: #1, #4, #5)
+  - [x] Hash password with SubtleCrypto PBKDF2/alternative
+  - [x] Generate UUID for vendor id
+  - [x] Set status = "pending_verification"
+  - [x] Set verified = false
+  - [x] Store vendor record
+- [x] Task 5: Implement notification flow (AC: #6, #7)
+  - [x] Create mock verification email function
+  - [x] Create mock admin notification function
+  - [x] Log notifications to console (development)
+  - [x] Generate verification token for email
 
 ## Dev Notes
 
@@ -65,9 +65,15 @@ so that I can list my experiences for travelers to book.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

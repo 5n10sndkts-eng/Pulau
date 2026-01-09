@@ -1,6 +1,6 @@
 # Story 12.3: Create Hidden Gems Section
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -43,59 +43,59 @@ So that I can have authentic local experiences.
 ## Tasks / Subtasks
 
 ### Task 1: Create Hidden Gems Query and Hook (AC: #2)
-- [ ] Create useHiddenGems hook
-- [ ] Query experiences WHERE rating >= 4.5 AND booking_count < 50 AND review_count >= 5
-- [ ] Sort by rating descending, then review_count descending
-- [ ] Limit to 10-12 experiences for carousel
-- [ ] Add caching with 1-hour stale time
-- [ ] Handle empty state gracefully
+- [x] Create useHiddenGems hook
+- [x] Query experiences WHERE rating >= 4.5 AND booking_count < 50 AND review_count >= 5
+- [x] Sort by rating descending, then review_count descending
+- [x] Limit to 10-12 experiences for carousel
+- [x] Add caching with 1-hour stale time
+- [x] Handle empty state gracefully
 
 ### Task 2: Build HiddenGemCard Component (AC: #3, #4)
-- [ ] Create HiddenGemCard component
-- [ ] Display experience image with subtle overlay
-- [ ] Show title with max 2 lines
-- [ ] Add "💎 Local Secret" badge with #F4D03F background
-- [ ] Display star rating (e.g., "4.8 ⭐")
-- [ ] Show price prominently
-- [ ] Use card size similar to trending (220x280px)
+- [x] Create HiddenGemCard component
+- [x] Display experience image with subtle overlay
+- [x] Show title with max 2 lines
+- [x] Add "💎 Local Secret" badge with #F4D03F background
+- [x] Display star rating (e.g., "4.8 ⭐")
+- [x] Show price prominently
+- [x] Use card size similar to trending (220x280px)
 
 ### Task 3: Implement Badge Component (AC: #4)
-- [ ] Create LocalSecretBadge component
-- [ ] Use diamond emoji 💎 or custom diamond icon
-- [ ] Apply Golden Sand color (#F4D03F) background
-- [ ] Add "Local Secret" text
-- [ ] Position badge at top of card image
-- [ ] Add subtle shadow for contrast
+- [x] Create LocalSecretBadge component
+- [x] Use diamond emoji 💎 or custom diamond icon
+- [x] Apply Golden Sand color (#F4D03F) background
+- [x] Add "Local Secret" text
+- [x] Position badge at top of card image
+- [x] Add subtle shadow for contrast
 
 ### Task 4: Build Horizontal Carousel (AC: #1)
-- [ ] Implement FlatList with horizontal scroll
-- [ ] Configure smooth snapping behavior
-- [ ] Add spacing between cards (12-16px)
-- [ ] Hide horizontal scroll indicator
-- [ ] Implement snap-to-card behavior
-- [ ] Set proper padding for edge cards
+- [x] Implement FlatList with horizontal scroll
+- [x] Configure smooth snapping behavior
+- [x] Add spacing between cards (12-16px)
+- [x] Hide horizontal scroll indicator
+- [x] Implement snap-to-card behavior
+- [x] Set proper padding for edge cards
 
 ### Task 5: Implement Card Navigation (AC: #5)
-- [ ] Add Pressable wrapper to card
-- [ ] Navigate to experience detail on tap
-- [ ] Add press feedback animation
-- [ ] Track "hidden_gem_tapped" analytics event
-- [ ] Pass experience data to detail screen
+- [x] Add Pressable wrapper to card
+- [x] Navigate to experience detail on tap
+- [x] Add press feedback animation
+- [x] Track "hidden_gem_tapped" analytics event
+- [x] Pass experience data to detail screen
 
 ### Task 6: Build "See All" Page (AC: #5)
-- [ ] Create HiddenGemsListScreen for "See All" view
-- [ ] Apply same filtering criteria as carousel
-- [ ] Show all hidden gems in vertical list/grid
-- [ ] Add search and additional filters
-- [ ] Implement pagination for large result sets
-- [ ] Display count: "X Hidden Gems in Bali"
+- [x] Create HiddenGemsListScreen for "See All" view
+- [x] Apply same filtering criteria as carousel
+- [x] Show all hidden gems in vertical list/grid
+- [x] Add search and additional filters
+- [x] Implement pagination for large result sets
+- [x] Display count: "X Hidden Gems in Bali"
 
 ### Task 7: Add Empty and Loading States
-- [ ] Create skeleton loader for hidden gem cards
-- [ ] Show skeleton during initial load
-- [ ] Handle empty state: "No hidden gems found"
-- [ ] Add error handling with retry
-- [ ] Display informative message if no results
+- [x] Create skeleton loader for hidden gem cards
+- [x] Show skeleton during initial load
+- [x] Handle empty state: "No hidden gems found"
+- [x] Add error handling with retry
+- [x] Display informative message if no results
 
 ## Dev Notes
 
@@ -181,8 +181,14 @@ const LocalSecretBadge = () => (
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

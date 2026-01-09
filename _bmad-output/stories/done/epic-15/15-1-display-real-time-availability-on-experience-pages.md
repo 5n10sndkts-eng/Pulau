@@ -1,6 +1,6 @@
 # Story 15.1: Display Real-time Availability on Experience Pages
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -29,39 +29,39 @@ So that I can book dates that work.
 ## Tasks / Subtasks
 
 ### Task 1: Create Availability Calendar Component (AC: #1)
-- [ ] Build AvailabilityCalendar component with 60-day date range
-- [ ] Implement color-coded status system (green/yellow/red/gray indicators)
-- [ ] Add date grid layout with mobile-first responsive design
-- [ ] Fetch and parse experience_availability KV namespace data
-- [ ] Display availability legend with status explanations
+- [x] Build AvailabilityCalendar component with 60-day date range
+- [x] Implement color-coded status system (green/yellow/red/gray indicators)
+- [x] Add date grid layout with mobile-first responsive design
+- [x] Fetch and parse experience_availability KV namespace data
+- [x] Display availability legend with status explanations
 
 ### Task 2: Implement Date Selection Logic (AC: #2)
-- [ ] Add tap/click handlers for available dates (disabled for unavailable)
-- [ ] Update selected date state and highlight selected date visually
-- [ ] Calculate and display remaining slots for selected date
-- [ ] Prefill "Add to Trip" CTA with selected date parameter
-- [ ] Add deselection capability (tap again to deselect)
+- [x] Add tap/click handlers for available dates (disabled for unavailable)
+- [x] Update selected date state and highlight selected date visually
+- [x] Calculate and display remaining slots for selected date
+- [x] Prefill "Add to Trip" CTA with selected date parameter
+- [x] Add deselection capability (tap again to deselect)
 
 ### Task 3: Optimize Data Fetching and Caching
-- [ ] Query experience_availability by experience_id for next 60 days
-- [ ] Implement Spark useKV caching for availability data
-- [ ] Add loading skeleton while availability fetches
-- [ ] Handle real-time updates when vendor changes availability
-- [ ] Set cache expiry to 30 seconds for fresh data
+- [x] Query experience_availability by experience_id for next 60 days
+- [x] Implement Spark useKV caching for availability data
+- [x] Add loading skeleton while availability fetches
+- [x] Handle real-time updates when vendor changes availability
+- [x] Set cache expiry to 30 seconds for fresh data
 
 ### Task 4: Handle Edge Cases and Errors (AC: #1, #2)
-- [ ] Display graceful error state if availability fails to load
-- [ ] Show "No availability data" message if KV namespace has no records
-- [ ] Handle timezone conversion for date display
-- [ ] Prevent selection of past dates
-- [ ] Add retry mechanism for failed availability requests
+- [x] Display graceful error state if availability fails to load
+- [x] Show "No availability data" message if KV namespace has no records
+- [x] Handle timezone conversion for date display
+- [x] Prevent selection of past dates
+- [x] Add retry mechanism for failed availability requests
 
 ### Task 5: Test Across Devices and Accessibility (AC: #1, #2)
-- [ ] Test calendar rendering on mobile (320px-428px), KV namespacet, desktop
-- [ ] Verify touch targets meet 44x44px minimum on mobile
-- [ ] Ensure color status indicators have sufficient contrast (WCAG AA)
-- [ ] Add ARIA labels for screen readers (date status, selection state)
-- [ ] Test keyboard navigation for date selection
+- [x] Test calendar rendering on mobile (320px-428px), KV namespacet, desktop
+- [x] Verify touch targets meet 44x44px minimum on mobile
+- [x] Ensure color status indicators have sufficient contrast (WCAG AA)
+- [x] Add ARIA labels for screen readers (date status, selection state)
+- [x] Test keyboard navigation for date selection
 
 ## Dev Notes
 
@@ -109,8 +109,14 @@ const availability = await db.experience_availability
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

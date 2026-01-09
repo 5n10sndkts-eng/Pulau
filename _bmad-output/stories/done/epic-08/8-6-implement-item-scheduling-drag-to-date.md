@@ -1,6 +1,6 @@
 # Story 8.6: Implement Item Scheduling (Drag to Date)
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -30,39 +30,39 @@ So that my itinerary has a logical flow.
 ## Tasks / Subtasks
 
 ### Task 1: Implement drag-and-drop functionality (AC: #1)
-- [ ] Add long-press detection to TripItemCard (300ms threshold)
-- [ ] Make item draggable using @dnd-kit or native drag API
-- [ ] Add visual feedback: elevation shadow, reduced opacity (0.7)
-- [ ] Create drop zones for each day section
-- [ ] Highlight drop zone on drag-over with border/background change
+- [x] Add long-press detection to TripItemCard (300ms threshold)
+- [x] Make item draggable using @dnd-kit or native drag API
+- [x] Add visual feedback: elevation shadow, reduced opacity (0.7)
+- [x] Create drop zones for each day section
+- [x] Highlight drop zone on drag-over with border/background change
 
 ### Task 2: Handle drop and update scheduled date (AC: #1)
-- [ ] Implement onDrop handler for day sections
-- [ ] Update trip_items.scheduled_date to target day's date
-- [ ] Move item from unscheduled to target day's items array
-- [ ] Persist change via useTripManagement hook
-- [ ] Add smooth animation for item repositioning
+- [x] Implement onDrop handler for day sections
+- [x] Update trip_items.scheduled_date to target day's date
+- [x] Move item from unscheduled to target day's items array
+- [x] Persist change via useTripManagement hook
+- [x] Add smooth animation for item repositioning
 
 ### Task 3: Create "Assign to Day" button and date picker (AC: #2)
-- [ ] Add "Assign to Day" button to unscheduled TripItemCard
-- [ ] Create DatePickerModal component
-- [ ] Filter available dates to trip.start_date and trip.end_date range
-- [ ] Show day of week and formatted date in picker
-- [ ] Handle date selection and close modal
+- [x] Add "Assign to Day" button to unscheduled TripItemCard
+- [x] Create DatePickerModal component
+- [x] Filter available dates to trip.start_date and trip.end_date range
+- [x] Show day of week and formatted date in picker
+- [x] Handle date selection and close modal
 
 ### Task 4: Update item positioning and sorting (AC: #1, #2)
-- [ ] Sort items within day by scheduled_time (if set)
-- [ ] Add items without time to end of day list
-- [ ] Re-render affected day sections on item move
-- [ ] Ensure unscheduled section updates when item removed
-- [ ] Maintain scroll position during re-render
+- [x] Sort items within day by scheduled_time (if set)
+- [x] Add items without time to end of day list
+- [x] Re-render affected day sections on item move
+- [x] Ensure unscheduled section updates when item removed
+- [x] Maintain scroll position during re-render
 
 ### Task 5: Add mobile and desktop interaction patterns (AC: #1)
-- [ ] Mobile: long-press (300ms) to initiate drag
-- [ ] Desktop: click-and-drag or hover menu with "Move to..." option
-- [ ] Add touch feedback vibration on long-press start (mobile)
-- [ ] Show ghost element following cursor/touch during drag
-- [ ] Cancel drag on escape key or edge swipe
+- [x] Mobile: long-press (300ms) to initiate drag
+- [x] Desktop: click-and-drag or hover menu with "Move to..." option
+- [x] Add touch feedback vibration on long-press start (mobile)
+- [x] Show ghost element following cursor/touch during drag
+- [x] Cancel drag on escape key or edge swipe
 
 ## Dev Notes
 
@@ -111,8 +111,14 @@ const { setNodeRef: setDropRef, isOver } = useDroppable({
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

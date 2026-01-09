@@ -155,8 +155,28 @@ create policy "Experience inclusions are viewable by everyone for active experie
     )
   );
 
-create policy "Vendors can manage inclusions for their own experiences."
-  on public.experience_inclusions for all
+create policy "Vendors can insert inclusions for their own experiences."
+  on public.experience_inclusions for insert
+  with check (
+    exists (
+      select 1 from public.experiences e
+      join public.vendors v on e.vendor_id = v.id
+      where e.id = experience_inclusions.experience_id and v.owner_id = auth.uid()
+    )
+  );
+
+create policy "Vendors can update inclusions for their own experiences."
+  on public.experience_inclusions for update
+  using (
+    exists (
+      select 1 from public.experiences e
+      join public.vendors v on e.vendor_id = v.id
+      where e.id = experience_inclusions.experience_id and v.owner_id = auth.uid()
+    )
+  );
+
+create policy "Vendors can delete inclusions for their own experiences."
+  on public.experience_inclusions for delete
   using (
     exists (
       select 1 from public.experiences e
@@ -187,8 +207,28 @@ create policy "Availability is viewable by everyone."
   on public.experience_availability for select
   using ( true );
 
-create policy "Vendors can manage availability for their own experiences."
-  on public.experience_availability for all
+create policy "Vendors can insert availability for their own experiences."
+  on public.experience_availability for insert
+  with check (
+    exists (
+      select 1 from public.experiences e
+      join public.vendors v on e.vendor_id = v.id
+      where e.id = experience_availability.experience_id and v.owner_id = auth.uid()
+    )
+  );
+
+create policy "Vendors can update availability for their own experiences."
+  on public.experience_availability for update
+  using (
+    exists (
+      select 1 from public.experiences e
+      join public.vendors v on e.vendor_id = v.id
+      where e.id = experience_availability.experience_id and v.owner_id = auth.uid()
+    )
+  );
+
+create policy "Vendors can delete availability for their own experiences."
+  on public.experience_availability for delete
   using (
     exists (
       select 1 from public.experiences e
@@ -227,6 +267,10 @@ create policy "Authenticated users can insert reviews."
 
 create policy "Users can update their own reviews."
   on public.reviews for update
+  using ( auth.uid() = user_id );
+
+create policy "Users can delete their own reviews."
+  on public.reviews for delete
   using ( auth.uid() = user_id );
 
 
@@ -297,7 +341,8 @@ alter table public.profiles
 add column if not exists first_name text,
 add column if not exists last_name text,
 add column if not exists has_completed_onboarding boolean default false,
-add column if not exists email_verified boolean default false;
+add column if not exists email_verified boolean default false,
+add column if not exists updated_at timestamptz default now();
 
 
 -- ================================================
@@ -308,12 +353,15 @@ create index if not exists idx_experiences_category on public.experiences(catego
 create index if not exists idx_experiences_status on public.experiences(status);
 create index if not exists idx_experiences_destination on public.experiences(destination_id);
 create index if not exists idx_experience_images_experience on public.experience_images(experience_id);
+create index if not exists idx_experience_inclusions_experience on public.experience_inclusions(experience_id);
 create index if not exists idx_experience_availability_date on public.experience_availability(experience_id, date);
 create index if not exists idx_trips_user_id on public.trips(user_id);
 create index if not exists idx_trips_status on public.trips(status);
 create index if not exists idx_trip_items_trip on public.trip_items(trip_id);
 create index if not exists idx_bookings_trip on public.bookings(trip_id);
 create index if not exists idx_reviews_experience on public.reviews(experience_id);
+create index if not exists idx_reviews_user on public.reviews(user_id);
+create index if not exists idx_reviews_experience_rating on public.reviews(experience_id, rating);
 create index if not exists idx_payment_methods_user on public.payment_methods(user_id);
 
 
@@ -338,4 +386,10 @@ create trigger set_experiences_updated_at
 drop trigger if exists set_trips_updated_at on public.trips;
 create trigger set_trips_updated_at
   before update on public.trips
+  for each row execute procedure public.handle_updated_at();
+
+-- Apply updated_at trigger to profiles
+drop trigger if exists set_profiles_updated_at on public.profiles;
+create trigger set_profiles_updated_at
+  before update on public.profiles
   for each row execute procedure public.handle_updated_at();

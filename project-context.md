@@ -1,10 +1,11 @@
 ---
 project_name: 'Pulau'
 user_name: 'Moe'
-date: '2026-01-05'
-sections_completed: ['technology_stack', 'typescript_rules', 'framework_rules', 'code_quality', 'critical_rules', 'workflow']
+date: '2026-01-08'
+sections_completed: ['technology_stack', 'typescript_rules', 'framework_rules', 'code_quality', 'critical_rules', 'workflow', 'backend_integration']
 status: 'complete'
 existing_patterns_found: 12
+architecture_version: '2026-01-08'
 ---
 
 # Project Context for AI Agents
@@ -155,11 +156,13 @@ src/
 - ✅ **Single-file router** - App.tsx contains all screen logic
 - ✅ **Navigate by setState** - Change `currentScreen` discriminated union to navigate
 
-**Data Layer:**
-- 🚨 **ALL data from mockData.ts** - No API calls, all static mock data
+**Data Layer (Backend Integration):**
+- ✅ **Supabase backend configured** - PostgreSQL database with RLS
+- ✅ **Service Layer pattern** - All Supabase calls go through `lib/*Service.ts` files
+- ✅ **TanStack Query hooks** - Data fetching via `hooks/use*.ts` files
+- ✅ **Components use hooks only** - NEVER call Supabase directly from components
+- ✅ **mockData.ts deprecated** - Being replaced by service layer (keep during transition)
 - ✅ **Helpers in lib/helpers.ts** - Utility functions for filtering, formatting, calculations
-- ✅ **Helpers can return undefined** - Always use optional chaining: `experience?.title`
-- ✅ **No backend integration yet** - Future API layer will replace mockData
 
 **React Hooks Usage:**
 - ✅ **Import hooks explicitly** - `import { useState, useEffect } from 'react'`
@@ -253,9 +256,11 @@ src/
 - ❌ **DON'T skip Toaster component** - Must be rendered in App.tsx for toast notifications
 
 **Data Layer Mistakes:**
-- 🚨 **NEVER call APIs** - Project uses mockData.ts only (no backend yet)
-- ❌ **DON'T create new data files** - Add to existing mockData.ts
-- ❌ **DON'T skip null checks on helpers** - `getExperienceById()` can return `undefined`
+- 🚨 **NEVER call Supabase from components** - Always use hooks from `hooks/use*.ts`
+- ❌ **DON'T skip service layer** - All database calls go through `lib/*Service.ts`
+- ❌ **DON'T throw errors from services** - Return `{ data: null, error: string }` instead
+- ❌ **DON'T use flat query keys** - Use hierarchical arrays: `['experiences', id]`
+- ❌ **DON'T skip null checks on helpers** - Functions can return `undefined`
 
 **Routing Mistakes:**
 - 🚨 **NEVER install react-router** - App uses discriminated union state routing
@@ -296,18 +301,155 @@ npm run preview    # Preview production build
 
 **Current State:**
 - ✅ Single-page application (SPA) with client-side routing
-- ✅ Mock data architecture (no backend)
+- ✅ Supabase backend (PostgreSQL + Auth + Edge Functions)
 - ✅ localStorage persistence via Spark useKV
 - ✅ Component-based architecture with Radix UI primitives
 - ✅ Error boundary configured for production
 
-**Future Considerations:**
-- 🔮 API integration will replace mockData.ts
-- 🔮 Authentication system needed
-- 🔮 Testing infrastructure (Vitest planned)
-- 🔮 Backend integration points identified in helpers.ts
+**Backend Integration Architecture:**
+- ✅ Supabase PostgreSQL with RLS policies
+- ✅ Supabase Auth (Email/Password, Magic Link, OAuth)
+- ✅ Service Layer pattern (`lib/*Service.ts`)
+- ✅ TanStack Query hooks (`hooks/use*.ts`)
+- ✅ Edge Functions for business logic (`supabase/functions/`)
 
 ---
 
-_Last updated: 2026-01-05 by Moe_
+## Backend Integration Rules
+
+### Database Naming (PostgreSQL)
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| Tables | `snake_case` plural | `users`, `experiences`, `bookings` |
+| Columns | `snake_case` | `user_id`, `created_at`, `is_active` |
+| Foreign Keys | `{table}_id` | `user_id`, `experience_id` |
+
+### API Response Pattern
+
+**All services MUST return discriminated unions:**
+```typescript
+type ApiResponse<T> =
+  | { data: T; error: null }
+  | { data: null; error: string }
+
+// Example usage:
+const result = await getExperiences()
+if (result.error) {
+  toast.error(result.error)
+  return
+}
+// result.data is guaranteed to be T here
+```
+
+### Service Layer Pattern
+
+**File naming:** `lib/*Service.ts` (camelCase + Service)
+```typescript
+// lib/experienceService.ts
+export async function getExperiences(): Promise<ApiResponse<Experience[]>> {
+  const { data, error } = await supabase
+    .from('experiences')
+    .select('*')
+
+  if (error) return { data: null, error: error.message }
+  return { data, error: null }
+}
+```
+
+### TanStack Query Hook Pattern
+
+**File naming:** `hooks/use*.ts` (use + PascalCase)
+```typescript
+// hooks/useExperiences.ts
+export function useExperiences() {
+  return useQuery({
+    queryKey: ['experiences'],
+    queryFn: () => getExperiences(),
+  })
+}
+
+export function useExperience(id: string) {
+  return useQuery({
+    queryKey: ['experiences', id],
+    queryFn: () => getExperience(id),
+  })
+}
+```
+
+### Query Key Hierarchy
+
+```typescript
+// List queries
+['experiences']
+['bookings']
+['trips']
+
+// Single item queries
+['experiences', experienceId]
+['bookings', bookingId]
+
+// Filtered queries
+['bookings', { status: 'pending' }]
+```
+
+### Optimistic Updates
+
+| Mutation Type | Optimistic? | Rationale |
+|---------------|-------------|-----------|
+| Add to wishlist | ✅ Yes | Low-risk, instant feedback |
+| Add/remove from trip | ✅ Yes | User expects immediate response |
+| Create booking | ❌ No | High-stakes, server validation required |
+| Process payment | ❌ No | Must confirm server success |
+
+### Component Data Pattern
+
+```typescript
+// Standard component pattern
+const { data, isLoading, error, refetch } = useExperiences()
+
+if (isLoading) return <Skeleton />
+if (error) return <ErrorState message={error} onRetry={refetch} />
+if (!data?.length) return <EmptyState message="No experiences found" />
+return <ExperienceList experiences={data} />
+```
+
+### Loading & Error State Conventions
+
+| Context | Pattern | Component |
+|---------|---------|-----------|
+| Data fetching | Skeleton placeholders | `<Skeleton />` |
+| Mutations | Button loading state | `<LoadingButton />` |
+| Errors | Friendly error UI | `<ErrorState />` |
+| Empty results | Empty state | `<EmptyState />` |
+
+### Edge Function Pattern
+
+**Folder naming:** `kebab-case` in `supabase/functions/`
+```
+supabase/functions/
+  checkout/index.ts
+  create-booking/index.ts
+  process-payment/index.ts
+```
+
+### Testing Infrastructure
+
+| Tool | Purpose |
+|------|---------|
+| Vitest | Test runner (Vite-native) |
+| @testing-library/react | Component testing |
+
+**Test file convention:** Co-located `.test.ts` files
+```
+lib/experienceService.ts
+lib/experienceService.test.ts
+hooks/useExperiences.ts
+hooks/useExperiences.test.ts
+```
+
+---
+
+_Last updated: 2026-01-08 by Moe_
 _This document is the single source of truth for AI agents working on Pulau project_
+_See also: `_bmad-output/planning-artifacts/architecture/architecture.md` for full architectural decisions_

@@ -19,7 +19,7 @@ const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
     if (USE_MOCK_AUTH) {
-      console.log('🔐 Auth Service: Using MOCK login');
+      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK login');
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (!email || !password) { reject(new Error('Email and password are required')); return; }
@@ -48,18 +48,8 @@ export const authService = {
             resolve(user);
           }
           else {
-            // For E2E tests, allow "login" if we just want to simulate a successful entry if the user doesn't exist?
-            // Actually, standard behavior is to fail if user not found. 
-            // BUT, looking at the previous implementation, it auto-created a user if not found.
-            // Keeping that behavior but adding persistence.
-            const newUser = {
-              id: `user_${Date.now()}`,
-              name: email.split('@')[0] || 'Traveler',
-              email,
-              avatar: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=0D7377&color=fff`,
-            };
-            localStorage.setItem('pulau_user', JSON.stringify(newUser));
-            resolve(newUser);
+            // Mock mode: reject with same message as Supabase for consistency
+            reject(new Error('Invalid login credentials'));
           }
         }, DELAY_MS);
       });
@@ -74,12 +64,12 @@ export const authService = {
     if (error) throw error;
     if (!session?.user) throw new Error('Login failed - no user returned');
 
-    // Fetch user profile
+    // Fetch user profile (use maybeSingle to handle missing profile gracefully)
     const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
     const profile = data as ProfileRow | null;
     const name = profile?.full_name || email.split('@')[0] || 'User';
@@ -131,12 +121,9 @@ export const authService = {
     if (error) throw error;
   },
 
-  register: async (name: string, email: string, password: string): Promise<User> => {
-    // ... existing register implementation ...
+  register: async (name: string, email: string, password: string, firstName?: string, lastName?: string): Promise<User> => {
     if (USE_MOCK_AUTH) {
-      // ...
-      // (Copied strictly to avoid cutting off)
-      console.log('🔐 Auth Service: Using MOCK register');
+      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK register');
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (!email || !password || !name) { reject(new Error('All fields are required')); return; }
@@ -172,14 +159,28 @@ export const authService = {
     if (error) throw error;
     if (!authUser) throw new Error('Registration failed');
 
+    // Update profile with first/last name if provided
+    const derivedFirstName = firstName || name.split(' ')[0];
+    const derivedLastName = lastName || name.split(' ').slice(1).join(' ');
+
+    if (derivedFirstName || derivedLastName) {
+      await supabase
+        .from('profiles')
+        .update({
+          first_name: derivedFirstName,
+          last_name: derivedLastName,
+        })
+        .eq('id', authUser.id);
+    }
+
     // Return user with defaults
     return {
       id: authUser.id,
       email: authUser.email || '',
       name: name,
       avatar: (authUser.user_metadata?.avatar_url as string) || undefined,
-      firstName: name.split(' ')[0],
-      lastName: name.split(' ').slice(1).join(' '),
+      firstName: derivedFirstName,
+      lastName: derivedLastName,
       emailVerified: false,
       createdAt: authUser.created_at,
       saved: [],
@@ -199,10 +200,10 @@ export const authService = {
 
   resetPassword: async (email: string): Promise<void> => {
     if (USE_MOCK_AUTH) {
-      console.log('🔐 Auth Service: Using MOCK password reset');
+      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK password reset');
       return new Promise((resolve) => {
         setTimeout(() => {
-          console.log(`Password reset email sent to: ${email}`);
+          if (import.meta.env.DEV) console.log(`Password reset email sent to: ${email}`);
           resolve();
         }, DELAY_MS);
       });
@@ -217,7 +218,7 @@ export const authService = {
 
   updatePassword: async (newPassword: string): Promise<void> => {
     if (USE_MOCK_AUTH) {
-      console.log('🔐 Auth Service: Using MOCK password update');
+      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK password update');
       return new Promise((resolve) => setTimeout(resolve, DELAY_MS));
     }
 

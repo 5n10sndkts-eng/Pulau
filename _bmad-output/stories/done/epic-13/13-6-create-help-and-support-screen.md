@@ -1,6 +1,6 @@
 # Story 13.6: Create Help and Support Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -33,21 +33,21 @@ So that I can resolve issues.
 ## Tasks / Subtasks
 
 ### Task 1: Create Help Screen (AC: #1)
-- [ ] Create screen in `app/profile/help.tsx`
-- [ ] Add FAQ accordion section
-- [ ] Add "Contact Us" button
-- [ ] Add "Report a Problem" link
+- [x] Create screen in `app/profile/help.tsx`
+- [x] Add FAQ accordion section
+- [x] Add "Contact Us" button
+- [x] Add "Report a Problem" link
 
 ### Task 2: Build FAQ Accordion (AC: #2, #3)
-- [ ] Create FAQ data structure
-- [ ] Build expandable FAQ items
-- [ ] Categorize by topic
-- [ ] Implement expand/collapse animation
+- [x] Create FAQ data structure
+- [x] Build expandable FAQ items
+- [x] Categorize by topic
+- [x] Implement expand/collapse animation
 
 ### Task 3: Implement Contact Actions (AC: #4)
-- [ ] Add email link using Linking.openURL
-- [ ] Optionally add live chat integration (Intercom/Zendesk)
-- [ ] Add problem report form
+- [x] Add email link using Linking.openURL
+- [x] Optionally add live chat integration (Intercom/Zendesk)
+- [x] Add problem report form
 
 ## Dev Notes
 
@@ -78,8 +78,14 @@ Linking.openURL('mailto:support@pulau.app?subject=Support%20Request');
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

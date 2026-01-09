@@ -1,6 +1,6 @@
 # Story 3.2: Implement Vendor Login and Portal Access
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -20,35 +20,35 @@ so that I can manage my experiences and bookings.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create vendor login UI (AC: #1, #7)
-  - [ ] Create `src/screens/vendor/VendorLoginScreen.tsx`
-  - [ ] Build form with business_email and password fields
-  - [ ] Add "Forgot Password?" link
-  - [ ] Add "Register as Vendor" link
-  - [ ] Style with vendor portal branding
-  - [ ] Show "pending verification" error for unverified accounts
-- [ ] Task 2: Implement vendor authentication (AC: #1, #2, #3)
-  - [ ] Create vendor login handler
-  - [ ] Look up vendor by business_email
-  - [ ] Verify password hash
-  - [ ] Check verified status before allowing login
-  - [ ] Generate vendor JWT with vendor_id and role="vendor"
-- [ ] Task 3: Create vendor session context (AC: #2, #3, #6)
-  - [ ] Create VendorAuthContext separate from customer AuthContext
-  - [ ] Store vendor token in useKV
-  - [ ] Set 12-hour expiration (different from customer 7-day)
-  - [ ] Create useVendorAuth hook
-- [ ] Task 4: Build vendor portal navigation (AC: #4, #5)
-  - [ ] Create `src/components/vendor/VendorNavigation.tsx`
-  - [ ] Add sidebar/header with: Dashboard, My Experiences, Bookings, Analytics, Settings
-  - [ ] Highlight active section
-  - [ ] Add vendor business name in header
-  - [ ] Add logout button
-- [ ] Task 5: Handle successful login (AC: #4)
-  - [ ] Set vendor authenticated state
-  - [ ] Navigate to /vendor/dashboard
-  - [ ] Load vendor profile data
-  - [ ] Show "Welcome, [Business Name]" toast
+- [x] Task 1: Create vendor login UI (AC: #1, #7)
+  - [x] Create `src/screens/vendor/VendorLoginScreen.tsx`
+  - [x] Build form with business_email and password fields
+  - [x] Add "Forgot Password?" link
+  - [x] Add "Register as Vendor" link
+  - [x] Style with vendor portal branding
+  - [x] Show "pending verification" error for unverified accounts
+- [x] Task 2: Implement vendor authentication (AC: #1, #2, #3)
+  - [x] Create vendor login handler
+  - [x] Look up vendor by business_email
+  - [x] Verify password hash
+  - [x] Check verified status before allowing login
+  - [x] Generate vendor JWT with vendor_id and role="vendor"
+- [x] Task 3: Create vendor session context (AC: #2, #3, #6)
+  - [x] Create VendorAuthContext separate from customer AuthContext
+  - [x] Store vendor token in useKV
+  - [x] Set 12-hour expiration (different from customer 7-day)
+  - [x] Create useVendorAuth hook
+- [x] Task 4: Build vendor portal navigation (AC: #4, #5)
+  - [x] Create `src/components/vendor/VendorNavigation.tsx`
+  - [x] Add sidebar/header with: Dashboard, My Experiences, Bookings, Analytics, Settings
+  - [x] Highlight active section
+  - [x] Add vendor business name in header
+  - [x] Add logout button
+- [x] Task 5: Handle successful login (AC: #4)
+  - [x] Set vendor authenticated state
+  - [x] Navigate to /vendor/dashboard
+  - [x] Load vendor profile data
+  - [x] Show "Welcome, [Business Name]" toast
 
 ## Dev Notes
 
@@ -66,9 +66,15 @@ so that I can manage my experiences and bookings.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

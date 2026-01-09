@@ -1,6 +1,6 @@
 # Story 2.1: Implement Customer Registration Flow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -53,15 +53,15 @@ so that I can save my trips and preferences into my personal Spark KV space.
 
 ## Disaster Prevention (CRITICAL)
 
-- [ ] **NO PLAIN TEXT:** Never store or log the plain text password.
-- [ ] **SALTING:** Every user record must have a unique salt. NEVER use a hardcoded static salt.
-- [ ] **ITERATIONS:** Use a minimum of 100,000 iterations for PBKDF2 to prevent easy brute-forcing of the local KV store.
-- [ ] **KV ATOMICITY:** Since Spark KV is eventually consistent, ensure you handle the "check then write" race condition gracefully or mention it in dev notes.
+- [x] **NO PLAIN TEXT:** Never store or log the plain text password.
+- [x] **SALTING:** Every user record must have a unique salt. NEVER use a hardcoded static salt.
+- [x] **ITERATIONS:** Use a minimum of 100,000 iterations for PBKDF2 to prevent easy brute-forcing of the local KV store.
+- [x] **KV ATOMICITY:** Since Spark KV is eventually consistent, ensure you handle the "check then write" race condition gracefully or mention it in dev notes.
 
 ## Definition of Done
 
-- [ ] Form validates all inputs correctly with Zod.
-- [ ] User record is visible in Spark KV dev tools after registration.
-- [ ] Password hash in KV is not the same as the plain password.
-- [ ] Successful registration navigates to Onboarding.
-- [ ] Duplicate email registration is blocked.
+- [x] Form validates all inputs correctly with Zod.
+- [x] User record is visible in Spark KV dev tools after registration.
+- [x] Password hash in KV is not the same as the plain password.
+- [x] Successful registration navigates to Onboarding.
+- [x] Duplicate email registration is blocked.

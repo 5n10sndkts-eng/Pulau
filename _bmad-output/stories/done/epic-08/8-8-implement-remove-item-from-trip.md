@@ -1,6 +1,6 @@
 # Story 8.8: Implement Remove Item from Trip
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -30,40 +30,40 @@ So that I can change my plans.
 ## Tasks / Subtasks
 
 ### Task 1: Implement swipe-to-delete on mobile (AC: #1)
-- [ ] Add swipe gesture detection to TripItemCard (left swipe)
-- [ ] Reveal red "Remove" button on swipe
-- [ ] Use framer-motion drag constraints for smooth swipe
-- [ ] Add threshold: swipe must exceed 60px to trigger
-- [ ] Reset card position if swipe is released before threshold
+- [x] Add swipe gesture detection to TripItemCard (left swipe)
+- [x] Reveal red "Remove" button on swipe
+- [x] Use framer-motion drag constraints for smooth swipe
+- [x] Add threshold: swipe must exceed 60px to trigger
+- [x] Reset card position if swipe is released before threshold
 
 ### Task 2: Add hover delete button on desktop (AC: #1)
-- [ ] Show trash icon button on card hover (desktop only)
-- [ ] Position button in top-right or trailing edge of card
-- [ ] Style with red/destructive color on hover
-- [ ] Ensure button has 44x44px touch target
-- [ ] Hide button when not hovering
+- [x] Show trash icon button on card hover (desktop only)
+- [x] Position button in top-right or trailing edge of card
+- [x] Style with red/destructive color on hover
+- [x] Ensure button has 44x44px touch target
+- [x] Hide button when not hovering
 
 ### Task 3: Implement remove function (AC: #2)
-- [ ] Create removeItem function in useTripManagement
-- [ ] Remove item from trip.items array by ID
-- [ ] Persist updated trip via useKV
-- [ ] Store removed item temporarily for undo functionality
-- [ ] Clear undo buffer after 5 seconds
+- [x] Create removeItem function in useTripManagement
+- [x] Remove item from trip.items array by ID
+- [x] Persist updated trip via useKV
+- [x] Store removed item temporarily for undo functionality
+- [x] Clear undo buffer after 5 seconds
 
 ### Task 4: Add removal animation (AC: #2)
-- [ ] Animate item fade out (opacity 0) over 200ms
-- [ ] Slide item left/right during fade
-- [ ] Collapse item height to 0 after fade completes
-- [ ] Update trip total with highlight animation
-- [ ] Remove item from DOM after animation completes
+- [x] Animate item fade out (opacity 0) over 200ms
+- [x] Slide item left/right during fade
+- [x] Collapse item height to 0 after fade completes
+- [x] Update trip total with highlight animation
+- [x] Remove item from DOM after animation completes
 
 ### Task 5: Implement undo functionality with toast (AC: #2)
-- [ ] Display toast: "Removed from trip" with "Undo" button
-- [ ] Set toast duration to 5 seconds
-- [ ] Store removed item in temporary undo buffer
-- [ ] On "Undo" click: restore item to original position
-- [ ] Animate item back in (reverse of removal animation)
-- [ ] Clear undo buffer when toast closes
+- [x] Display toast: "Removed from trip" with "Undo" button
+- [x] Set toast duration to 5 seconds
+- [x] Store removed item in temporary undo buffer
+- [x] On "Undo" click: restore item to original position
+- [x] Animate item back in (reverse of removal animation)
+- [x] Clear undo buffer when toast closes
 
 ## Dev Notes
 
@@ -139,8 +139,14 @@ const removeAnimation = {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

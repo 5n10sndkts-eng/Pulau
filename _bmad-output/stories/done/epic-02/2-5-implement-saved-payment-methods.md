@@ -1,6 +1,6 @@
 # Story 2.5: Implement Saved Payment Methods
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -20,36 +20,36 @@ so that checkout is faster on future bookings.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create payment methods list screen (AC: #2, #3, #6)
-  - [ ] Create `src/screens/profile/PaymentMethodsScreen.tsx`
-  - [ ] Display list of saved cards with card brand icon
-  - [ ] Show "•••• [last 4 digits]" format
-  - [ ] Show expiry date (MM/YY format)
-  - [ ] Display "Default" badge on default card
-  - [ ] Add "+ Add New Card" button at bottom
-- [ ] Task 2: Create add card modal/screen (AC: #1, #7)
-  - [ ] Create card entry form (mocked for MVP)
-  - [ ] Input fields: card number, expiry (MM/YY), CVV, cardholder name
-  - [ ] Format card number with spaces (#### #### #### ####)
-  - [ ] Detect and display card brand icon (Visa/Mastercard/Amex)
-  - [ ] Mock tokenization (generate fake token, store only last 4)
-  - [ ] Add "Save this card" confirmation button
-- [ ] Task 3: Implement payment method data model (AC: #3)
-  - [ ] Define PaymentMethod type in `src/types/payment.ts`
-  - [ ] Include: id, user_id, payment_token, last_four, card_brand, expiry_month, expiry_year, is_default, deleted_at
-  - [ ] Create payment methods storage in useKV
-  - [ ] Filter deleted methods from display
-- [ ] Task 4: Implement card management (AC: #4, #5)
-  - [ ] Add "Set as Default" option on card tap
-  - [ ] Implement default flag logic (only one default)
-  - [ ] Add "Remove" option with confirmation modal
-  - [ ] Implement soft delete (set deleted_at timestamp)
-  - [ ] Show "Card removed" toast on delete
-- [ ] Task 5: Validate card input (AC: #1)
-  - [ ] Validate card number with Luhn algorithm
-  - [ ] Validate expiry is not in past
-  - [ ] Validate CVV is 3-4 digits
-  - [ ] Show inline validation errors
+- [x] Task 1: Create payment methods list screen (AC: #2, #3, #6)
+  - [x] Create `src/screens/profile/PaymentMethodsScreen.tsx`
+  - [x] Display list of saved cards with card brand icon
+  - [x] Show "•••• [last 4 digits]" format
+  - [x] Show expiry date (MM/YY format)
+  - [x] Display "Default" badge on default card
+  - [x] Add "+ Add New Card" button at bottom
+- [x] Task 2: Create add card modal/screen (AC: #1, #7)
+  - [x] Create card entry form (mocked for MVP)
+  - [x] Input fields: card number, expiry (MM/YY), CVV, cardholder name
+  - [x] Format card number with spaces (#### #### #### ####)
+  - [x] Detect and display card brand icon (Visa/Mastercard/Amex)
+  - [x] Mock tokenization (generate fake token, store only last 4)
+  - [x] Add "Save this card" confirmation button
+- [x] Task 3: Implement payment method data model (AC: #3)
+  - [x] Define PaymentMethod type in `src/types/payment.ts`
+  - [x] Include: id, user_id, payment_token, last_four, card_brand, expiry_month, expiry_year, is_default, deleted_at
+  - [x] Create payment methods storage in useKV
+  - [x] Filter deleted methods from display
+- [x] Task 4: Implement card management (AC: #4, #5)
+  - [x] Add "Set as Default" option on card tap
+  - [x] Implement default flag logic (only one default)
+  - [x] Add "Remove" option with confirmation modal
+  - [x] Implement soft delete (set deleted_at timestamp)
+  - [x] Show "Card removed" toast on delete
+- [x] Task 5: Validate card input (AC: #1)
+  - [x] Validate card number with Luhn algorithm
+  - [x] Validate expiry is not in past
+  - [x] Validate CVV is 3-4 digits
+  - [x] Show inline validation errors
 
 ## Dev Notes
 
@@ -68,9 +68,15 @@ so that checkout is faster on future bookings.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

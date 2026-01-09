@@ -1,6 +1,6 @@
 # Story 6.1: Create Home Screen with Category Grid
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -24,32 +24,32 @@ so that I can bobjectse activities that interest me.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create home screen layout (AC: #1)
-  - [ ] Create `src/screens/home/HomeScreen.tsx`
-  - [ ] Build 2x3 responsive grid (responsive: 1 column on mobile <640px)
-  - [ ] Add header with "Explore Bali" title and user greeting
-  - [ ] Include trip summary bar if user has active trip
-- [ ] Task 2: Create CategoryCard component (AC: #1, #2)
-  - [ ] Create `src/components/home/CategoryCard.tsx`
-  - [ ] Display background image with gradient overlay for text readability
-  - [ ] Add category icon (Phosphor) with white color
-  - [ ] Show category name (bold, 18px)
-  - [ ] Show tagline below name (14px, semi-transparent)
-  - [ ] Use 12px border radius, subtle shadow
-- [ ] Task 3: Configure category data (AC: #5)
-  - [ ] Create categories data model in `src/types/category.ts`
-  - [ ] Define Category: id, name, slug, icon, tagline, background_image_url
-  - [ ] Store categories in useKV or as static data
-  - [ ] Map category slugs: water_adventures, land_explorations, culture_experiences, food_nightlife, transportation, stays
-- [ ] Task 4: Implement navigation (AC: #3, #4)
-  - [ ] Handle card tap to navigate to category bobjectse
-  - [ ] Pass categoryId to bobjectse screen
-  - [ ] Implement 300ms ease-in-out slide transition
-  - [ ] Use Framer Motion for smooth animation
-- [ ] Task 5: Add loading and image handling
-  - [ ] Show skeleton placeholders while loading
-  - [ ] Lazy load category background images
-  - [ ] Handle image load errors with fallback gradient
+- [x] Task 1: Create home screen layout (AC: #1)
+  - [x] Create `src/screens/home/HomeScreen.tsx`
+  - [x] Build 2x3 responsive grid (responsive: 1 column on mobile <640px)
+  - [x] Add header with "Explore Bali" title and user greeting
+  - [x] Include trip summary bar if user has active trip
+- [x] Task 2: Create CategoryCard component (AC: #1, #2)
+  - [x] Create `src/components/home/CategoryCard.tsx`
+  - [x] Display background image with gradient overlay for text readability
+  - [x] Add category icon (Phosphor) with white color
+  - [x] Show category name (bold, 18px)
+  - [x] Show tagline below name (14px, semi-transparent)
+  - [x] Use 12px border radius, subtle shadow
+- [x] Task 3: Configure category data (AC: #5)
+  - [x] Create categories data model in `src/types/category.ts`
+  - [x] Define Category: id, name, slug, icon, tagline, background_image_url
+  - [x] Store categories in useKV or as static data
+  - [x] Map category slugs: water_adventures, land_explorations, culture_experiences, food_nightlife, transportation, stays
+- [x] Task 4: Implement navigation (AC: #3, #4)
+  - [x] Handle card tap to navigate to category bobjectse
+  - [x] Pass categoryId to bobjectse screen
+  - [x] Implement 300ms ease-in-out slide transition
+  - [x] Use Framer Motion for smooth animation
+- [x] Task 5: Add loading and image handling
+  - [x] Show skeleton placeholders while loading
+  - [x] Lazy load category background images
+  - [x] Handle image load errors with fallback gradient
 
 ## Dev Notes
 
@@ -68,9 +68,15 @@ so that I can bobjectse activities that interest me.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

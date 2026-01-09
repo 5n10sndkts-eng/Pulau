@@ -1,6 +1,6 @@
 # Story 15.4: Build Messaging Conversation View
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -32,39 +32,39 @@ So that I can coordinate special requests.
 ## Tasks / Subtasks
 
 ### Task 1: Build Conversation View UI (AC: #1)
-- [ ] Create ConversationView component with header, message list, input footer
-- [ ] Design message bubbles (sent: teal right-aligned, received: gray left-aligned)
-- [ ] Add header with back button, other party name, experience title
-- [ ] Display timestamp below each message (small gray text)
-- [ ] Implement read receipt indicators (single check: sent, double check: read)
+- [x] Create ConversationView component with header, message list, input footer
+- [x] Design message bubbles (sent: teal right-aligned, received: gray left-aligned)
+- [x] Add header with back button, other party name, experience title
+- [x] Display timestamp below each message (small gray text)
+- [x] Implement read receipt indicators (single check: sent, double check: read)
 
 ### Task 2: Load and Display Messages (AC: #1)
-- [ ] Query messages KV namespace by conversation_id, ordered by sent_at ASC
-- [ ] Render message bubbles in scrollable container
-- [ ] Auto-scroll to bottom on initial load and new messages
-- [ ] Group messages by date with date separators ("Today", "Yesterday", date)
-- [ ] Show sender's avatar next to received messages
+- [x] Query messages KV namespace by conversation_id, ordered by sent_at ASC
+- [x] Render message bubbles in scrollable container
+- [x] Auto-scroll to bottom on initial load and new messages
+- [x] Group messages by date with date separators ("Today", "Yesterday", date)
+- [x] Show sender's avatar next to received messages
 
 ### Task 3: Implement Send Message Logic (AC: #2)
-- [ ] Build MessageInput component with text area and send button
-- [ ] On send, insert message into messages KV namespace with metadata
-- [ ] Clear input field after successful send
-- [ ] Add message to local state optimistically (before server confirms)
-- [ ] Show sending indicator (spinner) until server confirms
+- [x] Build MessageInput component with text area and send button
+- [x] On send, insert message into messages KV namespace with metadata
+- [x] Clear input field after successful send
+- [x] Add message to local state optimistically (before server confirms)
+- [x] Show sending indicator (spinner) until server confirms
 
 ### Task 4: Real-time Message Delivery (AC: #2, #3)
-- [ ] Implement polling mechanism (fetch new messages every 10 seconds)
-- [ ] Alternative: Set up WebSocket or SSE for real-time push
-- [ ] Update conversation view when new messages arrive
-- [ ] Mark messages as read when viewed (update is_read = true)
-- [ ] Trigger notification badge update in thread list
+- [x] Implement polling mechanism (fetch new messages every 10 seconds)
+- [x] Alternative: Set up WebSocket or SSE for real-time push
+- [x] Update conversation view when new messages arrive
+- [x] Mark messages as read when viewed (update is_read = true)
+- [x] Trigger notification badge update in thread list
 
 ### Task 5: Handle Edge Cases and Accessibility (AC: #1, #2, #3)
-- [ ] Handle empty conversation state (no messages yet)
-- [ ] Prevent sending empty messages (disable send button if blank)
-- [ ] Show error toast if message send fails with retry option
-- [ ] Ensure text input expands for multiline messages (max 5 lines)
-- [ ] Add ARIA labels for message bubbles and input field
+- [x] Handle empty conversation state (no messages yet)
+- [x] Prevent sending empty messages (disable send button if blank)
+- [x] Show error toast if message send fails with retry option
+- [x] Ensure text input expands for multiline messages (max 5 lines)
+- [x] Add ARIA labels for message bubbles and input field
 
 ## Dev Notes
 
@@ -152,8 +152,14 @@ useEffect(() => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

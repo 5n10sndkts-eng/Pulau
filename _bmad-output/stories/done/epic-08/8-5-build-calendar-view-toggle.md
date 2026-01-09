@@ -1,6 +1,6 @@
 # Story 8.5: Build Calendar View Toggle
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -31,39 +31,39 @@ So that I can visualize my itinerary in my preferred format.
 ## Tasks / Subtasks
 
 ### Task 1: Create view toggle component (AC: #1, #3)
-- [ ] Build SegmentedControl component with "Calendar" and "List" options
-- [ ] Style with active state highlighting (teal background)
-- [ ] Position toggle below date picker in trip builder
-- [ ] Store view preference in local state
-- [ ] Add smooth background slide animation on toggle
+- [x] Build SegmentedControl component with "Calendar" and "List" options
+- [x] Style with active state highlighting (teal background)
+- [x] Position toggle below date picker in trip builder
+- [x] Store view preference in local state
+- [x] Add smooth background slide animation on toggle
 
 ### Task 2: Implement list/timeline view (AC: #1, #3)
-- [ ] Create TripTimelineView component (default view)
-- [ ] Display items grouped by day with vertical timeline
-- [ ] Add connecting lines between day sections
-- [ ] Show day number, date, and items for each day
-- [ ] Include unscheduled section at bottom
+- [x] Create TripTimelineView component (default view)
+- [x] Display items grouped by day with vertical timeline
+- [x] Add connecting lines between day sections
+- [x] Show day number, date, and items for each day
+- [x] Include unscheduled section at bottom
 
 ### Task 3: Build calendar grid view (AC: #2)
-- [ ] Create TripCalendarView component using calendar grid layout
-- [ ] Display monthly calendar showing trip date range
-- [ ] Add colored dots on days with scheduled items
-- [ ] Highlight current day with border/background
-- [ ] Make calendar navigable (prev/next month buttons)
+- [x] Create TripCalendarView component using calendar grid layout
+- [x] Display monthly calendar showing trip date range
+- [x] Add colored dots on days with scheduled items
+- [x] Highlight current day with border/background
+- [x] Make calendar navigable (prev/next month buttons)
 
 ### Task 4: Implement day detail bottom sheet (AC: #2)
-- [ ] Create DayDetailSheet component (modal/bottom sheet)
-- [ ] Trigger sheet on calendar day tap
-- [ ] Display selected day's date and all items
-- [ ] Show item details: time, title, duration, price
-- [ ] Add "Close" and "Edit" actions in sheet
+- [x] Create DayDetailSheet component (modal/bottom sheet)
+- [x] Trigger sheet on calendar day tap
+- [x] Display selected day's date and all items
+- [x] Show item details: time, title, duration, price
+- [x] Add "Close" and "Edit" actions in sheet
 
 ### Task 5: Add smooth view transition animations (AC: #3)
-- [ ] Use Framer Motion AnimatePresence for view switching
-- [ ] Configure 200ms fade + slide transition
-- [ ] Ensure smooth height adjustment between views
-- [ ] Prevent layout shift during transition
-- [ ] Test animation performance on mobile
+- [x] Use Framer Motion AnimatePresence for view switching
+- [x] Configure 200ms fade + slide transition
+- [x] Ensure smooth height adjustment between views
+- [x] Prevent layout shift during transition
+- [x] Test animation performance on mobile
 
 ## Dev Notes
 
@@ -123,8 +123,14 @@ const viewTransition = {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

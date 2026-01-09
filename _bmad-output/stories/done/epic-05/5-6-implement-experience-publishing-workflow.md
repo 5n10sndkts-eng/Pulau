@@ -1,6 +1,6 @@
 # Story 5.6: Implement Experience Publishing Workflow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -20,39 +20,39 @@ so that travelers can discover and book it.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create publish button and modal (AC: #1)
-  - [ ] Add "Publish Experience" button on draft experiences
-  - [ ] Show publish confirmation modal
-  - [ ] Display pre-publish checklist
-  - [ ] Indicate which items pass/fail validation
-- [ ] Task 2: Implement validation logic (AC: #1, #6, #7)
-  - [ ] Check title is not empty
-  - [ ] Check description is not empty
-  - [ ] Check price > 0
-  - [ ] Check duration > 0
-  - [ ] Check group_size_min and group_size_max are valid
-  - [ ] Check at least 3 images uploaded
-  - [ ] Check at least one availability date set
-  - [ ] Check meeting point address filled
-  - [ ] Return list of failing validations
-- [ ] Task 3: Handle successful publish (AC: #2, #3, #4, #5)
-  - [ ] Update experience status to "active"
-  - [ ] Set published_at timestamp
-  - [ ] Show success confirmation modal
-  - [ ] Display "Experience is now live!" message
-  - [ ] Include link to view customer-facing page
-- [ ] Task 4: Handle validation failure (AC: #6, #7)
-  - [ ] Display clear error list
-  - [ ] Format: "Complete these before publishing:"
-  - [ ] List each missing requirement
-  - [ ] Provide links to fix each issue
-  - [ ] Keep modal open for user to see issues
-- [ ] Task 5: Add unpublish/deactivate option
-  - [ ] Add "Deactivate" button on active experiences
-  - [ ] Change status from "active" to "inactive"
-  - [ ] Hide from customer bobjectse
-  - [ ] Allow reactivating (back to active)
-  - [ ] Preserve all data when deactivated
+- [x] Task 1: Create publish button and modal (AC: #1)
+  - [x] Add "Publish Experience" button on draft experiences
+  - [x] Show publish confirmation modal
+  - [x] Display pre-publish checklist
+  - [x] Indicate which items pass/fail validation
+- [x] Task 2: Implement validation logic (AC: #1, #6, #7)
+  - [x] Check title is not empty
+  - [x] Check description is not empty
+  - [x] Check price > 0
+  - [x] Check duration > 0
+  - [x] Check group_size_min and group_size_max are valid
+  - [x] Check at least 3 images uploaded
+  - [x] Check at least one availability date set
+  - [x] Check meeting point address filled
+  - [x] Return list of failing validations
+- [x] Task 3: Handle successful publish (AC: #2, #3, #4, #5)
+  - [x] Update experience status to "active"
+  - [x] Set published_at timestamp
+  - [x] Show success confirmation modal
+  - [x] Display "Experience is now live!" message
+  - [x] Include link to view customer-facing page
+- [x] Task 4: Handle validation failure (AC: #6, #7)
+  - [x] Display clear error list
+  - [x] Format: "Complete these before publishing:"
+  - [x] List each missing requirement
+  - [x] Provide links to fix each issue
+  - [x] Keep modal open for user to see issues
+- [x] Task 5: Add unpublish/deactivate option
+  - [x] Add "Deactivate" button on active experiences
+  - [x] Change status from "active" to "inactive"
+  - [x] Hide from customer bobjectse
+  - [x] Allow reactivating (back to active)
+  - [x] Preserve all data when deactivated
 
 ## Dev Notes
 
@@ -70,9 +70,15 @@ so that travelers can discover and book it.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

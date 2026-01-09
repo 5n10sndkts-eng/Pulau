@@ -1,6 +1,6 @@
 # Story 8.2: Build Trip Canvas Home View
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -31,46 +31,46 @@ So that I can quickly understand my planned activities.
 ## Tasks / Subtasks
 
 ### Task 1: Create TripCanvasHome component structure (AC: #1, #2, #3, #4)
-- [ ] Build TripCanvasHome component with header, summary, and items sections
-- [ ] Add collapsible/expandable container for trip view
-- [ ] Position component prominently on home screen (below hero)
-- [ ] Ensure responsive layout for mobile and desktop
-- [ ] Add loading skeleton while trip data loads
+- [x] Build TripCanvasHome component with header, summary, and items sections
+- [x] Add collapsible/expandable container for trip view
+- [x] Position component prominently on home screen (below hero)
+- [x] Ensure responsive layout for mobile and desktop
+- [x] Add loading skeleton while trip data loads
 
 ### Task 2: Implement ediKV namespace trip header (AC: #1)
-- [ ] Create TripHeader with inline-ediKV namespace trip name
-- [ ] Add date range display (format: "Mar 15 - 20, 2026")
-- [ ] Show "Dates not set" when start_date/end_date are null
-- [ ] Implement inline edit on tap/click for trip name
-- [ ] Save edited name to trip data with auto-save
+- [x] Create TripHeader with inline-ediKV namespace trip name
+- [x] Add date range display (format: "Mar 15 - 20, 2026")
+- [x] Show "Dates not set" when start_date/end_date are null
+- [x] Implement inline edit on tap/click for trip name
+- [x] Save edited name to trip data with auto-save
 
 ### Task 3: Build trip summary bar (AC: #1)
-- [ ] Create TripSummaryBar component displaying key metrics
-- [ ] Show item count: "5 experiences"
-- [ ] Calculate and display total days from date range
-- [ ] Display total price with real-time calculation
-- [ ] Style with pill/badge design for each metric
+- [x] Create TripSummaryBar component displaying key metrics
+- [x] Show item count: "5 experiences"
+- [x] Calculate and display total days from date range
+- [x] Display total price with real-time calculation
+- [x] Style with pill/badge design for each metric
 
 ### Task 4: Implement day-organized item list (AC: #2)
-- [ ] Group trip items by scheduled_date
-- [ ] Create DaySection component with day number and date header
-- [ ] Render TripItemCard for each item in day
-- [ ] Display time, title, duration, price, guest count on each card
-- [ ] Add "Unscheduled" section for items without dates
+- [x] Group trip items by scheduled_date
+- [x] Create DaySection component with day number and date header
+- [x] Render TripItemCard for each item in day
+- [x] Display time, title, duration, price, guest count on each card
+- [x] Add "Unscheduled" section for items without dates
 
 ### Task 5: Create "View Full Trip" button and navigation (AC: #3)
-- [ ] Add "View Full Trip" button at bottom of canvas
-- [ ] Style as secondary button with full width
-- [ ] Navigate to detailed trip builder screen on click
-- [ ] Add smooth transition animation (fade + slide)
-- [ ] Persist scroll position when returning to home
+- [x] Add "View Full Trip" button at bottom of canvas
+- [x] Style as secondary button with full width
+- [x] Navigate to detailed trip builder screen on click
+- [x] Add smooth transition animation (fade + slide)
+- [x] Persist scroll position when returning to home
 
 ### Task 6: Build empty state component (AC: #4)
-- [ ] Create EmptyTripCanvas component with suitcase SVG illustration
-- [ ] Add heading: "Your trip canvas is empty"
-- [ ] Include subtext: "Start adding experiences to build your itinerary"
-- [ ] Add "Start Exploring" CTA button navigating to bobjectse/home
-- [ ] Center empty state vertically in canvas container
+- [x] Create EmptyTripCanvas component with suitcase SVG illustration
+- [x] Add heading: "Your trip canvas is empty"
+- [x] Include subtext: "Start adding experiences to build your itinerary"
+- [x] Add "Start Exploring" CTA button navigating to bobjectse/home
+- [x] Center empty state vertically in canvas container
 
 ## Dev Notes
 
@@ -119,8 +119,14 @@ TripCanvasHome
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

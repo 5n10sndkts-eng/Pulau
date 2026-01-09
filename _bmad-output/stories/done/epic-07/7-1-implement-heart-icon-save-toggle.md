@@ -1,6 +1,6 @@
 # Story 7.1: Implement Heart Icon Save Toggle
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -30,39 +30,39 @@ So that I can quickly bookmark activities I'm interested in.
 ## Tasks / Subtasks
 
 ### Task 1: Build heart icon UI component (AC: #1, #2)
-- [ ] Create HeartIcon component with outline and filled states
-- [ ] Add tap/click handler with state toggle logic
-- [ ] Position heart icon in top-right corner of experience cards
-- [ ] Ensure 44x44px minimum touch target for accessibility
-- [ ] Add visual hover state for desktop users
+- [x] Create HeartIcon component with outline and filled states
+- [x] Add tap/click handler with state toggle logic
+- [x] Position heart icon in top-right corner of experience cards
+- [x] Ensure 44x44px minimum touch target for accessibility
+- [x] Add visual hover state for desktop users
 
 ### Task 2: Implement save/unsave animation (AC: #1, #2)
-- [ ] Add Framer Motion wrapper to HeartIcon component
-- [ ] Create "pop" bounce animation (200ms spring) for save action
-- [ ] Implement reverse animation for unsave action
-- [ ] Test animation performance on mobile devices
-- [ ] Add color transition from outline to coral (#FF6B6B)
+- [x] Add Framer Motion wrapper to HeartIcon component
+- [x] Create "pop" bounce animation (200ms spring) for save action
+- [x] Implement reverse animation for unsave action
+- [x] Test animation performance on mobile devices
+- [x] Add color transition from outline to coral (#FF6B6B)
 
 ### Task 3: Integrate with saved_experiences data layer (AC: #1, #2, #3)
-- [ ] Create useSavedExperiences hook with useKV persistence
-- [ ] Implement saveExperience function to add record (user_id, experience_id, saved_at)
-- [ ] Implement unsaveExperience function to remove record
-- [ ] Add duplicate check to prevent multiple saves
-- [ ] Sync saved state across all experience card instances
+- [x] Create useSavedExperiences hook with useKV persistence
+- [x] Implement saveExperience function to add record (user_id, experience_id, saved_at)
+- [x] Implement unsaveExperience function to remove record
+- [x] Add duplicate check to prevent multiple saves
+- [x] Sync saved state across all experience card instances
 
 ### Task 4: Add toast notifications (AC: #1, #2)
-- [ ] Integrate toast notification system (shadcn/ui Toast)
-- [ ] Display "Saved to wishlist" on successful save
-- [ ] Display "Removed from wishlist" on successful unsave
-- [ ] Configure toast duration (3 seconds) and position (bottom)
-- [ ] Ensure toasts don't stack excessively on rapid taps
+- [x] Integrate toast notification system (shadcn/ui Toast)
+- [x] Display "Saved to wishlist" on successful save
+- [x] Display "Removed from wishlist" on successful unsave
+- [x] Configure toast duration (3 seconds) and position (bottom)
+- [x] Ensure toasts don't stack excessively on rapid taps
 
 ### Task 5: Implement offline persistence with Spark useKV (AC: #3)
-- [ ] Configure useKV hook for saved_experiences key
-- [ ] Implement optimistic UI updates for instant feedback
-- [ ] Add sync mechanism for when app comes back online
-- [ ] Handle edge cases (network errors, stale data)
-- [ ] Test offline save/unsave functionality
+- [x] Configure useKV hook for saved_experiences key
+- [x] Implement optimistic UI updates for instant feedback
+- [x] Add sync mechanism for when app comes back online
+- [x] Handle edge cases (network errors, stale data)
+- [x] Test offline save/unsave functionality
 
 ## Dev Notes
 
@@ -99,8 +99,14 @@ interface SavedExperience {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

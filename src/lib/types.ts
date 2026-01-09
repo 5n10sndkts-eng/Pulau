@@ -239,6 +239,9 @@ export interface Vendor {
   createdAt: string
   photo?: string
   bio?: string
+  rating?: number
+  reviewCount?: number
+  responseTime?: string
 }
 
 export interface VendorSession {

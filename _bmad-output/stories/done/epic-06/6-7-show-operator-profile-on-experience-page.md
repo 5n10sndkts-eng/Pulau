@@ -1,6 +1,6 @@
 # Story 6.7: Show Operator Profile on Experience Page
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -22,35 +22,35 @@ so that I feel confident booking with them.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create OperatorProfile component (AC: #1)
-  - [ ] Create `src/components/experience/OperatorProfile.tsx`
-  - [ ] Accept vendorId or vendor object as prop
-  - [ ] Warm coral background card (10% opacity)
-  - [ ] 16px border radius, 20px padding
-  - [ ] Section header: "Meet Your Local Operator"
-- [ ] Task 2: Build operator display (AC: #2)
-  - [ ] Circular photo (80px diameter) or placeholder avatar
-  - [ ] Business name (bold, 18px)
-  - [ ] Tagline: "Family operated since {since_year}"
-  - [ ] Bio text (max 300 chars, truncated with "read more")
-  - [ ] Bio expansion on tap
-- [ ] Task 3: Add operator badges (AC: #2)
-  - [ ] Create OperatorBadge component
-  - [ ] "Local Business" badge (always shown)
-  - [ ] "Verified Partner" badge (if verified = true)
-  - [ ] "Responds in X hours" badge (if avg_response_time exists)
-  - [ ] Badge styling: pill shape, teal border
-- [ ] Task 4: Add Message button (AC: #3)
-  - [ ] "Message Operator" button
-  - [ ] Secondary style: coral outline, coral text
-  - [ ] Navigate to messaging (Story 15.5)
-  - [ ] Position below badges
-- [ ] Task 5: Implement vendor profile modal (AC: #4)
-  - [ ] Create VendorProfileModal component
-  - [ ] Show on tap of name/photo
-  - [ ] Display full bio (no truncation)
-  - [ ] List all operator's experiences
-  - [ ] Include total reviews and average rating
+- [x] Task 1: Create OperatorProfile component (AC: #1)
+  - [x] Create `src/components/experience/OperatorProfile.tsx`
+  - [x] Accept vendorId or vendor object as prop
+  - [x] Warm coral background card (10% opacity)
+  - [x] 16px border radius, 20px padding
+  - [x] Section header: "Meet Your Local Operator"
+- [x] Task 2: Build operator display (AC: #2)
+  - [x] Circular photo (80px diameter) or placeholder avatar
+  - [x] Business name (bold, 18px)
+  - [x] Tagline: "Family operated since {since_year}"
+  - [x] Bio text (max 300 chars, truncated with "read more")
+  - [x] Bio expansion on tap
+- [x] Task 3: Add operator badges (AC: #2)
+  - [x] Create OperatorBadge component
+  - [x] "Local Business" badge (always shown)
+  - [x] "Verified Partner" badge (if verified = true)
+  - [x] "Responds in X hours" badge (if avg_response_time exists)
+  - [x] Badge styling: pill shape, teal border
+- [x] Task 4: Add Message button (AC: #3)
+  - [x] "Message Operator" button
+  - [x] Secondary style: coral outline, coral text
+  - [x] Navigate to messaging (Story 15.5)
+  - [x] Position below badges
+- [x] Task 5: Implement vendor profile modal (AC: #4)
+  - [x] Create VendorProfileModal component
+  - [x] Show on tap of name/photo
+  - [x] Display full bio (no truncation)
+  - [x] List all operator's experiences
+  - [x] Include total reviews and average rating
 
 ## Dev Notes
 
@@ -68,9 +68,15 @@ so that I feel confident booking with them.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

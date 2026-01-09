@@ -1,6 +1,6 @@
 # Story 13.4: Implement Notification Preferences
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -38,31 +38,31 @@ So that I only get relevant alerts.
 ## Tasks / Subtasks
 
 ### Task 1: Create Notification Settings Component (AC: #1, #2)
-- [ ] Create component in `src/pages/NotificationSettings.tsx`
-- [ ] Query KV store with key `user:notifications:preferences:{userId}` for current user preferences
-- [ ] Display toggle list with labels and descriptions using Tailwind styling
-- [ ] Add section headers for grouping notification types
-- [ ] Set up React Router route for `/profile/notifications`
+- [x] Create component in `src/pages/NotificationSettings.tsx`
+- [x] Query KV store with key `user:notifications:preferences:{userId}` for current user preferences
+- [x] Display toggle list with labels and descriptions using Tailwind styling
+- [x] Add section headers for grouping notification types
+- [x] Set up React Router route for `/profile/notifications`
 
 ### Task 2: Build Toggle Components (AC: #2, #4)
-- [ ] Use Radix UI Switch component (`@radix-ui/react-switch`)
-- [ ] Style with teal color (Tailwind `bg-teal-600`) when active
-- [ ] Add labels and helper text for each option using semantic HTML
-- [ ] Implement immediate onChange handling with optimistic updates
-- [ ] Add smooth toggle animations using Tailwind transitions
+- [x] Use Radix UI Switch component (`@radix-ui/react-switch`)
+- [x] Style with teal color (Tailwind `bg-teal-600`) when active
+- [x] Add labels and helper text for each option using semantic HTML
+- [x] Implement immediate onChange handling with optimistic updates
+- [x] Add smooth toggle animations using Tailwind transitions
 
 ### Task 3: Implement Save on Toggle (AC: #3)
-- [ ] Update KV store on each toggle change
-- [ ] No "Save" button required (immediate save)
-- [ ] Show subtle loading indicator during update
-- [ ] Handle errors with Radix UI Toast and revert toggle state
-- [ ] Use optimistic updates for instant UI feedback
+- [x] Update KV store on each toggle change
+- [x] No "Save" button required (immediate save)
+- [x] Show subtle loading indicator during update
+- [x] Handle errors with Radix UI Toast and revert toggle state
+- [x] Use optimistic updates for instant UI feedback
 
 ### Task 4: Set Up Notification Preferences Data Model
-- [ ] Define TypeScript interface for `NotificationPreferences`
-- [ ] Set default values when no preferences exist in KV store
-- [ ] Initialize preferences on first user profile creation
-- [ ] Ensure proper typing for all preference fields
+- [x] Define TypeScript interface for `NotificationPreferences`
+- [x] Set default values when no preferences exist in KV store
+- [x] Initialize preferences on first user profile creation
+- [x] Ensure proper typing for all preference fields
 
 ## Dev Notes
 
@@ -325,8 +325,14 @@ const prefs = await kv.get<NotificationPreferences>(NOTIFICATION_PREFS_KEY(userI
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

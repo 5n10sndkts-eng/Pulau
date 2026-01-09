@@ -1,6 +1,6 @@
 # Story 11.5: Create Active Trip Mode
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -63,64 +63,64 @@ So that I can easily access today's activities.
 ## Tasks / Subtasks
 
 ### Task 1: Detect Active Trip on Home Screen (AC: #1, #8)
-- [ ] Create useActiveTrip hook to query confirmed bookings where today is within date range
-- [ ] Add query: status='confirmed' AND trip.start_date <= today AND trip.end_date >= today
-- [ ] Run detection on home screen mount and when app becomes active
-- [ ] Handle multiple active trips (show most recent or user-selected)
-- [ ] Cache active trip data to reduce queries
+- [x] Create useActiveTrip hook to query confirmed bookings where today is within date range
+- [x] Add query: status='confirmed' AND trip.start_date <= today AND trip.end_date >= today
+- [x] Run detection on home screen mount and when app becomes active
+- [x] Handle multiple active trips (show most recent or user-selected)
+- [x] Cache active trip data to reduce queries
 
 ### Task 2: Build Active Trip Banner (AC: #2, #3)
-- [ ] Create ActiveTripBanner component
-- [ ] Display "Day X of your [destination] adventure!" with dynamic trip name
-- [ ] Calculate current day: Math.floor((today - trip.start_date) / (1 day)) + 1
-- [ ] Show countdown: trip.end_date - today in days
-- [ ] Style banner with gradient background and prominent positioning
-- [ ] Add subtle animation on first render
+- [x] Create ActiveTripBanner component
+- [x] Display "Day X of your [destination] adventure!" with dynamic trip name
+- [x] Calculate current day: Math.floor((today - trip.start_date) / (1 day)) + 1
+- [x] Show countdown: trip.end_date - today in days
+- [x] Style banner with gradient background and prominent positioning
+- [x] Add subtle animation on first render
 
 ### Task 3: Create Today's Schedule Section (AC: #4, #5)
-- [ ] Create TodaysSchedule component
-- [ ] Query trip_items where scheduled_date = today
-- [ ] Sort items by time (earliest first)
-- [ ] Display each item with: time, experience name, meeting point preview
-- [ ] Add "Get Directions" quick action for each item
-- [ ] Implement collapsible/expandable item details
+- [x] Create TodaysSchedule component
+- [x] Query trip_items where scheduled_date = today
+- [x] Sort items by time (earliest first)
+- [x] Display each item with: time, experience name, meeting point preview
+- [x] Add "Get Directions" quick action for each item
+- [x] Implement collapsible/expandable item details
 
 ### Task 4: Build Schedule Item Card (AC: #5)
-- [ ] Create ScheduleItemCard component
-- [ ] Show collapsed view: time, experience name, location
-- [ ] Add "View Details" button to expand
-- [ ] Expanded view shows: full description, operator contact, meeting instructions
-- [ ] Style with clear visual hierarchy
-- [ ] Add smooth expand/collapse animation
+- [x] Create ScheduleItemCard component
+- [x] Show collapsed view: time, experience name, location
+- [x] Add "View Details" button to expand
+- [x] Expanded view shows: full description, operator contact, meeting instructions
+- [x] Style with clear visual hierarchy
+- [x] Add smooth expand/collapse animation
 
 ### Task 5: Implement Full Itinerary Navigation (AC: #6)
-- [ ] Add "View Full Itinerary" button below today's schedule
-- [ ] Navigate to trip detail/builder screen on tap
-- [ ] Pass trip ID for detail view
-- [ ] Ensure itinerary shows all trip items (not just today's)
-- [ ] Style button as secondary action
+- [x] Add "View Full Itinerary" button below today's schedule
+- [x] Navigate to trip detail/builder screen on tap
+- [x] Pass trip ID for detail view
+- [x] Ensure itinerary shows all trip items (not just today's)
+- [x] Style button as secondary action
 
 ### Task 6: Integrate Weather Widget (AC: #7)
-- [ ] Research and integrate weather API (OpenWeatherMap, WeatherAPI, etc.)
-- [ ] Create WeatherWidget component
-- [ ] Fetch weather for trip destination using coordinates or city name
-- [ ] Display: current temperature, conditions icon, high/low
-- [ ] Show 3-day forecast if space permits
-- [ ] Handle API errors gracefully (hide widget if data unavailable)
-- [ ] Cache weather data for 1 hour to reduce API calls
+- [x] Research and integrate weather API (OpenWeatherMap, WeatherAPI, etc.)
+- [x] Create WeatherWidget component
+- [x] Fetch weather for trip destination using coordinates or city name
+- [x] Display: current temperature, conditions icon, high/low
+- [x] Show 3-day forecast if space permits
+- [x] Handle API errors gracefully (hide widget if data unavailable)
+- [x] Cache weather data for 1 hour to reduce API calls
 
 ### Task 7: Handle Mode Transitions (AC: #8)
-- [ ] Check trip.end_date daily to detect completion
-- [ ] Auto-transition to normal home screen when trip ends
-- [ ] Move completed booking to "Past" tab
-- [ ] Optionally show "How was your trip?" prompt after completion
-- [ ] Clear active trip cache
+- [x] Check trip.end_date daily to detect completion
+- [x] Auto-transition to normal home screen when trip ends
+- [x] Move completed booking to "Past" tab
+- [x] Optionally show "How was your trip?" prompt after completion
+- [x] Clear active trip cache
 
 ### Task 8: Build Normal Home Screen Fallback (AC: #8)
-- [ ] Ensure home screen has default content when no active trip
-- [ ] Show explore/discover content
-- [ ] Display "Plan a trip" CTA if user has no trips
-- [ ] Test smooth transition between active and normal modes
+- [x] Ensure home screen has default content when no active trip
+- [x] Show explore/discover content
+- [x] Display "Plan a trip" CTA if user has no trips
+- [x] Test smooth transition between active and normal modes
 
 ## Dev Notes
 
@@ -194,8 +194,14 @@ HomeScreen
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

@@ -1,6 +1,6 @@
 # Story 10.2: Build Step 1 - Trip Review Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -35,39 +35,39 @@ So that I can confirm my selections.
 ## Tasks / Subtasks
 
 ### Task 1: Create TripReviewStep component (AC: #1, #2, #3)
-- [ ] Build TripReviewStep layout component
-- [ ] Display header: "Review Your Trip"
-- [ ] Render list of all trip items with TripReviewItemCard
-- [ ] Add PriceSummary component at bottom
-- [ ] Include "Edit Trip" link and "Continue" button in footer
+- [x] Build TripReviewStep layout component
+- [x] Display header: "Review Your Trip"
+- [x] Render list of all trip items with TripReviewItemCard
+- [x] Add PriceSummary component at bottom
+- [x] Include "Edit Trip" link and "Continue" button in footer
 
 ### Task 2: Build TripReviewItemCard component (AC: #1, #4)
-- [ ] Create card showing experience thumbnail (80x80px)
-- [ ] Display experience title, category, duration
-- [ ] Show scheduled date/time or "Unscheduled" badge
-- [ ] Add guest count display with inline edit button
-- [ ] Display calculated item price (price × guest_count)
+- [x] Create card showing experience thumbnail (80x80px)
+- [x] Display experience title, category, duration
+- [x] Show scheduled date/time or "Unscheduled" badge
+- [x] Add guest count display with inline edit button
+- [x] Display calculated item price (price × guest_count)
 
 ### Task 3: Implement inline guest count editor (AC: #4)
-- [ ] Add "Edit" button next to guest count
-- [ ] Toggle to GuestCountStepper on edit click
-- [ ] Update trip item guest_count on change
-- [ ] Recalculate item and total prices immediately
-- [ ] Save changes to checkout session
+- [x] Add "Edit" button next to guest count
+- [x] Toggle to GuestCountStepper on edit click
+- [x] Update trip item guest_count on change
+- [x] Recalculate item and total prices immediately
+- [x] Save changes to checkout session
 
 ### Task 4: Add "Edit Trip" navigation (AC: #3)
-- [ ] Create "Edit Trip" link button in header or footer
-- [ ] Navigate back to trip builder on click
-- [ ] Preserve checkout session (don't clear)
-- [ ] Show toast: "Checkout paused. Resume anytime."
-- [ ] Ensure trip changes sync to checkout session
+- [x] Create "Edit Trip" link button in header or footer
+- [x] Navigate back to trip builder on click
+- [x] Preserve checkout session (don't clear)
+- [x] Show toast: "Checkout paused. Resume anytime."
+- [x] Ensure trip changes sync to checkout session
 
 ### Task 5: Implement "Continue" validation and navigation (AC: #3)
-- [ ] Add "Continue to Traveler Details" button
-- [ ] Validate: trip has at least 1 item
-- [ ] On continue: save trip snapshot to checkout session
-- [ ] Advance to Step 2 (Traveler Details)
-- [ ] Scroll to top of page on step change
+- [x] Add "Continue to Traveler Details" button
+- [x] Validate: trip has at least 1 item
+- [x] On continue: save trip snapshot to checkout session
+- [x] Advance to Step 2 (Traveler Details)
+- [x] Scroll to top of page on step change
 
 ## Dev Notes
 
@@ -129,8 +129,14 @@ So that I can confirm my selections.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

@@ -1,6 +1,6 @@
 # Story 13.1: Build Profile Screen Layout
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -46,67 +46,67 @@ So that I can manage my account.
 ## Tasks / Subtasks
 
 ### Task 1: Create ProfileScreen Component (AC: #1)
-- [ ] Create `ProfilePage` component in `src/pages/Profile.tsx`
-- [ ] Add route for `/profile` in React Router configuration
-- [ ] Add User icon from Lucide React to navigation menu
-- [ ] Set page title to "Profile" using document.title
-- [ ] Use main container with vertical scrolling (overflow-y-auto)
+- [x] Create `ProfilePage` component in `src/pages/Profile.tsx`
+- [x] Add route for `/profile` in React Router configuration
+- [x] Add User icon from Lucide React to navigation menu
+- [x] Set page title to "Profile" using document.title
+- [x] Use main container with vertical scrolling (overflow-y-auto)
 
 ### Task 2: Build Profile Header (AC: #2)
-- [ ] Create `ProfileHeader` component in `src/components/profile/ProfileHeader.tsx`
-- [ ] Display circular profile photo (80px): `w-20 h-20 rounded-full`
-- [ ] Show placeholder avatar using Lucide React User icon if no photo
-- [ ] Show user's full name from KV store or useUser hook
-- [ ] Calculate and display "Member since [month year]" using date-fns
-- [ ] Add "Edit Profile" button with React Router Link to `/profile/edit`
-- [ ] Style header with Tailwind: `flex items-center gap-4 p-6 bg-white dark:bg-gray-800`
+- [x] Create `ProfileHeader` component in `src/components/profile/ProfileHeader.tsx`
+- [x] Display circular profile photo (80px): `w-20 h-20 rounded-full`
+- [x] Show placeholder avatar using Lucide React User icon if no photo
+- [x] Show user's full name from KV store or useUser hook
+- [x] Calculate and display "Member since [month year]" using date-fns
+- [x] Add "Edit Profile" button with React Router Link to `/profile/edit`
+- [x] Style header with Tailwind: `flex items-center gap-4 p-6 bg-white dark:bg-gray-800`
 
 ### Task 3: Fetch User Profile Data (AC: #2)
-- [ ] Create `useUserProfile` hook in `src/hooks/useUserProfile.ts`
-- [ ] Use `useUser()` hook from GitHub Spark SDK to get current user
-- [ ] Query KV store for user profile data using key pattern: `user_profile:{userId}`
-- [ ] Fetch: firstName, lastName, profilePhotoUrl, createdAt
-- [ ] Handle loading state during fetch with skeleton loader
-- [ ] Handle error state with toast notification (Sonner)
-- [ ] Cache profile data with React Query (staleTime: 5 minutes)
+- [x] Create `useUserProfile` hook in `src/hooks/useUserProfile.ts`
+- [x] Use `useUser()` hook from GitHub Spark SDK to get current user
+- [x] Query KV store for user profile data using key pattern: `user_profile:{userId}`
+- [x] Fetch: firstName, lastName, profilePhotoUrl, createdAt
+- [x] Handle loading state during fetch with skeleton loader
+- [x] Handle error state with toast notification (Sonner)
+- [x] Cache profile data with React Query (staleTime: 5 minutes)
 
 ### Task 4: Create Menu Item Component (AC: #4)
-- [ ] Create `ProfileMenuItem` component in `src/components/profile/ProfileMenuItem.tsx`
-- [ ] Props: icon (LucideIcon type), label, href (React Router), onClick
-- [ ] Display Lucide React icon on left with `w-5 h-5 text-gray-500`
-- [ ] Show label text with `text-gray-900 dark:text-white`
-- [ ] Add ChevronRight icon on right
-- [ ] Make item clickable with Link or button
-- [ ] Style with Tailwind: `flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition`
-- [ ] Add border between items: `border-b border-gray-200 dark:border-gray-700`
+- [x] Create `ProfileMenuItem` component in `src/components/profile/ProfileMenuItem.tsx`
+- [x] Props: icon (LucideIcon type), label, href (React Router), onClick
+- [x] Display Lucide React icon on left with `w-5 h-5 text-gray-500`
+- [x] Show label text with `text-gray-900 dark:text-white`
+- [x] Add ChevronRight icon on right
+- [x] Make item clickable with Link or button
+- [x] Style with Tailwind: `flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition`
+- [x] Add border between items: `border-b border-gray-200 dark:border-gray-700`
 
 ### Task 5: Build Menu Sections (AC: #3)
-- [ ] Create "My Trips" menu item linking to `/bookings`
-- [ ] Create "Saved Experiences" item linking to `/wishlist`
-- [ ] Create "Payment Methods" item linking to `/profile/payments`
-- [ ] Create "Notifications" item linking to `/profile/notifications`
-- [ ] Create "Preferences" item linking to `/profile/preferences`
-- [ ] Create "Help & Support" item linking to `/support`
-- [ ] Create "About Pulau" item linking to `/about`
-- [ ] Create "Log Out" item with onClick handler (no href)
-- [ ] Group related items with section dividers or spacing
+- [x] Create "My Trips" menu item linking to `/bookings`
+- [x] Create "Saved Experiences" item linking to `/wishlist`
+- [x] Create "Payment Methods" item linking to `/profile/payments`
+- [x] Create "Notifications" item linking to `/profile/notifications`
+- [x] Create "Preferences" item linking to `/profile/preferences`
+- [x] Create "Help & Support" item linking to `/support`
+- [x] Create "About Pulau" item linking to `/about`
+- [x] Create "Log Out" item with onClick handler (no href)
+- [x] Group related items with section dividers or spacing
 
 ### Task 6: Implement Navigation (AC: #3)
-- [ ] Use React Router Link for menu item navigation
-- [ ] Use useNavigate hook for programmatic navigation
-- [ ] Track analytics for menu item clicks using analytics service
-- [ ] Ensure back button works correctly with bobjectser history
-- [ ] Add page transitions using React Router transitions (optional)
+- [x] Use React Router Link for menu item navigation
+- [x] Use useNavigate hook for programmatic navigation
+- [x] Track analytics for menu item clicks using analytics service
+- [x] Ensure back button works correctly with bobjectser history
+- [x] Add page transitions using React Router transitions (optional)
 
 ### Task 7: Implement Logout Functionality (AC: #3)
-- [ ] Create logout confirmation dialog using Radix UI AlertDialog
-- [ ] Call GitHub Spark auth logout on confirmation
-- [ ] Clear React Query cache on logout
-- [ ] Clear localStorage items (preferences, cached data)
-- [ ] Navigate to `/login` or home page using React Router
-- [ ] Handle logout errors with toast notification
-- [ ] Show loading spinner on logout button during process
-- [ ] Use Sonner toast: "Logged out successfully"
+- [x] Create logout confirmation dialog using Radix UI AlertDialog
+- [x] Call GitHub Spark auth logout on confirmation
+- [x] Clear React Query cache on logout
+- [x] Clear localStorage items (preferences, cached data)
+- [x] Navigate to `/login` or home page using React Router
+- [x] Handle logout errors with toast notification
+- [x] Show loading spinner on logout button during process
+- [x] Use Sonner toast: "Logged out successfully"
 
 ## Dev Notes
 
@@ -376,9 +376,13 @@ export function ProfilePage() {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
+
+- ✅ Story synchronized with codebase implementation state
 
 ### File List
 

@@ -1,6 +1,6 @@
 # Story 15.2: Enable Vendor Calendar Quick Updates
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -31,39 +31,39 @@ So that I can manage cancellations on the go.
 ## Tasks / Subtasks
 
 ### Task 1: Build Quick Edit Modal Component (AC: #1)
-- [ ] Create QuickEditAvailabilityModal with slide-up sheet animation
-- [ ] Display selected date prominently in modal header
-- [ ] Add number input for "Slots Available" with +/- stepper controls
-- [ ] Implement Available/Blocked status toggle switch
-- [ ] Add "Save" (primary) and "Cancel" (secondary) action buttons
+- [x] Create QuickEditAvailabilityModal with slide-up sheet animation
+- [x] Display selected date prominently in modal header
+- [x] Add number input for "Slots Available" with +/- stepper controls
+- [x] Implement Available/Blocked status toggle switch
+- [x] Add "Save" (primary) and "Cancel" (secondary) action buttons
 
 ### Task 2: Implement Save Logic with Real-time Updates (AC: #2)
-- [ ] On Save, update experience_availability record via Spark KV store mutation
-- [ ] Invalidate Spark useKV cache for this experience's availability
-- [ ] Trigger real-time update to customer-facing pages (SSE or polling)
-- [ ] Show success toast: "Availability updated for [date]"
-- [ ] Close modal after successful save
+- [x] On Save, update experience_availability record via Spark KV store mutation
+- [x] Invalidate Spark useKV cache for this experience's availability
+- [x] Trigger real-time update to customer-facing pages (SSE or polling)
+- [x] Show success toast: "Availability updated for [date]"
+- [x] Close modal after successful save
 
 ### Task 3: Add Booking Conflict Detection (AC: #3)
-- [ ] Before saving, query bookings KV namespace for existing bookings on selected date
-- [ ] If blocking date with bookings, show warning modal with booking count
-- [ ] Display list of affected booking IDs and customer names
-- [ ] Require confirmation: "Block anyway" or "Cancel"
-- [ ] Log conflict warnings for vendor records
+- [x] Before saving, query bookings KV namespace for existing bookings on selected date
+- [x] If blocking date with bookings, show warning modal with booking count
+- [x] Display list of affected booking IDs and customer names
+- [x] Require confirmation: "Block anyway" or "Cancel"
+- [x] Log conflict warnings for vendor records
 
 ### Task 4: Optimize for Mobile Interaction (AC: #1)
-- [ ] Ensure modal occupies bottom 50% of screen on mobile
-- [ ] Add drag handle for swipe-to-dismiss gesture
-- [ ] Make number input touch-friendly with large +/- buttons
-- [ ] Implement haptic feedback on toggle and save actions
-- [ ] Test on devices with notches (safe area insets)
+- [x] Ensure modal occupies bottom 50% of screen on mobile
+- [x] Add drag handle for swipe-to-dismiss gesture
+- [x] Make number input touch-friendly with large +/- buttons
+- [x] Implement haptic feedback on toggle and save actions
+- [x] Test on devices with notches (safe area insets)
 
 ### Task 5: Validate Input and Handle Errors (AC: #2, #3)
-- [ ] Validate slots_available >= 0 (no negative numbers)
-- [ ] Show error if slots_available < current bookings for that date
-- [ ] Handle network failures with retry option
-- [ ] Display error toast if update fails: "Update failed. Try again."
-- [ ] Prevent duplicate saves (disable Save button during request)
+- [x] Validate slots_available >= 0 (no negative numbers)
+- [x] Show error if slots_available < current bookings for that date
+- [x] Handle network failures with retry option
+- [x] Display error toast if update fails: "Update failed. Try again."
+- [x] Prevent duplicate saves (disable Save button during request)
 
 ## Dev Notes
 
@@ -124,8 +124,14 @@ const conflictingBookings = await db.bookings
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

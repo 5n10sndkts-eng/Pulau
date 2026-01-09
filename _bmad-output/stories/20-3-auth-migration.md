@@ -134,3 +134,25 @@ To test authentication:
    - Run migrations on Supabase (profiles table needed)
    - Register creates user in auth.users + profiles
    - Login validates against Supabase Auth
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Claude Opus 4.5
+**Date:** 2026-01-08
+**Outcome:** APPROVED (with fixes applied)
+
+### Issues Found & Fixed
+
+| # | Severity | Issue | Resolution |
+|---|----------|-------|------------|
+| 1 | MEDIUM | Mock login auto-creates user instead of rejecting | Fixed: Now rejects with "Invalid login credentials" |
+| 2 | MEDIUM | Profile fetch uses .single() which errors on missing | Fixed: Changed to .maybeSingle() |
+| 3 | MEDIUM | Register doesn't store first_name/last_name in Supabase | Fixed: Added profile update after signup |
+| 4 | LOW | Password error message says "6 chars" but Zod requires 8 | Fixed: Updated error message to "8 characters" |
+| 5 | LOW | Missing autoComplete on password fields in register | Fixed: Added autoComplete="new-password" |
+| 6 | LOW | Console.log statements not wrapped in DEV check | Fixed: Added import.meta.env.DEV guards |
+
+### Files Modified by Review
+
+- `src/lib/authService.ts` - Fixed mock login rejection, profile fetch, register firstName/lastName, console guards
+- `src/components/auth/CustomerRegister.tsx` - Fixed error message, added autoComplete, pass firstName/lastName

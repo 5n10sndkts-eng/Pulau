@@ -1,6 +1,6 @@
 # Story 12.2: Create Trending Experiences Section
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -49,57 +49,57 @@ So that I can discover highly-booked experiences.
 ## Tasks / Subtasks
 
 ### Task 1: Create Trending Query and Hook (AC: #2)
-- [ ] Create useTrendingExperiences hook
-- [ ] Query experiences with booking_count > 10 in last 30 days
-- [ ] Sort by booking_count descending
-- [ ] Limit to top 10 experiences
-- [ ] Add caching with stale-while-revalidate pattern
-- [ ] Handle empty state (no trending experiences)
+- [x] Create useTrendingExperiences hook
+- [x] Query experiences with booking_count > 10 in last 30 days
+- [x] Sort by booking_count descending
+- [x] Limit to top 10 experiences
+- [x] Add caching with stale-while-revalidate pattern
+- [x] Handle empty state (no trending experiences)
 
 ### Task 2: Build TrendingExperienceCard Component (AC: #3, #4)
-- [ ] Create TrendingExperienceCard component
-- [ ] Display experience image (use Expo Image with blurhash)
-- [ ] Show experience title with max 2 lines, ellipsis
-- [ ] Add fire emoji badge "🔥 X booked this week"
-- [ ] Display price with proper currency formatting
-- [ ] Make card slightly larger (e.g., 220x280px vs 180x240px)
-- [ ] Add subtle shadow and border radius
+- [x] Create TrendingExperienceCard component
+- [x] Display experience image (use Expo Image with blurhash)
+- [x] Show experience title with max 2 lines, ellipsis
+- [x] Add fire emoji badge "🔥 X booked this week"
+- [x] Display price with proper currency formatting
+- [x] Make card slightly larger (e.g., 220x280px vs 180x240px)
+- [x] Add subtle shadow and border radius
 
 ### Task 3: Implement Booking Badge Logic (AC: #3)
-- [ ] Calculate bookings in last 7 days for badge
-- [ ] Display "🔥 X booked this week" text
-- [ ] Position badge at top-left or top-right of card
-- [ ] Style badge with semi-transparent background
-- [ ] Use fire emoji or custom fire icon
+- [x] Calculate bookings in last 7 days for badge
+- [x] Display "🔥 X booked this week" text
+- [x] Position badge at top-left or top-right of card
+- [x] Style badge with semi-transparent background
+- [x] Use fire emoji or custom fire icon
 
 ### Task 4: Build Horizontal Carousel (AC: #1, #5)
-- [ ] Implement FlatList with horizontal scroll
-- [ ] Configure snapToInterval for smooth snapping
-- [ ] Set decelerationRate="fast" for better UX
-- [ ] Hide horizontal scroll indicator
-- [ ] Add proper spacing between cards (12-16px)
-- [ ] Set contentContainerStyle padding
+- [x] Implement FlatList with horizontal scroll
+- [x] Configure snapToInterval for smooth snapping
+- [x] Set decelerationRate="fast" for better UX
+- [x] Hide horizontal scroll indicator
+- [x] Add proper spacing between cards (12-16px)
+- [x] Set contentContainerStyle padding
 
 ### Task 5: Implement Card Press Navigation (AC: #6)
-- [ ] Add TouchableOpacity/Pressable wrapper to card
-- [ ] Navigate to experience detail on press: router.push(`/experiences/${id}`)
-- [ ] Add press animation (scale down slightly)
-- [ ] Pass experience data to detail screen
-- [ ] Track analytics event "trending_experience_tapped"
+- [x] Add TouchableOpacity/Pressable wrapper to card
+- [x] Navigate to experience detail on press: router.push(`/experiences/${id}`)
+- [x] Add press animation (scale down slightly)
+- [x] Pass experience data to detail screen
+- [x] Track analytics event "trending_experience_tapped"
 
 ### Task 6: Add Empty and Loading States
-- [ ] Create skeleton loader for trending cards
-- [ ] Show skeleton while data is loading
-- [ ] Handle empty state: "No trending experiences yet"
-- [ ] Add retry mechanism if query fails
-- [ ] Display error message gracefully
+- [x] Create skeleton loader for trending cards
+- [x] Show skeleton while data is loading
+- [x] Handle empty state: "No trending experiences yet"
+- [x] Add retry mechanism if query fails
+- [x] Display error message gracefully
 
 ### Task 7: Optimize Performance
-- [ ] Use React.memo for TrendingExperienceCard
-- [ ] Implement image lazy loading
-- [ ] Add keyExtractor for FlatList
-- [ ] Optimize re-renders with useMemo/useCallback
-- [ ] Test scrolling performance with 10+ cards
+- [x] Use React.memo for TrendingExperienceCard
+- [x] Implement image lazy loading
+- [x] Add keyExtractor for FlatList
+- [x] Optimize re-renders with useMemo/useCallback
+- [x] Test scrolling performance with 10+ cards
 
 ## Dev Notes
 
@@ -191,8 +191,14 @@ const getWeeklyBookings = (experience: Experience) => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

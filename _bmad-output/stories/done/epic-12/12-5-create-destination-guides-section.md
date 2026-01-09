@@ -1,6 +1,6 @@
 # Story 12.5: Create Destination Guides Section
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -44,59 +44,59 @@ So that I can learn about different areas of Bali.
 ## Tasks / Subtasks
 
 ### Task 1: Create Destination Guides Data (AC: #1, #2)
-- [ ] Create `destinationGuides` constant in `src/data/destination-guides.ts`
-- [ ] Add static data for: Ubud, Seminyak, Uluwatu, Nusa Islands
-- [ ] Include: id, name, slug, tagline, coverImageUrl, description, coordinates
-- [ ] Add "Best For" tags (e.g., ["Families", "Adventure", "Relaxation"])
-- [ ] Add TypeScript interface `DestinationGuide` in `src/lib/types.ts`
-- [ ] Consider storing in KV store for future dynamic updates
+- [x] Create `destinationGuides` constant in `src/data/destination-guides.ts`
+- [x] Add static data for: Ubud, Seminyak, Uluwatu, Nusa Islands
+- [x] Include: id, name, slug, tagline, coverImageUrl, description, coordinates
+- [x] Add "Best For" tags (e.g., ["Families", "Adventure", "Relaxation"])
+- [x] Add TypeScript interface `DestinationGuide` in `src/lib/types.ts`
+- [x] Consider storing in KV store for future dynamic updates
 
 ### Task 2: Build DestinationGuideCard Component (AC: #2)
-- [ ] Create `DestinationGuideCard` component in `src/components/explore/DestinationGuideCard.tsx`
-- [ ] Display cover image with aspect ratio: `aspect-[4/3]` or `aspect-video`
-- [ ] Show destination name with Tailwind: `text-xl font-bold`
-- [ ] Add tagline text: `text-sm text-gray-600 dark:text-gray-400`
-- [ ] Apply card styling: `rounded-lg shadow-md overflow-hidden`
-- [ ] Make card responsive: `w-full` in grid layout
+- [x] Create `DestinationGuideCard` component in `src/components/explore/DestinationGuideCard.tsx`
+- [x] Display cover image with aspect ratio: `aspect-[4/3]` or `aspect-video`
+- [x] Show destination name with Tailwind: `text-xl font-bold`
+- [x] Add tagline text: `text-sm text-gray-600 dark:text-gray-400`
+- [x] Apply card styling: `rounded-lg shadow-md overflow-hidden`
+- [x] Make card responsive: `w-full` in grid layout
 
 ### Task 3: Implement 2-Column Grid Layout (AC: #1)
-- [ ] Use CSS Grid with Tailwind: `grid grid-cols-2 gap-4`
-- [ ] Configure responsive spacing: `md:gap-6 lg:gap-8`
-- [ ] Ensure responsive sizing: `sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3`
-- [ ] Set consistent aspect ratio for all cards
-- [ ] Add padding to grid container: `p-4 md:p-6`
+- [x] Use CSS Grid with Tailwind: `grid grid-cols-2 gap-4`
+- [x] Configure responsive spacing: `md:gap-6 lg:gap-8`
+- [x] Ensure responsive sizing: `sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3`
+- [x] Set consistent aspect ratio for all cards
+- [x] Add padding to grid container: `p-4 md:p-6`
 
 ### Task 4: Create GuideDetailScreen (AC: #3, #4)
-- [ ] Create `GuideDetail` page in `src/pages/guides/[slug].tsx`
-- [ ] Add hero image section at top with overlay gradient
-- [ ] Display overview text/description with proper typography
-- [ ] Add navigation from card click using React Router Link
-- [ ] Use URL parameter for guide slug: `useParams<{ slug: string }>()`
-- [ ] Implement 404 page for invalid guide slugs
+- [x] Create `GuideDetail` page in `src/pages/guides/[slug].tsx`
+- [x] Add hero image section at top with overlay gradient
+- [x] Display overview text/description with proper typography
+- [x] Add navigation from card click using React Router Link
+- [x] Use URL parameter for guide slug: `useParams<{ slug: string }>()`
+- [x] Implement 404 page for invalid guide slugs
 
 ### Task 5: Build Top Experiences Section (AC: #4)
-- [ ] Query experiences filtered by destination/region from KV store
-- [ ] Display as grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`
-- [ ] Show 5-10 top-rated experiences for the area
-- [ ] Add "See All Experiences" button linking to `/explore?region={slug}`
-- [ ] Reuse existing ExperienceCard component
-- [ ] Add loading skeleton while fetching experiences
+- [x] Query experiences filtered by destination/region from KV store
+- [x] Display as grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`
+- [x] Show 5-10 top-rated experiences for the area
+- [x] Add "See All Experiences" button linking to `/explore?region={slug}`
+- [x] Reuse existing ExperienceCard component
+- [x] Add loading skeleton while fetching experiences
 
 ### Task 6: Integrate Map View (AC: #4)
-- [ ] Add Leaflet or Mapbox GL JS for interactive maps
-- [ ] Install: `npm install react-leaflet leaflet` or `npm install mapbox-gl`
-- [ ] Show map centered on destination coordinates
-- [ ] Add markers for top experiences using Lucide React MapPin icon
-- [ ] Make map interactive (zoomable, pannable)
-- [ ] Add proper attribution for map tiles
-- [ ] Set map height: `h-64 md:h-96 rounded-lg overflow-hidden`
+- [x] Add Leaflet or Mapbox GL JS for interactive maps
+- [x] Install: `npm install react-leaflet leaflet` or `npm install mapbox-gl`
+- [x] Show map centered on destination coordinates
+- [x] Add markers for top experiences using Lucide React MapPin icon
+- [x] Make map interactive (zoomable, pannable)
+- [x] Add proper attribution for map tiles
+- [x] Set map height: `h-64 md:h-96 rounded-lg overflow-hidden`
 
 ### Task 7: Add Best For Tags (AC: #4)
-- [ ] Display tags as horizontal scrollable pills: `flex gap-2 overflow-x-auto`
-- [ ] Style tags with Tailwind: `bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full text-sm`
-- [ ] Tags examples: "Families", "Adventure", "Culture", "Nightlife"
-- [ ] Make tags clickable to filter experiences (navigate to `/explore?tag={tag}`)
-- [ ] Add hover state: `hover:bg-blue-200 dark:hover:bg-blue-800 cursor-pointer`
+- [x] Display tags as horizontal scrollable pills: `flex gap-2 overflow-x-auto`
+- [x] Style tags with Tailwind: `bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full text-sm`
+- [x] Tags examples: "Families", "Adventure", "Culture", "Nightlife"
+- [x] Make tags clickable to filter experiences (navigate to `/explore?tag={tag}`)
+- [x] Add hover state: `hover:bg-blue-200 dark:hover:bg-blue-800 cursor-pointer`
 
 ## Dev Notes
 
@@ -356,9 +356,13 @@ export function useExperiencesByRegion(region: string) {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
+
+- ✅ Story synchronized with codebase implementation state
 
 ### File List
 

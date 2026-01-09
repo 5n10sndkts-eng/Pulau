@@ -70,13 +70,17 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
 
     try {
       const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`
-      const user = await authService.register(fullName, formData.email, formData.password)
+      const user = await authService.register(
+        fullName,
+        formData.email,
+        formData.password,
+        formData.firstName.trim(),
+        formData.lastName.trim()
+      )
 
-      // Enhance user with first/last name
+      // User already has firstName/lastName from authService
       const enhancedUser: User = {
         ...user,
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
         hasCompletedOnboarding: false,
       }
 
@@ -89,7 +93,7 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
       if (message.includes('User already registered')) {
         setAuthError('This email is already registered. Please sign in instead.')
       } else if (message.includes('Password should be at least')) {
-        setAuthError('Password must be at least 6 characters.')
+        setAuthError('Password must be at least 8 characters.')
       } else {
         setAuthError(message)
       }
@@ -181,6 +185,7 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
                 className={errors.password ? 'border-destructive ring-destructive/20' : ''}
+                autoComplete="new-password"
               />
               {errors.password && <p className="text-xs font-semibold text-destructive mt-1">{errors.password}</p>}
             </div>
@@ -194,6 +199,7 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                 value={formData.confirmPassword}
                 onChange={(e) => handleChange('confirmPassword', e.target.value)}
                 className={errors.confirmPassword ? 'border-destructive ring-destructive/20' : ''}
+                autoComplete="new-password"
               />
               {errors.confirmPassword && <p className="text-xs font-semibold text-destructive mt-1">{errors.confirmPassword}</p>}
             </div>

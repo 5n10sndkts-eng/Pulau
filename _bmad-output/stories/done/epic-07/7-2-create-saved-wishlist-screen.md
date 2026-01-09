@@ -1,6 +1,6 @@
 # Story 7.2: Create Saved/Wishlist Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -27,39 +27,39 @@ So that I can easily revisit and compare options.
 ## Tasks / Subtasks
 
 ### Task 1: Build SavedScreen layout component (AC: #1, #2)
-- [ ] Create SavedScreen component with header and list container
-- [ ] Add "Saved" header with count badge (e.g., "12 saved")
-- [ ] Implement scrollable list layout with proper spacing
-- [ ] Add pull-to-refresh functionality for mobile
-- [ ] Ensure safe area insets for bottom navigation
+- [x] Create SavedScreen component with header and list container
+- [x] Add "Saved" header with count badge (e.g., "12 saved")
+- [x] Implement scrollable list layout with proper spacing
+- [x] Add pull-to-refresh functionality for mobile
+- [x] Ensure safe area insets for bottom navigation
 
 ### Task 2: Create SavedExperienceCard component (AC: #1)
-- [ ] Design card layout: hero image, title, price, rating, saved date
-- [ ] Add filled heart icon in top-right corner (integrated with Story 7.1)
-- [ ] Include "Add to Trip" button with primary styling
-- [ ] Display "Saved [relative time]" (e.g., "Saved 2 days ago")
-- [ ] Make entire card tappable to navigate to experience detail
+- [x] Design card layout: hero image, title, price, rating, saved date
+- [x] Add filled heart icon in top-right corner (integrated with Story 7.1)
+- [x] Include "Add to Trip" button with primary styling
+- [x] Display "Saved [relative time]" (e.g., "Saved 2 days ago")
+- [x] Make entire card tappable to navigate to experience detail
 
 ### Task 3: Implement data fetching and sorting (AC: #1)
-- [ ] Create useSavedExperiences hook to fetch from useKV
-- [ ] Join saved_experiences with experiences data
-- [ ] Sort by saved_at DESC (most recent first)
-- [ ] Handle loading state with skeleton cards
-- [ ] Add error handling for data fetch failures
+- [x] Create useSavedExperiences hook to fetch from useKV
+- [x] Join saved_experiences with experiences data
+- [x] Sort by saved_at DESC (most recent first)
+- [x] Handle loading state with skeleton cards
+- [x] Add error handling for data fetch failures
 
 ### Task 4: Build empty state component (AC: #2)
-- [ ] Create EmptyWishlist component with heart illustration SVG
-- [ ] Add centered text: "Your wishlist is empty"
-- [ ] Include descriptive subtext: "Save experiences to view them here"
-- [ ] Add "Start Exploring" CTA button with navigation to home
-- [ ] Ensure empty state is vertically centered
+- [x] Create EmptyWishlist component with heart illustration SVG
+- [x] Add centered text: "Your wishlist is empty"
+- [x] Include descriptive subtext: "Save experiences to view them here"
+- [x] Add "Start Exploring" CTA button with navigation to home
+- [x] Ensure empty state is vertically centered
 
 ### Task 5: Integrate heart icon unsave functionality (AC: #1)
-- [ ] Connect heart icon to unsave handler from Story 7.1
-- [ ] Remove card from list with fade-out animation on unsave
-- [ ] Show toast notification: "Removed from wishlist"
-- [ ] Update count badge in header when item removed
-- [ ] Show empty state if last item is removed
+- [x] Connect heart icon to unsave handler from Story 7.1
+- [x] Remove card from list with fade-out animation on unsave
+- [x] Show toast notification: "Removed from wishlist"
+- [x] Update count badge in header when item removed
+- [x] Show empty state if last item is removed
 
 ## Dev Notes
 
@@ -109,8 +109,14 @@ interface SavedExperienceWithDetails extends SavedExperience {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

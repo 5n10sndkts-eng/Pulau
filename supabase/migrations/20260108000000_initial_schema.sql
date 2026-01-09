@@ -24,6 +24,7 @@ create policy "Users can update own profile."
   using ( auth.uid() = id );
 
 -- Create trigger to create profile on signup
+-- NOTE: SECURITY DEFINER with explicit search_path to prevent privilege escalation
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -31,7 +32,7 @@ begin
   values (new.id, new.email, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
   return new;
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql security definer set search_path = public;
 
 create trigger on_auth_user_created
   after insert on auth.users
@@ -64,6 +65,10 @@ create policy "Vendors can update own profile."
   on public.vendors for update
   using ( auth.uid() = owner_id );
 
+create policy "Vendor owners can delete their vendor profile."
+  on public.vendors for delete
+  using ( auth.uid() = owner_id );
+
 -- Create experiences table
 create table public.experiences (
   id uuid default gen_random_uuid() primary key,
@@ -92,4 +97,8 @@ create policy "Vendors can insert their own experiences."
 
 create policy "Vendors can update their own experiences."
   on public.experiences for update
+  using ( auth.uid() in (select owner_id from public.vendors where id = vendor_id) );
+
+create policy "Vendors can delete their own experiences."
+  on public.experiences for delete
   using ( auth.uid() in (select owner_id from public.vendors where id = vendor_id) );

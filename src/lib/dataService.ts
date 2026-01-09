@@ -7,8 +7,11 @@ import { experiences as mockExperiences } from './mockData'
 // 2. Supabase is not configured (no valid credentials)
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupabaseConfigured()
 
-// Helper to convert DB Record to UI Experience
-function toExperience(record: any): Experience {
+/**
+ * Helper to convert DB Record to UI Experience.
+ * Exported for use by vendorService to avoid code duplication.
+ */
+export function toExperience(record: any): Experience {
     // Map vendor data from join
     const vendor = record.vendors
     const provider: Provider = {
@@ -153,7 +156,7 @@ export const dataService = {
             .order('created_at', { ascending: false })
 
         if (error) {
-            console.error('Error fetching experiences:', error)
+            if (import.meta.env.DEV) console.error('Error fetching experiences:', error)
             throw error
         }
 
@@ -173,7 +176,7 @@ export const dataService = {
             .single()
 
         if (error) {
-            console.error('Error fetching experience:', error)
+            if (import.meta.env.DEV) console.error('Error fetching experience:', error)
             return undefined
         }
 
@@ -194,7 +197,7 @@ export const dataService = {
             .order('created_at', { ascending: false })
 
         if (error) {
-            console.error('Error fetching experiences by category:', error)
+            if (import.meta.env.DEV) console.error('Error fetching experiences by category:', error)
             throw error
         }
 
@@ -207,20 +210,23 @@ export const dataService = {
             await new Promise(resolve => setTimeout(resolve, 400))
             const lowerQuery = query.toLowerCase()
             return mockExperiences.filter(e =>
-                e.title.toLowerCase().includes(lowerQuery) ||
-                e.description.toLowerCase().includes(lowerQuery)
+                e.title?.toLowerCase().includes(lowerQuery) ||
+                e.description?.toLowerCase().includes(lowerQuery)
             )
         }
+
+        // Sanitize query to prevent SQL injection - escape special characters
+        const sanitizedQuery = query.replace(/[%_\\]/g, '\\$&')
 
         const { data, error } = await supabase
             .from('experiences')
             .select(EXPERIENCE_SELECT)
             .eq('status', 'active')
-            .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+            .or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%`)
             .order('created_at', { ascending: false })
 
         if (error) {
-            console.error('Error searching experiences:', error)
+            if (import.meta.env.DEV) console.error('Error searching experiences:', error)
             throw error
         }
 
@@ -242,10 +248,13 @@ export const dataService = {
             .order('created_at', { ascending: false })
 
         if (error) {
-            console.error('Error fetching experiences by destination:', error)
+            if (import.meta.env.DEV) console.error('Error fetching experiences by destination:', error)
             throw error
         }
 
         return (data || []).map(toExperience)
     }
 }
+
+// Export the select query for reuse in vendorService
+export { EXPERIENCE_SELECT }

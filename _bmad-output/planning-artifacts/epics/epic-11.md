@@ -2,6 +2,10 @@
 
 **Goal:** Users view booking history with upcoming/past tabs, manage active trips, access booking confirmations and references, utilize "Book Again" to duplicate past trips, and experience active trip mode during travel dates.
 
+**Phase:** Phase 1 (MVP)
+**Dependencies:** Epic 10 (Checkout)
+**Storage:** **Spark KV Store** (`pulau_bookings_{userId}`)
+
 ### Story 11.1: Create Booking History Screen
 As a traveler, I want to view all my bookings in one place, so that I can manage my travel plans.
 
@@ -46,5 +50,5 @@ As a traveler who needs to cancel, I want to cancel my booking according to poli
 
 **Acceptance Criteria:**
 - **Given** confirmed booking **When** I tap "Cancel" **Then** modal displays policy and refund calculation
-- **When** confirmed **Then** status updates to 'cancelled' and refund initiates via gateway
-- **And** confirmation email is sent
+- **When** confirmed **Then** status updates to 'cancelled' (Refund logic is manual in MVP)
+- **And** confirmation email is sent (Mock)

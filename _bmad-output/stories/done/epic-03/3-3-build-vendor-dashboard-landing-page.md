@@ -1,6 +1,6 @@
 # Story 3.3: Build Vendor Dashboard Landing Page
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -18,34 +18,34 @@ so that I can quickly understand my business performance.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create dashboard layout (AC: #1)
-  - [ ] Create `src/screens/vendor/VendorDashboardScreen.tsx`
-  - [ ] Build 4-card summary grid (responsive: 2x2 on mobile, 1x4 on desktop)
-  - [ ] Style cards with icons: Briefcase (experiences), Calendar (bookings), DollarSign (revenue), Star (rating)
-  - [ ] Show value + comparison text (e.g., "+5% from last month")
-- [ ] Task 2: Implement summary card data (AC: #1, #4)
-  - [ ] Create dashboard data hooks
-  - [ ] Calculate Total Experiences: count of vendor's experiences
-  - [ ] Calculate Total Bookings: count of bookings this month
-  - [ ] Calculate Revenue: sum of booking amounts this month
-  - [ ] Calculate Average Rating: avg of experience reviews
-  - [ ] Filter all queries by logged-in vendor_id
-- [ ] Task 3: Build recent bookings list (AC: #2)
-  - [ ] Create RecentBookingsList component
-  - [ ] Display 5 most recent bookings
-  - [ ] Show: traveler name, experience name, date, status badge
-  - [ ] Status badges: Confirmed (green), Pending (yellow), Cancelled (gray)
-  - [ ] Add "View All" link to full bookings list
-- [ ] Task 4: Add quick actions section (AC: #3)
-  - [ ] Create QuickActions component
-  - [ ] Add "+ Add New Experience" button (primary) → navigate to experience creation
-  - [ ] Add "View All Bookings" button → navigate to bookings list
-  - [ ] Add "Manage Calendar" button → navigate to availability calendar
-- [ ] Task 5: Handle empty state (AC: #5)
-  - [ ] Detect when vendor has no experiences
-  - [ ] Show friendly empty state illustration
-  - [ ] Display "List your first experience to get started"
-  - [ ] Prominent "Add Experience" CTA button
+- [x] Task 1: Create dashboard layout (AC: #1)
+  - [x] Create `src/screens/vendor/VendorDashboardScreen.tsx`
+  - [x] Build 4-card summary grid (responsive: 2x2 on mobile, 1x4 on desktop)
+  - [x] Style cards with icons: Briefcase (experiences), Calendar (bookings), DollarSign (revenue), Star (rating)
+  - [x] Show value + comparison text (e.g., "+5% from last month")
+- [x] Task 2: Implement summary card data (AC: #1, #4)
+  - [x] Create dashboard data hooks
+  - [x] Calculate Total Experiences: count of vendor's experiences
+  - [x] Calculate Total Bookings: count of bookings this month
+  - [x] Calculate Revenue: sum of booking amounts this month
+  - [x] Calculate Average Rating: avg of experience reviews
+  - [x] Filter all queries by logged-in vendor_id
+- [x] Task 3: Build recent bookings list (AC: #2)
+  - [x] Create RecentBookingsList component
+  - [x] Display 5 most recent bookings
+  - [x] Show: traveler name, experience name, date, status badge
+  - [x] Status badges: Confirmed (green), Pending (yellow), Cancelled (gray)
+  - [x] Add "View All" link to full bookings list
+- [x] Task 4: Add quick actions section (AC: #3)
+  - [x] Create QuickActions component
+  - [x] Add "+ Add New Experience" button (primary) → navigate to experience creation
+  - [x] Add "View All Bookings" button → navigate to bookings list
+  - [x] Add "Manage Calendar" button → navigate to availability calendar
+- [x] Task 5: Handle empty state (AC: #5)
+  - [x] Detect when vendor has no experiences
+  - [x] Show friendly empty state illustration
+  - [x] Display "List your first experience to get started"
+  - [x] Prominent "Add Experience" CTA button
 
 ## Dev Notes
 
@@ -63,9 +63,15 @@ so that I can quickly understand my business performance.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

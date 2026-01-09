@@ -1,6 +1,6 @@
 # Story 8.4: Create Detailed Trip Builder Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -29,40 +29,40 @@ So that I can see all details and make adjustments.
 ## Tasks / Subtasks
 
 ### Task 1: Build TripBuilderScreen layout (AC: #1, #2, #3, #4)
-- [ ] Create TripBuilderScreen component with full-screen layout
-- [ ] Add header with back navigation, ediKV namespace title, share button
-- [ ] Implement scrollable content area for trip items
-- [ ] Add sticky footer with pricing summary
-- [ ] Ensure proper z-index layering for fixed elements
+- [x] Create TripBuilderScreen component with full-screen layout
+- [x] Add header with back navigation, ediKV namespace title, share button
+- [x] Implement scrollable content area for trip items
+- [x] Add sticky footer with pricing summary
+- [x] Ensure proper z-index layering for fixed elements
 
 ### Task 2: Implement ediKV namespace trip name in header (AC: #1)
-- [ ] Create inline ediKV namespace trip name component
-- [ ] Show pencil icon on hover to indicate editability
-- [ ] Save changes on blur or Enter key
-- [ ] Validate name (min 1 char, max 100 chars)
-- [ ] Update trip.name in useKV persistence
+- [x] Create inline ediKV namespace trip name component
+- [x] Show pencil icon on hover to indicate editability
+- [x] Save changes on blur or Enter key
+- [x] Validate name (min 1 char, max 100 chars)
+- [x] Update trip.name in useKV persistence
 
 ### Task 3: Build date picker component (AC: #2)
-- [ ] Create DateRangePicker component using shadcn/ui Calendar
-- [ ] Display current arrival and departure dates (or "Set dates")
-- [ ] Open calendar modal on click
-- [ ] Allow selection of date range with visual highlighting
-- [ ] Update trip.start_date and trip.end_date on selection
+- [x] Create DateRangePicker component using shadcn/ui Calendar
+- [x] Display current arrival and departure dates (or "Set dates")
+- [x] Open calendar modal on click
+- [x] Allow selection of date range with visual highlighting
+- [x] Update trip.start_date and trip.end_date on selection
 
 ### Task 4: Implement item grouping by scheduled date (AC: #3)
-- [ ] Group trip items by scheduled_date
-- [ ] Create DaySection for each unique date
-- [ ] Display day number and formatted date as section header
-- [ ] Render TripItemCard for each item within day
-- [ ] Create separate "Unscheduled" section for items with null scheduled_date
+- [x] Group trip items by scheduled_date
+- [x] Create DaySection for each unique date
+- [x] Display day number and formatted date as section header
+- [x] Render TripItemCard for each item within day
+- [x] Create separate "Unscheduled" section for items with null scheduled_date
 
 ### Task 5: Build sticky footer with pricing and CTA (AC: #4)
-- [ ] Create TripFooter component with fixed positioning
-- [ ] Display item count: "5 experiences"
-- [ ] Calculate and display total: SUM(price × guest_count)
-- [ ] Add "Continue to Booking" button navigating to checkout
-- [ ] Add safe area padding for mobile devices
-- [ ] Show loading state during price calculation
+- [x] Create TripFooter component with fixed positioning
+- [x] Display item count: "5 experiences"
+- [x] Calculate and display total: SUM(price × guest_count)
+- [x] Add "Continue to Booking" button navigating to checkout
+- [x] Add safe area padding for mobile devices
+- [x] Show loading state during price calculation
 
 ## Dev Notes
 
@@ -127,8 +127,14 @@ const calculateTripTotal = (items: TripItem[], experiences: Experience[]): numbe
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

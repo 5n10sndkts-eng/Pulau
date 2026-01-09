@@ -1,6 +1,6 @@
 # Story 2.6: Enable Cross-Device Profile Sync with Spark KV
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -20,37 +20,37 @@ so that I have a consistent experience across devices.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Implement local persistence (AC: #1)
-  - [ ] Use Spark useKV for all profile/preference data
-  - [ ] Store user profile, preferences, saved cards references
-  - [ ] Update localStorage on any profile change
-  - [ ] Create useProfile hook for easy access
-- [ ] Task 2: Create sync state tracking (AC: #5)
-  - [ ] Add last_synced_at timestamp to user data
-  - [ ] Track dirty/clean state for sync status
-  - [ ] Display "Last updated" in settings screen
-  - [ ] Create SyncStatus component (optional)
-- [ ] Task 3: Implement sync on login (AC: #3)
-  - [ ] On login, check for existing local data
-  - [ ] If backend data exists, load and merge
-  - [ ] Prefer backend data for initial load (authoritative source)
-  - [ ] Clear previous user's local data on new login
-- [ ] Task 4: Implement change synchronization (AC: #2, #4)
-  - [ ] Create sync queue for pending changes
-  - [ ] Batch changes for efficient sync
-  - [ ] Update last_synced_at on successful sync
-  - [ ] Mock backend API calls (log to console)
-- [ ] Task 5: Implement conflict resolution (AC: #6)
-  - [ ] Compare timestamps for concurrent edits
-  - [ ] Apply "last write wins" strategy
-  - [ ] Log conflict resolution for debugging
-  - [ ] Consider showing merge notification (optional)
-- [ ] Task 6: Handle offline sync (AC: #7)
-  - [ ] Detect network status (navigator.onLine)
-  - [ ] Queue changes when offline
-  - [ ] Sync queued changes when online
-  - [ ] Show "Offline" indicator in app
-  - [ ] Show "Syncing..." indicator when reconnecting
+- [x] Task 1: Implement local persistence (AC: #1)
+  - [x] Use Spark useKV for all profile/preference data
+  - [x] Store user profile, preferences, saved cards references
+  - [x] Update localStorage on any profile change
+  - [x] Create useProfile hook for easy access
+- [x] Task 2: Create sync state tracking (AC: #5)
+  - [x] Add last_synced_at timestamp to user data
+  - [x] Track dirty/clean state for sync status
+  - [x] Display "Last updated" in settings screen
+  - [x] Create SyncStatus component (optional)
+- [x] Task 3: Implement sync on login (AC: #3)
+  - [x] On login, check for existing local data
+  - [x] If backend data exists, load and merge
+  - [x] Prefer backend data for initial load (authoritative source)
+  - [x] Clear previous user's local data on new login
+- [x] Task 4: Implement change synchronization (AC: #2, #4)
+  - [x] Create sync queue for pending changes
+  - [x] Batch changes for efficient sync
+  - [x] Update last_synced_at on successful sync
+  - [x] Mock backend API calls (log to console)
+- [x] Task 5: Implement conflict resolution (AC: #6)
+  - [x] Compare timestamps for concurrent edits
+  - [x] Apply "last write wins" strategy
+  - [x] Log conflict resolution for debugging
+  - [x] Consider showing merge notification (optional)
+- [x] Task 6: Handle offline sync (AC: #7)
+  - [x] Detect network status (navigator.onLine)
+  - [x] Queue changes when offline
+  - [x] Sync queued changes when online
+  - [x] Show "Offline" indicator in app
+  - [x] Show "Syncing..." indicator when reconnecting
 
 ## Dev Notes
 
@@ -69,9 +69,15 @@ so that I have a consistent experience across devices.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

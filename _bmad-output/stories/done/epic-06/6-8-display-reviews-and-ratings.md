@@ -1,6 +1,6 @@
 # Story 6.8: Display Reviews and Ratings
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -26,42 +26,42 @@ so that I can gauge experience quality.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create ReviewsSection component (AC: #1)
-  - [ ] Create `src/components/experience/ReviewsSection.tsx`
-  - [ ] Section header: "What Travelers Say"
-  - [ ] Large rating display: number + filled star
-  - [ ] Review count: "127 reviews" format
-  - [ ] Calculate average from reviews data
-- [ ] Task 2: Build rating breakdown bars (AC: #1)
-  - [ ] Create RatingBreakdown component
-  - [ ] 5 horizontal bars (5-star to 1-star)
-  - [ ] Each bar shows star count, progress bar, percentage
-  - [ ] Progress bar filled with teal color
-  - [ ] Calculate percentages from review distribution
-- [ ] Task 3: Build traveler photos section (AC: #2)
-  - [ ] Create TravelerPhotos horizontal scroll
-  - [ ] Display photos attached to reviews
-  - [ ] 80x80px thumbnails with rounded corners
-  - [ ] Tap photo to view full size in modal
-  - [ ] Handle case when no photos exist
-- [ ] Task 4: Create ReviewCard component (AC: #3)
-  - [ ] Display reviewer first name + country flag
-  - [ ] Date formatted: "December 2024"
-  - [ ] Star icons (filled for rating, outline for remainder)
-  - [ ] Review text truncated at 3 lines
-  - [ ] "read more" to expand text
-  - [ ] "Helpful" button with count
-- [ ] Task 5: Implement review list (AC: #3, #4, #5)
-  - [ ] Fetch reviews by experience_id
-  - [ ] Order by created_at DESC
-  - [ ] Show only first 3 reviews
-  - [ ] Add "See all reviews" link at bottom
-  - [ ] Calculate AVG for rating display
-- [ ] Task 6: Create all reviews modal (AC: #6)
-  - [ ] Full-screen modal with header
-  - [ ] Infinite scroll for all reviews
-  - [ ] Filter/sort options (optional)
-  - [ ] Close button returns to detail page
+- [x] Task 1: Create ReviewsSection component (AC: #1)
+  - [x] Create `src/components/experience/ReviewsSection.tsx`
+  - [x] Section header: "What Travelers Say"
+  - [x] Large rating display: number + filled star
+  - [x] Review count: "127 reviews" format
+  - [x] Calculate average from reviews data
+- [x] Task 2: Build rating breakdown bars (AC: #1)
+  - [x] Create RatingBreakdown component
+  - [x] 5 horizontal bars (5-star to 1-star)
+  - [x] Each bar shows star count, progress bar, percentage
+  - [x] Progress bar filled with teal color
+  - [x] Calculate percentages from review distribution
+- [x] Task 3: Build traveler photos section (AC: #2)
+  - [x] Create TravelerPhotos horizontal scroll
+  - [x] Display photos attached to reviews
+  - [x] 80x80px thumbnails with rounded corners
+  - [x] Tap photo to view full size in modal
+  - [x] Handle case when no photos exist
+- [x] Task 4: Create ReviewCard component (AC: #3)
+  - [x] Display reviewer first name + country flag
+  - [x] Date formatted: "December 2024"
+  - [x] Star icons (filled for rating, outline for remainder)
+  - [x] Review text truncated at 3 lines
+  - [x] "read more" to expand text
+  - [x] "Helpful" button with count
+- [x] Task 5: Implement review list (AC: #3, #4, #5)
+  - [x] Fetch reviews by experience_id
+  - [x] Order by created_at DESC
+  - [x] Show only first 3 reviews
+  - [x] Add "See all reviews" link at bottom
+  - [x] Calculate AVG for rating display
+- [x] Task 6: Create all reviews modal (AC: #6)
+  - [x] Full-screen modal with header
+  - [x] Infinite scroll for all reviews
+  - [x] Filter/sort options (optional)
+  - [x] Close button returns to detail page
 
 ## Dev Notes
 
@@ -79,9 +79,15 @@ so that I can gauge experience quality.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

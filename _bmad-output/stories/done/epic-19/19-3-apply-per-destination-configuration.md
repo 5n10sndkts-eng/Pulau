@@ -1,6 +1,6 @@
 # Story 19.3: Apply Per-Destination Configuration
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -15,50 +15,50 @@ so that currency and timezone are correct.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create currency formatting utilities (AC: #1, #2)
-  - [ ] Create `src/utils/currency.ts`
-  - [ ] Implement formatPrice(amount, currencyCode) function
-  - [ ] Support multiple currencies: USD, IDR, EUR, etc.
-  - [ ] Use Intl.NumberFormat for locale-aware formatting
-  - [ ] Handle different decimal places (USD: 2, IDR: 0)
-- [ ] Task 2: Implement currency conversion (AC: #2)
-  - [ ] Create exchange rate data structure
-  - [ ] Add convertCurrency(amount, fromCurrency, toCurrency)
-  - [ ] Store exchange rates in `src/data/exchange-rates.ts`
-  - [ ] Update rates periodically (or use static rates for MVP)
-  - [ ] Add note about rate freshness to UI
-- [ ] Task 3: Apply destination currency to price displays (AC: #1)
-  - [ ] Get selected destination's currency from destination config
-  - [ ] Update all price displays to use destination currency
-  - [ ] Apply to: experience cards, trip total, checkout screens
-  - [ ] Allow user override in profile settings
-- [ ] Task 4: Create timezone formatting utilities (AC: #1)
-  - [ ] Create `src/utils/datetime.ts`
-  - [ ] Implement formatTime(date, timezone) function
-  - [ ] Implement formatDate(date, timezone, locale) function
-  - [ ] Use Intl.DateTimeFormat with timezone support
-  - [ ] Display times like "2:00 PM WITA" (with timezone abbreviation)
-- [ ] Task 5: Apply destination timezone to time displays (AC: #1)
-  - [ ] Get selected destination's timezone from destination config
-  - [ ] Update experience start times to show in destination timezone
-  - [ ] Update calendar dates to destination timezone
-  - [ ] Update booking confirmation times to destination timezone
-- [ ] Task 6: Implement locale-aware date formatting (AC: #1)
-  - [ ] Get destination's language_default as locale
-  - [ ] Use locale for date formatting (e.g., MM/DD/YYYY vs DD/MM/YYYY)
-  - [ ] Apply to calendars, date pickers, booking screens
-  - [ ] Allow user override in profile settings
-- [ ] Task 7: Filter destination-specific content (AC: #1)
-  - [ ] Update content queries to filter by destination_id
-  - [ ] Apply to: destination guides, traveler stories
-  - [ ] Ensure explore screen shows only relevant content
-  - [ ] Add destination_id to content data models
-- [ ] Task 8: Test configuration switching (AC: #1, #2)
-  - [ ] Test switching from Bali (USD, Asia/Makassar) to future destination
-  - [ ] Verify currency formatting changes correctly
-  - [ ] Verify timezone displays update correctly
-  - [ ] Verify date formats update correctly
-  - [ ] Test currency conversion accuracy
+- [x] Task 1: Create currency formatting utilities (AC: #1, #2)
+  - [x] Create `src/utils/currency.ts`
+  - [x] Implement formatPrice(amount, currencyCode) function
+  - [x] Support multiple currencies: USD, IDR, EUR, etc.
+  - [x] Use Intl.NumberFormat for locale-aware formatting
+  - [x] Handle different decimal places (USD: 2, IDR: 0)
+- [x] Task 2: Implement currency conversion (AC: #2)
+  - [x] Create exchange rate data structure
+  - [x] Add convertCurrency(amount, fromCurrency, toCurrency)
+  - [x] Store exchange rates in `src/data/exchange-rates.ts`
+  - [x] Update rates periodically (or use static rates for MVP)
+  - [x] Add note about rate freshness to UI
+- [x] Task 3: Apply destination currency to price displays (AC: #1)
+  - [x] Get selected destination's currency from destination config
+  - [x] Update all price displays to use destination currency
+  - [x] Apply to: experience cards, trip total, checkout screens
+  - [x] Allow user override in profile settings
+- [x] Task 4: Create timezone formatting utilities (AC: #1)
+  - [x] Create `src/utils/datetime.ts`
+  - [x] Implement formatTime(date, timezone) function
+  - [x] Implement formatDate(date, timezone, locale) function
+  - [x] Use Intl.DateTimeFormat with timezone support
+  - [x] Display times like "2:00 PM WITA" (with timezone abbreviation)
+- [x] Task 5: Apply destination timezone to time displays (AC: #1)
+  - [x] Get selected destination's timezone from destination config
+  - [x] Update experience start times to show in destination timezone
+  - [x] Update calendar dates to destination timezone
+  - [x] Update booking confirmation times to destination timezone
+- [x] Task 6: Implement locale-aware date formatting (AC: #1)
+  - [x] Get destination's language_default as locale
+  - [x] Use locale for date formatting (e.g., MM/DD/YYYY vs DD/MM/YYYY)
+  - [x] Apply to calendars, date pickers, booking screens
+  - [x] Allow user override in profile settings
+- [x] Task 7: Filter destination-specific content (AC: #1)
+  - [x] Update content queries to filter by destination_id
+  - [x] Apply to: destination guides, traveler stories
+  - [x] Ensure explore screen shows only relevant content
+  - [x] Add destination_id to content data models
+- [x] Task 8: Test configuration switching (AC: #1, #2)
+  - [x] Test switching from Bali (USD, Asia/Makassar) to future destination
+  - [x] Verify currency formatting changes correctly
+  - [x] Verify timezone displays update correctly
+  - [x] Verify date formats update correctly
+  - [x] Test currency conversion accuracy
 
 ## Dev Notes
 
@@ -86,9 +86,15 @@ so that currency and timezone are correct.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

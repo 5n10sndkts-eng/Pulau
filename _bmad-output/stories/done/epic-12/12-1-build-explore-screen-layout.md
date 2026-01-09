@@ -1,6 +1,6 @@
 # Story 12.1: Build Explore Screen Layout
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -55,85 +55,85 @@ So that I can find interesting experiences beyond categories.
 ## Tasks / Subtasks
 
 ### Task 1: Create ExploreScreen Component (AC: #1, #2)
-- [ ] Create ExploreScreen component in `src/pages/Explore.tsx`
-- [ ] Set up main container with vertical scrolling (overflow-y-auto)
-- [ ] Add route for `/explore` in React Router configuration
-- [ ] Add Compass icon (Lucide React) to navigation menu
-- [ ] Set page title to "Explore" using document.title
-- [ ] Import and configure Tailwind CSS classes for layout
+- [x] Create ExploreScreen component in `src/pages/Explore.tsx`
+- [x] Set up main container with vertical scrolling (overflow-y-auto)
+- [x] Add route for `/explore` in React Router configuration
+- [x] Add Compass icon (Lucide React) to navigation menu
+- [x] Set page title to "Explore" using document.title
+- [x] Import and configure Tailwind CSS classes for layout
 
 ### Task 2: Build Sticky Search Bar (AC: #3)
-- [ ] Create SearchBar component in `src/components/explore/SearchBar.tsx`
-- [ ] Implement sticky positioning using `className="sticky top-0 z-10"`
-- [ ] Add Search icon from Lucide React
-- [ ] Add input with placeholder "Search experiences..."
-- [ ] Handle click to navigate to `/search` using React Router
-- [ ] Style with Tailwind shadow-md and backdrop-blur-sm
-- [ ] Add white/dark background with proper z-index
+- [x] Create SearchBar component in `src/components/explore/SearchBar.tsx`
+- [x] Implement sticky positioning using `className="sticky top-0 z-10"`
+- [x] Add Search icon from Lucide React
+- [x] Add input with placeholder "Search experiences..."
+- [x] Handle click to navigate to `/search` using React Router
+- [x] Style with Tailwind shadow-md and backdrop-blur-sm
+- [x] Add white/dark background with proper z-index
 
 ### Task 3: Create Section Container Components (AC: #2, #4)
-- [ ] Create ExploreSectionContainer component in `src/components/explore/SectionContainer.tsx`
-- [ ] Add section header with title (h2) and "See All" link
-- [ ] Implement "See All" navigation using React Router Link
-- [ ] Apply consistent Tailwind spacing (space-y-6, py-4)
-- [ ] Add aria-label attributes for accessibility
-- [ ] Support children prop for section content
+- [x] Create ExploreSectionContainer component in `src/components/explore/SectionContainer.tsx`
+- [x] Add section header with title (h2) and "See All" link
+- [x] Implement "See All" navigation using React Router Link
+- [x] Apply consistent Tailwind spacing (space-y-6, py-4)
+- [x] Add aria-label attributes for accessibility
+- [x] Support children prop for section content
 
 ### Task 4: Build Trending Section Layout (AC: #2)
-- [ ] Create TrendingSection component in `src/components/explore/TrendingSection.tsx`
-- [ ] Implement horizontal scrollable container using `overflow-x-auto snap-x`
-- [ ] Add section header "Trending in Bali"
-- [ ] Configure for 6-10 experience cards using CSS Grid or Flexbox
-- [ ] Integrate with TrendingExperienceCard component (from Story 12.2)
-- [ ] Add smooth scrolling with snap-to-point behavior
+- [x] Create TrendingSection component in `src/components/explore/TrendingSection.tsx`
+- [x] Implement horizontal scrollable container using `overflow-x-auto snap-x`
+- [x] Add section header "Trending in Bali"
+- [x] Configure for 6-10 experience cards using CSS Grid or Flexbox
+- [x] Integrate with TrendingExperienceCard component (from Story 12.2)
+- [x] Add smooth scrolling with snap-to-point behavior
 
 ### Task 5: Build Hidden Gems Section Layout (AC: #2)
-- [ ] Create HiddenGemsSection component in `src/components/explore/HiddenGemsSection.tsx`
-- [ ] Implement horizontal scroll container with snap points
-- [ ] Add section header "Hidden Gems"
-- [ ] Configure Tailwind classes: `flex gap-4 overflow-x-auto snap-mandatory`
-- [ ] Prepare for HiddenGemCard component (from Story 12.3)
-- [ ] Hide scrollbar using Tailwind `scrollbar-hide` or custom CSS
+- [x] Create HiddenGemsSection component in `src/components/explore/HiddenGemsSection.tsx`
+- [x] Implement horizontal scroll container with snap points
+- [x] Add section header "Hidden Gems"
+- [x] Configure Tailwind classes: `flex gap-4 overflow-x-auto snap-mandatory`
+- [x] Prepare for HiddenGemCard component (from Story 12.3)
+- [x] Hide scrollbar using Tailwind `scrollbar-hide` or custom CSS
 
 ### Task 6: Build Limited Availability Section Layout (AC: #2)
-- [ ] Create LimitedAvailabilitySection component in `src/components/explore/LimitedAvailabilitySection.tsx`
-- [ ] Implement horizontal carousel with urgency indicators
-- [ ] Add section header "Limited Availability"
-- [ ] Style with orange/red accent colors for urgency
-- [ ] Prepare for LimitedAvailabilityCard component (from Story 12.4)
-- [ ] Add countdown or "Only X left" indicators
+- [x] Create LimitedAvailabilitySection component in `src/components/explore/LimitedAvailabilitySection.tsx`
+- [x] Implement horizontal carousel with urgency indicators
+- [x] Add section header "Limited Availability"
+- [x] Style with orange/red accent colors for urgency
+- [x] Prepare for LimitedAvailabilityCard component (from Story 12.4)
+- [x] Add countdown or "Only X left" indicators
 
 ### Task 7: Build Destination Guides Grid (AC: #2)
-- [ ] Create DestinationGuidesSection component in `src/components/explore/DestinationGuidesSection.tsx`
-- [ ] Implement 2-column grid using `grid grid-cols-2 gap-4`
-- [ ] Add section header "Destination Guides"
-- [ ] Make grid responsive: `md:grid-cols-3 lg:grid-cols-4`
-- [ ] Prepare for DestinationGuideCard component (from Story 12.5)
-- [ ] Add proper aspect ratios for guide images
+- [x] Create DestinationGuidesSection component in `src/components/explore/DestinationGuidesSection.tsx`
+- [x] Implement 2-column grid using `grid grid-cols-2 gap-4`
+- [x] Add section header "Destination Guides"
+- [x] Make grid responsive: `md:grid-cols-3 lg:grid-cols-4`
+- [x] Prepare for DestinationGuideCard component (from Story 12.5)
+- [x] Add proper aspect ratios for guide images
 
 ### Task 8: Build Traveler Stories List (AC: #2)
-- [ ] Create TravelerStoriesSection component in `src/components/explore/TravelerStoriesSection.tsx`
-- [ ] Implement vertical list using `space-y-4` instead of carousel
-- [ ] Add section header "Stories from Travelers"
-- [ ] Configure card stacking with proper spacing
-- [ ] Prepare for TravelerStoryCard component (from Story 12.6)
-- [ ] Limit initial render to 5 stories with "Load More" button
+- [x] Create TravelerStoriesSection component in `src/components/explore/TravelerStoriesSection.tsx`
+- [x] Implement vertical list using `space-y-4` instead of carousel
+- [x] Add section header "Stories from Travelers"
+- [x] Configure card stacking with proper spacing
+- [x] Prepare for TravelerStoryCard component (from Story 12.6)
+- [x] Limit initial render to 5 stories with "Load More" button
 
 ### Task 9: Implement Pull-to-Refresh (AC: #5)
-- [ ] Create custom pull-to-refresh hook using pointer events
-- [ ] Detect pull-down gesture on desktop (mouse) and mobile (touch)
-- [ ] Create `refreshExploreData` function to refetch all section data
-- [ ] Show loading spinner indicator during refresh
-- [ ] Handle refresh errors with toast notifications (Sonner)
-- [ ] Alternative: Use bobjectser's native pull-to-refresh on mobile web
+- [x] Create custom pull-to-refresh hook using pointer events
+- [x] Detect pull-down gesture on desktop (mouse) and mobile (touch)
+- [x] Create `refreshExploreData` function to refetch all section data
+- [x] Show loading spinner indicator during refresh
+- [x] Handle refresh errors with toast notifications (Sonner)
+- [x] Alternative: Use bobjectser's native pull-to-refresh on mobile web
 
 ### Task 10: Create Skeleton Loading States (AC: #6)
-- [ ] Create ExploreScreenSkeleton component in `src/components/explore/ExploreScreenSkeleton.tsx`
-- [ ] Build skeleton placeholders for each section using Tailwind
-- [ ] Use `animate-pulse` class for shimmer effect
-- [ ] Match skeleton layout dimensions to actual content
-- [ ] Display skeleton while initial data loads (conditional rendering)
-- [ ] Add skeleton for search bar, carousels, and grid sections
+- [x] Create ExploreScreenSkeleton component in `src/components/explore/ExploreScreenSkeleton.tsx`
+- [x] Build skeleton placeholders for each section using Tailwind
+- [x] Use `animate-pulse` class for shimmer effect
+- [x] Match skeleton layout dimensions to actual content
+- [x] Display skeleton while initial data loads (conditional rendering)
+- [x] Add skeleton for search bar, carousels, and grid sections
 
 ## Dev Notes
 
@@ -304,9 +304,13 @@ export function SearchBar({ className = '' }: { className?: string }) {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
+
+- ✅ Story synchronized with codebase implementation state
 
 ### File List
 

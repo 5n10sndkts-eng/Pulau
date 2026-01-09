@@ -1,6 +1,6 @@
 # Story 10.3: Build Step 2 - Traveler Details Form
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -35,39 +35,39 @@ So that operators can reach me.
 ## Tasks / Subtasks
 
 ### Task 1: Create TravelerDetailsStep form component (AC: #1)
-- [ ] Build TravelerDetailsStep with React Hook Form
-- [ ] Add Primary Contact fields: firstName, lastName, email, phone
-- [ ] Add "Trip lead is same as contact" checkbox
-- [ ] Conditionally show Trip Lead fields if unchecked
-- [ ] Add Special Requests textarea (optional, 500 char max)
+- [x] Build TravelerDetailsStep with React Hook Form
+- [x] Add Primary Contact fields: firstName, lastName, email, phone
+- [x] Add "Trip lead is same as contact" checkbox
+- [x] Conditionally show Trip Lead fields if unchecked
+- [x] Add Special Requests textarea (optional, 500 char max)
 
 ### Task 2: Implement Zod validation schema (AC: #2, #3)
-- [ ] Create travelerDetailsSchema with Zod
-- [ ] Validate firstName: string, min 1, max 50
-- [ ] Validate lastName: string, min 1, max 50
-- [ ] Validate email: valid email format
-- [ ] Validate phone: valid international phone format
+- [x] Create travelerDetailsSchema with Zod
+- [x] Validate firstName: string, min 1, max 50
+- [x] Validate lastName: string, min 1, max 50
+- [x] Validate email: valid email format
+- [x] Validate phone: valid international phone format
 
 ### Task 3: Add inline error display (AC: #3)
-- [ ] Show validation errors below each field
-- [ ] Apply red border to invalid fields
-- [ ] Display user-friendly error messages
-- [ ] Clear errors on field blur when valid
-- [ ] Add helper text for phone format (e.g., "+1234567890")
+- [x] Show validation errors below each field
+- [x] Apply red border to invalid fields
+- [x] Display user-friendly error messages
+- [x] Clear errors on field blur when valid
+- [x] Add helper text for phone format (e.g., "+1234567890")
 
 ### Task 4: Pre-fill form from user profile (AC: #1)
-- [ ] Check if user is logged in
-- [ ] Pre-populate fields from user_profiles KV namespace
-- [ ] Allow editing of pre-filled values
-- [ ] Show "Logged in as [email]" indicator
-- [ ] Add "Use different email" option if needed
+- [x] Check if user is logged in
+- [x] Pre-populate fields from user_profiles KV namespace
+- [x] Allow editing of pre-filled values
+- [x] Show "Logged in as [email]" indicator
+- [x] Add "Use different email" option if needed
 
 ### Task 5: Implement continue button with validation (AC: #4)
-- [ ] Disable "Continue to Payment" until form is valid
-- [ ] Save form data to checkout session on continue
-- [ ] Advance to Step 3 (Payment)
-- [ ] Scroll to top on step change
-- [ ] Add loading state during save
+- [x] Disable "Continue to Payment" until form is valid
+- [x] Save form data to checkout session on continue
+- [x] Advance to Step 3 (Payment)
+- [x] Scroll to top on step change
+- [x] Add loading state during save
 
 ## Dev Notes
 
@@ -150,8 +150,14 @@ const TravelerDetailsStep = () => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

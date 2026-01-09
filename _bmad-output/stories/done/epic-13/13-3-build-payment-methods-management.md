@@ -1,6 +1,6 @@
 # Story 13.3: Build Payment Methods Management
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -39,40 +39,40 @@ So that checkout is convenient.
 ## Tasks / Subtasks
 
 ### Task 1: Create Payment Methods Screen (AC: #1)
-- [ ] Create screen in `app/profile/payments.tsx`
-- [ ] Query payment_methods WHERE user_id AND deleted_at IS NULL
-- [ ] Display cards in list with brand icon, masked number, expiry
-- [ ] Show "Default" badge for is_default cards
-- [ ] Add skeleton loader
+- [x] Create screen in `app/profile/payments.tsx`
+- [x] Query payment_methods WHERE user_id AND deleted_at IS NULL
+- [x] Display cards in list with brand icon, masked number, expiry
+- [x] Show "Default" badge for is_default cards
+- [x] Add skeleton loader
 
 ### Task 2: Build Payment Card Component (AC: #1)
-- [ ] Create PaymentMethodCard component
-- [ ] Display card brand logo (Visa, Mastercard, Amex)
-- [ ] Show "•••• {last4}"
-- [ ] Display expiry MM/YY
-- [ ] Add "Default" badge styling
-- [ ] Make card tappable for options
+- [x] Create PaymentMethodCard component
+- [x] Display card brand logo (Visa, Mastercard, Amex)
+- [x] Show "•••• {last4}"
+- [x] Display expiry MM/YY
+- [x] Add "Default" badge styling
+- [x] Make card tappable for options
 
 ### Task 3: Implement Card Options Menu (AC: #3)
-- [ ] Show action sheet/bottom sheet on card tap
-- [ ] Add "Set as Default" option
-- [ ] Add "Remove" option (destructive style)
-- [ ] Handle set default: UPDATE payment_methods SET is_default
-- [ ] Ensure only one card can be default
+- [x] Show action sheet/bottom sheet on card tap
+- [x] Add "Set as Default" option
+- [x] Add "Remove" option (destructive style)
+- [x] Handle set default: UPDATE payment_methods SET is_default
+- [x] Ensure only one card can be default
 
 ### Task 4: Build Remove Card Flow (AC: #4)
-- [ ] Show confirmation modal on remove
-- [ ] Soft delete: SET deleted_at = NOW()
-- [ ] Prevent removing default card (must set another default first)
-- [ ] Show success toast
-- [ ] Refresh card list
+- [x] Show confirmation modal on remove
+- [x] Soft delete: SET deleted_at = NOW()
+- [x] Prevent removing default card (must set another default first)
+- [x] Show success toast
+- [x] Refresh card list
 
 ### Task 5: Integrate Add Card Flow (AC: #2, #5)
-- [ ] Add "+ Add New Card" button
-- [ ] Navigate to card entry form
-- [ ] Reuse CardEntryForm from checkout
-- [ ] Save card and return to payment methods screen
-- [ ] Set as default if first card
+- [x] Add "+ Add New Card" button
+- [x] Navigate to card entry form
+- [x] Reuse CardEntryForm from checkout
+- [x] Save card and return to payment methods screen
+- [x] Set as default if first card
 
 ## Dev Notes
 
@@ -98,8 +98,14 @@ Use `@stripe/react-stripe-js` or custom icons for Visa, Mastercard, Amex, etc.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

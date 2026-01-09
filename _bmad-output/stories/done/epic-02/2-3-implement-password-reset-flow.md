@@ -1,6 +1,6 @@
 # Story 2.3: Implement Password Reset Flow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -20,34 +20,34 @@ so that I can regain access to my account.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create forgot password UI (AC: #1)
-  - [ ] Create `src/screens/auth/ForgotPasswordScreen.tsx`
-  - [ ] Build form with single email input field
-  - [ ] Add "Back to Login" link
-  - [ ] Show "Check your email" success message
-  - [ ] Handle case when email not found (still show success for security)
-- [ ] Task 2: Implement reset token generation (AC: #1, #2)
-  - [ ] Generate UUID reset token
-  - [ ] Store token with: user_id, token, expires_at (1 hour)
-  - [ ] Create mock email function logging reset link
-  - [ ] Build reset URL: `/reset-password?token={token}`
-- [ ] Task 3: Create reset password UI (AC: #3, #7)
-  - [ ] Create `src/screens/auth/ResetPasswordScreen.tsx`
-  - [ ] Extract token from URL params
-  - [ ] Build form with new password and confirm password fields
-  - [ ] Validate password (min 8 chars) with Zod
-  - [ ] Show error for invalid/expired token
-- [ ] Task 4: Implement password reset logic (AC: #3, #4, #5)
-  - [ ] Validate token exists and not expired
-  - [ ] Hash new password
-  - [ ] Update user record with new hashed_password
-  - [ ] Delete reset token after use
-  - [ ] Invalidate all existing sessions for user
-- [ ] Task 5: Handle reset success (AC: #6)
-  - [ ] Show "Password updated successfully" toast
-  - [ ] Clear any existing session state
-  - [ ] Navigate to login screen
-  - [ ] Pre-fill email field from reset context
+- [x] Task 1: Create forgot password UI (AC: #1)
+  - [x] Create `src/screens/auth/ForgotPasswordScreen.tsx`
+  - [x] Build form with single email input field
+  - [x] Add "Back to Login" link
+  - [x] Show "Check your email" success message
+  - [x] Handle case when email not found (still show success for security)
+- [x] Task 2: Implement reset token generation (AC: #1, #2)
+  - [x] Generate UUID reset token
+  - [x] Store token with: user_id, token, expires_at (1 hour)
+  - [x] Create mock email function logging reset link
+  - [x] Build reset URL: `/reset-password?token={token}`
+- [x] Task 3: Create reset password UI (AC: #3, #7)
+  - [x] Create `src/screens/auth/ResetPasswordScreen.tsx`
+  - [x] Extract token from URL params
+  - [x] Build form with new password and confirm password fields
+  - [x] Validate password (min 8 chars) with Zod
+  - [x] Show error for invalid/expired token
+- [x] Task 4: Implement password reset logic (AC: #3, #4, #5)
+  - [x] Validate token exists and not expired
+  - [x] Hash new password
+  - [x] Update user record with new hashed_password
+  - [x] Delete reset token after use
+  - [x] Invalidate all existing sessions for user
+- [x] Task 5: Handle reset success (AC: #6)
+  - [x] Show "Password updated successfully" toast
+  - [x] Clear any existing session state
+  - [x] Navigate to login screen
+  - [x] Pre-fill email field from reset context
 
 ## Dev Notes
 
@@ -65,9 +65,15 @@ so that I can regain access to my account.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

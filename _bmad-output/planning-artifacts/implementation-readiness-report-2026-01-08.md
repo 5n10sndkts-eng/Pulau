@@ -3,6 +3,8 @@
 **Date:** 2026-01-08
 **Project:** Pulau
 
+<!-- stepsCompleted: ["step-01-document-discovery", "step-02-prd-analysis", "step-03-epic-coverage-validation", "step-04-ux-alignment", "step-05-epic-quality-review", "step-06-final-assessment"] -->
+
 ---
 
 ## Document Inventory
@@ -17,78 +19,113 @@
 | UX Design | Not found | ⚠️ Missing |
 
 ### Notes
-- Epics exist in both whole (`epics.md`) and sharded (`epics/`) formats - using sharded (newer, Jan 8)
-- `epics.md.bak` backup file present - ignored
-- No UX document found - will assess without UX traceability
+- Resolved duplicate epics issue: `epics.md` renamed to `epics.md.old`.
+- Using sharded `epics/` directory as the source of truth (newer modification date).
+- No UX document found - will assess without UX traceability.
 
 ---
 
 ## PRD Analysis
 
-### Functional Requirements (30 total)
+### Functional Requirements
 
-| FR# | Requirement |
-|-----|-------------|
-| FR1 | Trip Canvas Building - Visual itinerary builder with calendar-style trip view |
-| FR2 | Quick Add functionality - Tap to add experience with animation |
-| FR3 | Live price updates - Total cost visible at all times |
-| FR4 | Experience Discovery - Browse categorized local experiences |
-| FR5 | Personalized recommendations - "Perfect for you" based on preferences |
-| FR6 | Experience filtering - Filters (difficulty/duration/price) with instant update |
-| FR7 | Detailed Experience Pages - Multimedia pages with operator stories, reviews, pricing |
-| FR8 | Image carousel - View image carousel on experience pages |
-| FR9 | Guest count adjustment - Adjust guests with price updates |
-| FR10 | Operator bio display - See operator bio and verification status |
-| FR11 | Reviews and ratings - Read reviews and ratings |
-| FR12 | Multi-Step Checkout Flow - Trip review, traveler details, payment |
-| FR13 | Booking confirmation - Success animation and booking reference |
-| FR14 | Onboarding Preferences - 3-screen preference capture |
-| FR15 | Date entry - Enter travel dates (or skip) during onboarding |
-| FR16 | Booking History Dashboard - View bookings with tabs (Upcoming/Past/All) |
-| FR17 | Booking detail view - Full trip details read-only with reference |
-| FR18 | Book Again functionality - Create new trip from completed booking |
-| FR19 | Scheduling conflict detection - Warning banner for overlapping activities |
-| FR20 | Smart suggestions - Suggestions to adjust times for conflicts |
-| FR21 | No Results State - Empty state with filter suggestions |
-| FR22 | Network interruption handling - Cached data, timestamps, retry |
-| FR23 | Date Not Set flow - Allow browsing without dates |
-| FR24 | Incomplete Booking handling - Validation, highlights, progress save |
-| FR25 | Sold Out handling - Badge, waitlist, alternatives |
-| FR26 | Wishlist/Favorites - Heart toggle with animation |
-| FR27 | Category browsing - Home → Category navigation |
-| FR28 | Search functionality - Search for experiences |
-| FR29 | Share trip - Trip sharing capability |
-| FR30 | Map integration - View meeting point/location |
+#### FR1-FR10: Core Experience
+FR1: Trip Canvas Building - Visual itinerary builder with calendar-style trip view
+FR2: Quick Add functionality - Tap to add experience with animation
+FR3: Live price updates - Total cost visible at all times
+FR4: Experience Discovery - Browse categorized local experiences
+FR5: Personalized recommendations - "Perfect for you" based on preferences
+FR6: Experience filtering - Filters (difficulty/duration/price) with instant update
+FR7: Detailed Experience Pages - Multimedia pages with operator stories, reviews, pricing
+FR8: Image carousel - View image carousel on experience pages
+FR9: Guest count adjustment - Adjust guests with price updates
+FR10: Operator bio display - See operator bio and verification status
 
-### Non-Functional Requirements (28 total)
+#### FR11-FR20: Booking & Management
+FR11: Reviews and ratings - Read reviews and ratings
+FR12: Multi-Step Checkout Flow - Trip review, traveler details, payment
+FR13: Booking confirmation - Success animation and booking reference
+FR14: Onboarding Preferences - 3-screen preference capture
+FR15: Date entry - Enter travel dates (or skip) during onboarding
+FR16: Booking History Dashboard - View bookings with tabs (Upcoming/Past/All)
+FR17: Booking detail view - Full trip details read-only with reference
+FR18: Book Again functionality - Create new trip from completed booking
+FR19: Scheduling conflict detection - Warning banner for overlapping activities
+FR20: Smart suggestions - Suggestions to adjust times for conflicts
 
-| NFR# | Category | Requirement |
-|------|----------|-------------|
-| NFR1 | Performance | Build 5-day trip with 6+ activities in under 10 minutes |
-| NFR2 | Performance | Find experiences within 3 taps |
-| NFR3 | Performance | Filter results update instantly |
-| NFR4 | Usability | 80%+ info visible without scrolling |
-| NFR5 | Usability | Zero abandoned checkouts due to confusion |
-| NFR6 | Usability | Find any booking within 2 taps |
-| NFR7-10 | Accessibility | Color contrast ratios: 4.6:1 to 14.8:1 |
-| NFR11 | Accessibility | Touch targets minimum 44x44px |
-| NFR12 | Accessibility | Motion respects reduced-motion preferences |
-| NFR13-17 | Animation | Specific animation timings (150-500ms) |
-| NFR18-20 | Responsive | Mobile-first breakpoints and layouts |
-| NFR21-22 | Typography | Plus Jakarta Sans / Inter font specs |
-| NFR23-24 | Spacing | Card padding 20px, margins 20/24px |
-| NFR25 | Testing | 141 tests, 100% passing |
-| NFR26 | Build | TypeScript strict mode |
-| NFR27 | Platform | React Web SPA, modern browsers |
-| NFR28 | State | GitHub Spark KV store |
+#### FR21-FR30: Edge Cases & Navigation
+FR21: No Results State - Empty state with filter suggestions
+FR22: Network interruption handling - Cached data, timestamps, retry
+FR23: Date Not Set flow - Allow browsing without dates
+FR24: Incomplete Booking handling - Validation, highlights, progress save
+FR25: Sold Out handling - Badge, waitlist, alternatives
+FR26: Wishlist/Favorites - Heart toggle with animation
+FR27: Category browsing - Home → Category navigation
+FR28: Search functionality - Search for experiences
+FR29: Share trip - Trip sharing capability
+FR30: Map integration - View meeting point/location
 
-### PRD Gaps Identified
+### Non-Functional Requirements
 
-| Gap | Severity | Impact |
-|-----|----------|--------|
-| No vendor/operator role definition | Medium | Epic coverage may be incomplete for vendor features |
-| Authentication flow not detailed | Medium | Login, registration, password reset unspecified |
-| Payment processing not specified | Medium | Checkout integration details missing |
+#### Performance & Usability
+NFR1: Build 5-day trip with 6+ activities in under 10 minutes
+NFR2: Find experiences within 3 taps
+NFR3: Filter results update instantly
+NFR4: 80%+ info visible without scrolling (experience details)
+NFR5: Zero abandoned checkouts due to confusion
+NFR6: Find any booking within 2 taps
+
+#### Accessibility
+NFR7: Primary Teal text contrast ratio 6.2:1 (target 4.5:1+)
+NFR8: Accent Coral text contrast ratio 4.6:1 (target 4.5:1+)
+NFR9: Background Off-white text contrast ratio 13.1:1
+NFR10: Card White text contrast ratio 14.8:1
+NFR11: Touch targets minimum 44x44px
+NFR12: Motion respects reduced-motion preferences
+
+#### Design & Animation
+NFR13: "Fly" to trip bar animation: 150ms ease-out
+NFR14: Heart "pop" animation: 200ms bounce
+NFR15: Page transition: 300ms ease-in-out
+NFR16: Success confetti: 500ms
+NFR17: Filter application fade: 200ms
+
+#### Technical & Platform
+NFR18: Responsive - Mobile-first breakpoints (640px, 768px, 1024px implied)
+NFR19: React Web Application (SPA) with React 19
+NFR20: TypeScript 5.7.2 with strict mode
+NFR21: GitHub Spark KV Store for data persistence
+NFR22: Tailwind CSS 4.0.0-alpha.37
+NFR23: Lucide React icons
+NFR24: Vitest testing with 141 tests required
+NFR25: No JIT compiler overhead (pure CSS output)
+
+### Additional Requirements (Deferred/Phase 2+)
+
+**User Authentication (Phase 2):**
+- Customer Authentication (Sign Up, Login, Reset) - Uses mock auth service with KV storage for MVP
+- Customer Profile & Payment Methods - Profile editing, saved cards
+
+**Vendor Portal (Phase 3):**
+- Vendor Authentication (Separate portal)
+- Vendor Experience Management (Create, edit, publish)
+- Vendor Analytics (Revenue, metrics)
+
+**Real-Time Features (Phase 3):**
+- Real-Time Availability (Live updates)
+- Vendor-Customer Messaging (In-app chat)
+
+**Future Scalability (Phase 4):**
+- Multi-Destination Architecture
+
+### PRD Completeness Assessment
+
+The PRD is comprehensive regarding the core "Traveler" journey (building, booking, viewing). However, there are notable observations:
+
+1. **Vendor Role is Deferred**: The PRD explicitly marks Vendor features as Phase 3. If epics exist for Vendor features (which discovery suggested), there will be a scope mismatch.
+2. **Auth is Mocked**: The PRD specifies "Mock auth service with KV storage" for MVP, but references Phase 2 for "Production requires Epic 20 (Supabase)". This creates a potential conflict if Epic 20 is included in the current MVP scope.
+3. **Architecture Shift**: The PRD explicitly notes a shift from "React Native/Expo" to "React Web" and "Supabase" to "KV Store". We must ensure all Epics reflect this shift.
+4. **UX Detail**: While no separate UX doc exists, the PRD contains significant design direction (Colors, Fonts, Animations, Component Selection). This mitigates the missing UX file risk slightly, but wireframes are still missing.
 
 ---
 
@@ -96,55 +133,68 @@
 
 ### Coverage Matrix
 
-All 38 FRs from `requirements.md` are covered across 20 epics:
+| FR Range | Description | Covered In Epic | Status |
+|----------|-------------|-----------------|--------|
+| **FR1-FR10: Core Experience** |
+| FR1 | Trip Canvas & Itinerary | Epic 8 | ✅ Covered |
+| FR2 | Quick Add | Epic 6 (Story 6.2) | ✅ Covered |
+| FR3 | Live Price Updates | Epic 8 | ✅ Covered |
+| FR4 | Experience Discovery | Epic 6 | ✅ Covered |
+| FR5 | Recommendations | Epic 4 (Story 4.4) | ✅ Covered |
+| FR6 | Filtering | Epic 6 (Story 6.3) | ✅ Covered |
+| FR7 | Detailed Experience Pages | Epic 6 (Story 6.5) | ✅ Covered |
+| FR8 | Image Carousel | Epic 6 (Story 6.6) | ✅ Covered |
+| FR9 | Guest Count Adjustment | Epic 6 (Story 6.5) | ✅ Covered |
+| FR10 | Operator Bio | Epic 6 (Story 6.5) | ✅ Covered |
+| **FR11-FR20: Booking & Management** |
+| FR11 | Reviews | Epic 6 (Story 6.10) | ✅ Covered |
+| FR12 | Checkout Flow | Epic 10 | ✅ Covered |
+| FR13 | Booking Confirmation | Epic 10 | ✅ Covered |
+| FR14 | Onboarding Preferences | Epic 4 | ✅ Covered |
+| FR15 | Date Entry | Epic 4 | ✅ Covered |
+| FR16 | Booking History Dashboard | Epic 11 | ✅ Covered |
+| FR17 | Booking Detail View | Epic 11 | ✅ Covered |
+| FR18 | Book Again | Epic 11 | ✅ Covered |
+| FR19 | Conflict Detection | Epic 9 | ✅ Covered |
+| FR20 | Smart Suggestions | Epic 9 | ✅ Covered |
+| **FR21-FR30: Edge Cases & Navigation** |
+| FR21 | No Results State | Epic 17 (Story 17.2) | ✅ Covered |
+| FR22 | Network Interruption | Epic 17 (Story 17.5) | ✅ Covered |
+| FR23 | Date Not Set Flow | Epic 8 (Story 8.6) | ✅ Covered |
+| FR24 | Incomplete Booking | Epic 10 (Story 10.3) | ✅ Covered |
+| FR25 | Sold Out Handling | Epic 6 (Story 6.2) | ✅ Covered |
+| FR26 | Wishlist/Favorites | Epic 7 | ✅ Covered |
+| FR27 | Category Browsing | Epic 6 | ✅ Covered |
+| FR28 | Search | Epic 6 (Story 6.4) | ✅ Covered |
+| FR29 | Share Trip | Epic 9 (Story 9.4) | ✅ Covered |
+| FR30 | Map Integration | Epic 6 (Story 6.9) | ✅ Covered |
+| **Deferred Requirements (Phase 2+)** |
+| FR31 | Customer Auth | Epic 2 | ⚠️ In MVP Scope? |
+| FR32 | Customer Profile | Epic 13 | ⚠️ In MVP Scope? |
+| FR33 | Vendor Auth | Epic 3 | ⚠️ In MVP Scope? |
+| FR34 | Vendor Dashboard | Epic 14 | ⚠️ In MVP Scope? |
+| FR35 | Vendor Experience Mgmt | Epic 5 | ⚠️ In MVP Scope? |
+| FR36 | Real-time Availability | Epic 15 | ⚠️ In MVP Scope? |
+| FR37 | Vendor Messaging | Epic 15 | ⚠️ In MVP Scope? |
+| FR38 | Multi-destination | Epic 19 | ⚠️ In MVP Scope? |
 
-| FR Range | Description | Epic(s) | Stories |
-|----------|-------------|---------|---------|
-| FR1-FR3 | Trip Canvas & Pricing | Epic 8 | 8.1-8.10 |
-| FR2, FR9, FR15 | Browse, Search, Filters | Epic 6 | 6.1-6.4 |
-| FR3, FR20-24 | Experience Details | Epic 6 | 6.5-6.10 |
-| FR4, FR17 | Checkout Flow | Epic 10 | 10.1-10.8 |
-| FR5, FR7 | Onboarding & Recommendations | Epic 4 | 4.1-4.4 |
-| FR6, FR14 | Booking History & Active Trip | Epic 11 | 11.1-11.6 |
-| FR8 | Conflict Detection | Epic 9 | 9.1-9.3 |
-| FR10 | Wishlist | Epic 7 | 7.1-7.3 |
-| FR13 | Trip Sharing | Epic 9 | 9.4 |
-| FR16, FR18-19 | Edge Cases & Errors | Epic 17 | 17.1-17.5 |
-| FR25-26 | Trip Views | Epic 8 | 8.5, 8.9 |
-| FR27 | Explore Screen | Epic 12 | 12.1-12.6 |
-| FR28-29 | Profile & Settings | Epic 13 | 13.1-13.7 |
-| FR30 | Bottom Navigation | Epic 18 | 18.1-18.4 |
-| FR31-32 | Customer Auth | Epic 2 | 2.1-2.6 |
-| FR33-35 | Vendor Portal | Epic 3, Epic 5 | 3.1-3.3, 5.1-5.6 |
-| FR36-37 | Availability & Messaging | Epic 15 | 15.1-15.5 |
-| FR38 | Multi-Destination | Epic 19 | 19.1-19.5 |
+### Missing Requirements & Scope Creep
+
+1.  **Scope Creep Alert**: The Epics include full implementations for features the PRD marked as **Deferred/Phase 2+**:
+    *   **Epic 3 & 14 (Vendor Features)**: PRD says "Vendor Portal (Phase 3)", but Epics 3, 5, 14, 15 are explicitly detailing these features for implementation.
+    *   **Epic 2 & 13 (Customer Auth)**: PRD says "Uses mock auth service... production requires Epic 20", but Epic 2 and 13 seem to be building full auth flows.
+    *   **Epic 20 (Backend Integration)**: PRD says "Deferred", but Epic 20 exists as a migration epic.
+
+2.  **Coverage Assessment**:
+    *   **Core MVP (FR1-FR30)**: 100% Covered.
+    *   **Deferred Features**: Included in Epics, creating a scope mismatch with the PRD.
 
 ### Coverage Statistics
 
-| Metric | Value |
-|--------|-------|
-| Total FRs (requirements.md) | 38 |
-| FRs covered in epics | 38 |
-| **Coverage percentage** | **100%** |
-
-### Critical Finding: PRD vs Epics Requirements Mismatch
-
-⚠️ **The PRD contains 30 FRs, but requirements.md contains 38 FRs.**
-
-**8 FRs added in epics but NOT formally in PRD:**
-
-| FR# | Requirement | Risk |
-|-----|-------------|------|
-| FR31 | Customer authentication (register, login, reset) | Medium - Core feature assumed but not specified |
-| FR32 | Customer profile with saved payments | Medium - Implied but not detailed |
-| FR33 | Vendor authentication with separate portal | High - New user role not in PRD |
-| FR34 | Vendor dashboard | High - New feature scope |
-| FR35 | Vendor experience management | High - Major feature addition |
-| FR36 | Real-time availability checking | Medium - Implementation detail |
-| FR37 | Vendor-customer messaging | High - New communication feature |
-| FR38 | Multi-destination architecture | Medium - Future-proofing |
-
-**Recommendation:** Update PRD to formally include FR31-38 or document as out-of-scope for MVP.
+- Total PRD MVP FRs: 30
+- MVP FRs covered in Epics: 30
+- **MVP Coverage Percentage: 100%**
+- **Extra Epics found**: 8 (Epics 2, 3, 5, 13, 14, 15, 19, 20) covering deferred scope.
 
 ---
 
@@ -152,7 +202,7 @@ All 38 FRs from `requirements.md` are covered across 20 epics:
 
 ### UX Document Status
 
-**❌ NOT FOUND** - No dedicated UX design document exists in planning artifacts.
+**❌ NOT FOUND** - No dedicated UX design document exists in planning artifacts. An empty `ux-design` folder was found.
 
 ### UX Implied in PRD
 
@@ -180,100 +230,54 @@ The PRD contains embedded UX direction but NO formal UX document:
 
 ### Alignment Issues
 
-1. **PRD ↔ Architecture**: PRD specifies Phosphor icons, but `requirements.md` mentions "2px stroke" - Architecture uses Lucide React
-2. **PRD ↔ Epics**: PRD mentions 6 categories but Epic 6 doesn't enumerate them
-3. **No vendor UX**: PRD doesn't cover vendor dashboard UX, but Epic 3, 5, 14 assume vendor interfaces
+1.  **PRD ↔ Architecture (Icons)**: PRD specifies **Lucide React** (updated from Phosphor). `requirements.md` (ARCH10) still references **Phosphor icons (2px stroke)**. This is a documentation lag.
+2.  **PRD ↔ Epics (Categories)**: PRD mentions 6 categories but doesn't enumerate them. Epics should ensure these match exactly.
+3.  **Vendor UX Gap**: Since Vendor Epics exist (3, 5, 14) but the PRD defers them, there is ZERO UX guidance for the Vendor Dashboard. If implemented, developers will be flying blind.
 
 ### Recommendation
 
-For a "Complex Application" with 20 epics and 100+ stories, consider creating:
-- Wireframes for critical flows (Onboarding, Checkout, Trip Builder)
-- User flow diagrams for multi-step processes
-- Component state specifications (hover, active, disabled, error)
+For a "Complex Application" with 20 epics, creating **Wireframes for Critical Flows** (Onboarding, Checkout, Trip Builder) is highly recommended before implementation to avoid rework.
 
 ---
 
 ## Epic Quality Review
 
-### 🔴 Critical Violations (3)
+### 🔴 Critical Violations
 
-| Epic | Violation | Remediation |
-|------|-----------|-------------|
-| **Epic 1: Foundation & Technical Infrastructure** | Technical epic with NO user value. "Development environment established" is developer-facing only. | Merge into Epic 6 or Epic 8 as setup tasks, or accept as technical prerequisite |
-| **Epic 5: Story 5.1** | "Design and Create Experiences Database Schema" is pure technical work | Move to Epic 20 or make implicit in Story 5.2 |
-| **Epic 20: Backend Integration** | Entire epic is infrastructure migration, not user value | Accept as technical prerequisite or defer to post-MVP |
+1.  **Technical Epics (NO USER VALUE)**
+    *   **Epic 1: Foundation & Technical Infrastructure**: "Development environment established..." is developer-facing. This is setup work, not a user story.
+    *   **Epic 20: Backend Integration (Supabase)**: This is a "Migration" epic. While necessary for production, it delivers zero new user value if features already work with KV store.
 
-### 🟠 Major Issues (11)
+2.  **Explicit Cross-Epic Dependencies**
+    *   **Epic 5** explicitly states: "**Phase:** Post-MVP (requires Epic 3 Vendor Auth)". This proves forward dependency on a deferred epic.
 
-| Issue | Epics Affected | Problem |
-|-------|----------------|---------|
-| **Database dependency before creation** | Epic 2, 3, 4, 7 | Stories reference "database" but Epic 20 hasn't run |
-| **Auth dependency chain broken** | Epic 2 → 3 → 4 | Epic 3 needs Epic 2's auth, Epic 4 needs user context |
-| **Payment gateway undefined** | Epic 10, 11 | "payment token via gateway" - what gateway? |
-| **Shareable URLs need server** | Epic 9 | `pulau.app/trip/{uuid}` needs backend routing |
-| **Real-time messaging undefined** | Epic 15 | WebSocket/polling infrastructure not specified |
-| **NFR epics as standalone** | Epic 16, 17 | Should be integrated into feature epics |
-| **Navigation as epic** | Epic 18 | Should be part of foundation (Epic 1) |
-| **Implicit data dependencies** | Epic 12, 14 | Assumes experience/booking data exists |
-| **Forward dependency: Story 5.1** | Epic 5 | "Given vendor auth is in place" - Epic 3 must complete |
-| **Storage confusion** | All epics | PRD says KV store, epics say database, Epic 20 adds Supabase |
-| **Multi-destination timing** | Epic 19 | Future-proofing before MVP features complete |
+3.  **Database Strategy Ambiguity**
+    *   Epics 2 & 3 reference "auth" and "users/vendors" but seemingly without a database (until Epic 20).
+    *   Search for "database" or "table" creation in Epics 2 & 3 returned **ZERO results**.
+    *   **Issue**: Epics 2, 3, 4, 5, 7, 10 seem to assume a database exists "magically" or rely on the KV store in ways not fully specified for relational entities (like Users/Vendors).
 
-### 🟡 Minor Concerns (6)
+### 🟠 Major Issues
 
-| Concern | Location |
-|---------|----------|
-| Missing error state ACs | Epic 6 Story 6.2 infinite scroll |
-| Implicit auth state | Epic 10 Story 10.3 "pre-filled if logged in" |
-| Inconsistent icon library | PRD: Phosphor, Impl: Lucide React |
-| Category enumeration missing | Epic 6 doesn't list the 6 categories |
-| Story sizing unclear | Some stories (5.2, 8.4) seem large |
-| AC format inconsistent | Some use full Given/When/Then, others abbreviated |
+1.  **Scope Creep in Epics 2, 3, 5, 13, 14, 15, 19**
+    *   These epics detail features the PRD explicitly deferred. This wastes development time on features not in the MVP goal.
 
-### Epic Independence Test Results
+2.  **Epic 16 & 17: NFR Epics**
+    *   **Epic 16 (Design System)** and **Epic 17 (Error Handling)** should be acceptance criteria within feature stories, not standalone epics. Users don't "use" error handling in isolation.
 
-| Transition | Result | Issue |
-|------------|--------|-------|
-| Epic 1 → 2 | ✅ PASS | Foundation enables auth |
-| Epic 2 → 3 | ⚠️ CONDITIONAL | Needs database from Epic 20 |
-| Epic 3 → 4 | ⚠️ CONDITIONAL | Needs auth context from Epic 2 |
-| Epic 4 → 5 | ❌ FAIL | user_preferences table doesn't exist |
-| Epic 5 → 6 | ✅ PASS | Experience data available |
-| Epic 6 → 7 | ✅ PASS | Independent features |
-| Epic 7 → 8 | ✅ PASS | Independent features |
-| Epic 8 → 9 | ✅ PASS | Trip data available |
-| Epic 9 → 10 | ✅ PASS | Trip ready for checkout |
-| Epic 10 → 11 | ✅ PASS | Bookings created |
+3.  **Epic 18: Navigation**
+    *   Navigation is infrastructure/skeleton, not a standalone value add. It should be part of the first feature epic (e.g., Home Screen in Epic 6).
 
-### User Value Assessment
+### 🟡 Minor Concerns
 
-| Epic | Has User Value? |
-|------|-----------------|
-| Epic 1 | ❌ NO - Technical only |
-| Epic 2-4 | ✅ YES - Auth, onboarding |
-| Epic 5 | ⚠️ PARTIAL - Story 5.1 is technical |
-| Epic 6-15 | ✅ YES - Feature delivery |
-| Epic 16-17 | ⚠️ NFR - Cross-cutting, not standalone |
-| Epic 18 | ⚠️ PARTIAL - Navigation is infrastructure |
-| Epic 19 | ⚠️ PARTIAL - Future-proofing |
-| Epic 20 | ❌ NO - Technical migration |
+1.  **Documentation Lag**: `requirements.md` references Phosphor icons (old), PRD references Lucide (new).
+2.  **Naming Consistency**: Epics use "Story X.Y" but sometimes refer to dependencies vaguely.
 
-### Acceptance Criteria Quality Sample
+### Recommendations
 
-**Story 2.1 (Registration) - Issues Found:**
-- ❌ No AC for duplicate email handling
-- ❌ No AC for email service failure
-- ❌ No password strength requirements specified
-- ⚠️ "in the database" - what database?
-
-### Recommended Remediation
-
-1. **Clarify storage strategy:** KV store vs Supabase - pick one or define transition point
-2. **Merge technical epics:** Epic 1 + Epic 18 + Epic 20 could be "Epic 0: Technical Foundation"
-3. **Add missing ACs:** Error states, edge cases for all stories
-4. **Define payment gateway:** Stripe? Mock? Deferred?
-5. **Address dependency chain:** Epic 2 → 3 → 4 needs clear sequencing
-6. **Integrate NFR epics:** Move Epic 16, 17 requirements into feature stories
+1.  **Kill Technical Epics**: Merge Epic 1 setup tasks into Epic 6 (Home Screen) as prerequisites.
+2.  **Defer Scope Creep**: Mark Epics 3, 5, 14, 15, 19, 20 as **post-MVP** and remove them from the immediate backlog.
+3.  **Fix Dependencies**: Ensure Epic 2 (Customer Auth) is self-contained if it stays in MVP (using KV store mock auth as per PRD).
+4.  **Resolve Database Strategy**: Explicitly decide: KV Store for EVERYTHING in MVP? If so, rewrite Epic 2 to clearly use KV store for "users", not "database".
 
 ---
 
@@ -283,79 +287,23 @@ For a "Complex Application" with 20 epics and 100+ stories, consider creating:
 
 # ⚠️ NEEDS WORK
 
-The project has strong requirements coverage (100% FRs mapped to epics) but significant structural issues prevent immediate implementation. The core problem is **architectural confusion** around data storage (KV vs Supabase) and **circular dependencies** between epics that would block developers.
-
-### Issue Summary
-
-| Category | Critical | Major | Minor | Total |
-|----------|----------|-------|-------|-------|
-| PRD Gaps | 0 | 3 | 0 | 3 |
-| PRD/Epic Mismatch | 1 | 0 | 0 | 1 |
-| UX Missing | 0 | 4 | 0 | 4 |
-| Epic Quality | 3 | 11 | 6 | 20 |
-| **TOTAL** | **4** | **18** | **6** | **28** |
+The core product definition is strong, with 100% coverage of MVP requirements. However, the project is **NOT READY** for implementation due to a massive **Scope Creep** issue and **Database Strategy Ambiguity**. The current plan includes building 8 major deferred epics (Vendor Portal, Real Auth, Backend Migration) that are explicitly out of MVP scope, with no clear UX or Database strategy to support them.
 
 ### Critical Issues Requiring Immediate Action
 
-1. **Storage Strategy Undefined** - PRD says GitHub Spark KV, but epics reference "database" throughout, and Epic 20 adds Supabase migration. Pick one approach for MVP.
-
-2. **Epic Dependency Chain Broken** - Epic 4 saves to `user_preferences table` that doesn't exist. Epic 5 requires "vendor auth in place" from Epic 3. The sequencing doesn't work.
-
-3. **Technical Epics Have No User Value** - Epic 1 (Foundation) and Epic 20 (Backend) deliver nothing users can see. Either accept as prerequisites or restructure.
-
-4. **Payment Gateway Undefined** - Epic 10 and 11 reference "payment token via gateway" with no specification of what gateway, how it integrates, or what the mock behavior should be.
+1.  **Scope Containment**: **STOP** planning to build Epics 3, 5, 14, 15, 19, and 20. They are marked "Deferred" in the PRD. Remove them from the active implementation plan to focus on the Core MVP.
+2.  **Database Strategy Decision**: Explicitly define how "Users" and "Auth" work in MVP.
+    *   *Option A (Recommended for Speed)*: Use KV Store Mock Auth for everything. Rewrite Epic 2 to use KV Store explicitly. Delete Epic 20.
+    *   *Option B (Production Ready)*: Use Supabase from Day 1. Rewrite Epic 1/2 to set up Supabase immediately (not deferred to Epic 20).
+3.  **Technical Epic Elimination**: Distribute Epic 1 (Setup) and Epic 16/17 (NFRs) into real feature epics. Don't waste sprints on "setup" that delivers no user value.
 
 ### Recommended Next Steps
 
-**Before Sprint 1:**
-
-1. **Resolve storage architecture** - Add a decision document: KV-only for MVP, then migrate to Supabase? Or Supabase from day one? Update all epic references accordingly.
-
-2. **Reorder epics for dependency compliance:**
-   - Epic 1 + 20 → "Epic 0: Technical Foundation" (runs first, creates DB if needed)
-   - Epic 2 runs after foundation provides storage
-   - Epic 3 runs after Epic 2 provides auth infrastructure
-
-3. **Update PRD to include FR31-38** - The epics added vendor features and auth that aren't formally in PRD. Either add them or mark as out-of-scope.
-
-4. **Add missing acceptance criteria** - Every story needs error state handling, especially:
-   - Story 2.1: duplicate email, email service failure, password strength
-   - Story 10.5: payment failure scenarios
-
-**Before Implementation:**
-
-5. **Create UX wireframes** for critical flows:
-   - 4-step checkout flow
-   - 3-screen onboarding
-   - Trip builder calendar/list views
-
-6. **Define payment approach:**
-   - Stripe integration? When?
-   - Mock payment for MVP?
-   - Document in Architecture
-
-7. **Merge NFR epics into feature epics** - Epic 16 (Design System) and Epic 17 (Error Handling) should be acceptance criteria within feature stories, not standalone epics.
-
-### Risk Assessment
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Developer confusion on storage | High | High | Resolve KV vs Supabase before sprint |
-| Blocked by missing dependencies | High | Medium | Reorder epics, add dependency tracking |
-| Inconsistent UI without wireframes | Medium | Medium | Create wireframes for complex flows |
-| Payment integration delays | Medium | High | Define mock behavior for MVP |
-| Scope creep from vendor features | Medium | Medium | Clarify MVP scope in PRD |
+1.  **Scope Pruning**: Move Epics 3, 5, 13, 14, 15, 19, 20 to a "Phase 2" backlog folder.
+2.  **Rewrite Epic 2 (Auth)**: clearly specify "Mock Auth using KV Store" as per PRD, removing any ambiguity about "databases".
+3.  **Merge Epic 1**: Move project setup stories into the start of Epic 6 (Home Screen) or Epic 4 (Onboarding) - whichever comes first.
+4.  **Create Wireframes**: Sketch the Onboarding and Checkout flows to clarify the UI before coding.
 
 ### Final Note
 
-This assessment identified **28 issues** across **4 categories**. The project has excellent requirements coverage and well-structured epics for the core traveler journey (Epics 6-11). However, the foundational confusion around storage architecture and epic dependencies would cause immediate blockers in Sprint 1.
-
-**Recommendation:** Spend 2-4 hours resolving the storage strategy and epic ordering before starting implementation. The remaining issues (UX wireframes, missing ACs) can be addressed incrementally during sprints.
-
----
-
-**Assessment completed:** 2026-01-08
-**Assessor:** John (PM Agent)
-**Workflow:** Implementation Readiness Review
-
-<!-- stepsCompleted: ["step-01-document-discovery", "step-02-prd-analysis", "step-03-epic-coverage-validation", "step-04-ux-alignment", "step-05-epic-quality-review", "step-06-final-assessment"] -->
+This assessment identified **4 Critical Violations** and **Scope Creep across 8 Epics**. The foundation is solid, but the house is being built twice as big as the blueprint allows. **Cut the scope back to the PRD's MVP definition**, and you will have a highly successful build. Proceeding as-is invites confusion and delays.

@@ -1,6 +1,6 @@
 # Story 8.7: Add Guest Count Adjustment per Item
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -26,39 +26,39 @@ So that pricing reflects my actual group size.
 ## Tasks / Subtasks
 
 ### Task 1: Create GuestCountStepper component (AC: #1)
-- [ ] Build stepper UI with minus, count display, and plus buttons
-- [ ] Style buttons with circular design and borders
-- [ ] Disable minus button when count is 1 (minimum)
-- [ ] Disable plus button when count reaches experience.group_size_max
-- [ ] Add 44x44px touch target for mobile accessibility
+- [x] Build stepper UI with minus, count display, and plus buttons
+- [x] Style buttons with circular design and borders
+- [x] Disable minus button when count is 1 (minimum)
+- [x] Disable plus button when count reaches experience.group_size_max
+- [x] Add 44x44px touch target for mobile accessibility
 
 ### Task 2: Implement increment and decrement handlers (AC: #1, #2)
-- [ ] Create handleIncrement function checking max limit
-- [ ] Create handleDecrement function checking min limit (1)
-- [ ] Update trip item's guest_count in state
-- [ ] Persist change via useTripManagement.updateTripItem
-- [ ] Add haptic feedback on button tap (mobile)
+- [x] Create handleIncrement function checking max limit
+- [x] Create handleDecrement function checking min limit (1)
+- [x] Update trip item's guest_count in state
+- [x] Persist change via useTripManagement.updateTripItem
+- [x] Add haptic feedback on button tap (mobile)
 
 ### Task 3: Integrate stepper into TripItemCard (AC: #1, #2)
-- [ ] Add GuestCountStepper to TripItemCard component
-- [ ] Position stepper near price display
-- [ ] Make stepper inline-ediKV namespace (click to show stepper)
-- [ ] Show guest count as text when not editing
-- [ ] Format display: "1 guest" or "2 guests" (singular/plural)
+- [x] Add GuestCountStepper to TripItemCard component
+- [x] Position stepper near price display
+- [x] Make stepper inline-ediKV namespace (click to show stepper)
+- [x] Show guest count as text when not editing
+- [x] Format display: "1 guest" or "2 guests" (singular/plural)
 
 ### Task 4: Update item price calculation (AC: #2)
-- [ ] Calculate item price: experience.price × guest_count
-- [ ] Display calculated price on TripItemCard
-- [ ] Add visual highlight animation when price changes
-- [ ] Format price with currency symbol (e.g., "$90.00")
-- [ ] Update immediately on guest count change (no debounce)
+- [x] Calculate item price: experience.price × guest_count
+- [x] Display calculated price on TripItemCard
+- [x] Add visual highlight animation when price changes
+- [x] Format price with currency symbol (e.g., "$90.00")
+- [x] Update immediately on guest count change (no debounce)
 
 ### Task 5: Trigger trip total recalculation (AC: #2)
-- [ ] Listen for guest_count changes in useTripManagement
-- [ ] Recalculate trip total: SUM(all item prices)
-- [ ] Update TripFooter total display
-- [ ] Add pulse animation to total when it changes
-- [ ] Ensure all price displays sync instantly
+- [x] Listen for guest_count changes in useTripManagement
+- [x] Recalculate trip total: SUM(all item prices)
+- [x] Update TripFooter total display
+- [x] Add pulse animation to total when it changes
+- [x] Ensure all price displays sync instantly
 
 ## Dev Notes
 
@@ -117,8 +117,14 @@ const calculateTripTotal = (trip: Trip, experiences: Experience[]): number => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

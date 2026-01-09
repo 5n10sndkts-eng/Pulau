@@ -1,6 +1,6 @@
 # Story 9.4: Create Shareable Trip Links
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -31,40 +31,40 @@ So that travel companions can see the itinerary.
 ## Tasks / Subtasks
 
 ### Task 1: Add share button to trip builder header (AC: #1)
-- [ ] Add share icon button (Share2 from Lucide) to header
-- [ ] Position button in top-right corner next to trip name
-- [ ] Style with secondary/outline button styling
-- [ ] Add onClick handler to open share modal
-- [ ] Ensure 44px touch target for mobile
+- [x] Add share icon button (Share2 from Lucide) to header
+- [x] Position button in top-right corner next to trip name
+- [x] Style with secondary/outline button styling
+- [x] Add onClick handler to open share modal
+- [x] Ensure 44px touch target for mobile
 
 ### Task 2: Create share modal with copy and native share options (AC: #1)
-- [ ] Build ShareTripModal component using shadcn/ui Dialog
-- [ ] Add "Copy Link" button with clipboard API integration
-- [ ] Add "Share via..." button triggering Web Share API
-- [ ] Show success toast after link copied: "Link copied!"
-- [ ] Handle Web Share API not available (desktop) gracefully
+- [x] Build ShareTripModal component using shadcn/ui Dialog
+- [x] Add "Copy Link" button with clipboard API integration
+- [x] Add "Share via..." button triggering Web Share API
+- [x] Show success toast after link copied: "Link copied!"
+- [x] Handle Web Share API not available (desktop) gracefully
 
 ### Task 3: Generate and store share token (AC: #2)
-- [ ] Add share_token field to Trip data model (nullable string)
-- [ ] Generate UUID on first share: `crypto.randomUUID()`
-- [ ] Store share_token in trip via useKV
-- [ ] Reuse existing token on subsequent shares
-- [ ] Construct shareable URL: `${window.location.origin}/trip/${shareToken}`
+- [x] Add share_token field to Trip data model (nullable string)
+- [x] Generate UUID on first share: `crypto.randomUUID()`
+- [x] Store share_token in trip via useKV
+- [x] Reuse existing token on subsequent shares
+- [x] Construct shareable URL: `${window.location.origin}/trip/${shareToken}`
 
 ### Task 4: Create read-only trip view page (AC: #3)
-- [ ] Build SharedTripView component/route
-- [ ] Parse share_token from URL path parameter
-- [ ] Fetch trip data by share_token from storage
-- [ ] Display trip in read-only format (no edit capabilities)
-- [ ] Show all trip details: name, dates, items, pricing
-- [ ] Handle invalid/expired tokens with 404 page
+- [x] Build SharedTripView component/route
+- [x] Parse share_token from URL path parameter
+- [x] Fetch trip data by share_token from storage
+- [x] Display trip in read-only format (no edit capabilities)
+- [x] Show all trip details: name, dates, items, pricing
+- [x] Handle invalid/expired tokens with 404 page
 
 ### Task 5: Add "Create your own trip" CTA (AC: #3)
-- [ ] Add CTA button at bottom of shared trip view
-- [ ] Button text: "Plan your own adventure"
-- [ ] Navigate to home screen or trip builder on click
-- [ ] Style as primary CTA (teal button)
-- [ ] Include Pulau branding/logo at bottom
+- [x] Add CTA button at bottom of shared trip view
+- [x] Button text: "Plan your own adventure"
+- [x] Navigate to home screen or trip builder on click
+- [x] Style as primary CTA (teal button)
+- [x] Include Pulau branding/logo at bottom
 
 ## Dev Notes
 
@@ -182,8 +182,14 @@ interface Trip {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+

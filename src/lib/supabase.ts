@@ -25,7 +25,9 @@ export function isSupabaseConfigured(): boolean {
   return isValidUrl(supabaseUrl) &&
          !!supabaseAnonKey &&
          supabaseAnonKey !== 'placeholder-key' &&
-         !supabaseUrl?.includes('your-project-ref')
+         supabaseAnonKey !== 'your-anon-key-here' &&
+         !supabaseUrl?.includes('your-project-ref') &&
+         !supabaseUrl?.includes('placeholder')
 }
 
 // Determine which URL/key to use (fallback for mock mode)

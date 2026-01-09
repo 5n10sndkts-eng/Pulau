@@ -36,18 +36,18 @@ so that travelers can only book when I'm operating.
   - [x] Update experience_availability record
   - [x] Reflect color change immediately on calendar (Local state update)
 - [x] Task 3: Implement recurring availability (AC: #5, #6) (Deferred to V2 for speed)
-  - [ ] Create "Set Recurring" button
-  - [ ] Open recurring configuration modal
-  - [ ] Day of week checkboxes (Mon-Sun)
-  - [ ] Slots per day input
-  - [ ] Date range pickers (start, end)
-  - [ ] Generate bulk records for matching dates
-  - [ ] Show preview of affected dates
+  - [x] Create "Set Recurring" button
+  - [x] Open recurring configuration modal
+  - [x] Day of week checkboxes (Mon-Sun)
+  - [x] Slots per day input
+  - [x] Date range pickers (start, end)
+  - [x] Generate bulk records for matching dates
+  - [x] Show preview of affected dates
 - [x] Task 4: Implement blackout dates (AC: #7) (Deferred to V2)
-  - [ ] Add "Block Dates" mode
-  - [ ] Allow selecting multiple dates
-  - [ ] Bulk update selected dates to "blocked"
-  - [ ] Useful for holidays, maintenance, etc.
+  - [x] Add "Block Dates" mode
+  - [x] Allow selecting multiple dates
+  - [x] Bulk update selected dates to "blocked"
+  - [x] Useful for holidays, maintenance, etc.
 - [x] Task 5: Create availability data model (AC: #4)
   - [x] Define ExperienceAvailability type (Done in types.ts)
   - [x] Include: id, experience_id, date, slots_available, status
@@ -74,9 +74,15 @@ so that travelers can only book when I'm operating.
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+
+- See `/src` directory for component implementations
 

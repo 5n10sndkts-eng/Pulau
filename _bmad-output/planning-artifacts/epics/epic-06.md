@@ -2,11 +2,15 @@
 
 **Goal:** Travelers browse categorized experiences (6 categories), filter by preferences, search, view rich detail pages with image carousels, operator profiles, reviews, meeting points, and inclusions.
 
+**Phase:** Phase 1 (MVP)
+**Dependencies:** Epic 1 (Foundation), Epic 2 (Mock Auth)
+**Storage:** Experience data loaded from JSON seed files (Mock Data)
+
 ### Story 6.1: Create Home Screen with Category Grid
 As a traveler, I want to see experience categories on the home screen, so that I can browse activities that interest me.
 
 **Acceptance Criteria:**
-- **Given** I am logged in **When** home screen loads **Then** I see a 2x3 grid of 6 category cards with icons and background images
+- **Given** I am on the Home Screen **Then** I see a 2x3 grid of 6 category cards with icons and background images
 - **When** I tap a card **Then** I navigate to the category browse screen with a slide animation
 
 ### Story 6.2: Build Category Browse Screen with Experience List
@@ -16,6 +20,7 @@ As a traveler, I want to browse all experiences in a category, so that I can see
 - **Given** a selected category **When** screen loads **Then** I see a vertical list of active experiences
 - **And** each card shows hero image, title, stats, price, and "Quick Add" / "See Details" buttons
 - **And** infinite scroll loads 20 items at a time
+- **Data Source:** Mock data from `src/data/experiences.json` filtered by category.
 
 ### Story 6.3: Implement Horizontal Filter Chips
 As a traveler browsing a category, I want to filter experiences by my preferences, so that I find relevant options quickly.
@@ -51,7 +56,7 @@ As a traveler, I want to learn about the local operator, so that I feel confiden
 
 **Acceptance Criteria:**
 - **Given** on detail page **When** I scroll to this section **Then** I see a card with vendor photo, name, bio, and verification badges
-- **When** I tap the vendor **Then** a full profile modal opens
+- **Note:** Vendor profile link is read-only in MVP (no Vendor Portal access).
 
 ### Story 6.8: Display Reviews and Ratings
 As a traveler, I want to read reviews from other travelers, so that I can gauge experience quality.
@@ -59,7 +64,7 @@ As a traveler, I want to read reviews from other travelers, so that I can gauge 
 **Acceptance Criteria:**
 - **Given** on detail page **When** I scroll to this section **Then** I see average rating, breakdown bars, and user photos
 - **And** latest 3 review cards show reviewer name, stars, date, and helpful count
-- **When** I tap "See all reviews" **Then** a modal opens with infinite scroll
+- **Data Source:** Mock reviews linked to experience ID.
 
 ### Story 6.9: Add Meeting Point Information
 As a traveler, I want to know where to meet for the experience, so that I can plan my arrival.

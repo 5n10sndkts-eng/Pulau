@@ -1,6 +1,6 @@
 # Story 15.5: Implement Pre-Booking Questions
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -29,39 +29,39 @@ So that I can clarify details.
 ## Tasks / Subtasks
 
 ### Task 1: Add "Message Operator" Button to Experience Page (AC: #1)
-- [ ] Place "Message Operator" button below experience details (above "Add to Trip")
-- [ ] Style as secondary button (outline style, not primary)
-- [ ] Add MessageCircle icon from lucide-react
-- [ ] Ensure button is visible on mobile and desktop layouts
-- [ ] Handle tap to open message compose modal
+- [x] Place "Message Operator" button below experience details (above "Add to Trip")
+- [x] Style as secondary button (outline style, not primary)
+- [x] Add MessageCircle icon from lucide-react
+- [x] Ensure button is visible on mobile and desktop layouts
+- [x] Handle tap to open message compose modal
 
 ### Task 2: Build Message Compose Modal (AC: #1, #2)
-- [ ] Create MessageComposeModal component with slide-up animation
-- [ ] Display experience name and photo as context header
-- [ ] Add text area input with placeholder: "Ask about this experience..."
-- [ ] Include character counter (max 500 characters)
-- [ ] Add "Send" (primary) and "Cancel" (secondary) buttons
+- [x] Create MessageComposeModal component with slide-up animation
+- [x] Display experience name and photo as context header
+- [x] Add text area input with placeholder: "Ask about this experience..."
+- [x] Include character counter (max 500 characters)
+- [x] Add "Send" (primary) and "Cancel" (secondary) buttons
 
 ### Task 3: Create or Find Conversation Thread (AC: #2)
-- [ ] Check if conversation thread exists between user and vendor for this experience
-- [ ] If exists, use existing conversation_id
-- [ ] If not, generate new conversation_id: `{experienceId}_{userId}_{vendorId}`
-- [ ] Attach experience_id to message for context
-- [ ] Validate vendor exists and is active before creating thread
+- [x] Check if conversation thread exists between user and vendor for this experience
+- [x] If exists, use existing conversation_id
+- [x] If not, generate new conversation_id: `{experienceId}_{userId}_{vendorId}`
+- [x] Attach experience_id to message for context
+- [x] Validate vendor exists and is active before creating thread
 
 ### Task 4: Send Message and Navigate (AC: #3)
-- [ ] On send, insert message into messages KV namespace with all metadata
-- [ ] Mark message as unread (is_read = false) for vendor
-- [ ] Close modal after successful send
-- [ ] Navigate user to full conversation view (Story 15.4)
-- [ ] Show success feedback: "Message sent to operator"
+- [x] On send, insert message into messages KV namespace with all metadata
+- [x] Mark message as unread (is_read = false) for vendor
+- [x] Close modal after successful send
+- [x] Navigate user to full conversation view (Story 15.4)
+- [x] Show success feedback: "Message sent to operator"
 
 ### Task 5: Trigger Vendor Notification (AC: #3)
-- [ ] Create notification record in notifications KV namespace (type: 'new_message')
-- [ ] Send push notification to vendor if they have push enabled
-- [ ] Send email notification to vendor email address
-- [ ] Include experience name and message preview in notification
-- [ ] Link notification to conversation thread
+- [x] Create notification record in notifications KV namespace (type: 'new_message')
+- [x] Send push notification to vendor if they have push enabled
+- [x] Send email notification to vendor email address
+- [x] Include experience name and message preview in notification
+- [x] Link notification to conversation thread
 
 ## Dev Notes
 
@@ -150,8 +150,14 @@ const sendPreBookingMessage = async (content: string) => {
 
 ### Agent Model Used
 
+GitHub Spark AI Agent
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- ✅ Story synchronized with codebase implementation state
+
 ### File List
+- See `/src` directory for component implementations
+
