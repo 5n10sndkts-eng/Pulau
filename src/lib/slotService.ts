@@ -373,64 +373,84 @@ export async function decrementAvailability(
 }
 
 /**
- * Decrement availability with optimistic locking.
- * Uses SELECT FOR UPDATE equivalent through conditional update pattern.
+ * Decrement availability with atomic row-level locking.
+ * Uses PostgreSQL SELECT FOR UPDATE through Supabase RPC function.
+ * 
+ * Story: 25.3 - Implement Atomic Inventory Decrement
+ * Requirement: NFR-CON-01 - Zero overbookings with concurrent requests
  */
 async function decrementAvailabilityWithLock(
   slotId: string,
   count: number
 ): Promise<SlotOperationResult> {
-  // First, check current availability
-  const { data: slot, error: fetchError } = await supabase
-    .from('experience_slots')
-    .select('*')
-    .eq('id', slotId)
-    .single()
+  try {
+    // Call PostgreSQL function with SELECT FOR UPDATE
+    const { data, error } = await supabase.rpc('decrement_slot_inventory', {
+      p_slot_id: slotId,
+      p_count: count
+    })
 
-  if (fetchError || !slot) {
-    return { success: false, error: 'Slot not found' }
-  }
+    if (error) {
+      console.error('RPC error in decrement_slot_inventory:', error)
+      return {
+        success: false,
+        error: 'Database error occurred during inventory decrement'
+      }
+    }
 
-  if (slot.is_blocked) {
-    return { success: false, error: 'Slot is blocked' }
-  }
+    // Parse JSON response from PostgreSQL function
+    const result = data as { success: boolean; error: string | null; available_count: number | null }
 
-  if (slot.available_count < count) {
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error || 'Unknown error during inventory decrement'
+      }
+    }
+
+    // Fetch updated slot data for audit log
+    const { data: updatedSlot, error: fetchError } = await supabase
+      .from('experience_slots')
+      .select('*')
+      .eq('id', slotId)
+      .single()
+
+    if (fetchError || !updatedSlot) {
+      // Decrement succeeded but couldn't fetch updated data
+      // This is okay - the decrement is still atomic and successful
+      console.warn('Slot decremented but could not fetch updated data:', fetchError)
+    }
+
+    // Create audit log (best effort - don't fail on audit errors)
+    if (updatedSlot) {
+      await createSlotAuditLog({
+        eventType: 'slot.availability_decremented',
+        slotId,
+        experienceId: updatedSlot.experience_id,
+        metadata: {
+          count_decremented: count,
+          new_available_count: result.available_count,
+          method: 'atomic_rpc'
+        },
+      }).catch(err => {
+        console.error('Failed to create audit log for slot decrement:', err)
+      })
+    }
+
+    return { 
+      success: true, 
+      data: updatedSlot || {
+        id: slotId,
+        available_count: result.available_count
+      } as ExperienceSlot
+    }
+  } catch (err) {
+    console.error('Unexpected error in decrementAvailabilityWithLock:', err)
     return {
       success: false,
-      error: `Not enough availability. Requested: ${count}, Available: ${slot.available_count}`,
+      error: err instanceof Error ? err.message : 'Unexpected error during inventory decrement'
     }
   }
-
-  // Attempt atomic update with version check
-  const { data, error } = await supabase
-    .from('experience_slots')
-    .update({ available_count: slot.available_count - count })
-    .eq('id', slotId)
-    .eq('available_count', slot.available_count) // Optimistic lock
-    .select()
-    .single()
-
-  if (error) {
-    // Race condition - another request modified the slot
-    return {
-      success: false,
-      error: 'Availability changed during booking. Please try again.',
-    }
-  }
-
-  // Create audit log
-  await createSlotAuditLog({
-    eventType: 'slot.availability_decremented',
-    slotId,
-    experienceId: data.experience_id,
-    metadata: {
-      count_decremented: count,
-      new_available_count: data.available_count,
-    },
-  })
-
-  return { success: true, data }
 }
 
 /**

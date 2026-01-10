@@ -1,6 +1,6 @@
 # Story 25.2: Create Real-Time Service Module
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -23,32 +23,32 @@ So that Supabase Realtime subscriptions are managed consistently.
 
 ## Tasks / Subtasks
 
-- [ ] Create realtimeService.ts module (AC: 1)
-  - [ ] Create file at `src/lib/realtimeService.ts`
-  - [ ] Import Supabase client from existing supabaseClient module
-  - [ ] Define TypeScript interfaces for subscription callbacks
-  - [ ] Implement subscription tracking with Map<string, RealtimeChannel>
-- [ ] Implement subscribeToSlotAvailability function (AC: 1)
-  - [ ] Accept experienceId and callback parameters
-  - [ ] Create Supabase channel for experience_slots table
-  - [ ] Filter changes by experience_id
-  - [ ] Return unique subscription ID
-  - [ ] Add to subscription tracking map
-- [ ] Implement subscribeToBookingStatus function (AC: 1)
-  - [ ] Accept bookingId and callback parameters
-  - [ ] Create Supabase channel for bookings table
-  - [ ] Filter changes by booking ID
-  - [ ] Return unique subscription ID
-  - [ ] Add to subscription tracking map
-- [ ] Implement unsubscribe and unsubscribeAll functions (AC: 1)
-  - [ ] Remove channel from Supabase
-  - [ ] Remove from subscription tracking map
-  - [ ] Handle edge case of non-existent subscription ID gracefully
-- [ ] Add comprehensive TypeScript types (AC: 1)
-  - [ ] Define SlotAvailabilityPayload type
-  - [ ] Define BookingStatusPayload type
-  - [ ] Define SubscriptionCallback generic type
-  - [ ] Export all types for use in components
+- [x] Create realtimeService.ts module (AC: 1)
+  - [x] Create file at `src/lib/realtimeService.ts`
+  - [x] Import Supabase client from existing supabaseClient module
+  - [x] Define TypeScript interfaces for subscription callbacks
+  - [x] Implement subscription tracking with Map<string, RealtimeChannel>
+- [x] Implement subscribeToSlotAvailability function (AC: 1)
+  - [x] Accept experienceId and callback parameters
+  - [x] Create Supabase channel for experience_slots table
+  - [x] Filter changes by experience_id
+  - [x] Return unique subscription ID
+  - [x] Add to subscription tracking map
+- [x] Implement subscribeToBookingStatus function (AC: 1)
+  - [x] Accept bookingId and callback parameters
+  - [x] Create Supabase channel for bookings table
+  - [x] Filter changes by booking ID
+  - [x] Return unique subscription ID
+  - [x] Add to subscription tracking map
+- [x] Implement unsubscribe and unsubscribeAll functions (AC: 1)
+  - [x] Remove channel from Supabase
+  - [x] Remove from subscription tracking map
+  - [x] Handle edge case of non-existent subscription ID gracefully
+- [x] Add comprehensive TypeScript types (AC: 1)
+  - [x] Define SlotAvailabilityPayload type
+  - [x] Define BookingStatusPayload type
+  - [x] Define SubscriptionCallback generic type
+  - [x] Export all types for use in components
 
 ## Dev Notes
 
@@ -169,16 +169,62 @@ export type SubscriptionResponse =
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude 3.7 Sonnet (GitHub Copilot Workspace)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Implemented as part of Story 25.1 integration
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+This story was implemented comprehensively as part of Story 25.1, creating a robust realtime service module with all required functionality plus enhancements:
+
+1. **Core Service Functions:**
+   - `subscribeToSlotAvailability(experienceId, callback)` - Subscribes to experience_slots table changes filtered by experience_id
+   - `subscribeToBookingStatus(bookingId, callback)` - Subscribes to bookings table changes filtered by booking ID
+   - `unsubscribe(subscriptionId)` - Removes specific subscription and cleans up channel
+   - `unsubscribeAll()` - Removes all active subscriptions (useful for cleanup)
+
+2. **Additional Helper Functions:**
+   - `getActiveSubscriptionCount()` - Returns count of active subscriptions (debugging)
+   - `getActiveSubscriptionIds()` - Returns list of subscription IDs (debugging)
+
+3. **Type Safety:**
+   - Exported ExperienceSlot and Booking types from database schema
+   - Created SlotChangePayload and BookingChangePayload type aliases
+   - Type-safe callback signatures with RealtimePostgresChangesPayload<T>
+   - Full integration with Database types from database.types.ts
+
+4. **Subscription Management:**
+   - Module-level Map tracks all active subscriptions
+   - Unique subscription IDs generated with timestamp (slot-{id}-{timestamp})
+   - Metadata stored for each subscription (channel, type, entity ID)
+   - Automatic cleanup with Promise.all for unsubscribeAll
+
+5. **Error Handling:**
+   - Graceful handling of non-existent subscription IDs (warns but doesn't throw)
+   - Console warnings for debugging
+   - Clean async/await patterns
+
+**Testing:**
+- Created comprehensive test suite in realtimeService.test.ts
+- 15+ tests covering all functions, edge cases, concurrent subscriptions
+- Mock Supabase client properly chained
+- Cleanup verification in afterEach hooks
+
+**Architecture Compliance:**
+- Follows service layer pattern (similar to paymentService, slotService)
+- Located at src/lib/realtimeService.ts
+- Centralizes all Supabase Realtime logic
+- Prevents code duplication across components
+- Matches ARCH-SVC-03 requirement
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/lib/realtimeService.ts (created in Story 25.1)
+- src/lib/realtimeService.test.ts (created in Story 25.1)
+
+**Modified Files:**
+- _bmad-output/stories/25-2-create-real-time-service-module.md
