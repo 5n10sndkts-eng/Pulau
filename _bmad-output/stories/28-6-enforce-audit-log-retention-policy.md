@@ -1,6 +1,6 @@
 # Story 28.6: Enforce Audit Log Retention Policy
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

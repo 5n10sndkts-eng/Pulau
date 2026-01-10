@@ -1,6 +1,6 @@
 # Story 26.5: PWA Installation and Offline Indicator
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

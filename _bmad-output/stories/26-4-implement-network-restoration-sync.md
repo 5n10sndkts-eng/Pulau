@@ -1,6 +1,6 @@
 # Story 26.4: Implement Network Restoration Sync
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

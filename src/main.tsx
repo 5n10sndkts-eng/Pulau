@@ -28,6 +28,25 @@ if (import.meta.env.DEV) {
     })
 }
 
+// Register Service Worker for offline ticket access (Story 26.1)
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then(registration => {
+        console.log('✅ Service Worker registered:', registration.scope)
+        
+        // Check for updates periodically
+        setInterval(() => {
+          registration.update()
+        }, 60 * 60 * 1000) // Check every hour
+      })
+      .catch(error => {
+        console.error('❌ Service Worker registration failed:', error)
+      })
+  })
+}
+
 const rootElement = document.getElementById('root')
 if (!rootElement) {
   throw new Error('Root element not found. Ensure index.html has <div id="root"></div>')

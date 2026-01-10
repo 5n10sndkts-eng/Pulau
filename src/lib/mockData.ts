@@ -105,6 +105,7 @@ export const experiences: Experience[] = [
       reviewCount: 127,
       responseTime: 'within 2 hours',
       verified: true,
+      instantBookEnabled: true,
     },
     price: {
       amount: 65,
@@ -192,6 +193,7 @@ export const experiences: Experience[] = [
       reviewCount: 342,
       responseTime: 'within 1 hour',
       verified: true,
+      instantBookEnabled: true,
     },
     price: {
       amount: 55,

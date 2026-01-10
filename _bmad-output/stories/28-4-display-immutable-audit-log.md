@@ -1,6 +1,6 @@
 # Story 28.4: Display Immutable Audit Log
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

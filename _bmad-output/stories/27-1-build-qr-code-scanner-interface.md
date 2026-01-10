@@ -1,6 +1,6 @@
 # Story 27.1: Build QR Code Scanner Interface
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

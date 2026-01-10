@@ -1,6 +1,6 @@
 # Story 26.1: Implement Service Worker for Ticket Caching
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

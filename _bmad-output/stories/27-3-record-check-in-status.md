@@ -1,6 +1,6 @@
 # Story 27.3: Record Check-In Status
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

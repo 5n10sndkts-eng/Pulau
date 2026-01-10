@@ -1,6 +1,6 @@
 # Story 26.2: Build Offline Ticket Display
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

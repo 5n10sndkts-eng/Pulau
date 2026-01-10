@@ -1,6 +1,6 @@
 # Story 25.5: Display Real-Time Slot Availability
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

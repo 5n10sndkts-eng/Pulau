@@ -1,6 +1,6 @@
 # Story 27.5: Create Vendor Payout Status Edge Function
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
