@@ -7,7 +7,9 @@ import { Experience } from '@/lib/types'
 import { formatPrice } from '@/lib/helpers'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AvailabilityCalendar } from '@/components/AvailabilityCalendar'
+import { RealtimeSlotDisplay } from '@/components/RealtimeSlotDisplay'
 import { SoldOutOverlay } from '@/components/ErrorHandling'
+import type { ExperienceSlot } from '@/lib/slotService'
 import {
   ArrowLeft,
   Heart,
@@ -44,6 +46,7 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [guests, setGuests] = useState(2)
   const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined)
+  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | undefined>(undefined)
   const [showWaitlist, setShowWaitlist] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -331,9 +334,31 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
                 setShowWaitlist(true)
               } else {
                 setSelectedDate(date)
+                setSelectedSlot(undefined) // Clear slot when date changes
               }
             }}
           />
+          
+          {/* Real-time slot display when date is selected */}
+          {selectedDate && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="mt-6"
+            >
+              <h3 className="font-display text-lg font-semibold mb-4">Available Time Slots</h3>
+              <RealtimeSlotDisplay
+                experienceId={experience.id}
+                selectedDate={selectedDate}
+                basePrice={experience.price.amount}
+                onSlotSelect={(slot) => setSelectedSlot(slot)}
+                selectedSlotId={selectedSlot?.id}
+              />
+            </motion.div>
+          )}
+          
           {showWaitlist && (
             <div className="absolute inset-0 z-50">
               <SoldOutOverlay onWaitlist={handleWaitlist} onViewSimilar={() => setShowWaitlist(false)} />
@@ -368,19 +393,38 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
       {/* Sticky Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-gradient-to-t from-background via-background to-transparent pointer-events-none">
         <PremiumContainer variant="glass" className="pointer-events-auto max-w-lg mx-auto flex items-center justify-between p-4 rounded-3xl shadow-2xl border-white/20 backdrop-blur-2xl">
-          <div className="space-y-0.5">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Price</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-display font-bold">{formatPrice(totalPrice)}</span>
-              <span className="text-[10px] text-muted-foreground">/ {guests} guests</span>
-            </div>
+          <div className="space-y-0.5 flex-1">
+            {selectedSlot && selectedDate ? (
+              <>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  {selectedDate} • {selectedSlot.slot_time.substring(0, 5)}
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-display font-bold">
+                    {formatPrice((selectedSlot.price_override_amount ?? experience.price.amount) * guests)}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">/ {guests} guests</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  {selectedDate ? 'Select Time Slot' : 'Select Date & Time'}
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-display font-bold">{formatPrice(totalPrice)}</span>
+                  <span className="text-[10px] text-muted-foreground">/ {guests} guests</span>
+                </div>
+              </>
+            )}
           </div>
           <Button
             size="lg"
             className="rounded-2xl px-8 font-bold h-14 shadow-lg shadow-primary/25"
             onClick={() => onAddToTrip(guests, totalPrice)}
+            disabled={!selectedSlot || !selectedDate}
           >
-            Add to Trip
+            {selectedSlot && selectedDate ? 'Add to Trip' : 'Select Slot'}
           </Button>
         </PremiumContainer>
       </div>
