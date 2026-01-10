@@ -568,6 +568,92 @@ async function createSlotAuditLog(params: SlotAuditLogParams): Promise<void> {
 }
 
 // ================================================
+// CUT-OFF TIME UTILITIES
+// ================================================
+
+/**
+ * Check if a slot is within the cut-off window (booking closed).
+ * Cut-off is calculated from the slot's start time.
+ *
+ * @param slotDate - Slot date in YYYY-MM-DD format
+ * @param slotTime - Slot time in HH:MM format
+ * @param cutoffHours - Hours before start when booking closes
+ * @returns true if the slot is within the cut-off window (unavailable for booking)
+ */
+export function isSlotWithinCutoff(
+  slotDate: string,
+  slotTime: string,
+  cutoffHours: number
+): boolean {
+  const slotDateTime = new Date(`${slotDate}T${slotTime}:00`)
+  const cutoffTime = new Date(slotDateTime.getTime() - (cutoffHours * 60 * 60 * 1000))
+  return new Date() >= cutoffTime
+}
+
+/**
+ * Get time remaining until cut-off for a slot.
+ * Returns null if already within cut-off window.
+ *
+ * @returns Object with hours and minutes remaining, or null if past cut-off
+ */
+export function getTimeUntilCutoff(
+  slotDate: string,
+  slotTime: string,
+  cutoffHours: number
+): { hours: number; minutes: number } | null {
+  const slotDateTime = new Date(`${slotDate}T${slotTime}:00`)
+  const cutoffTime = new Date(slotDateTime.getTime() - (cutoffHours * 60 * 60 * 1000))
+  const now = new Date()
+
+  if (now >= cutoffTime) {
+    return null // Already past cut-off
+  }
+
+  const msRemaining = cutoffTime.getTime() - now.getTime()
+  const hoursRemaining = Math.floor(msRemaining / (60 * 60 * 1000))
+  const minutesRemaining = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000))
+
+  return { hours: hoursRemaining, minutes: minutesRemaining }
+}
+
+/**
+ * Format cut-off time remaining for display.
+ * Returns a human-readable string like "2h 30m" or "Booking closed"
+ */
+export function formatCutoffRemaining(
+  slotDate: string,
+  slotTime: string,
+  cutoffHours: number
+): string {
+  const remaining = getTimeUntilCutoff(slotDate, slotTime, cutoffHours)
+
+  if (!remaining) {
+    return 'Booking closed'
+  }
+
+  if (remaining.hours === 0) {
+    return `${remaining.minutes}m left to book`
+  }
+
+  if (remaining.minutes === 0) {
+    return `${remaining.hours}h left to book`
+  }
+
+  return `${remaining.hours}h ${remaining.minutes}m left to book`
+}
+
+/**
+ * Filter slots by cut-off time.
+ * Removes slots that are within the cut-off window.
+ */
+export function filterSlotsByCutoff<T extends { slot_date: string; slot_time: string }>(
+  slots: T[],
+  cutoffHours: number
+): T[] {
+  return slots.filter(slot => !isSlotWithinCutoff(slot.slot_date, slot.slot_time, cutoffHours))
+}
+
+// ================================================
 // EXPORTS
 // ================================================
 
@@ -594,4 +680,10 @@ export const slotService = {
 
   // Delete
   deleteSlot,
+
+  // Cut-off utilities
+  isSlotWithinCutoff,
+  getTimeUntilCutoff,
+  formatCutoffRemaining,
+  filterSlotsByCutoff,
 }

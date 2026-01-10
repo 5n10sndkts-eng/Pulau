@@ -22,6 +22,7 @@ import {
   Share2,
   Info,
   CalendarDays,
+  Zap,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PremiumContainer } from '@/components/ui/premium-container'
@@ -236,6 +237,18 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
               <Users className="w-4 h-4" aria-hidden="true" />
               <span>Max {experience.groupSize.max}</span>
             </div>
+            {/* Booking Policy Badge */}
+            {experience.instantBookEnabled ? (
+              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200">
+                <Zap className="w-3 h-3 mr-1 fill-yellow-500 text-yellow-500" />
+                Instant Confirmation
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="text-muted-foreground">
+                <Clock className="w-3 h-3 mr-1" />
+                Request to Book
+              </Badge>
+            )}
           </div>
         </motion.div>
 
@@ -303,6 +316,13 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
             <CalendarDays className="w-5 h-5 text-primary" />
             Check Availability
           </h2>
+          {/* Cut-off notice */}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
+            <Clock className="w-4 h-4" />
+            <span>
+              Booking closes {experience.cutoffHours ?? 2} hour{(experience.cutoffHours ?? 2) !== 1 ? 's' : ''} before start time
+            </span>
+          </div>
           <AvailabilityCalendar
             experienceId={experience.id}
             selectedDate={selectedDate}

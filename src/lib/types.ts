@@ -108,6 +108,8 @@ export interface Experience {
   createdAt?: string
   updatedAt?: string
   publishedAt?: string
+  instantBookEnabled?: boolean
+  cutoffHours?: number
 }
 
 // --- Database Schema Records (Story 5.1) ---
@@ -136,6 +138,8 @@ export interface ExperienceRecord {
   meetingPointLng?: number
   meetingPointInstructions?: string
   cancellationPolicy?: string
+  instantBookEnabled?: boolean
+  cutoffHours?: number
   createdAt: string
   updatedAt: string
 }
@@ -355,3 +359,45 @@ export interface ExperienceAvailability {
   slotsTotal: number
   status: 'available' | 'blocked'
 }
+
+// --- Payment Types (Story 24.7) ---
+
+export type PaymentStatus =
+  | 'pending'
+  | 'succeeded'
+  | 'failed'
+  | 'refunded'
+  | 'partially_refunded'
+
+export interface Payment {
+  id: string
+  bookingId: string
+  stripePaymentIntentId: string
+  stripeCheckoutSessionId: string | null
+  amount: number // In cents
+  currency: string
+  platformFee: number // In cents
+  vendorPayout: number // In cents
+  status: PaymentStatus
+  refundAmount: number
+  refundReason: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CheckoutRequest {
+  tripId: string
+}
+
+export interface CheckoutResponse {
+  success: boolean
+  sessionUrl?: string
+  sessionId?: string
+  error?: string
+  errorCode?: string
+}
+
+// Generic API Response type for discriminated union pattern
+export type ApiResponse<T> =
+  | { data: T; error: null }
+  | { data: null; error: string }

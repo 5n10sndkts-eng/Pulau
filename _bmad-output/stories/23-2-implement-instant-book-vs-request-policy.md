@@ -1,6 +1,6 @@
 # Story 23.2: Implement Instant Book vs Request Policy
 
-Status: ready-for-dev
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -33,26 +33,26 @@ So that I can control how reservations are confirmed.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add booking policy toggle to experience settings (AC: #1, #3)
-  - [ ] 1.1: Create BookingPolicyToggle component
-  - [ ] 1.2: Display current policy setting
-  - [ ] 1.3: Check vendor onboarding state for eligibility
-  - [ ] 1.4: Show disabled state with explanation for ineligible vendors
+- [x] Task 1: Add booking policy toggle to experience settings (AC: #1, #3)
+  - [x] 1.1: Create BookingPolicyToggle component
+  - [x] 1.2: Display current policy setting
+  - [x] 1.3: Check vendor onboarding state for eligibility
+  - [x] 1.4: Show disabled state with explanation for ineligible vendors
 
-- [ ] Task 2: Update experience data model (AC: #1)
-  - [ ] 2.1: Ensure `instant_book_enabled` column exists in experiences table
-  - [ ] 2.2: Update experienceService to handle policy updates
-  - [ ] 2.3: Add TypeScript types for booking policy
+- [x] Task 2: Update experience data model (AC: #1)
+  - [x] 2.1: Ensure `instant_book_enabled` column exists in experiences table
+  - [x] 2.2: Update experienceService to handle policy updates
+  - [x] 2.3: Add TypeScript types for booking policy
 
-- [ ] Task 3: Implement slot hold mechanism for Request to Book (AC: #2)
+- [ ] Task 3: Implement slot hold mechanism for Request to Book (AC: #2) **DEFERRED to Epic 24**
   - [ ] 3.1: Add `held_until` column or use existing is_blocked with metadata
   - [ ] 3.2: Create function to temporarily hold slot capacity
   - [ ] 3.3: Create function to release held capacity after 24h expiry
   - [ ] 3.4: Create function to confirm held booking on vendor approval
 
-- [ ] Task 4: Display booking policy on experience detail page (AC: #1)
-  - [ ] 4.1: Show "Instant Confirmation" badge for instant book experiences
-  - [ ] 4.2: Show "Request to Book" indicator for approval-required experiences
+- [x] Task 4: Display booking policy on experience detail page (AC: #1)
+  - [x] 4.1: Show "Instant Confirmation" badge for instant book experiences
+  - [x] 4.2: Show "Request to Book" indicator for approval-required experiences
 
 ## Dev Notes
 

@@ -6,7 +6,10 @@ import { toast } from 'sonner'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { vendorService } from '@/lib/vendorService'
+import { getVendorOnboardingState, getVendorCapabilities, VendorCapabilities } from '@/lib/vendorStateMachine'
 import {
   Plus,
   ArrowLeft,
@@ -15,8 +18,17 @@ import {
   DollarSign,
   Users,
   Clock,
-  Star
+  Star,
+  Zap,
+  Timer
 } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface VendorExperiencesProps {
   session: VendorSession
@@ -29,6 +41,9 @@ interface VendorExperiencesProps {
 export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavigateToEdit, onNavigateToAvailability }: VendorExperiencesProps) {
   const [experiences, setExperiences] = useState<Experience[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [vendorCapabilities, setVendorCapabilities] = useState<VendorCapabilities | null>(null)
+  const [updatingInstantBook, setUpdatingInstantBook] = useState<string | null>(null)
+  const [updatingCutoff, setUpdatingCutoff] = useState<string | null>(null)
 
   const [publishModalOpen, setPublishModalOpen] = useState(false)
   const [selectedExpId, setSelectedExpId] = useState<string | null>(null)
@@ -37,6 +52,7 @@ export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavig
 
   useEffect(() => {
     loadExperiences()
+    loadVendorCapabilities()
   }, [session.vendorId])
 
   const loadExperiences = async () => {
@@ -49,6 +65,57 @@ export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavig
       toast.error('Failed to load experiences')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadVendorCapabilities = async () => {
+    try {
+      const state = await getVendorOnboardingState(session.vendorId)
+      if (state) {
+        setVendorCapabilities(getVendorCapabilities(state))
+      }
+    } catch (error) {
+      console.error('Failed to load vendor capabilities:', error)
+    }
+  }
+
+  const handleInstantBookToggle = async (experienceId: string, enabled: boolean) => {
+    if (!vendorCapabilities?.canEnableInstantBook) {
+      toast.error('Complete payment setup to enable Instant Book')
+      return
+    }
+
+    setUpdatingInstantBook(experienceId)
+    try {
+      await vendorService.updateExperienceInstantBook(experienceId, enabled)
+      setExperiences(prev => prev.map(exp =>
+        exp.id === experienceId ? { ...exp, instantBookEnabled: enabled } : exp
+      ))
+      toast.success(enabled ? 'Instant Book enabled!' : 'Switched to Request to Book')
+    } catch (error) {
+      console.error('Failed to update instant book:', error)
+      toast.error('Failed to update booking policy')
+    } finally {
+      setUpdatingInstantBook(null)
+    }
+  }
+
+  const handleCutoffChange = async (experienceId: string, hours: string) => {
+    const cutoffHours = parseInt(hours, 10)
+    if (isNaN(cutoffHours)) return
+
+    setUpdatingCutoff(experienceId)
+    try {
+      await vendorService.updateExperienceCutoffHours(experienceId, cutoffHours)
+      setExperiences(prev => prev.map(exp =>
+        exp.id === experienceId ? { ...exp, cutoffHours } : exp
+      ))
+      toast.success(`Cut-off time set to ${cutoffHours} hours`)
+    } catch (error) {
+      console.error('Failed to update cutoff:', error)
+      toast.error('Failed to update cut-off time')
+    } finally {
+      setUpdatingCutoff(null)
     }
   }
 
@@ -228,6 +295,71 @@ export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavig
                           <p className="text-xs text-muted-foreground">duration</p>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Instant Book Toggle */}
+                    <div className="flex items-center justify-between rounded-lg border p-3 mb-4 bg-muted/30">
+                      <div className="flex items-center gap-2">
+                        <Zap className={`h-4 w-4 ${experience.instantBookEnabled ? 'text-yellow-500' : 'text-muted-foreground'}`} />
+                        <div>
+                          <p className="text-sm font-medium">
+                            {experience.instantBookEnabled ? 'Instant Book' : 'Request to Book'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {experience.instantBookEnabled
+                              ? 'Travelers book instantly'
+                              : 'Approval required'}
+                          </p>
+                        </div>
+                      </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Switch
+                                checked={experience.instantBookEnabled ?? false}
+                                onCheckedChange={(checked) => handleInstantBookToggle(experience.id, checked)}
+                                disabled={!vendorCapabilities?.canEnableInstantBook || updatingInstantBook === experience.id}
+                                aria-label="Toggle instant book"
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          {!vendorCapabilities?.canEnableInstantBook && (
+                            <TooltipContent>
+                              <p>Complete payment setup to enable Instant Book</p>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+
+                    {/* Cut-off Time Selector */}
+                    <div className="flex items-center justify-between rounded-lg border p-3 mb-4 bg-muted/30">
+                      <div className="flex items-center gap-2">
+                        <Timer className="h-4 w-4 text-blue-500" />
+                        <div>
+                          <p className="text-sm font-medium">Booking Cut-off</p>
+                          <p className="text-xs text-muted-foreground">
+                            Closes {experience.cutoffHours ?? 2}h before start
+                          </p>
+                        </div>
+                      </div>
+                      <Select
+                        value={String(experience.cutoffHours ?? 2)}
+                        onValueChange={(value) => handleCutoffChange(experience.id, value)}
+                        disabled={updatingCutoff === experience.id}
+                      >
+                        <SelectTrigger className="w-24">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="2">2 hours</SelectItem>
+                          <SelectItem value="6">6 hours</SelectItem>
+                          <SelectItem value="12">12 hours</SelectItem>
+                          <SelectItem value="24">24 hours</SelectItem>
+                          <SelectItem value="48">48 hours</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div className="flex md:flex-col gap-2">

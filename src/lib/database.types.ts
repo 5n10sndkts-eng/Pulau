@@ -275,6 +275,7 @@ export type Database = {
           cancellation_policy: string | null
           category: string
           created_at: string
+          cutoff_hours: number | null
           description: string | null
           destination_id: string | null
           difficulty: string | null
@@ -305,6 +306,7 @@ export type Database = {
           cancellation_policy?: string | null
           category: string
           created_at?: string
+          cutoff_hours?: number | null
           description?: string | null
           destination_id?: string | null
           difficulty?: string | null
@@ -335,6 +337,7 @@ export type Database = {
           cancellation_policy?: string | null
           category?: string
           created_at?: string
+          cutoff_hours?: number | null
           description?: string | null
           destination_id?: string | null
           difficulty?: string | null

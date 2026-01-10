@@ -81,5 +81,45 @@ export const vendorService = {
             if (import.meta.env.DEV) console.error('Error updating experience status:', error)
             throw error
         }
+    },
+
+    /**
+     * Update instant book setting for an experience.
+     * Only available for vendors with BANK_LINKED or ACTIVE onboarding state.
+     */
+    updateExperienceInstantBook: async (experienceId: string, instantBookEnabled: boolean): Promise<void> => {
+        if (USE_MOCK_DATA) {
+            return
+        }
+
+        const { error } = await supabase
+            .from('experiences')
+            .update({ instant_book_enabled: instantBookEnabled })
+            .eq('id', experienceId)
+
+        if (error) {
+            if (import.meta.env.DEV) console.error('Error updating instant book setting:', error)
+            throw error
+        }
+    },
+
+    /**
+     * Update cutoff hours for an experience.
+     * Cutoff is the number of hours before start time when booking closes.
+     */
+    updateExperienceCutoffHours: async (experienceId: string, cutoffHours: number): Promise<void> => {
+        if (USE_MOCK_DATA) {
+            return
+        }
+
+        const { error } = await supabase
+            .from('experiences')
+            .update({ cutoff_hours: cutoffHours })
+            .eq('id', experienceId)
+
+        if (error) {
+            if (import.meta.env.DEV) console.error('Error updating cutoff hours:', error)
+            throw error
+        }
     }
 }

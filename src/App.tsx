@@ -9,6 +9,8 @@ import { CategoryBrowser } from './components/CategoryBrowser'
 import { ExperienceDetail } from './components/ExperienceDetail'
 import { TripBuilder } from './components/TripBuilder'
 import { CheckoutFlow } from './components/checkout/CheckoutFlow'
+import { CheckoutSuccess } from './components/checkout/CheckoutSuccess'
+import { CheckoutCancel } from './components/checkout/CheckoutCancel'
 import { TripsDashboard } from './components/TripsDashboard'
 import { SavedScreen } from './components/SavedScreen'
 import { ExploreScreen } from './components/ExploreScreen'
@@ -372,6 +374,25 @@ function AppContent() {
                 trip={safeTrip}
                 onBack={() => navigate('/plan')}
                 onComplete={handleCheckoutComplete}
+              />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/checkout/success" element={
+            <ProtectedRoute>
+              <CheckoutSuccess
+                onNavigateHome={() => navigate('/')}
+                onNavigateToTrips={() => navigate('/trips')}
+              />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/checkout/cancel" element={
+            <ProtectedRoute>
+              <CheckoutCancel
+                onRetryCheckout={() => navigate('/checkout')}
+                onReturnToTrip={() => navigate('/plan')}
+                onNavigateHome={() => navigate('/')}
               />
             </ProtectedRoute>
           } />

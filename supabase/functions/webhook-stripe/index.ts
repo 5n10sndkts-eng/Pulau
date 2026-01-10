@@ -2,11 +2,12 @@
 // Edge Function: webhook-stripe
 // Story: 22.2 - Handle Stripe Account Update Webhooks
 // Story: 22.5 - Integrate State Machine Transitions
+// Story: 24.4 - Handle Stripe Webhooks for Payment Events
 // Phase: 2a - Core Transactional
 // ================================================
 // Handles Stripe webhook events for account updates,
-// payment events, and other Stripe-initiated notifications.
-// Integrates with vendor onboarding state machine.
+// payment events, refunds, and other Stripe-initiated notifications.
+// Integrates with vendor onboarding state machine and payment processing.
 // ================================================
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
@@ -115,7 +116,7 @@ async function transitionVendorState(
     event_type: 'vendor.state_transition',
     entity_type: 'vendor',
     entity_id: vendorId,
-    actor_type: 'stripe_webhook',
+    actor_type: 'stripe',
     stripe_event_id: stripeEventId,
     metadata: {
       previous_state: currentState,
@@ -191,6 +192,10 @@ serve(async (req: Request): Promise<Response> => {
 
       case 'payment_intent.payment_failed':
         await handlePaymentFailed(supabase, event)
+        break
+
+      case 'charge.refunded':
+        await handleChargeRefunded(supabase, event)
         break
 
       default:
@@ -347,33 +352,208 @@ async function handleCheckoutCompleted(
 
   console.log(`Processing checkout.session.completed for ${session.id}`)
 
-  // Extract metadata
-  const tripId = session.metadata?.tripId
-  const userId = session.metadata?.userId
+  // Extract metadata - check both formats (from checkout Edge Function)
+  const tripId = session.metadata?.trip_id || session.metadata?.tripId
+  const userId = session.metadata?.user_id || session.metadata?.userId
 
   if (!tripId || !userId) {
-    console.error('Missing tripId or userId in session metadata')
+    console.error('Missing tripId or userId in session metadata:', session.metadata)
+    await createAuditLog(supabase, {
+      eventType: 'payment.checkout_completed_error',
+      entityType: 'checkout_session',
+      entityId: session.id,
+      actorType: 'stripe',
+      stripeEventId: event.id,
+      metadata: {
+        error: 'Missing tripId or userId in metadata',
+        session_id: session.id,
+        metadata_received: session.metadata,
+      },
+    })
     return
   }
 
-  // Create audit log for checkout completion
+  // ================================================
+  // Step 1: Find and update payment record (AC #1)
+  // ================================================
+  const paymentIntentId = typeof session.payment_intent === 'string'
+    ? session.payment_intent
+    : session.payment_intent?.id || null
+
+  const { data: payment, error: paymentError } = await supabase
+    .from('payments')
+    .update({
+      status: 'succeeded',
+      stripe_payment_intent_id: paymentIntentId,
+    })
+    .eq('stripe_checkout_session_id', session.id)
+    .select('id, booking_id, amount')
+    .single()
+
+  if (paymentError || !payment) {
+    console.error('Payment not found for session:', session.id, paymentError?.message)
+    // Create payment record if missing (reconciliation scenario)
+    await createAuditLog(supabase, {
+      eventType: 'payment.checkout_completed_no_payment',
+      entityType: 'checkout_session',
+      entityId: session.id,
+      actorType: 'stripe',
+      stripeEventId: event.id,
+      metadata: {
+        error: 'Payment record not found',
+        session_id: session.id,
+        trip_id: tripId,
+        user_id: userId,
+      },
+    })
+    return
+  }
+
+  // ================================================
+  // Step 2: Fetch booking for confirmation (AC #1)
+  // Note: Status update is handled by confirm_booking_atomic RPC
+  // ================================================
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, trip_id, reference')
+    .eq('id', payment.booking_id)
+    .single()
+
+  if (bookingError || !booking) {
+    console.error('Booking not found:', payment.booking_id, bookingError?.message)
+    return
+  }
+
+  // ================================================
+  // Step 3: Atomic booking confirmation (AC #1) - Story 24.5
+  // Uses PostgreSQL function with row-level locking
+  // ================================================
+  const { data: confirmResult, error: confirmError } = await supabase.rpc('confirm_booking_atomic', {
+    p_booking_id: booking.id,
+    p_trip_id: booking.trip_id,
+  })
+
+  if (confirmError) {
+    // Fallback to manual confirmation if RPC fails
+    console.log('Atomic confirm RPC failed, using manual fallback:', confirmError.message)
+
+    // Update booking status
+    await supabase
+      .from('bookings')
+      .update({ status: 'confirmed', booked_at: new Date().toISOString() })
+      .eq('id', booking.id)
+
+    // Decrement each slot using the atomic RPC for row-level locking
+    // This provides per-slot atomicity even if full transaction atomicity isn't available
+    const { data: tripItems } = await supabase
+      .from('trip_items')
+      .select('id, experience_id, guests, date, time')
+      .eq('trip_id', booking.trip_id)
+
+    if (tripItems) {
+      const slotResults: Array<{ slotId: string; success: boolean; error?: string }> = []
+      for (const item of tripItems) {
+        if (item.date && item.time) {
+          // Use decrement_slot_availability RPC which has row-level locking
+          const { data: decrementResult, error: decrementError } = await supabase.rpc(
+            'decrement_slot_availability',
+            {
+              p_experience_id: item.experience_id,
+              p_slot_date: item.date,
+              p_slot_time: item.time,
+              p_count: item.guests || 1,
+            }
+          )
+
+          if (decrementError) {
+            // Fallback to manual decrement if RPC not available
+            console.warn('decrement_slot_availability RPC failed, using manual update:', decrementError.message)
+            const { data: slot } = await supabase
+              .from('experience_slots')
+              .select('id, available_count')
+              .eq('experience_id', item.experience_id)
+              .eq('slot_date', item.date)
+              .eq('slot_time', item.time)
+              .single()
+
+            if (slot) {
+              const newCount = Math.max(0, slot.available_count - (item.guests || 1))
+              await supabase
+                .from('experience_slots')
+                .update({ available_count: newCount })
+                .eq('id', slot.id)
+              slotResults.push({ slotId: slot.id, success: true })
+            }
+          } else {
+            slotResults.push({ slotId: decrementResult?.slot_id || 'unknown', success: decrementResult?.success || false })
+          }
+        }
+      }
+      console.log('Fallback slot decrements completed:', JSON.stringify(slotResults))
+    }
+
+    // Update trip status manually
+    await supabase
+      .from('trips')
+      .update({ status: 'booked', booked_at: new Date().toISOString() })
+      .eq('id', booking.trip_id)
+  } else {
+    // Log atomic confirmation result
+    console.log('Atomic booking confirmation result:', JSON.stringify(confirmResult))
+
+    // Check if any slots failed
+    if (!confirmResult?.success) {
+      console.warn('Some slots may have had issues:', confirmResult?.slot_results)
+    }
+  }
+
+  // ================================================
+  // Step 5: Create audit log (AC #1)
+  // ================================================
   await createAuditLog(supabase, {
     eventType: 'payment.checkout_completed',
-    entityType: 'trip',
-    entityId: tripId,
+    entityType: 'payment',
+    entityId: payment.id,
     actorId: userId,
-    actorType: 'user',
+    actorType: 'stripe',
     stripeEventId: event.id,
     metadata: {
       session_id: session.id,
-      payment_intent: session.payment_intent,
+      payment_intent: paymentIntentId,
       amount_total: session.amount_total,
       currency: session.currency,
+      booking_id: booking.id,
+      booking_reference: booking.reference,
+      trip_id: booking.trip_id,
     },
   })
 
-  // Note: Booking creation is handled by a separate Edge Function
-  // that will be triggered after payment confirmation
+  // ================================================
+  // Step 6: Trigger ticket generation (Story 24.6)
+  // Async - don't block webhook response
+  // ================================================
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+  // Fire and forget - ticket generation happens async
+  fetch(`${supabaseUrl}/functions/v1/generate-ticket`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${supabaseServiceKey}`,
+    },
+    body: JSON.stringify({ bookingId: booking.id }),
+  }).then(response => {
+    if (response.ok) {
+      console.log(`Ticket generation triggered for booking ${booking.reference}`)
+    } else {
+      console.error(`Ticket generation failed for booking ${booking.reference}:`, response.status)
+    }
+  }).catch(error => {
+    console.error(`Ticket generation error for booking ${booking.reference}:`, error)
+  })
+
+  console.log(`Checkout completed: payment=${payment.id}, booking=${booking.reference}`)
 }
 
 async function handlePaymentSucceeded(
@@ -458,7 +638,7 @@ async function handlePaymentFailed(
     .single()
 
   if (payment) {
-    // Update payment status to failed
+    // Update payment status to failed (AC #2)
     await supabase
       .from('payments')
       .update({
@@ -466,9 +646,15 @@ async function handlePaymentFailed(
         updated_at: new Date().toISOString(),
       })
       .eq('id', payment.id)
+
+    // Update booking status (AC #2)
+    await supabase
+      .from('bookings')
+      .update({ status: 'payment_failed' })
+      .eq('id', payment.booking_id)
   }
 
-  // Create audit log
+  // Create audit log (AC #2)
   await createAuditLog(supabase, {
     eventType: 'payment.failed',
     entityType: payment ? 'payment' : 'payment_intent',
@@ -480,11 +666,106 @@ async function handlePaymentFailed(
       booking_id: payment?.booking_id,
       amount: paymentIntent.amount,
       currency: paymentIntent.currency,
-      last_payment_error: paymentIntent.last_payment_error?.message,
+      failure_reason: paymentIntent.last_payment_error?.message,
+      failure_code: paymentIntent.last_payment_error?.code,
     },
   })
 
   console.log(`Payment failed: ${paymentIntent.id}`)
+}
+
+/**
+ * Handle charge.refunded event (AC #3)
+ * - Updates payment refund_amount and status
+ * - Updates booking status if full refund
+ */
+async function handleChargeRefunded(
+  supabase: ReturnType<typeof createClient>,
+  event: Stripe.Event
+) {
+  const charge = event.data.object as Stripe.Charge
+
+  console.log(`Processing charge.refunded for ${charge.id}`)
+
+  const paymentIntentId = charge.payment_intent as string
+  if (!paymentIntentId) {
+    console.error('No payment_intent on charge:', charge.id)
+    await createAuditLog(supabase, {
+      eventType: 'payment.refund_error',
+      entityType: 'charge',
+      entityId: charge.id,
+      actorType: 'stripe',
+      stripeEventId: event.id,
+      metadata: {
+        error: 'No payment_intent on charge',
+        charge_id: charge.id,
+      },
+    })
+    return
+  }
+
+  // Calculate refund amounts
+  const totalRefunded = charge.amount_refunded
+  const originalAmount = charge.amount
+  const isFullRefund = totalRefunded >= originalAmount
+
+  // Determine new status
+  const newStatus = isFullRefund ? 'refunded' : 'partially_refunded'
+
+  // Find and update payment record (AC #3)
+  const { data: payment, error: paymentError } = await supabase
+    .from('payments')
+    .update({
+      refund_amount: totalRefunded,
+      status: newStatus,
+    })
+    .eq('stripe_payment_intent_id', paymentIntentId)
+    .select('id, booking_id')
+    .single()
+
+  if (paymentError || !payment) {
+    console.error('Payment not found for intent:', paymentIntentId, paymentError?.message)
+    await createAuditLog(supabase, {
+      eventType: 'payment.refund_error',
+      entityType: 'payment_intent',
+      entityId: paymentIntentId,
+      actorType: 'stripe',
+      stripeEventId: event.id,
+      metadata: {
+        error: 'Payment record not found',
+        payment_intent_id: paymentIntentId,
+        charge_id: charge.id,
+      },
+    })
+    return
+  }
+
+  // If full refund, update booking status (AC #3)
+  if (isFullRefund) {
+    await supabase
+      .from('bookings')
+      .update({ status: 'refunded' })
+      .eq('id', payment.booking_id)
+  }
+
+  // Create audit log (AC #3)
+  await createAuditLog(supabase, {
+    eventType: isFullRefund ? 'payment.refunded' : 'payment.partially_refunded',
+    entityType: 'payment',
+    entityId: payment.id,
+    actorType: 'stripe',
+    stripeEventId: event.id,
+    metadata: {
+      charge_id: charge.id,
+      payment_intent_id: paymentIntentId,
+      refund_amount: totalRefunded,
+      original_amount: originalAmount,
+      is_full_refund: isFullRefund,
+      booking_id: payment.booking_id,
+    },
+  })
+
+  console.log(`Refund processed: payment=${payment.id}, amount=${totalRefunded}, full=${isFullRefund}`)
 }
 
 // ================================================

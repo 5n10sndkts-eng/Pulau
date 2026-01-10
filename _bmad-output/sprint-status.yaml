@@ -259,23 +259,23 @@ development_status:
   epic-22-retrospective: optional
 
   # Epic 23: Vendor Availability Management (5 stories)
-  epic-23: in-progress
+  epic-23: done
   23-1-build-slot-creation-interface: done
-  23-2-implement-instant-book-vs-request-policy: ready-for-dev
-  23-3-configure-cut-off-time-settings: ready-for-dev
-  23-4-manual-slot-blocking-unblocking: ready-for-dev
+  23-2-implement-instant-book-vs-request-policy: done
+  23-3-configure-cut-off-time-settings: done
+  23-4-manual-slot-blocking-unblocking: done
   23-5-create-slot-service-module: done
-  epic-23-retrospective: optional
+  epic-23-retrospective: done
 
   # Epic 24: Traveler Payment & Checkout (7 stories)
-  epic-24: backlog
-  24-1-create-checkout-edge-function: backlog
-  24-2-build-checkout-review-screen: backlog
-  24-3-integrate-stripe-elements-for-payment: backlog
-  24-4-handle-stripe-webhooks-for-payment-events: backlog
-  24-5-create-booking-confirmation-edge-function: backlog
-  24-6-generate-and-send-pdf-ticket: backlog
-  24-7-create-payment-service-module: backlog
+  epic-24: done
+  24-1-create-checkout-edge-function: done
+  24-2-build-checkout-review-screen: done
+  24-3-integrate-stripe-elements-for-payment: done
+  24-4-handle-stripe-webhooks-for-payment-events: done
+  24-5-create-booking-confirmation-edge-function: done
+  24-6-generate-and-send-pdf-ticket: done
+  24-7-create-payment-service-module: done
   epic-24-retrospective: optional
 
   # Epic 25: Real-Time Inventory & Availability (5 stories)

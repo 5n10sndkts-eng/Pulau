@@ -97,7 +97,9 @@ function toExperience(record: any): Experience {
         vendorId: record.vendor_id,
         createdAt: record.created_at,
         updatedAt: record.updated_at,
-        publishedAt: record.published_at
+        publishedAt: record.published_at,
+        instantBookEnabled: record.instant_book_enabled ?? false,
+        cutoffHours: record.cutoff_hours ?? 2
     }
 }
 
