@@ -15,6 +15,7 @@ export function filterExperiences(exps: Experience[], filter: FilterType): Exper
   return exps.filter((exp) => {
     if (filter === 'under50') return exp.price.amount < 50
     if (filter === 'toprated') return exp.provider.rating >= 4.8
+    if (filter === 'instant') return exp.provider.instantBookEnabled === true
     if (!exp.tags) return false
     return exp.tags.includes(filter)
   })

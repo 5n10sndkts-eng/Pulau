@@ -6,7 +6,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Experience, FilterType, UserPreferences } from '@/lib/types'
 import { getExperiencesByCategory, filterExperiences, formatPrice, getRecommendedExperiences } from '@/lib/helpers'
 import { categories } from '@/lib/mockData'
-import { ArrowLeft, Search, Clock, Users, Star, Heart, Plus } from 'lucide-react'
+import { ArrowLeft, Search, Clock, Users, Star, Heart, Plus, Zap } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { PerfectForYouBadge } from '@/components/ui/PerfectForYouBadge'
 
@@ -29,6 +29,7 @@ const filters: { id: FilterType; label: string }[] = [
   { id: 'group', label: 'Group' },
   { id: 'under50', label: 'Under $50' },
   { id: 'toprated', label: 'Top Rated' },
+  { id: 'instant', label: 'Instant Confirmation' },
 ]
 
 export function CategoryBrowser({
@@ -73,9 +74,10 @@ export function CategoryBrowser({
               <Badge
                 key={filter.id}
                 variant={activeFilter === filter.id ? 'default' : 'outline'}
-                className="cursor-pointer whitespace-nowrap"
+                className="cursor-pointer whitespace-nowrap flex items-center gap-1"
                 onClick={() => setActiveFilter(filter.id)}
               >
+                {filter.id === 'instant' && <Zap className="w-3 h-3" />}
                 {filter.label}
               </Badge>
             ))}
@@ -152,6 +154,15 @@ function ExperienceCard({
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {isRecommended && (
               <PerfectForYouBadge />
+            )}
+            {experience.provider.instantBookEnabled && (
+              <Badge 
+                variant="secondary" 
+                className="bg-[oklch(0.87_0.12_85)] text-[oklch(0.25_0_0)] backdrop-blur-sm shadow-sm self-start flex items-center gap-1"
+              >
+                <Zap className="w-3.5 h-3.5" strokeWidth={2} />
+                Instant
+              </Badge>
             )}
             <Badge variant="secondary" className="bg-white/95 backdrop-blur-sm shadow-sm self-start">
               {experience.provider.name}

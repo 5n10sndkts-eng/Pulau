@@ -56,6 +56,7 @@ export interface Provider {
   reviewCount: number
   responseTime: string
   verified: boolean
+  instantBookEnabled?: boolean  // Story 25.4: Instant confirmation capability
 }
 
 export interface Review {
@@ -262,7 +263,7 @@ export interface VendorStats {
   averageRating: number
 }
 
-export type FilterType = 'all' | 'beginner' | 'halfday' | 'fullday' | 'private' | 'group' | 'under50' | 'toprated'
+export type FilterType = 'all' | 'beginner' | 'halfday' | 'fullday' | 'private' | 'group' | 'under50' | 'toprated' | 'instant'
 
 /**
  * Discriminated Union for Screen Routing
