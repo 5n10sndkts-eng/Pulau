@@ -1,6 +1,6 @@
 # Story 26.3: Show Last Updated Timestamp
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
