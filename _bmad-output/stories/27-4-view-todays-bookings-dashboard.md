@@ -1,6 +1,6 @@
 # Story 27.4: View Today's Bookings Dashboard
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

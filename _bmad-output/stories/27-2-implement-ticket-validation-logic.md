@@ -1,6 +1,6 @@
 # Story 27.2: Implement Ticket Validation Logic
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
