@@ -42,6 +42,7 @@ import {
 } from '@/lib/vendorAnalyticsService'
 import { RevenueSummaryCard } from './RevenueSummaryCard'
 import { RevenueChart } from './RevenueChart'
+import { ExperiencePerformanceTable } from './ExperiencePerformanceTable'
 
 // Error fallback for chart rendering failures
 function ChartErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
@@ -338,6 +339,12 @@ export function VendorRevenueDashboard({
             </div>
           </Card>
         )}
+
+        {/* Experience Performance Table (Story 29.2) */}
+        <ExperiencePerformanceTable
+          session={session}
+          selectedPeriod={selectedPeriod}
+        />
       </div>
     </div>
   )

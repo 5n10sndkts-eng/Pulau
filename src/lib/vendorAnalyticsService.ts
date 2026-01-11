@@ -48,6 +48,33 @@ export interface PayoutSummary {
 
 export type TimePeriod = '7d' | '30d' | '90d' | '12m'
 
+// Story 29.2: Experience Performance Metrics
+export interface ExperiencePerformanceMetrics {
+  experienceId: string
+  title: string
+  thumbnailUrl: string | null
+  category: string
+  bookingCount: number
+  slotUtilization: number // 0-100 percentage
+  totalSlots: number
+  bookedSlots: number
+  averageRating: number | null // null if no reviews
+  reviewCount: number
+  revenue: number // in cents
+}
+
+export interface ExperiencePerformanceResponse {
+  experiences: ExperiencePerformanceMetrics[]
+  totals: {
+    totalBookings: number
+    averageUtilization: number
+    totalRevenue: number
+  }
+}
+
+export type SortColumn = 'title' | 'bookingCount' | 'slotUtilization' | 'averageRating' | 'revenue'
+export type SortDirection = 'asc' | 'desc'
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -470,4 +497,302 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
 export function formatPercentChange(percent: number): string {
   const sign = percent >= 0 ? '+' : ''
   return `${sign}${percent}%`
+}
+
+// ============================================================================
+// Story 29.2: Experience Performance Metrics
+// ============================================================================
+
+const MOCK_EXPERIENCE_TITLES = [
+  'Mount Batur Sunrise Trek',
+  'Ubud Rice Terraces Walk',
+  'Seminyak Cooking Class',
+  'Nusa Penida Snorkeling',
+  'Uluwatu Temple Sunset',
+  'Tegallalang Photo Tour',
+  'Bali Swing Adventure',
+  'Waterbom Water Park',
+]
+
+const MOCK_CATEGORIES = ['adventure', 'culture', 'wellness', 'food', 'nature']
+
+function generateMockExperienceMetrics(): ExperiencePerformanceMetrics[] {
+  const count = Math.floor(Math.random() * 5) + 3 // 3-7 experiences
+  return MOCK_EXPERIENCE_TITLES.slice(0, count).map((title, index) => {
+    const totalSlots = Math.floor(Math.random() * 100) + 20
+    const bookedSlots = Math.floor(Math.random() * totalSlots)
+    const utilization = totalSlots > 0 ? Math.round((bookedSlots / totalSlots) * 100) : 0
+    const reviewCount = Math.floor(Math.random() * 50)
+
+    return {
+      experienceId: `exp-${index + 1}`,
+      title,
+      thumbnailUrl: `https://images.unsplash.com/photo-${1550000000000 + index * 1000}?w=100&h=100&fit=crop`,
+      category: MOCK_CATEGORIES[index % MOCK_CATEGORIES.length] ?? 'adventure',
+      bookingCount: Math.floor(Math.random() * 30) + 5,
+      slotUtilization: utilization,
+      totalSlots,
+      bookedSlots,
+      averageRating: reviewCount > 0 ? Math.round((Math.random() * 15 + 35)) / 10 : null, // 3.5-5.0
+      reviewCount,
+      revenue: Math.floor(Math.random() * 500000) + 50000, // $500-$5,500 in cents
+    }
+  })
+}
+
+function sortExperiences(
+  experiences: ExperiencePerformanceMetrics[],
+  sortBy: SortColumn,
+  sortDir: SortDirection
+): ExperiencePerformanceMetrics[] {
+  return [...experiences].sort((a, b) => {
+    let valueA: number | string | null
+    let valueB: number | string | null
+
+    switch (sortBy) {
+      case 'title':
+        valueA = a.title.toLowerCase()
+        valueB = b.title.toLowerCase()
+        break
+      case 'bookingCount':
+        valueA = a.bookingCount
+        valueB = b.bookingCount
+        break
+      case 'slotUtilization':
+        valueA = a.slotUtilization
+        valueB = b.slotUtilization
+        break
+      case 'averageRating':
+        valueA = a.averageRating ?? 0
+        valueB = b.averageRating ?? 0
+        break
+      case 'revenue':
+        valueA = a.revenue
+        valueB = b.revenue
+        break
+      default:
+        return 0
+    }
+
+    if (valueA < valueB) return sortDir === 'asc' ? -1 : 1
+    if (valueA > valueB) return sortDir === 'asc' ? 1 : -1
+    return 0
+  })
+}
+
+/**
+ * Get experience performance metrics for a vendor
+ *
+ * @param vendorId - The vendor's UUID
+ * @param period - Time period for filtering metrics
+ * @param sortBy - Column to sort by
+ * @param sortDir - Sort direction
+ */
+export async function getExperiencePerformanceMetrics(
+  vendorId: string,
+  period: TimePeriod = '30d',
+  sortBy: SortColumn = 'revenue',
+  sortDir: SortDirection = 'desc'
+): Promise<ExperiencePerformanceResponse> {
+  const defaultResponse: ExperiencePerformanceResponse = {
+    experiences: [],
+    totals: {
+      totalBookings: 0,
+      averageUtilization: 0,
+      totalRevenue: 0,
+    },
+  }
+
+  if (USE_MOCK_DATA) {
+    const mockExperiences = generateMockExperienceMetrics()
+    const sorted = sortExperiences(mockExperiences, sortBy, sortDir)
+
+    const totalBookings = sorted.reduce((sum, e) => sum + e.bookingCount, 0)
+    const totalRevenue = sorted.reduce((sum, e) => sum + e.revenue, 0)
+    const avgUtilization = sorted.length > 0
+      ? Math.round(sorted.reduce((sum, e) => sum + e.slotUtilization, 0) / sorted.length)
+      : 0
+
+    return {
+      experiences: sorted,
+      totals: {
+        totalBookings,
+        averageUtilization: avgUtilization,
+        totalRevenue,
+      },
+    }
+  }
+
+  const { startDate, endDate } = getDateRangeForPeriod(period)
+
+  try {
+    // 1. Get vendor's experiences with images
+    const { data: experiences, error: expError } = await supabase
+      .from('experiences')
+      .select(`
+        id,
+        title,
+        category,
+        experience_images (
+          image_url,
+          display_order
+        )
+      `)
+      .eq('vendor_id', vendorId)
+
+    if (expError) {
+      console.error('Error fetching experiences:', expError)
+      return defaultResponse
+    }
+
+    if (!experiences || experiences.length === 0) {
+      return defaultResponse
+    }
+
+    const experienceIds = experiences.map(e => e.id)
+
+    // 2. Get slot utilization data
+    const { data: slotData, error: slotError } = await supabase
+      .from('experience_slots')
+      .select('experience_id, total_capacity, available_count, slot_date')
+      .in('experience_id', experienceIds)
+      .gte('slot_date', startDate.toISOString().split('T')[0])
+      .lte('slot_date', endDate.toISOString().split('T')[0])
+
+    if (slotError) {
+      console.error('Error fetching slots:', slotError)
+    }
+
+    // Aggregate slot data by experience
+    const slotStats = new Map<string, { total: number; booked: number }>()
+    for (const slot of slotData || []) {
+      const existing = slotStats.get(slot.experience_id) || { total: 0, booked: 0 }
+      const capacity = slot.total_capacity || 0
+      const available = slot.available_count || 0
+      slotStats.set(slot.experience_id, {
+        total: existing.total + capacity,
+        booked: existing.booked + (capacity - available),
+      })
+    }
+
+    // 3. Get booking/revenue data via trip_items
+    const { data: tripItems, error: tiError } = await supabase
+      .from('trip_items')
+      .select(`
+        experience_id,
+        trips!inner (
+          bookings!inner (
+            id,
+            booked_at,
+            payments (
+              amount,
+              status
+            )
+          )
+        )
+      `)
+      .in('experience_id', experienceIds)
+
+    if (tiError) {
+      console.error('Error fetching trip items:', tiError)
+    }
+
+    // Aggregate booking and revenue by experience
+    const bookingStats = new Map<string, { bookings: number; revenue: number }>()
+    for (const item of tripItems || []) {
+      const trip = item.trips
+      if (!trip) continue
+
+      const bookings = trip.bookings || []
+      for (const booking of bookings) {
+        const bookingDate = new Date(booking.booked_at)
+        if (bookingDate < startDate || bookingDate > endDate) continue
+
+        const existing = bookingStats.get(item.experience_id) || { bookings: 0, revenue: 0 }
+        const payments = booking.payments || []
+        const revenue = payments
+          .filter((p: { status: string }) => p.status === 'succeeded')
+          .reduce((sum: number, p: { amount: number }) => sum + (p.amount || 0), 0)
+
+        bookingStats.set(item.experience_id, {
+          bookings: existing.bookings + 1,
+          revenue: existing.revenue + revenue,
+        })
+      }
+    }
+
+    // 4. Get review/rating data
+    const { data: reviews, error: reviewError } = await supabase
+      .from('reviews')
+      .select('experience_id, rating')
+      .in('experience_id', experienceIds)
+
+    if (reviewError) {
+      console.error('Error fetching reviews:', reviewError)
+    }
+
+    // Aggregate reviews by experience
+    const reviewStats = new Map<string, { sum: number; count: number }>()
+    for (const review of reviews || []) {
+      const existing = reviewStats.get(review.experience_id) || { sum: 0, count: 0 }
+      reviewStats.set(review.experience_id, {
+        sum: existing.sum + (review.rating || 0),
+        count: existing.count + 1,
+      })
+    }
+
+    // 5. Build metrics for each experience
+    const metrics: ExperiencePerformanceMetrics[] = experiences.map(exp => {
+      const images = exp.experience_images || []
+      const sortedImages = [...images].sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+      const thumbnail = sortedImages[0]?.image_url || null
+
+      const slots = slotStats.get(exp.id) || { total: 0, booked: 0 }
+      const booking = bookingStats.get(exp.id) || { bookings: 0, revenue: 0 }
+      const review = reviewStats.get(exp.id) || { sum: 0, count: 0 }
+
+      const utilization = slots.total > 0
+        ? Math.round((slots.booked / slots.total) * 100)
+        : 0
+      const avgRating = review.count > 0
+        ? Math.round((review.sum / review.count) * 10) / 10
+        : null
+
+      return {
+        experienceId: exp.id,
+        title: exp.title,
+        thumbnailUrl: thumbnail,
+        category: exp.category,
+        bookingCount: booking.bookings,
+        slotUtilization: utilization,
+        totalSlots: slots.total,
+        bookedSlots: slots.booked,
+        averageRating: avgRating,
+        reviewCount: review.count,
+        revenue: booking.revenue,
+      }
+    })
+
+    // Sort
+    const sorted = sortExperiences(metrics, sortBy, sortDir)
+
+    // Calculate totals
+    const totalBookings = sorted.reduce((sum, e) => sum + e.bookingCount, 0)
+    const totalRevenue = sorted.reduce((sum, e) => sum + e.revenue, 0)
+    const avgUtilization = sorted.length > 0
+      ? Math.round(sorted.reduce((sum, e) => sum + e.slotUtilization, 0) / sorted.length)
+      : 0
+
+    return {
+      experiences: sorted,
+      totals: {
+        totalBookings,
+        averageUtilization: avgUtilization,
+        totalRevenue,
+      },
+    }
+  } catch (err) {
+    console.error('Error in getExperiencePerformanceMetrics:', err)
+    return defaultResponse
+  }
 }
