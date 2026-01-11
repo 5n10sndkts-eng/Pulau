@@ -323,7 +323,7 @@ development_status:
   # Epic 29: Vendor Analytics & Payout Dashboard (5 stories)
   epic-29: in-progress
   29-1-create-vendor-revenue-dashboard: done
-  29-2-build-experience-performance-metrics: ready-for-dev
+  29-2-build-experience-performance-metrics: done
   29-3-implement-payout-history-table: backlog
   29-4-create-booking-funnel-analytics: backlog
   29-5-add-real-time-revenue-notifications: backlog
