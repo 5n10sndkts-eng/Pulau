@@ -88,6 +88,173 @@ export type Database = {
           },
         ]
       }
+      customer_notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: string
+          title: string
+          message: string
+          booking_id: string | null
+          read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: string
+          title: string
+          message: string
+          booking_id?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: string
+          title?: string
+          message?: string
+          booking_id?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_notifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_modifications: {
+        Row: {
+          id: string
+          booking_id: string
+          trip_item_id: string
+          requestor_id: string
+          vendor_id: string
+          modification_type: Database["public"]["Enums"]["modification_type"]
+          status: Database["public"]["Enums"]["modification_request_status"]
+          original_date: string | null
+          original_time: string | null
+          original_guests: number | null
+          original_total_price: number | null
+          requested_date: string | null
+          requested_time: string | null
+          requested_guests: number | null
+          price_difference: number | null
+          new_total_price: number | null
+          vendor_response_at: string | null
+          vendor_response_by: string | null
+          vendor_notes: string | null
+          rejection_reason: string | null
+          executed_at: string | null
+          payment_intent_id: string | null
+          refund_id: string | null
+          customer_notes: string | null
+          expires_at: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          booking_id: string
+          trip_item_id: string
+          requestor_id: string
+          vendor_id: string
+          modification_type: Database["public"]["Enums"]["modification_type"]
+          status?: Database["public"]["Enums"]["modification_request_status"]
+          original_date?: string | null
+          original_time?: string | null
+          original_guests?: number | null
+          original_total_price?: number | null
+          requested_date?: string | null
+          requested_time?: string | null
+          requested_guests?: number | null
+          price_difference?: number | null
+          new_total_price?: number | null
+          vendor_response_at?: string | null
+          vendor_response_by?: string | null
+          vendor_notes?: string | null
+          rejection_reason?: string | null
+          executed_at?: string | null
+          payment_intent_id?: string | null
+          refund_id?: string | null
+          customer_notes?: string | null
+          expires_at: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          booking_id?: string
+          trip_item_id?: string
+          requestor_id?: string
+          vendor_id?: string
+          modification_type?: Database["public"]["Enums"]["modification_type"]
+          status?: Database["public"]["Enums"]["modification_request_status"]
+          original_date?: string | null
+          original_time?: string | null
+          original_guests?: number | null
+          original_total_price?: number | null
+          requested_date?: string | null
+          requested_time?: string | null
+          requested_guests?: number | null
+          price_difference?: number | null
+          new_total_price?: number | null
+          vendor_response_at?: string | null
+          vendor_response_by?: string | null
+          vendor_notes?: string | null
+          rejection_reason?: string | null
+          executed_at?: string | null
+          payment_intent_id?: string | null
+          refund_id?: string | null
+          customer_notes?: string | null
+          expires_at?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_modifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_modifications_trip_item_id_fkey"
+            columns: ["trip_item_id"]
+            isOneToOne: false
+            referencedRelation: "trip_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_modifications_requestor_id_fkey"
+            columns: ["requestor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_modifications_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       destinations: {
         Row: {
           active: boolean | null
@@ -806,6 +973,28 @@ export type Database = {
         }
         Returns: Json
       }
+      check_modification_allowed: {
+        Args: {
+          p_trip_item_id: string
+          p_modification_type?: string
+        }
+        Returns: Json
+      }
+      calculate_modification_price: {
+        Args: {
+          p_trip_item_id: string
+          p_new_date?: string
+          p_new_time?: string
+          p_new_guests?: number
+        }
+        Returns: Json
+      }
+      execute_booking_modification: {
+        Args: {
+          p_modification_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       vendor_onboarding_state:
@@ -816,6 +1005,17 @@ export type Database = {
         | "bank_linked"
         | "active"
         | "suspended"
+      modification_request_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "executed"
+        | "cancelled"
+        | "expired"
+      modification_type:
+        | "reschedule"
+        | "guest_change"
+        | "combined"
     }
     CompositeTypes: {
       [_ in never]: never
