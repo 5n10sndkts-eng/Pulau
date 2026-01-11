@@ -288,18 +288,23 @@ serve(async (req: Request): Promise<Response> => {
 
       if (payment?.stripe_payment_intent_id) {
         try {
-          const refund = await stripe.refunds.create({
-            payment_intent: payment.stripe_payment_intent_id,
-            amount: refundAmount,
-            reason: 'requested_by_customer',
-            metadata: {
-              modification_id: modification.id,
-              type: 'reschedule_price_adjustment',
+          // Use idempotency key to prevent duplicate refunds on retry
+          const idempotencyKey = `refund-mod-${modification.id}-${modification.booking_id}`
+          const refund = await stripe.refunds.create(
+            {
+              payment_intent: payment.stripe_payment_intent_id,
+              amount: refundAmount,
+              reason: 'requested_by_customer',
+              metadata: {
+                modification_id: modification.id,
+                type: 'reschedule_price_adjustment',
+              },
             },
-          })
+            { idempotencyKey }
+          )
 
           refundId = refund.id
-          logger.info('Refund processed', { refundId })
+          logger.info('Refund processed', { refundId, idempotencyKey })
         } catch (stripeError) {
           logger.error('Stripe refund failed', stripeError)
           // Continue - the reschedule can still proceed
@@ -348,7 +353,7 @@ serve(async (req: Request): Promise<Response> => {
     // ================================================
     // Step 10: Create Audit Log
     // ================================================
-    await supabase.from('audit_logs').insert({
+    const { error: auditError } = await supabase.from('audit_logs').insert({
       event_type: 'booking.rescheduled',
       entity_type: 'booking',
       entity_id: modification.booking_id,
@@ -366,16 +371,26 @@ serve(async (req: Request): Promise<Response> => {
       },
     })
 
+    if (auditError) {
+      // Log audit failure for compliance tracking - don't fail the operation
+      logger.error('Audit log insert failed', { auditError, modificationId })
+    }
+
     // ================================================
     // Step 11: Create Customer Notification
     // ================================================
-    await supabase.from('customer_notifications').insert({
+    const { error: notifError } = await supabase.from('customer_notifications').insert({
       user_id: tripItem.trips.user_id,
       type: 'booking_rescheduled',
       title: 'Booking Rescheduled',
       message: `Your booking has been rescheduled to ${modification.requested_date} at ${modification.requested_time}`,
       booking_id: modification.booking_id,
     })
+
+    if (notifError) {
+      // Log notification failure - don't fail the operation
+      logger.warn('Customer notification insert failed', { notifError, modificationId })
+    }
 
     logger.requestEnd(200, { modificationId })
 

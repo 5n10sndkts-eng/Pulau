@@ -57,6 +57,26 @@ export interface ModificationRequest {
 }
 
 // ============================================================================
+// UUID VALIDATION
+// ============================================================================
+
+/**
+ * UUID v4 validation regex pattern
+ * Prevents injection attacks by ensuring IDs match expected format
+ */
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+/**
+ * Validate that a string is a valid UUID
+ * @throws Error if the ID is not a valid UUID format
+ */
+function validateUUID(id: string, paramName: string): void {
+  if (!UUID_PATTERN.test(id)) {
+    throw new Error(`Invalid ${paramName}: must be a valid UUID format`)
+  }
+}
+
+// ============================================================================
 // CHECK MODIFICATION ELIGIBILITY
 // ============================================================================
 
@@ -68,6 +88,8 @@ export async function checkModificationAllowed(
   tripItemId: string,
   modificationType: ModificationType = 'reschedule'
 ): Promise<ModificationAllowedResult> {
+  validateUUID(tripItemId, 'tripItemId')
+
   const { data, error } = await supabase.rpc('check_modification_allowed', {
     p_trip_item_id: tripItemId,
     p_modification_type: modificationType,
@@ -98,6 +120,8 @@ export async function calculateModificationPrice(
   newTime?: string,
   newGuests?: number
 ): Promise<ModificationPriceResult> {
+  validateUUID(tripItemId, 'tripItemId')
+
   const { data, error } = await supabase.rpc('calculate_modification_price', {
     p_trip_item_id: tripItemId,
     p_new_date: newDate,
@@ -132,6 +156,11 @@ export async function calculateModificationPrice(
 export async function createModificationRequest(
   request: ModificationRequest
 ): Promise<{ data: BookingModification | null; error: string | null }> {
+  // Validate all UUID parameters
+  validateUUID(request.bookingId, 'bookingId')
+  validateUUID(request.tripItemId, 'tripItemId')
+  validateUUID(request.vendorId, 'vendorId')
+
   // First check if modification is allowed
   const eligibility = await checkModificationAllowed(
     request.tripItemId,
@@ -229,6 +258,8 @@ export async function createModificationRequest(
 export async function getModificationsByBooking(
   bookingId: string
 ): Promise<BookingModification[]> {
+  validateUUID(bookingId, 'bookingId')
+
   const { data, error } = await supabase
     .from('booking_modifications')
     .select('*')
@@ -249,6 +280,8 @@ export async function getModificationsByBooking(
 export async function getVendorPendingModifications(
   vendorId: string
 ): Promise<BookingModification[]> {
+  validateUUID(vendorId, 'vendorId')
+
   const { data, error } = await supabase
     .from('booking_modifications')
     .select('*')
@@ -271,6 +304,8 @@ export async function getVendorModifications(
   vendorId: string,
   limit: number = 50
 ): Promise<BookingModification[]> {
+  validateUUID(vendorId, 'vendorId')
+
   const { data, error } = await supabase
     .from('booking_modifications')
     .select('*')
@@ -297,6 +332,8 @@ export async function approveModification(
   modificationId: string,
   vendorNotes?: string
 ): Promise<{ success: boolean; error: string | null }> {
+  validateUUID(modificationId, 'modificationId')
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -331,6 +368,8 @@ export async function rejectModification(
   modificationId: string,
   rejectionReason: string
 ): Promise<{ success: boolean; error: string | null }> {
+  validateUUID(modificationId, 'modificationId')
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -368,6 +407,8 @@ export async function rejectModification(
 export async function cancelModificationRequest(
   modificationId: string
 ): Promise<{ success: boolean; error: string | null }> {
+  validateUUID(modificationId, 'modificationId')
+
   const { error } = await supabase
     .from('booking_modifications')
     .update({ status: 'cancelled' })
@@ -403,6 +444,8 @@ export interface ExecuteModificationResult {
 export async function executeModification(
   modificationId: string
 ): Promise<ExecuteModificationResult> {
+  validateUUID(modificationId, 'modificationId')
+
   try {
     const { data, error } = await supabase.functions.invoke('process-reschedule', {
       body: { modificationId },
@@ -449,6 +492,8 @@ export async function executeModification(
 export async function executeModificationSimple(
   modificationId: string
 ): Promise<{ success: boolean; error: string | null }> {
+  validateUUID(modificationId, 'modificationId')
+
   const { data, error } = await supabase.rpc('execute_booking_modification', {
     p_modification_id: modificationId,
   })

@@ -7,7 +7,7 @@
  * Shows available capacity, price difference, and handles request submission.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -83,33 +83,32 @@ export function GuestCountModificationModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Reset state when modal opens/closes
-  useEffect(() => {
-    if (open) {
-      setGuestCount(booking.currentGuests)
-      checkEligibility()
-    } else {
-      setStep('check')
-      setEligibility(null)
-      setAvailableCapacity(null)
-      setPriceCalc(null)
-      setCustomerNotes('')
-      setError(null)
-    }
-  }, [open, booking.tripItemId, booking.currentGuests])
-
-  // Calculate price when guest count changes
-  useEffect(() => {
-    if (step === 'select' && guestCount !== booking.currentGuests) {
-      calculatePrice()
-    }
-  }, [guestCount, step])
-
   // ============================================================================
   // HANDLERS
   // ============================================================================
 
-  async function checkEligibility() {
+  const fetchSlotCapacity = useCallback(async () => {
+    try {
+      const dateRange: DateRange = {
+        startDate: booking.currentDate,
+        endDate: booking.currentDate,
+      }
+      const slots = await slotService.getAvailableSlots(booking.experienceId, dateRange)
+
+      const currentSlot = slots.find(
+        (s) => s.slot_date === booking.currentDate && s.slot_time === booking.currentTime
+      )
+
+      if (currentSlot) {
+        // Available = current available + guests we already have booked
+        setAvailableCapacity(currentSlot.available_count + booking.currentGuests)
+      }
+    } catch (err) {
+      console.error('Error fetching slot capacity:', err)
+    }
+  }, [booking.currentDate, booking.currentTime, booking.experienceId, booking.currentGuests])
+
+  const checkEligibility = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -131,31 +130,10 @@ export function GuestCountModificationModal({
     } finally {
       setLoading(false)
     }
-  }
+  }, [booking.tripItemId, fetchSlotCapacity])
 
-  async function fetchSlotCapacity() {
-    try {
-      const dateRange: DateRange = {
-        startDate: booking.currentDate,
-        endDate: booking.currentDate,
-      }
-      const slots = await slotService.getAvailableSlots(booking.experienceId, dateRange)
-
-      const currentSlot = slots.find(
-        (s) => s.slot_date === booking.currentDate && s.slot_time === booking.currentTime
-      )
-
-      if (currentSlot) {
-        // Available = current available + guests we already have booked
-        setAvailableCapacity(currentSlot.available_count + booking.currentGuests)
-      }
-    } catch (err) {
-      console.error('Error fetching slot capacity:', err)
-    }
-  }
-
-  async function calculatePrice() {
-    if (guestCount === booking.currentGuests) {
+  const calculatePrice = useCallback(async (newGuestCount: number) => {
+    if (newGuestCount === booking.currentGuests) {
       setPriceCalc(null)
       return
     }
@@ -167,7 +145,7 @@ export function GuestCountModificationModal({
         booking.tripItemId,
         booking.currentDate,
         booking.currentTime,
-        guestCount
+        newGuestCount
       )
 
       setPriceCalc(price)
@@ -182,7 +160,29 @@ export function GuestCountModificationModal({
     } finally {
       setLoading(false)
     }
-  }
+  }, [booking.currentGuests, booking.tripItemId, booking.currentDate, booking.currentTime])
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (open) {
+      setGuestCount(booking.currentGuests)
+      checkEligibility()
+    } else {
+      setStep('check')
+      setEligibility(null)
+      setAvailableCapacity(null)
+      setPriceCalc(null)
+      setCustomerNotes('')
+      setError(null)
+    }
+  }, [open, booking.currentGuests, checkEligibility])
+
+  // Calculate price when guest count changes
+  useEffect(() => {
+    if (step === 'select' && guestCount !== booking.currentGuests) {
+      calculatePrice(guestCount)
+    }
+  }, [guestCount, step, booking.currentGuests, calculatePrice])
 
   function handleGuestChange(delta: number) {
     const newCount = guestCount + delta

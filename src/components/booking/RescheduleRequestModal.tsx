@@ -7,7 +7,7 @@
  * Shows available slots, price difference, and handles request submission.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -83,28 +83,11 @@ export function RescheduleRequestModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Check eligibility on mount
-  useEffect(() => {
-    if (open) {
-      checkEligibility()
-    } else {
-      // Reset state when modal closes
-      setStep('check')
-      setEligibility(null)
-      setSelectedDate(undefined)
-      setSelectedSlot(null)
-      setAvailableSlots([])
-      setPriceCalc(null)
-      setCustomerNotes('')
-      setError(null)
-    }
-  }, [open, booking.tripItemId])
-
   // ============================================================================
   // HANDLERS
   // ============================================================================
 
-  async function checkEligibility() {
+  const checkEligibility = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -124,7 +107,24 @@ export function RescheduleRequestModal({
     } finally {
       setLoading(false)
     }
-  }
+  }, [booking.tripItemId])
+
+  // Check eligibility on mount
+  useEffect(() => {
+    if (open) {
+      checkEligibility()
+    } else {
+      // Reset state when modal closes
+      setStep('check')
+      setEligibility(null)
+      setSelectedDate(undefined)
+      setSelectedSlot(null)
+      setAvailableSlots([])
+      setPriceCalc(null)
+      setCustomerNotes('')
+      setError(null)
+    }
+  }, [open, checkEligibility])
 
   async function handleDateSelect(date: Date | undefined) {
     setSelectedDate(date)
