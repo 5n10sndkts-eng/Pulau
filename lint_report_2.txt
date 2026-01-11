@@ -1,0 +1,351 @@
+
+> spark-template@0.0.0 lint
+> eslint .
+
+
+/Users/moe/Pulau/e2e/payments.spec.ts
+  33:64  error  'page' is defined but never used     @typescript-eslint/no-unused-vars
+  33:70  error  'browser' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/scripts/trace-all.ts
+    2:39  error  'existsSync' is defined but never used               @typescript-eslint/no-unused-vars
+    3:10  error  'resolve' is defined but never used                  @typescript-eslint/no-unused-vars
+    3:29  error  'dirname' is defined but never used                  @typescript-eslint/no-unused-vars
+    3:38  error  'join' is defined but never used                     @typescript-eslint/no-unused-vars
+    9:7   error  'SOURCE_DIR' is assigned a value but never used      @typescript-eslint/no-unused-vars
+   10:7   error  'TEST_DIR' is assigned a value but never used        @typescript-eslint/no-unused-vars
+   32:11  error  'results' is assigned a value but never used         @typescript-eslint/no-unused-vars
+   75:11  error  'searchPatterns' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   91:14  error  'e' is defined but never used                        @typescript-eslint/no-unused-vars
+  116:18  error  'e' is defined but never used                        @typescript-eslint/no-unused-vars
+  158:26  error  'e' is defined but never used                        @typescript-eslint/no-unused-vars
+  158:29  error  Empty block statement                                no-empty
+
+/Users/moe/Pulau/src/App.tsx
+  103:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  421:30  error  't' is defined but never used             @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/CategoryBrowser.tsx
+  45:9  error  'category' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/ErrorHandling.tsx
+   2:30  error  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+   4:10  error  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+   4:16  error  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  19:20  error  'Compass' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/ExperienceDetail.tsx
+  47:18  error  'setGuests' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/ExploreScreen.tsx
+   6:10  error  'Checkbox' is defined but never used     @typescript-eslint/no-unused-vars
+  15:3   error  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+  19:3   error  'Flame' is defined but never used        @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/HomeScreen.tsx
+  6:68   error  'PreferenceSection' is defined but never used  @typescript-eslint/no-unused-vars
+  8:117  error  'Users' is defined but never used              @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/Onboarding.tsx
+   24:38   error  'scaleIn' is defined but never used       @typescript-eslint/no-unused-vars
+  116:72   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:166  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:69   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  187:70   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  254:72   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/PreferenceChips.tsx
+  40:98  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/RealtimeSlotDisplay.tsx
+  13:10  error  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/TripCalendarView.tsx
+   4:55  error  'getDaysBetween' is defined but never used       @typescript-eslint/no-unused-vars
+   5:10  error  'Clock' is defined but never used                @typescript-eslint/no-unused-vars
+   6:47  error  'isSameDay' is defined but never used            @typescript-eslint/no-unused-vars
+   6:58  error  'addHours' is defined but never used             @typescript-eslint/no-unused-vars
+  13:42  error  'readOnly' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  87:43  error  'isConflict' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/TripsDashboard.tsx
+    3:10  error  'useKV' is defined but never used    @typescript-eslint/no-unused-vars
+  121:34  error  'booking' is defined but never used  @typescript-eslint/no-unused-vars
+  125:28  error  'booking' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/__tests__/ExperienceRealtime.test.tsx
+   5:39  error  'unsubscribe' is defined but never used   @typescript-eslint/no-unused-vars
+  20:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/admin/AdminBookingSearch.test.tsx
+   70:51   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:63   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:20   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   79:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:10   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  149:45   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:105  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/auth/LoginScreen.tsx
+  20:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/booking/TicketPage.tsx
+  9:10  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/booking/TicketPageRoute.tsx
+  17:11  warning  The 'loadBooking' function makes the dependencies of useEffect Hook (at line 43) change on every render. To fix this, wrap the definition of 'loadBooking' in its own useCallback() Hook  react-hooks/exhaustive-deps
+
+/Users/moe/Pulau/src/components/checkout/CheckoutFlow.tsx
+  1:10  error  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+  1:20  error  'useMemo' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/checkout/CheckoutProgress.tsx
+  17:49  error  'completedSteps' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/common/MetaManager.tsx
+  10:13  error  'description' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/moe/Pulau/src/components/layout/NavigationShell.tsx
+   3:10  error  'Home' is defined but never used          @typescript-eslint/no-unused-vars
+  70:74  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/ui/calendar.tsx
+  63:74  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  66:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/ui/chart.tsx
+  126:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  182:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  263:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  279:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/ui/form.tsx
+  157:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/moe/Pulau/src/components/ui/motion.tsx
+  63:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/moe/Pulau/src/components/ui/navigation-menu.tsx
+  167:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/moe/Pulau/src/components/ui/sidebar.tsx
+  725:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/moe/Pulau/src/components/vendor/CreateSlotModal.tsx
+  77:14  error  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/vendor/QRScanner.tsx
+  179:9  warning  The 'startCamera' function makes the dependencies of useEffect Hook (at line 228) change on every render. To fix this, wrap the definition of 'startCamera' in its own useCallback() Hook  react-hooks/exhaustive-deps
+
+/Users/moe/Pulau/src/components/vendor/ValidationCard.tsx
+  10:5   error  'Calendar' is defined but never used         @typescript-eslint/no-unused-vars
+  14:18  error  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/components/vendor/VendorDashboard.tsx
+   87:14  error  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  112:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/components/vendor/VendorExperiences.tsx
+   53:9   warning  The 'loadExperiences' function makes the dependencies of useEffect Hook (at line 80) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'loadExperiences' in its own useCallback() Hook                react-hooks/exhaustive-deps
+   66:9   warning  The 'loadVendorCapabilities' function makes the dependencies of useEffect Hook (at line 80) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'loadVendorCapabilities' in its own useCallback() Hook  react-hooks/exhaustive-deps
+  154:14  error    'e' is defined but never used                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  177:14  error    'e' is defined but never used                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/contexts/AuthContext.tsx
+   38:90  error    'session' is defined but never used                                                                                             @typescript-eslint/no-unused-vars
+   71:11  error    Unnecessary catch clause                                                                                                        no-useless-catch
+   83:11  error    Unnecessary catch clause                                                                                                        no-useless-catch
+  117:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/moe/Pulau/src/hooks/useRealtimeSlots.test.ts
+   80:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/auditService.test.ts
+   43:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   44:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   54:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   67:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   72:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  234:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  355:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/auditService.ts
+  36:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/authService.ts
+   87:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  266:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/bookingService.test.ts
+   81:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  170:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  196:89  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/bookingService.ts
+    8:6   error  'BookingRow' is defined but never used             @typescript-eslint/no-unused-vars
+   14:11  error  'ValidateBookingParams' is defined but never used  @typescript-eslint/no-unused-vars
+  134:52  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  139:63  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  226:67  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/dataService.ts
+  14:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  50:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/db.ts
+   4:5    error  'ExperienceImageRecord' is defined but never used  @typescript-eslint/no-unused-vars
+   9:5    error  'Provider' is defined but never used               @typescript-eslint/no-unused-vars
+  11:42   error  'destinations' is defined but never used           @typescript-eslint/no-unused-vars
+  21:100  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/experienceService.ts
+  11:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/mockData.ts
+  1:95  error  'ExperienceStatus' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/lib/realtimeService.test.ts
+  27:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  46:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/slotService.test.ts
+    9:5   error  'unblockSlot' is defined but never used   @typescript-eslint/no-unused-vars
+   29:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   70:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   91:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  126:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  142:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  156:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  170:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  171:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  191:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  192:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  223:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  224:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  236:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  237:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/tripService.ts
+   4:10  error  'Database' is defined but never used      @typescript-eslint/no-unused-vars
+  54:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/src/lib/vendorOnboardService.ts
+  263:12  error  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/lib/vendorStateMachine.test.ts
+  2:36  error  'beforeEach' is defined but never used          @typescript-eslint/no-unused-vars
+  2:48  error  'afterEach' is defined but never used           @typescript-eslint/no-unused-vars
+  4:5   error  'vendorStateMachine' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/screens/vendor/ExperienceAvailabilityScreen.tsx
+  49:9  warning  The 'loadSlots' function makes the dependencies of useEffect Hook (at line 68) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'loadSlots' in its own useCallback() Hook  react-hooks/exhaustive-deps
+
+/Users/moe/Pulau/src/screens/vendor/ExperienceImageUploadScreen.tsx
+  4:10  error  'Card' is defined but never used          @typescript-eslint/no-unused-vars
+  5:29  error  'X' is defined but never used             @typescript-eslint/no-unused-vars
+  5:68  error  'GripVertical' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/src/screens/vendor/experience-form/Step5Inclusions.tsx
+  20:19  error  Use the rest parameters instead of 'arguments'  prefer-rest-params
+
+/Users/moe/Pulau/src/screens/vendor/experience-form/index.tsx
+    4:55  error  'ExperienceCategory' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+  120:25  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+/Users/moe/Pulau/src/test-env.d.ts
+  3:1  error  Do not use a triple slash reference for @testing-library/jest-dom, use `import` style instead  @typescript-eslint/triple-slash-reference
+
+/Users/moe/Pulau/supabase/functions/checkout/index.ts
+  46:11  error  'TripItem' is defined but never used  @typescript-eslint/no-unused-vars
+  71:11  error  'Trip' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/supabase/functions/vendor-onboard/index.ts
+  98:11  error  'VendorOnboardRequest' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/tests/concurrency/inventory-decrement.test.ts
+  11:32  error  'beforeAll' is defined but never used  @typescript-eslint/no-unused-vars
+  77:27  error  'i' is defined but never used          @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/tests/e2e/auth.spec.ts
+  25:11  error  'user' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/tests/e2e/example.spec.ts
+  24:92  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/tests/e2e/trip-canvas.spec.ts
+  30:65  error  'page' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/tests/support/fixtures/auth.fixture.ts
+  1:24  error  'expect' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/tests/support/fixtures/checkout.fixture.ts
+  1:24  error  'expect' is defined but never used      @typescript-eslint/no-unused-vars
+  3:10  error  'createTrip' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/moe/Pulau/tests/support/fixtures/factories/user-factory.ts
+  9:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/moe/Pulau/tests/support/fixtures/index.ts
+  9:25  error  Unexpected empty object pattern  no-empty-pattern
+
+/Users/moe/Pulau/tests/support/fixtures/spark.fixture.ts
+   6:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   7:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 213 problems (203 errors, 10 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

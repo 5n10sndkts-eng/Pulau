@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications alt+T"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - button "Go to homepage" [ref=e5] [cursor=pointer]:
+        - img [ref=e7]
+        - heading "Pulau" [level=1] [ref=e9]
+      - button "View Profile" [ref=e11]:
+        - img
+    - main [ref=e12]:
+      - generic [ref=e14]:
+        - banner [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e17]:
+              - img [ref=e18]
+              - generic [ref=e21]: Bali, Indonesia
+            - heading "Island of the Gods" [level=1] [ref=e22]
+            - paragraph [ref=e23]: Set your dates
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - heading "Your Travel Style" [level=3] [ref=e27]
+            - generic [ref=e31]:
+              - generic [ref=e33] [cursor=pointer]:
+                - img
+                - text: Solo
+              - generic [ref=e35] [cursor=pointer]:
+                - img
+                - text: Couple
+              - generic [ref=e37] [cursor=pointer]:
+                - img
+                - text: Friends
+              - generic [ref=e39] [cursor=pointer]:
+                - img
+                - text: Family
+              - generic [ref=e41] [cursor=pointer]:
+                - img
+                - text: Budget
+              - generic [ref=e43] [cursor=pointer]:
+                - img
+                - text: Mid-Range
+              - generic [ref=e45] [cursor=pointer]:
+                - img
+                - text: Luxury
+              - generic [ref=e47] [cursor=pointer]:
+                - img
+                - text: Adventure
+              - generic [ref=e49] [cursor=pointer]:
+                - img
+                - text: Relaxation
+              - generic [ref=e51] [cursor=pointer]:
+                - img
+                - text: Culture
+          - generic [ref=e52]:
+            - generic [ref=e53]: ✨
+            - generic [ref=e54]:
+              - heading "Your Bali story starts here" [level=2] [ref=e55]
+              - paragraph [ref=e56]: Select your travel style above for personalized picks
+            - generic [ref=e57]:
+              - img [ref=e58]
+              - generic [ref=e60]: Set your dates
+          - generic [ref=e61]:
+            - heading "Explore Experiences" [level=2] [ref=e62]
+            - list "Explore Experiences" [ref=e63]:
+              - listitem [ref=e64]:
+                - 'button "Browse Water Adventures: Boat trips, snorkeling, diving" [ref=e65] [cursor=pointer]':
+                  - generic [ref=e67]:
+                    - img [ref=e69]
+                    - heading "Water Adventures" [level=3] [ref=e73]
+                    - paragraph [ref=e74]: Boat trips, snorkeling, diving
+              - listitem [ref=e75]:
+                - 'button "Browse Land Explorations: Bikes, scooters, guided treks" [ref=e76] [cursor=pointer]':
+                  - generic [ref=e78]:
+                    - img [ref=e80]
+                    - heading "Land Explorations" [level=3] [ref=e85]
+                    - paragraph [ref=e86]: Bikes, scooters, guided treks
+              - listitem [ref=e87]:
+                - 'button "Browse Culture & Experiences: Temples, ceremonies, cooking classes" [ref=e88] [cursor=pointer]':
+                  - generic [ref=e90]:
+                    - img [ref=e92]
+                    - heading "Culture & Experiences" [level=3] [ref=e95]
+                    - paragraph [ref=e96]: Temples, ceremonies, cooking classes
+              - listitem [ref=e97]:
+                - 'button "Browse Food & Nightlife: Local warungs to beach clubs" [ref=e98] [cursor=pointer]':
+                  - generic [ref=e100]:
+                    - img [ref=e102]
+                    - heading "Food & Nightlife" [level=3] [ref=e107]
+                    - paragraph [ref=e108]: Local warungs to beach clubs
+              - listitem [ref=e109]:
+                - 'button "Browse Getting Around: Transfers, drivers, day trips" [ref=e110] [cursor=pointer]':
+                  - generic [ref=e112]:
+                    - img [ref=e114]
+                    - heading "Getting Around" [level=3] [ref=e118]
+                    - paragraph [ref=e119]: Transfers, drivers, day trips
+              - listitem [ref=e120]:
+                - 'button "Browse Destinations & Stays: Where will you wake up?" [ref=e121] [cursor=pointer]':
+                  - generic [ref=e123]:
+                    - img [ref=e125]
+                    - heading "Destinations & Stays" [level=3] [ref=e128]
+                    - paragraph [ref=e129]: Where will you wake up?
+    - navigation "Main Navigation" [ref=e130]:
+      - generic [ref=e131]:
+        - button "Trip" [ref=e132]:
+          - img [ref=e134]
+          - generic [ref=e136]: Trip
+        - button "Explore" [ref=e137]:
+          - img [ref=e138]
+          - generic [ref=e141]: Explore
+        - button "Saved" [ref=e142]:
+          - img [ref=e143]
+          - generic [ref=e145]: Saved
+        - button "Profile" [ref=e146]:
+          - img [ref=e147]
+          - generic [ref=e151]: Profile
+        - button "Start Planning" [ref=e152]:
+          - img [ref=e153]
+```
