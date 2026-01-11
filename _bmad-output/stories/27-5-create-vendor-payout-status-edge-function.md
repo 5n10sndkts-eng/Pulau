@@ -22,26 +22,26 @@ So that I know when to expect payment.
 
 ## Tasks / Subtasks
 
-- [ ] Create vendor-payout-status Edge Function (AC: 1)
-  - [ ] Create `supabase/functions/vendor-payout-status/index.ts`
-  - [ ] Set up Deno imports for Stripe SDK
-  - [ ] Authenticate vendor from request headers
-  - [ ] Retrieve vendor's stripe_account_id from database
-- [ ] Fetch payout data from Stripe (AC: 1)
-  - [ ] Call Stripe Connect API: `stripe.payouts.list({ stripeAccount: vendorStripeId })`
-  - [ ] Filter by status: pending, in_transit, paid, failed
-  - [ ] Get balance transactions for pending funds
-  - [ ] Retrieve payout schedule from Stripe account settings
-- [ ] Calculate payout summaries (AC: 1)
-  - [ ] Sum pending payouts (funds in escrow)
-  - [ ] List scheduled payouts with arrival_date
-  - [ ] List completed payouts with amount and transfer_id
-  - [ ] Show next payout date based on schedule
-- [ ] Implement caching (AC: 1)
-  - [ ] Cache response in Supabase for 5 minutes
-  - [ ] Use vendor_id as cache key
-  - [ ] Return cached data if fresh
-  - [ ] Refetch from Stripe if cache expired
+- [x] Create vendor-payout-status Edge Function (AC: 1)
+  - [x] Create `supabase/functions/vendor-payout-status/index.ts`
+  - [x] Set up Deno imports for Stripe SDK
+  - [x] Authenticate vendor from request headers
+  - [x] Retrieve vendor's stripe_account_id from database
+- [x] Fetch payout data from Stripe (AC: 1)
+  - [x] Call Stripe Connect API: `stripe.payouts.list({ stripeAccount: vendorStripeId })`
+  - [x] Filter by status: pending, in_transit, paid, failed
+  - [x] Get balance transactions for pending funds
+  - [x] Retrieve payout schedule from Stripe account settings
+- [x] Calculate payout summaries (AC: 1)
+  - [x] Sum pending payouts (funds in escrow)
+  - [x] List scheduled payouts with arrival_date
+  - [x] List completed payouts with amount and transfer_id
+  - [x] Show next payout date based on schedule
+- [x] Implement caching (AC: 1)
+  - [x] Cache response in Supabase for 5 minutes
+  - [x] Use vendor_id as cache key
+  - [x] Return cached data if fresh
+  - [x] Refetch from Stripe if cache expired
 
 ## Dev Notes
 
@@ -239,16 +239,22 @@ serve(async (req) => {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Edge function implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created vendor-payout-status edge function
+2. Stripe Connect integration for payout status
+3. Balance retrieval via Stripe API
+4. Caching for performance optimization
+5. Vendor authentication via JWT
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- supabase/functions/vendor-payout-status/index.ts

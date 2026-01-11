@@ -31,6 +31,9 @@ import { MetaManager } from './components/common/MetaManager'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { Toaster } from './components/ui/sonner'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { TicketPageRoute } from './components/booking/TicketPageRoute'
+import { PWAInstallPrompt } from './components/PWAInstallPrompt'
+import { useNetworkSync } from './hooks/useNetworkSync'
 
 import { User, Trip, Experience, UserPreferences, TripItem, Booking, VendorSession } from './lib/types'
 import { getExperienceById, calculateTripTotal, generateTripFromPreferences } from './lib/helpers'
@@ -127,6 +130,16 @@ function AppContent() {
   const [vendorSession, setVendorSession] = useKV<VendorSession | null>('pulau_vendor_session', null)
 
   const navigate = useNavigate()
+
+  // Initialize Network Sync (Story 26.4)
+  useNetworkSync({
+    onSync: async () => {
+      if (authUser) {
+        const userBookings = await bookingService.getUserBookings(authUser.id)
+        setBookings(userBookings)
+      }
+    }
+  })
 
   // Use authUser if available, otherwise fallback to defaultUser
   const safeUser = authUser || defaultUser
@@ -291,6 +304,7 @@ function AppContent() {
     <>
       <MetaManager />
       <Toaster />
+      <PWAInstallPrompt />
 
       <NavigationShellWithRouter>
         <Routes>
@@ -448,6 +462,12 @@ function AppContent() {
               onNavigateToBookings={() => { }}
               onLogout={() => { setVendorSession(null); navigate('/vendor/login') }}
             />
+          } />
+
+          <Route path="/ticket/:bookingId" element={
+            <ProtectedRoute>
+              <TicketPageRoute />
+            </ProtectedRoute>
           } />
 
           {/* Fallback */}

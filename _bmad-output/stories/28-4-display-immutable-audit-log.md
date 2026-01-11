@@ -23,27 +23,27 @@ So that I can understand exactly what happened for dispute resolution.
 
 ## Tasks / Subtasks
 
-- [ ] Add "View Audit Log" button to booking detail (AC: 1)
-  - [ ] Add button to booking detail page
-  - [ ] Open audit log modal or expand section on click
-  - [ ] Show loading state while fetching audit log
-- [ ] Fetch audit log data (AC: 1)
-  - [ ] Call auditService.getAuditLog('booking', bookingId)
-  - [ ] Fetch all audit entries for booking
-  - [ ] Include related entries (payment events, status changes, etc.)
-  - [ ] Sort by timestamp descending (newest first)
-- [ ] Display audit log timeline (AC: 1)
-  - [ ] Show each event as timeline item
-  - [ ] Display timestamp (formatted as date + time)
-  - [ ] Show event type with icon (created: ✓, refunded: ↩, etc.)
-  - [ ] Show actor name (user/vendor/admin) or "System"
-  - [ ] Display event metadata (amounts, reasons, etc.)
-  - [ ] Use different colors for different event types
-- [ ] Add event type filter (AC: 1)
-  - [ ] Add filter dropdown or chips
-  - [ ] Options: All, Created, Payment, Status Change, Refund, Check-in
-  - [ ] Filter events client-side or server-side
-  - [ ] Show count per event type
+- [x] Add "View Audit Log" button to booking detail (AC: 1)
+  - [x] Add button to booking detail page
+  - [x] Open audit log modal or expand section on click
+  - [x] Show loading state while fetching audit log
+- [x] Fetch audit log data (AC: 1)
+  - [x] Call auditService.getAuditLog('booking', bookingId)
+  - [x] Fetch all audit entries for booking
+  - [x] Include related entries (payment events, status changes, etc.)
+  - [x] Sort by timestamp descending (newest first)
+- [x] Display audit log timeline (AC: 1)
+  - [x] Show each event as timeline item
+  - [x] Display timestamp (formatted as date + time)
+  - [x] Show event type with icon (created: ✓, refunded: ↩, etc.)
+  - [x] Show actor name (user/vendor/admin) or "System"
+  - [x] Display event metadata (amounts, reasons, etc.)
+  - [x] Use different colors for different event types
+- [x] Add event type filter (AC: 1)
+  - [x] Add filter dropdown or chips
+  - [x] Options: All, Created, Payment, Status Change, Refund, Check-in
+  - [x] Filter events client-side or server-side
+  - [x] Show count per event type
 
 ## Dev Notes
 
@@ -204,16 +204,26 @@ function AuditLogTimeline({ events }: { events: AuditLogEntry[] }) {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Standard component implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created AuditLogViewer component with:
+   - Immutable log display (read-only)
+   - Chronological ordering
+   - Event type filtering
+   - Date range selection
+   - Actor and action details
+
+2. RLS policies prevent modification
+3. Pagination for large datasets
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/components/admin/AuditLogViewer.tsx

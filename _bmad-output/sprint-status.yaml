@@ -279,38 +279,38 @@ development_status:
   epic-24-retrospective: optional
 
   # Epic 25: Real-Time Inventory & Availability (5 stories)
-  epic-25: in-progress
-  25-1-implement-supabase-realtime-subscriptions: ready-for-dev
-  25-2-create-real-time-service-module: ready-for-dev
-  25-3-implement-atomic-inventory-decrement: ready-for-dev
-  25-4-add-instant-confirmation-filter: ready-for-dev
-  25-5-display-real-time-slot-availability: ready-for-dev
-  epic-25-retrospective: optional
+  epic-25: done
+  25-1-implement-supabase-realtime-subscriptions: done
+  25-2-create-real-time-service-module: done
+  25-3-implement-atomic-inventory-decrement: done
+  25-4-add-instant-confirmation-filter: done
+  25-5-display-real-time-slot-availability: done
+  epic-25-retrospective: done
 
   # Epic 26: Offline Ticket Access PWA (5 stories)
-  epic-26: in-progress
-  26-1-implement-service-worker-for-ticket-caching: ready-for-dev
-  26-2-build-offline-ticket-display: ready-for-dev
-  26-3-show-last-updated-timestamp: ready-for-dev
-  26-4-implement-network-restoration-sync: ready-for-dev
-  26-5-pwa-installation-and-offline-indicator: ready-for-dev
-  epic-26-retrospective: optional
+  epic-26: done
+  26-1-implement-service-worker-for-ticket-caching: done
+  26-2-build-offline-ticket-display: done
+  26-3-show-last-updated-timestamp: done
+  26-4-implement-network-restoration-sync: done
+  26-5-pwa-installation-and-offline-indicator: done
+  epic-26-retrospective: done
 
   # Epic 27: Vendor Check-In & Operations (5 stories)
-  epic-27: in-progress
-  27-1-build-qr-code-scanner-interface: ready-for-dev
-  27-2-implement-ticket-validation-logic: ready-for-dev
-  27-3-record-check-in-status: ready-for-dev
-  27-4-view-todays-bookings-dashboard: ready-for-dev
-  27-5-create-vendor-payout-status-edge-function: ready-for-dev
-  epic-27-retrospective: optional
+  epic-27: done
+  27-1-build-qr-code-scanner-interface: done
+  27-2-implement-ticket-validation-logic: done
+  27-3-record-check-in-status: done
+  27-4-view-todays-bookings-dashboard: done
+  27-5-create-vendor-payout-status-edge-function: done
+  epic-27-retrospective: done
 
   # Epic 28: Admin Refunds & Audit Trail (6 stories)
-  epic-28: in-progress
-  28-1-build-booking-search-interface: ready-for-dev
-  28-2-create-refund-processing-interface: ready-for-dev
-  28-3-implement-refund-edge-function: ready-for-dev
-  28-4-display-immutable-audit-log: ready-for-dev
-  28-5-create-audit-service-module: ready-for-dev
-  28-6-enforce-audit-log-retention-policy: ready-for-dev
-  epic-28-retrospective: optional
+  epic-28: done
+  28-1-build-booking-search-interface: done
+  28-2-create-refund-processing-interface: done
+  28-3-implement-refund-edge-function: done
+  28-4-display-immutable-audit-log: done
+  28-5-create-audit-service-module: done
+  28-6-enforce-audit-log-retention-policy: done
+  epic-28-retrospective: done

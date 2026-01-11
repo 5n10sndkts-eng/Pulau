@@ -1,0 +1,55 @@
+
+> spark-template@0.0.0 test:run
+> vitest run src/lib/realtimeService.test.ts
+
+
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90m/Users/moe/Pulau[39m
+
+ [31m❯[39m src/lib/realtimeService.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+       [32m✓[39m should create a channel subscription for an experience[32m 3[2mms[22m[39m
+       [32m✓[39m should track active subscriptions[32m 1[2mms[22m[39m
+       [32m✓[39m should allow multiple subscriptions to same experience[32m 0[2mms[22m[39m
+       [32m✓[39m should create a channel subscription for a booking[32m 0[2mms[22m[39m
+[31m       [31m×[31m should remove a specific subscription[39m[32m 4[2mms[22m[39m
+       [32m✓[39m should handle unsubscribing non-existent subscription[32m 0[2mms[22m[39m
+       [32m✓[39m should not affect other subscriptions[32m 0[2mms[22m[39m
+       [32m✓[39m should remove all active subscriptions[32m 0[2mms[22m[39m
+       [32m✓[39m should handle empty subscription list[32m 0[2mms[22m[39m
+       [32m✓[39m should return correct count[32m 0[2mms[22m[39m
+       [32m✓[39m should return list of active subscription IDs[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/lib/realtimeService.test.ts[2m > [22mrealtimeService[2m > [22munsubscribe[2m > [22mshould remove a specific subscription
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ { on: [Function Mock] } ][90m
+
+Received: 
+
+[1m  1st vi.fn() call:
+
+[22m[2m  [[22m
+[32m-   {[90m
+[32m-     "on": [Function Mock],[90m
+[32m-   },[90m
+[31m+   undefined,[90m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m src/lib/realtimeService.test.ts:[2m143:38[22m[39m
+    [90m141| [39m      [35mawait[39m [34munsubscribe[39m(subId)
+    [90m142| [39m
+    [90m143| [39m      [34mexpect[39m(supabase[33m.[39mremoveChannel)[33m.[39m[34mtoHaveBeenCalledWith[39m(mockChannel)
+    [90m   | [39m                                     [31m^[39m
+    [90m144| [39m      [34mexpect[39m([34mgetActiveSubscriptionCount[39m())[33m.[39m[34mtoBe[39m([34m0[39m)
+    [90m145| [39m    })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m10 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 17:10:43
+[2m   Duration [22m 671ms[2m (transform 54ms, setup 129ms, import 45ms, tests 11ms, environment 382ms)[22m
+

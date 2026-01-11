@@ -21,7 +21,7 @@ import { Clock, Users, Zap, WifiOff, AlertCircle } from 'lucide-react'
 import { formatPrice } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 
-interface RealtimeSlotDisplayProps {
+export interface RealtimeSlotDisplayProps {
   experienceId: string
   selectedDate: string // YYYY-MM-DD format
   basePrice: number // In cents
@@ -100,17 +100,13 @@ export function RealtimeSlotDisplay({
       setLoadError(null)
 
       try {
-        const result = await getAvailableSlots(experienceId, {
+        const slotsData = await getAvailableSlots(experienceId, {
           startDate: selectedDate,
           endDate: selectedDate
         })
 
-        if (result.error) {
-          throw new Error(result.error)
-        }
-
-        if (isMounted && result.data) {
-          setSlots(result.data)
+        if (isMounted) {
+          setSlots(slotsData)
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load slots'

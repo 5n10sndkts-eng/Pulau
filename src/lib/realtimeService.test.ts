@@ -32,16 +32,19 @@ describe('realtimeService', () => {
     // Reset mocks
     vi.clearAllMocks()
 
-    // Create mock channel chain
-    mockSubscribe = vi.fn()
-    mockOn = vi.fn(() => ({ subscribe: mockSubscribe }))
+    // Create mock channel that supports chaining
     mockChannel = {
-      on: mockOn
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn().mockReturnThis()
     }
 
+    // Expose mocks for assertions
+    mockOn = mockChannel.on
+    mockSubscribe = mockChannel.subscribe
+
     // Setup supabase.channel to return mock channel
-    vi.mocked(supabase.channel).mockReturnValue(mockChannel)
-    vi.mocked(supabase.removeChannel).mockResolvedValue(undefined)
+    vi.mocked(supabase.channel).mockReturnValue(mockChannel as any)
+    vi.mocked(supabase.removeChannel).mockResolvedValue('ok')
   })
 
   afterEach(async () => {
@@ -56,8 +59,8 @@ describe('realtimeService', () => {
 
       const subId = subscribeToSlotAvailability(experienceId, callback)
 
-      // Should create channel with correct name
-      expect(supabase.channel).toHaveBeenCalledWith(`experience-slots-${experienceId}`)
+      // Should create channel with correct name prefix
+      expect(supabase.channel).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`^experience-slots-${experienceId}-`)))
 
       // Should set up postgres_changes listener
       expect(mockOn).toHaveBeenCalledWith(
@@ -75,7 +78,7 @@ describe('realtimeService', () => {
       expect(mockSubscribe).toHaveBeenCalled()
 
       // Should return subscription ID
-      expect(subId).toMatch(/^slot-exp-123-\d+$/)
+      expect(subId).toMatch(/^slot-exp-123-[\d-]+$/)
     })
 
     it('should track active subscriptions', () => {
@@ -110,8 +113,8 @@ describe('realtimeService', () => {
 
       const subId = subscribeToBookingStatus(bookingId, callback)
 
-      // Should create channel with correct name
-      expect(supabase.channel).toHaveBeenCalledWith(`booking-${bookingId}`)
+      // Should create channel with correct name prefix
+      expect(supabase.channel).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`^booking-${bookingId}-`)))
 
       // Should set up postgres_changes listener
       expect(mockOn).toHaveBeenCalledWith(
@@ -126,7 +129,7 @@ describe('realtimeService', () => {
       )
 
       // Should return subscription ID
-      expect(subId).toMatch(/^booking-booking-123-\d+$/)
+      expect(subId).toMatch(/^booking-booking-123-[\d-]+$/)
     })
   })
 
@@ -145,7 +148,7 @@ describe('realtimeService', () => {
     })
 
     it('should handle unsubscribing non-existent subscription', async () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => { })
 
       await unsubscribe('non-existent-id')
 
@@ -173,7 +176,7 @@ describe('realtimeService', () => {
   describe('unsubscribeAll', () => {
     it('should remove all active subscriptions', async () => {
       const callback = vi.fn()
-      
+
       subscribeToSlotAvailability('exp-1', callback)
       subscribeToSlotAvailability('exp-2', callback)
       subscribeToBookingStatus('booking-1', callback)

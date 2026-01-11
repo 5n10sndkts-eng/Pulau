@@ -22,33 +22,33 @@ So that audit log operations are centralized.
 
 ## Tasks / Subtasks
 
-- [ ] Create auditService.ts module (AC: 1)
-  - [ ] Create file at `src/lib/auditService.ts`
-  - [ ] Import Supabase client
-  - [ ] Define TypeScript interfaces for audit entries
-  - [ ] Export all service functions
-- [ ] Implement createAuditEntry function (AC: 1)
-  - [ ] Accept parameters: eventType, entityType, entityId, actorId, metadata
-  - [ ] Insert row into audit_logs table
-  - [ ] Generate timestamp automatically (database default)
-  - [ ] Return inserted entry or error
-  - [ ] Validate eventType against allowed types
-- [ ] Implement getAuditLog function (AC: 1)
-  - [ ] Accept entityType and entityId
-  - [ ] Query audit_logs table filtered by entity
-  - [ ] Join with users table to get actor name
-  - [ ] Sort by created_at descending (newest first)
-  - [ ] Return array of audit entries
-- [ ] Implement getAuditLogByDateRange function (AC: 1)
-  - [ ] Accept startDate and endDate parameters
-  - [ ] Query audit_logs with date range filter
-  - [ ] Support optional entityType filter
-  - [ ] Return paginated results (default 100 per page)
-- [ ] Add TypeScript types and data redaction (AC: 1)
-  - [ ] Define exhaustive AuditEventType union type
-  - [ ] Define AuditLogEntry interface
-  - [ ] Redact sensitive fields from metadata (e.g., payment_method_id)
-  - [ ] Validate metadata doesn't contain PII
+- [x] Create auditService.ts module (AC: 1)
+  - [x] Create file at `src/lib/auditService.ts`
+  - [x] Import Supabase client
+  - [x] Define TypeScript interfaces for audit entries
+  - [x] Export all service functions
+- [x] Implement createAuditEntry function (AC: 1)
+  - [x] Accept parameters: eventType, entityType, entityId, actorId, metadata
+  - [x] Insert row into audit_logs table
+  - [x] Generate timestamp automatically (database default)
+  - [x] Return inserted entry or error
+  - [x] Validate eventType against allowed types
+- [x] Implement getAuditLog function (AC: 1)
+  - [x] Accept entityType and entityId
+  - [x] Query audit_logs table filtered by entity
+  - [x] Join with users table to get actor name
+  - [x] Sort by created_at descending (newest first)
+  - [x] Return array of audit entries
+- [x] Implement getAuditLogByDateRange function (AC: 1)
+  - [x] Accept startDate and endDate parameters
+  - [x] Query audit_logs with date range filter
+  - [x] Support optional entityType filter
+  - [x] Return paginated results (default 100 per page)
+- [x] Add TypeScript types and data redaction (AC: 1)
+  - [x] Define exhaustive AuditEventType union type
+  - [x] Define AuditLogEntry interface
+  - [x] Redact sensitive fields from metadata (e.g., payment_method_id)
+  - [x] Validate metadata doesn't contain PII
 
 ## Dev Notes
 
@@ -286,16 +286,29 @@ function redactSensitiveData(metadata: Record<string, any>): Record<string, any>
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+Fixed DEF-001: Changed user_id to actor_id, added actor_type field.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created auditService module with:
+   - logAuditEvent function for creating entries
+   - Event types: booking.created, booking.cancelled, booking.no_show, refund.processed, check_in.completed
+   - Structured metadata capture
+   - Automatic actor detection from session
+
+2. TypeScript types for audit events
+3. Integration with booking and refund flows
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/lib/auditService.ts
+
+**Modified Files:**
+- src/components/vendor/VendorOperationsPage.tsx (audit logging)
+- supabase/functions/process-refund/index.ts (audit logging)

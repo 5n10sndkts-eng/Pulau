@@ -1,6 +1,6 @@
 # Story 25.3: Implement Atomic Inventory Decrement
 
-Status: done
+Status: review
 
 ## Story
 

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useKV } from '@github/spark/hooks'
 import { Trip, Booking } from '../lib/types'
 import { Card } from './ui/card'
@@ -29,6 +30,7 @@ import {
   Mail,
   Navigation,
   HelpCircle,
+  QrCode,
 } from 'lucide-react'
 import {
   AlertDialog,
@@ -55,6 +57,7 @@ interface TripsDashboardProps {
 export function TripsDashboard({ bookings = [], onUpdateBookings, onBack, onViewTrip, onBookAgain }: TripsDashboardProps) {
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'past' | 'all'>('upcoming')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const navigate = useNavigate()
 
   const safeBookings = bookings || []
 
@@ -233,6 +236,18 @@ export function TripsDashboard({ bookings = [], onUpdateBookings, onBack, onView
               <Package className="w-4 h-4 mr-2" />
               View Details
             </Button>
+            {booking.status === 'confirmed' && (
+              <Button
+                className="flex-1 bg-teal-600 hover:bg-teal-700"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  navigate(`/ticket/${booking.id}`)
+                }}
+              >
+                <QrCode className="w-4 h-4 mr-2" />
+                View Ticket
+              </Button>
+            )}
             {booking.status === 'completed' && (
               <Button
                 variant="outline"
@@ -544,6 +559,17 @@ export function TripsDashboard({ bookings = [], onUpdateBookings, onBack, onView
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+        )}
+
+        {/* Digital Ticket Access (Epic 26) */}
+        {booking.status === 'confirmed' && (
+          <Button
+            className="w-full bg-teal-600 hover:bg-teal-700 h-14 text-lg font-bold shadow-lg shadow-teal-100"
+            onClick={() => navigate(`/ticket/${booking.id}`)}
+          >
+            <QrCode className="w-6 h-6 mr-3" />
+            View Digital Ticket
+          </Button>
         )}
 
         {/* AC #7: Help Link Access */}

@@ -379,7 +379,7 @@ export async function decrementAvailability(
  * Story: 25.3 - Implement Atomic Inventory Decrement
  * Requirement: NFR-CON-01 - Zero overbookings with concurrent requests
  */
-async function decrementAvailabilityWithLock(
+export async function decrementAvailabilityWithLock(
   slotId: string,
   count: number
 ): Promise<SlotOperationResult> {
@@ -437,8 +437,8 @@ async function decrementAvailabilityWithLock(
       })
     }
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       data: updatedSlot || {
         id: slotId,
         available_count: result.available_count
@@ -696,6 +696,7 @@ export const slotService = {
 
   // Availability
   decrementAvailability,
+  decrementAvailabilityWithLock,
   incrementAvailability,
 
   // Delete

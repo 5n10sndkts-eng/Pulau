@@ -1,0 +1,118 @@
+
+> spark-template@0.0.0 test:run
+> vitest run src/hooks/useRealtimeSlots.test.ts
+
+
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90m/Users/moe/Pulau[39m
+
+ [31m❯[39m src/hooks/useRealtimeSlots.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[33m 35040[2mms[22m[39m
+     [32m✓[39m should initialize with disconnected state[32m 10[2mms[22m[39m
+     [32m✓[39m should subscribe when experienceId is provided[32m 3[2mms[22m[39m
+     [32m✓[39m should not subscribe when experienceId is undefined[32m 2[2mms[22m[39m
+[31m     [31m×[31m should unsubscribe on unmount[39m[33m 5005[2mms[22m[39m
+[31m     [31m×[31m should call callback when slot changes[39m[33m 5002[2mms[22m[39m
+[31m     [31m×[31m should handle callback errors gracefully[39m[33m 5002[2mms[22m[39m
+[31m     [31m×[31m should detect stale data[39m[33m 5001[2mms[22m[39m
+[31m     [31m×[31m should retry on error when enabled[39m[33m 5002[2mms[22m[39m
+[31m     [31m×[31m should not retry when retryOnError is false[39m[33m 5009[2mms[22m[39m
+[31m     [31m×[31m should resubscribe when experienceId changes[39m[33m 5003[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 7 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould unsubscribe on unmount
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m65:3[22m[39m
+    [90m 63| [39m  })
+    [90m 64| [39m
+    [90m 65| [39m  [34mit[39m([32m'should unsubscribe on unmount'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 66| [39m    [35mconst[39m mockSubId [33m=[39m [32m'sub-456'[39m
+    [90m 67| [39m    vi.mocked(realtimeService.subscribeToSlotAvailability).mockReturnV…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould call callback when slot changes
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m79:3[22m[39m
+    [90m 77| [39m  })
+    [90m 78| [39m
+    [90m 79| [39m  [34mit[39m([32m'should call callback when slot changes'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m 80| [39m    [35mlet[39m capturedCallback[33m:[39m any
+    [90m 81| [39m    vi.mocked(realtimeService.subscribeToSlotAvailability).mockImpleme…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould handle callback errors gracefully
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m112:3[22m[39m
+    [90m110| [39m  })
+    [90m111| [39m
+    [90m112| [39m  [34mit[39m([32m'should handle callback errors gracefully'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m113| [39m    [35mlet[39m capturedCallback[33m:[39m any
+    [90m114| [39m    vi.mocked(realtimeService.subscribeToSlotAvailability).mockImpleme…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould detect stale data
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m143:3[22m[39m
+    [90m141| [39m  })
+    [90m142| [39m
+    [90m143| [39m  [34mit[39m([32m'should detect stale data'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m144| [39m    [35mlet[39m capturedCallback[33m:[39m any
+    [90m145| [39m    vi.mocked(realtimeService.subscribeToSlotAvailability).mockImpleme…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould retry on error when enabled
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m179:3[22m[39m
+    [90m177| [39m  })
+    [90m178| [39m
+    [90m179| [39m  [34mit[39m([32m'should retry on error when enabled'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m180| [39m    [35mconst[39m mockError [33m=[39m [35mnew[39m [33mError[39m([32m'Connection failed'[39m)
+    [90m181| [39m    [35mlet[39m callCount [33m=[39m [34m0[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould not retry when retryOnError is false
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m218:3[22m[39m
+    [90m216| [39m  })
+    [90m217| [39m
+    [90m218| [39m  [34mit[39m([32m'should not retry when retryOnError is false'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m219| [39m    [35mconst[39m mockError [33m=[39m [35mnew[39m [33mError[39m([32m'Connection failed'[39m)
+    [90m220| [39m    vi.mocked(realtimeService.subscribeToSlotAvailability).mockImpleme…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/hooks/useRealtimeSlots.test.ts[2m > [22museRealtimeSlots[2m > [22mshould resubscribe when experienceId changes
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/hooks/useRealtimeSlots.test.ts:[2m246:3[22m[39m
+    [90m244| [39m  })
+    [90m245| [39m
+    [90m246| [39m  [34mit[39m([32m'should resubscribe when experienceId changes'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m247| [39m    const mockUnsubscribe = vi.mocked(realtimeService.unsubscribe).moc…
+    [90m248| [39m    vi[33m.[39m[34mmocked[39m(realtimeService[33m.[39msubscribeToSlotAvailability)
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 17:12:59
+[2m   Duration [22m 35.58s[2m (transform 40ms, setup 86ms, import 35ms, tests 35.04s, environment 326ms)[22m
+

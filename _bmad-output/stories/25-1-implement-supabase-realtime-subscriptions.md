@@ -1,6 +1,6 @@
 # Story 25.1: Implement Supabase Realtime Subscriptions
 
-Status: done
+Status: review
 
 ## Story
 

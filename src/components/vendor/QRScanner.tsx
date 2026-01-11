@@ -1,16 +1,18 @@
 /**
  * QR Scanner Component
  * Story: 27.1 - Build QR Code Scanner Interface
- * 
+ *
  * Scans QR codes from traveler tickets for check-in
+ * Uses jsQR library for QR code detection from camera feed
  */
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { X, Camera, AlertCircle } from 'lucide-react'
+import { X, Camera, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import jsQR from 'jsqr'
 
 interface QRScannerProps {
   onScan: (bookingId: string) => void
@@ -18,16 +20,89 @@ interface QRScannerProps {
   isOpen: boolean
 }
 
+// Expected QR data format: JSON with bookingId field or plain booking reference
+interface QRData {
+  bookingId?: string
+  bookingReference?: string
+  type?: 'pulau-ticket'
+}
+
 export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
   const [error, setError] = useState<string | null>(null)
   const [hasPermission, setHasPermission] = useState<boolean | null>(null)
+  const [scanSuccess, setScanSuccess] = useState(false)
+  const [lastScannedCode, setLastScannedCode] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const scanningRef = useRef(false)
+  const scanIntervalRef = useRef<number | null>(null)
+
+  // Parse QR code data and extract booking ID
+  const parseQRData = useCallback((data: string): string | null => {
+    // Try parsing as JSON first (structured ticket format)
+    try {
+      const parsed: QRData = JSON.parse(data)
+
+      // Check for Pulau ticket format
+      if (parsed.type === 'pulau-ticket') {
+        return parsed.bookingId || parsed.bookingReference || null
+      }
+
+      // Fallback to any booking ID field
+      return parsed.bookingId || parsed.bookingReference || null
+    } catch {
+      // Not JSON - treat as plain booking reference
+      // Validate it looks like a booking reference (e.g., PUL-XXXXXX or UUID)
+      const uuidPattern =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const refPattern = /^PUL-[A-Z0-9]{6,}$/i
+
+      if (uuidPattern.test(data) || refPattern.test(data)) {
+        return data
+      }
+
+      // Allow any alphanumeric string of reasonable length as fallback
+      if (/^[A-Za-z0-9-]{6,50}$/.test(data)) {
+        return data
+      }
+
+      return null
+    }
+  }, [])
+
+  // Handle successful QR scan
+  const handleQRDetected = useCallback(
+    (bookingId: string) => {
+      // Prevent duplicate scans of same code
+      if (bookingId === lastScannedCode) {
+        return
+      }
+
+      setLastScannedCode(bookingId)
+      setScanSuccess(true)
+
+      // Stop scanning
+      scanningRef.current = false
+      if (scanIntervalRef.current) {
+        clearInterval(scanIntervalRef.current)
+        scanIntervalRef.current = null
+      }
+
+      // Brief visual feedback then trigger callback
+      setTimeout(() => {
+        onScan(bookingId)
+        onClose()
+      }, 500)
+    },
+    [lastScannedCode, onScan, onClose]
+  )
 
   useEffect(() => {
     if (!isOpen) {
       stopCamera()
+      setScanSuccess(false)
+      setLastScannedCode(null)
       return
     }
 
@@ -75,8 +150,12 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
   }
 
   const stopCamera = () => {
+    if (scanIntervalRef.current) {
+      clearInterval(scanIntervalRef.current)
+      scanIntervalRef.current = null
+    }
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop())
+      streamRef.current.getTracks().forEach((track) => track.stop())
       streamRef.current = null
     }
     scanningRef.current = false
@@ -87,39 +166,63 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
 
     scanningRef.current = true
 
-    // Use canvas-based QR detection (simplified approach)
-    // In production, would use html5-qrcode library
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
+    // Create canvas for frame capture if not exists
+    if (!canvasRef.current) {
+      canvasRef.current = document.createElement('canvas')
+    }
+    const canvas = canvasRef.current
+    const context = canvas.getContext('2d', { willReadFrequently: true })
 
-    const scanInterval = setInterval(() => {
+    if (!context) {
+      console.error('[QRScanner] Failed to get canvas context')
+      return
+    }
+
+    // Scan at 10 FPS for balance between responsiveness and performance
+    scanIntervalRef.current = window.setInterval(() => {
       if (!videoRef.current || !scanningRef.current) {
-        clearInterval(scanInterval)
+        if (scanIntervalRef.current) {
+          clearInterval(scanIntervalRef.current)
+          scanIntervalRef.current = null
+        }
         return
       }
 
       const video = videoRef.current
 
-      if (video.readyState === video.HAVE_ENOUGH_DATA && context) {
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        context.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-        // In production, use a QR detection library here
-        // For now, simulate scanning with a mock pattern
-        detectQRCode(canvas, context)
+      // Only process when video has data
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+        return
       }
-    }, 500) // Scan every 500ms
 
-    return () => clearInterval(scanInterval)
-  }
+      // Set canvas size to match video
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
 
-  const detectQRCode = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
-    // This is a placeholder for actual QR detection
-    // In production, use a library like jsQR or zxing-js
-    
-    // Mock detection for demonstration
-    // Would extract booking ID from actual QR code
+      // Draw current video frame to canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      // Get image data for jsQR processing
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+
+      // Detect QR code using jsQR
+      const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert',
+      })
+
+      if (qrCode && qrCode.data) {
+        console.log('[QRScanner] QR code detected:', qrCode.data)
+
+        // Parse and validate the QR data
+        const bookingId = parseQRData(qrCode.data)
+
+        if (bookingId) {
+          handleQRDetected(bookingId)
+        } else {
+          console.warn('[QRScanner] Invalid QR data format:', qrCode.data)
+        }
+      }
+    }, 100) // 100ms = 10 FPS
   }
 
   const handleManualInput = () => {
@@ -192,26 +295,60 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
                 playsInline
                 muted
               />
-              
+
               {/* Scanning overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative">
-                  {/* Corner markers */}
+                  {/* Corner markers - change color on success */}
                   <div className="w-64 h-64 relative">
-                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white"></div>
-                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white"></div>
-                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white"></div>
-                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white"></div>
-                    
-                    {/* Scanning line */}
-                    <motion.div
-                      className="absolute left-0 right-0 h-1 bg-white/50"
-                      animate={{ y: [0, 256, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    />
+                    <div
+                      className={`absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
+                    ></div>
+                    <div
+                      className={`absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
+                    ></div>
+                    <div
+                      className={`absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
+                    ></div>
+                    <div
+                      className={`absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
+                    ></div>
+
+                    {/* Success indicator or scanning line */}
+                    {scanSuccess ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        <div className="bg-green-500 rounded-full p-4">
+                          <CheckCircle2 className="w-12 h-12 text-white" />
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        className="absolute left-0 right-0 h-1 bg-white/50"
+                        animate={{ y: [0, 256, 0] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                      />
+                    )}
                   </div>
                   <p className="text-white text-center mt-4 text-sm">
-                    Position QR code within frame
+                    {scanSuccess
+                      ? 'QR Code detected!'
+                      : 'Position QR code within frame'}
                   </p>
                 </div>
               </div>

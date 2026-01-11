@@ -24,30 +24,30 @@ So that refunds are processed securely via Stripe.
 
 ## Tasks / Subtasks
 
-- [ ] Create process-refund Edge Function (AC: 1)
-  - [ ] Create `supabase/functions/process-refund/index.ts`
-  - [ ] Import Stripe SDK for Deno
-  - [ ] Authenticate admin from request headers
-  - [ ] Parse refund request from body
-- [ ] Validate refund request (AC: 1)
-  - [ ] Check user has admin role
-  - [ ] Fetch booking and payment records
-  - [ ] Verify booking exists and is refundable
-  - [ ] Verify refund amount <= original payment amount
-  - [ ] Check booking not already fully refunded
-  - [ ] Return 400 error if validation fails
-- [ ] Process Stripe refund (AC: 1)
-  - [ ] Call `stripe.refunds.create()`
-  - [ ] Pass payment_intent_id from payment record
-  - [ ] Set refund amount
-  - [ ] Set refund reason metadata
-  - [ ] Use idempotency key (booking_id + timestamp)
-  - [ ] Handle Stripe errors (insufficient funds, already refunded, etc.)
-- [ ] Update database records (AC: 1)
-  - [ ] Update payments table: refund_amount, refund_reason, refund_id
-  - [ ] Update booking status: "refunded" (full) or "partially_refunded" (partial)
-  - [ ] Create audit log entry with full details
-  - [ ] Use database transaction for atomicity
+- [x] Create process-refund Edge Function (AC: 1)
+  - [x] Create `supabase/functions/process-refund/index.ts`
+  - [x] Import Stripe SDK for Deno
+  - [x] Authenticate admin from request headers
+  - [x] Parse refund request from body
+- [x] Validate refund request (AC: 1)
+  - [x] Check user has admin role
+  - [x] Fetch booking and payment records
+  - [x] Verify booking exists and is refundable
+  - [x] Verify refund amount <= original payment amount
+  - [x] Check booking not already fully refunded
+  - [x] Return 400 error if validation fails
+- [x] Process Stripe refund (AC: 1)
+  - [x] Call `stripe.refunds.create()`
+  - [x] Pass payment_intent_id from payment record
+  - [x] Set refund amount
+  - [x] Set refund reason metadata
+  - [x] Use idempotency key (booking_id + timestamp)
+  - [x] Handle Stripe errors (insufficient funds, already refunded, etc.)
+- [x] Update database records (AC: 1)
+  - [x] Update payments table: refund_amount, refund_reason, refund_id
+  - [x] Update booking status: "refunded" (full) or "partially_refunded" (partial)
+  - [x] Create audit log entry with full details
+  - [x] Use database transaction for atomicity
 
 ## Dev Notes
 
@@ -269,16 +269,28 @@ serve(async (req) => {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Edge function implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created process-refund edge function with:
+   - Stripe refunds.create() integration
+   - Full and partial refund support
+   - User authentication via JWT
+   - Booking validation and status checks
+   - Payment record updates
+   - Audit log creation
+
+2. Error handling for Stripe errors
+3. CORS headers for browser requests
+4. Idempotency via booking ID
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- supabase/functions/process-refund/index.ts

@@ -21,27 +21,27 @@ So that I can show my ticket even without internet.
 
 ## Tasks / Subtasks
 
-- [ ] Create Service Worker file (AC: 1)
-  - [ ] Create `public/sw.js` service worker file
-  - [ ] Register service worker in main.tsx or index.html
-  - [ ] Implement install event handler
-  - [ ] Implement activate event handler for cache cleanup
-- [ ] Implement ticket caching strategy (AC: 1)
-  - [ ] Use Cache API to store ticket resources
-  - [ ] Cache ticket HTML, CSS, and JavaScript on fetch
-  - [ ] Cache QR code images (generated or static)
-  - [ ] Cache booking metadata as JSON in IndexedDB
-  - [ ] Use "Network First, Cache Fallback" strategy
-- [ ] Set cache expiration to 30 days (AC: 1)
-  - [ ] Add timestamp to cached entries
-  - [ ] Check timestamp on cache retrieval
-  - [ ] Expire entries older than 30 days
-  - [ ] Re-fetch and update cache when online
-- [ ] Implement cache update on online view (AC: 1)
-  - [ ] Detect when ticket page viewed while online
-  - [ ] Fetch latest booking data from API
-  - [ ] Update cache with fresh data
-  - [ ] Update timestamp for cache expiration
+- [x] Create Service Worker file (AC: 1)
+  - [x] Create `public/sw.js` service worker file
+  - [x] Register service worker in main.tsx or index.html
+  - [x] Implement install event handler
+  - [x] Implement activate event handler for cache cleanup
+- [x] Implement ticket caching strategy (AC: 1)
+  - [x] Use Cache API to store ticket resources
+  - [x] Cache ticket HTML, CSS, and JavaScript on fetch
+  - [x] Cache QR code images (generated or static)
+  - [x] Cache booking metadata as JSON in IndexedDB
+  - [x] Use "Network First, Cache Fallback" strategy
+- [x] Set cache expiration to 30 days (AC: 1)
+  - [x] Add timestamp to cached entries
+  - [x] Check timestamp on cache retrieval
+  - [x] Expire entries older than 30 days
+  - [x] Re-fetch and update cache when online
+- [x] Implement cache update on online view (AC: 1)
+  - [x] Detect when ticket page viewed while online
+  - [x] Fetch latest booking data from API
+  - [x] Update cache with fresh data
+  - [x] Update timestamp for cache expiration
 
 ## Dev Notes
 
@@ -151,16 +151,36 @@ self.addEventListener('fetch', (event) => {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Implementation followed standard PWA patterns.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created `public/sw.js` service worker with:
+   - Install event handler with cache pre-population
+   - Activate event handler for old cache cleanup
+   - Fetch event handler with Network-First strategy
+   - 30-day cache expiration logic
+   - Ticket-specific caching for booking pages
+
+2. Registered service worker in `src/main.tsx`:
+   - Production-only registration check
+   - Hourly update interval
+   - Console logging for registration status
+
+3. Cache strategy implemented:
+   - Network-First for ticket data (fresher when online)
+   - Cache-First for static assets (JS/CSS/images)
+   - Fallback to cached responses when offline
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- public/sw.js
+
+**Modified Files:**
+- src/main.tsx (service worker registration)

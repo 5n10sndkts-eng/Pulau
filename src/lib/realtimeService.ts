@@ -75,8 +75,13 @@ export function subscribeToSlotAvailability(
   experienceId: string,
   callback: SlotAvailabilityCallback
 ): string {
-  const channelName = `experience-slots-${experienceId}`
-  
+  // Generate unique subscription ID
+  const subscriptionId = `slot-${experienceId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+
+  // Use unique channel name to allow multiple independent listeners for same resource
+  // The filter param controls what data we receive, channel name is just a handle
+  const channelName = `experience-slots-${experienceId}-${subscriptionId}`
+
   const channel = supabase
     .channel(channelName)
     .on(
@@ -91,9 +96,6 @@ export function subscribeToSlotAvailability(
     )
     .subscribe()
 
-  // Generate unique subscription ID
-  const subscriptionId = `slot-${experienceId}-${Date.now()}`
-  
   // Track subscription
   activeSubscriptions.set(subscriptionId, {
     channel,
@@ -124,8 +126,9 @@ export function subscribeToBookingStatus(
   bookingId: string,
   callback: BookingStatusCallback
 ): string {
-  const channelName = `booking-${bookingId}`
-  
+  const subscriptionId = `booking-${bookingId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const channelName = `booking-${bookingId}-${subscriptionId}`
+
   const channel = supabase
     .channel(channelName)
     .on(
@@ -140,8 +143,6 @@ export function subscribeToBookingStatus(
     )
     .subscribe()
 
-  const subscriptionId = `booking-${bookingId}-${Date.now()}`
-  
   activeSubscriptions.set(subscriptionId, {
     channel,
     type: 'booking',
@@ -163,7 +164,7 @@ export function subscribeToBookingStatus(
  */
 export async function unsubscribe(subscriptionId: string): Promise<void> {
   const subscription = activeSubscriptions.get(subscriptionId)
-  
+
   if (!subscription) {
     console.warn(`Subscription ${subscriptionId} not found`)
     return
@@ -190,7 +191,7 @@ export async function unsubscribeAll(): Promise<void> {
   const promises = Array.from(activeSubscriptions.values()).map(sub =>
     supabase.removeChannel(sub.channel)
   )
-  
+
   await Promise.all(promises)
   activeSubscriptions.clear()
 }

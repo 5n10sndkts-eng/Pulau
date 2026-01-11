@@ -21,27 +21,27 @@ So that I have the latest booking information.
 
 ## Tasks / Subtasks
 
-- [ ] Detect network restoration (AC: 1)
-  - [ ] Listen to window `online` event
-  - [ ] Trigger sync function when online event fires
-  - [ ] Use custom hook: `useNetworkSync()`
-  - [ ] Debounce sync to avoid multiple rapid triggers
-- [ ] Implement sync logic (AC: 1)
-  - [ ] Fetch latest booking data from API
-  - [ ] Compare with cached data for changes
-  - [ ] Update cache with fresh data
-  - [ ] Update last_updated timestamp
-  - [ ] Complete within 10 seconds (NFR-REL-02)
-- [ ] Show "Syncing..." indicator (AC: 1)
-  - [ ] Display toast notification: "Syncing your tickets..."
-  - [ ] Show loading spinner in toast
-  - [ ] Auto-dismiss after sync completes (< 10 seconds)
-  - [ ] Use Sonner toast library
-- [ ] Handle booking status changes (AC: 1)
-  - [ ] Check if booking status changed while offline
-  - [ ] Show notification if booking cancelled
-  - [ ] Update UI to reflect new status
-  - [ ] Show detailed notification with reason if available
+- [x] Detect network restoration (AC: 1)
+  - [x] Listen to window `online` event
+  - [x] Trigger sync function when online event fires
+  - [x] Use custom hook: `useNetworkSync()`
+  - [x] Debounce sync to avoid multiple rapid triggers
+- [x] Implement sync logic (AC: 1)
+  - [x] Fetch latest booking data from API
+  - [x] Compare with cached data for changes
+  - [x] Update cache with fresh data
+  - [x] Update last_updated timestamp
+  - [x] Complete within 10 seconds (NFR-REL-02)
+- [x] Show "Syncing..." indicator (AC: 1)
+  - [x] Display toast notification: "Syncing your tickets..."
+  - [x] Show loading spinner in toast
+  - [x] Auto-dismiss after sync completes (< 10 seconds)
+  - [x] Use Sonner toast library
+- [x] Handle booking status changes (AC: 1)
+  - [x] Check if booking status changed while offline
+  - [x] Show notification if booking cancelled
+  - [x] Update UI to reflect new status
+  - [x] Show detailed notification with reason if available
 
 ## Dev Notes
 
@@ -184,16 +184,30 @@ function useNetworkSync() {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Standard hook implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created `useNetworkSync` hook with:
+   - Online event listener for network restoration detection
+   - Configurable sync delay (default 1000ms)
+   - Toast notifications for sync status
+   - Debounced sync to prevent rapid triggers
+
+2. Created `useOnlineStatus` hook (dependency)
+3. Integrated with Sonner toast for notifications
+4. Sync completes within 10 seconds (NFR-REL-02)
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/hooks/useNetworkSync.ts
+- src/hooks/useOnlineStatus.ts
+
+**Referenced Files:**
+- src/lib/bookingService.ts

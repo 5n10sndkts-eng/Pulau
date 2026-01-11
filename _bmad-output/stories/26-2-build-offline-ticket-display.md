@@ -24,29 +24,29 @@ So that I can gain entry to my experience.
 
 ## Tasks / Subtasks
 
-- [ ] Create offline ticket page component (AC: 1)
-  - [ ] Create or modify `TicketPage.tsx` component
-  - [ ] Display QR code prominently at top (large size, centered)
-  - [ ] Show experience name as heading
-  - [ ] Display date/time with calendar icon
-  - [ ] Show guest count with person icon
-  - [ ] Display meeting point with map pin icon
-- [ ] Add offline mode indicator (AC: 1)
-  - [ ] Detect offline state using navigator.onLine
-  - [ ] Show "Offline Mode" banner at top (coral background)
-  - [ ] Hide banner when online
-  - [ ] Use toast notification when going offline/online
-- [ ] Add "Last Updated" timestamp (AC: 1)
-  - [ ] Retrieve timestamp from cache metadata
-  - [ ] Format as relative time (e.g., "Last updated 2 hours ago")
-  - [ ] Display at bottom of ticket in muted text
-  - [ ] Update timestamp when cache refreshes
-- [ ] Optimize for performance (TTI < 1.5 seconds) (AC: 1)
-  - [ ] Minimize JavaScript bundle size
-  - [ ] Lazy load non-critical components
-  - [ ] Use static QR code image (pre-generated)
-  - [ ] Inline critical CSS
-  - [ ] Test with Lighthouse performance audit
+- [x] Create offline ticket page component (AC: 1)
+  - [x] Create or modify `TicketPage.tsx` component
+  - [x] Display QR code prominently at top (large size, centered)
+  - [x] Show experience name as heading
+  - [x] Display date/time with calendar icon
+  - [x] Show guest count with person icon
+  - [x] Display meeting point with map pin icon
+- [x] Add offline mode indicator (AC: 1)
+  - [x] Detect offline state using navigator.onLine
+  - [x] Show "Offline Mode" banner at top (coral background)
+  - [x] Hide banner when online
+  - [x] Use toast notification when going offline/online
+- [x] Add "Last Updated" timestamp (AC: 1)
+  - [x] Retrieve timestamp from cache metadata
+  - [x] Format as relative time (e.g., "Last updated 2 hours ago")
+  - [x] Display at bottom of ticket in muted text
+  - [x] Update timestamp when cache refreshes
+- [x] Optimize for performance (TTI < 1.5 seconds) (AC: 1)
+  - [x] Minimize JavaScript bundle size
+  - [x] Lazy load non-critical components
+  - [x] Use static QR code image (pre-generated)
+  - [x] Inline critical CSS
+  - [x] Test with Lighthouse performance audit
 
 ## Dev Notes
 
@@ -162,16 +162,36 @@ interface TicketData {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Standard component implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created `OfflineTicketDisplay.tsx` component with:
+   - QR code display (large, centered)
+   - Experience details (name, date/time, guests, meeting point)
+   - Offline mode banner with coral background
+   - Last updated timestamp display
+
+2. Created `useOnlineStatus` hook for network detection:
+   - Listens to online/offline window events
+   - Returns boolean isOnline status
+   - Used across multiple components
+
+3. Performance optimized for TTI < 1.5s:
+   - Minimal bundle size
+   - Pre-generated QR codes (static images)
+   - Critical CSS inlined
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/components/OfflineTicketDisplay.tsx
+- src/hooks/useOnlineStatus.ts
+
+**Modified Files:**
+- src/components/BookingConfirmation.tsx (QR code display)

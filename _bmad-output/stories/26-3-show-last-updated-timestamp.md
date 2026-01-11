@@ -18,27 +18,27 @@ So that I know if the information is current.
 
 ## Tasks / Subtasks
 
-- [ ] Add timestamp to cache metadata (AC: 1)
-  - [ ] Store last_updated timestamp when caching ticket data
-  - [ ] Use Unix timestamp (milliseconds since epoch)
-  - [ ] Update timestamp when cache refreshes online
-  - [ ] Retrieve timestamp from cache when displaying ticket
-- [ ] Display relative timestamp (AC: 1)
-  - [ ] Format timestamp as relative time (e.g., "2 hours ago", "3 days ago")
-  - [ ] Use date-fns library: `formatDistanceToNow()` function
-  - [ ] Display at bottom of ticket page in muted text
-  - [ ] Update display every minute (for accuracy)
-- [ ] Show warning for stale data (AC: 1)
-  - [ ] Check if last_updated is > 24 hours old
-  - [ ] Display yellow warning banner: "Ticket data may be outdated"
-  - [ ] Suggest refreshing when back online
-  - [ ] Use alert icon (AlertCircle from Lucide React)
-- [ ] Add refresh button (AC: 1)
-  - [ ] Add "Refresh" button at bottom of ticket
-  - [ ] Disable button when offline (grayed out, cursor not-allowed)
-  - [ ] Enable button when online
-  - [ ] Show loading spinner when refreshing
-  - [ ] Update timestamp after successful refresh
+- [x] Add timestamp to cache metadata (AC: 1)
+  - [x] Store last_updated timestamp when caching ticket data
+  - [x] Use Unix timestamp (milliseconds since epoch)
+  - [x] Update timestamp when cache refreshes online
+  - [x] Retrieve timestamp from cache when displaying ticket
+- [x] Display relative timestamp (AC: 1)
+  - [x] Format timestamp as relative time (e.g., "2 hours ago", "3 days ago")
+  - [x] Use date-fns library: `formatDistanceToNow()` function
+  - [x] Display at bottom of ticket page in muted text
+  - [x] Update display every minute (for accuracy)
+- [x] Show warning for stale data (AC: 1)
+  - [x] Check if last_updated is > 24 hours old
+  - [x] Display yellow warning banner: "Ticket data may be outdated"
+  - [x] Suggest refreshing when back online
+  - [x] Use alert icon (AlertCircle from Lucide React)
+- [x] Add refresh button (AC: 1)
+  - [x] Add "Refresh" button at bottom of ticket
+  - [x] Disable button when offline (grayed out, cursor not-allowed)
+  - [x] Enable button when online
+  - [x] Show loading spinner when refreshing
+  - [x] Update timestamp after successful refresh
 
 ## Dev Notes
 
@@ -155,16 +155,23 @@ const cacheData = {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Standard implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Integrated timestamp display with cache metadata
+2. Used date-fns `formatDistanceToNow()` for relative timestamps
+3. Implemented stale data warning (> 24 hours)
+4. Added refresh button (disabled when offline)
+5. Timestamp updates every 60 seconds
 
 ### File List
 
-_To be filled by dev agent_
+**Modified Files:**
+- src/components/OfflineTicketDisplay.tsx (timestamp display)
+- public/sw.js (cache metadata with timestamp)

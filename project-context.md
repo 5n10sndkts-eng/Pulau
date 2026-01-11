@@ -1,9 +1,11 @@
 ---
 project_name: 'Pulau'
 user_name: 'Moe'
-date: '2026-01-08'
-sections_completed: ['technology_stack', 'typescript_rules', 'framework_rules', 'code_quality', 'critical_rules', 'workflow', 'backend_integration']
+date: '2026-01-11'
+sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
+rule_count: 42
+optimized_for_llm: true
 existing_patterns_found: 12
 architecture_version: '2026-01-08'
 ---
@@ -20,6 +22,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **React**: 19.0.0 (latest with new JSX transform)
 - **TypeScript**: 5.7.2 (strict null checks enabled)
 - **Vite**: 7.2.6 (build tool + dev server with SWC)
+- **React Router DOM**: 7.11.0 (Standard routing)
 - **Node Package Manager**: NPM with workspace support
 
 ### GitHub Spark Framework
@@ -152,16 +155,17 @@ src/
 - 🚨 **CRITICAL: Check for null in useKV updaters** - Pattern: `const base = current || defaultValue`
 
 **Routing Pattern:**
-- 🚨 **NO react-router** - Navigation is state-based in App.tsx
-- ✅ **Single-file router** - App.tsx contains all screen logic
-- ✅ **Navigate by setState** - Change `currentScreen` discriminated union to navigate
+- ✅ **React Router DOM v7** - Standard routing with `<Outlet />` layouts
+- ✅ **Navigation** - Use `useNavigate()` hook and `<Link />` components
+- 🚨 **NO window.location** - Never force full page reloads
+- ✅ **Route Definition** - Defined in `App.tsx` using `Routes` and `Route` components
 
 **Data Layer (Backend Integration):**
 - ✅ **Supabase backend configured** - PostgreSQL database with RLS
 - ✅ **Service Layer pattern** - All Supabase calls go through `lib/*Service.ts` files
 - ✅ **TanStack Query hooks** - Data fetching via `hooks/use*.ts` files
+- ✅ **Offline Strategy** - Hybrid: TanStack Query for cache, `useNetworkSync` for Tickets
 - ✅ **Components use hooks only** - NEVER call Supabase directly from components
-- ✅ **mockData.ts deprecated** - Being replaced by service layer (keep during transition)
 - ✅ **Helpers in lib/helpers.ts** - Utility functions for filtering, formatting, calculations
 
 **React Hooks Usage:**
@@ -228,10 +232,11 @@ src/
 - ✅ **Typography** - `font-display` for headings, default for body
 - ✅ **Variants with CVA** - Use `class-variance-authority` for component variants
 
-**Code Formatting:**
-- ✅ **Consistent indentation** - 2 spaces (enforced by ESLint)
-- ✅ **Template literals for strings** - Use backticks for interpolation
-- ✅ **Arrow functions preferred** - Use arrow functions for handlers and callbacks
+**Code Formatting & Documentation:**
+- ✅ **Indentation**: 2 spaces (enforced by ESLint)
+- ✅ **Comments**: Explain "WHY" something is done, not "WHAT" the code does
+- ✅ **No Dead Code**: Remove unused imports and commented-out code immediately
+- ✅ **Arrow Functions**: Preferred for handlers and callbacks
 
 ---
 
@@ -433,23 +438,44 @@ supabase/functions/
   process-payment/index.ts
 ```
 
-### Testing Infrastructure
+### Testing Rules
 
-| Tool | Purpose |
-|------|---------|
-| Vitest | Test runner (Vite-native) |
-| @testing-library/react | Component testing |
+**Infrastructure:**
+- ✅ **Infrastructure**: Vitest (Unit) + Playwright (E2E) + MSW (API Mocking)
+- ✅ **Mocking Mandate**: Unit tests MUST mock `lib/*Service` layer. NEVER hit real Supabase.
 
-**Test file convention:** Co-located `.test.ts` files
-```
-lib/experienceService.ts
-lib/experienceService.test.ts
-hooks/useExperiences.ts
-hooks/useExperiences.test.ts
-```
+**Critical One-Line Rules:**
+- ✅ **Offline First**: ALL PWA features (like Tickets) MUST be verified with network disabled (Playwright)
+- ✅ **Co-location**: Tests live with source: `feature.tsx` -> `feature.test.tsx`
+- ✅ **Behavior Driven**: Test user interactions, not internal state
+
+### Code Quality & Style Rules
+
+**Standards:**
+- ✅ **One Component, One File**: Except closely coupled sub-components
+- ✅ **Naming**: PascalCase for Components, camelCase for logic/hooks
+- ✅ **Imports**: Grouped: React -> External -> Internal (`@/`) -> Styles
+
+**Documentation:**
+- ✅ **Why not What**: Comments should explain intent, not syntax
+- ✅ **No Dead Code**: Commented-out code is forbidden
 
 ---
 
-_Last updated: 2026-01-08 by Moe_
-_This document is the single source of truth for AI agents working on Pulau project_
-_See also: `_bmad-output/planning-artifacts/architecture/architecture.md` for full architectural decisions_
+## Usage Guidelines
+
+**For AI Agents:**
+
+- Read this file before implementing any code
+- Follow ALL rules exactly as documented
+- When in doubt, prefer the more restrictive option
+- Update this file if new patterns emerge
+
+**For Humans:**
+
+- Keep this file lean and focused on agent needs
+- Update when technology stack changes
+- Review quarterly for outdated rules
+- Remove rules that become obvious over time
+
+Last Updated: 2026-01-11

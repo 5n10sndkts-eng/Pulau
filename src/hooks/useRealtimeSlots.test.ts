@@ -11,7 +11,7 @@ import * as realtimeService from '@/lib/realtimeService'
 // Mock the realtime service
 vi.mock('@/lib/realtimeService', () => ({
   subscribeToSlotAvailability: vi.fn(),
-  unsubscribe: vi.fn()
+  unsubscribe: vi.fn().mockResolvedValue(undefined)
 }))
 
 describe('useRealtimeSlots', () => {
@@ -38,7 +38,7 @@ describe('useRealtimeSlots', () => {
     vi.mocked(realtimeService.subscribeToSlotAvailability).mockReturnValue(mockSubId)
 
     const callback = vi.fn()
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealtimeSlots('exp-123', callback)
     )
 
@@ -121,7 +121,7 @@ describe('useRealtimeSlots', () => {
     const errorCallback = vi.fn(() => {
       throw new Error('Callback error')
     })
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { })
 
     const { result } = renderHook(() => useRealtimeSlots('exp-error', errorCallback))
 
@@ -149,7 +149,7 @@ describe('useRealtimeSlots', () => {
       }
     )
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealtimeSlots('exp-stale', undefined, { staleThresholdMs: 5000 })
     )
 
@@ -179,7 +179,7 @@ describe('useRealtimeSlots', () => {
   it('should retry on error when enabled', async () => {
     const mockError = new Error('Connection failed')
     let callCount = 0
-    
+
     vi.mocked(realtimeService.subscribeToSlotAvailability).mockImplementation(() => {
       callCount++
       if (callCount === 1) {
@@ -188,10 +188,10 @@ describe('useRealtimeSlots', () => {
       return 'sub-retry-success'
     })
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { })
+    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => { })
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealtimeSlots('exp-retry', undefined, { retryOnError: true, retryDelayMs: 1000 })
     )
 
@@ -221,9 +221,9 @@ describe('useRealtimeSlots', () => {
       throw mockError
     })
 
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { })
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealtimeSlots('exp-no-retry', undefined, { retryOnError: false })
     )
 

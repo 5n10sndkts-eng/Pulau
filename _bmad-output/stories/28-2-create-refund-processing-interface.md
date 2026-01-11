@@ -24,30 +24,30 @@ So that I can resolve customer issues efficiently.
 
 ## Tasks / Subtasks
 
-- [ ] Add "Process Refund" button to booking detail (AC: 1)
-  - [ ] Show button on booking detail page in admin dashboard
-  - [ ] Enable only for confirmed/partially_refunded bookings
-  - [ ] Disable for fully refunded or cancelled bookings
-  - [ ] Open refund modal on click
-- [ ] Create refund modal interface (AC: 1)
-  - [ ] Display booking summary (experience, amount paid)
-  - [ ] Add refund type radio buttons: Full / Partial
-  - [ ] Add custom amount input (for partial refunds)
-  - [ ] Validate amount <= original payment
-  - [ ] Add refund reason textarea (required)
-  - [ ] Show calculated breakdown
-- [ ] Calculate refund amounts (AC: 1)
-  - [ ] Traveler refund amount
-  - [ ] Vendor deduction (if within cancellation window)
-  - [ ] Platform fee handling (refund or keep)
-  - [ ] Calculate based on refund policy
-  - [ ] Display itemized breakdown
-- [ ] Add confirmation step (AC: 1)
-  - [ ] Show summary before processing
-  - [ ] Require admin to confirm amounts
-  - [ ] Display "Confirm Refund" button
-  - [ ] Show loading state during processing
-  - [ ] Display success/error message after processing
+- [x] Add "Process Refund" button to booking detail (AC: 1)
+  - [x] Show button on booking detail page in admin dashboard
+  - [x] Enable only for confirmed/partially_refunded bookings
+  - [x] Disable for fully refunded or cancelled bookings
+  - [x] Open refund modal on click
+- [x] Create refund modal interface (AC: 1)
+  - [x] Display booking summary (experience, amount paid)
+  - [x] Add refund type radio buttons: Full / Partial
+  - [x] Add custom amount input (for partial refunds)
+  - [x] Validate amount <= original payment
+  - [x] Add refund reason textarea (required)
+  - [x] Show calculated breakdown
+- [x] Calculate refund amounts (AC: 1)
+  - [x] Traveler refund amount
+  - [x] Vendor deduction (if within cancellation window)
+  - [x] Platform fee handling (refund or keep)
+  - [x] Calculate based on refund policy
+  - [x] Display itemized breakdown
+- [x] Add confirmation step (AC: 1)
+  - [x] Show summary before processing
+  - [x] Require admin to confirm amounts
+  - [x] Display "Confirm Refund" button
+  - [x] Show loading state during processing
+  - [x] Display success/error message after processing
 
 ## Dev Notes
 
@@ -195,16 +195,27 @@ const refundSchema = z.object({
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Standard modal implementation.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created RefundModal component with:
+   - Full/partial refund selection
+   - Custom amount input for partial refunds
+   - Required refund reason (min 10 chars)
+   - Two-step confirmation flow
+   - Loading states and error handling
+
+2. TanStack Mutation for refund processing
+3. Calls process-refund edge function
+4. Toast notifications for success/error
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/components/admin/RefundModal.tsx

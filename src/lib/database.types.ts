@@ -56,6 +56,8 @@ export type Database = {
           id: string
           reference: string
           status: string | null
+          ticket_generated_at: string | null
+          ticket_url: string | null
           trip_id: string
         }
         Insert: {
@@ -63,6 +65,8 @@ export type Database = {
           id?: string
           reference: string
           status?: string | null
+          ticket_generated_at?: string | null
+          ticket_url?: string | null
           trip_id: string
         }
         Update: {
@@ -70,6 +74,8 @@ export type Database = {
           id?: string
           reference?: string
           status?: string | null
+          ticket_generated_at?: string | null
+          ticket_url?: string | null
           trip_id?: string
         }
         Relationships: [
@@ -613,6 +619,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "trip_items_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trip_items_trip_id_fkey"
             columns: ["trip_id"]
             isOneToOne: false
@@ -693,7 +706,9 @@ export type Database = {
           id: string
           instant_book_enabled: boolean | null
           last_activity_at: string | null
-          onboarding_state: Database["public"]["Enums"]["vendor_onboarding_state"] | null
+          onboarding_state:
+            | Database["public"]["Enums"]["vendor_onboarding_state"]
+            | null
           owner_first_name: string | null
           owner_id: string
           owner_last_name: string | null
@@ -716,7 +731,9 @@ export type Database = {
           id?: string
           instant_book_enabled?: boolean | null
           last_activity_at?: string | null
-          onboarding_state?: Database["public"]["Enums"]["vendor_onboarding_state"] | null
+          onboarding_state?:
+            | Database["public"]["Enums"]["vendor_onboarding_state"]
+            | null
           owner_first_name?: string | null
           owner_id: string
           owner_last_name?: string | null
@@ -739,7 +756,9 @@ export type Database = {
           id?: string
           instant_book_enabled?: boolean | null
           last_activity_at?: string | null
-          onboarding_state?: Database["public"]["Enums"]["vendor_onboarding_state"] | null
+          onboarding_state?:
+            | Database["public"]["Enums"]["vendor_onboarding_state"]
+            | null
           owner_first_name?: string | null
           owner_id?: string
           owner_last_name?: string | null
@@ -761,10 +780,42 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      confirm_booking_atomic: {
+        Args: { p_booking_id: string; p_trip_id: string }
+        Returns: Json
+      }
+      decrement_slot_availability: {
+        Args: {
+          p_count?: number
+          p_experience_id: string
+          p_slot_date: string
+          p_slot_time: string
+        }
+        Returns: Json
+      }
+      decrement_slot_inventory: {
+        Args: { p_count: number; p_slot_id: string }
+        Returns: Json
+      }
+      release_slot_availability: {
+        Args: {
+          p_count?: number
+          p_experience_id: string
+          p_slot_date: string
+          p_slot_time: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
-      vendor_onboarding_state: 'registered' | 'kyc_submitted' | 'kyc_verified' | 'kyc_rejected' | 'bank_linked' | 'active' | 'suspended'
+      vendor_onboarding_state:
+        | "registered"
+        | "kyc_submitted"
+        | "kyc_verified"
+        | "kyc_rejected"
+        | "bank_linked"
+        | "active"
+        | "suspended"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -891,6 +942,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      vendor_onboarding_state: [
+        "registered",
+        "kyc_submitted",
+        "kyc_verified",
+        "kyc_rejected",
+        "bank_linked",
+        "active",
+        "suspended",
+      ],
+    },
   },
 } as const

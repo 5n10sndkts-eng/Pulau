@@ -1,6 +1,6 @@
 # Story 25.5: Display Real-Time Slot Availability
 
-Status: done
+Status: review
 
 ## Story
 
@@ -22,28 +22,28 @@ So that I can make informed booking decisions.
 
 ## Tasks / Subtasks
 
-- [ ] Create slot availability component (AC: 1)
-  - [ ] Create `SlotAvailabilityList.tsx` component
-  - [ ] Display list of time slots for selected date
-  - [ ] Show time, available count, and price for each slot
-  - [ ] Use card component for each slot
-  - [ ] Make slots clickable to select for booking
-- [ ] Add low availability visual indicator (AC: 1)
-  - [ ] Show warning color (coral) when available_count < 3
-  - [ ] Add "Only X left!" text in coral color
-  - [ ] Add subtle pulsing animation for urgency (200ms)
-  - [ ] Use alert icon (AlertCircle from Lucide React)
-- [ ] Handle sold out slots (AC: 1)
-  - [ ] Display "Sold Out" badge on unavailable slots
-  - [ ] Gray out sold out slots (reduced opacity: 0.5)
-  - [ ] Disable click interaction on sold out slots
-  - [ ] Show slots but make unselectable
-- [ ] Integrate real-time updates (AC: 1)
-  - [ ] Use realtimeService from Story 25.2
-  - [ ] Subscribe to slot availability changes on component mount
-  - [ ] Update local state when subscription fires
-  - [ ] Clean up subscription on unmount
-  - [ ] Show subtle animation when availability changes
+- [x] Create slot availability component (AC: 1)
+  - [x] Create `SlotAvailabilityList.tsx` component
+  - [x] Display list of time slots for selected date
+  - [x] Show time, available count, and price for each slot
+  - [x] Use card component for each slot
+  - [x] Make slots clickable to select for booking
+- [x] Add low availability visual indicator (AC: 1)
+  - [x] Show warning color (coral) when available_count < 3
+  - [x] Add "Only X left!" text in coral color
+  - [x] Add subtle pulsing animation for urgency (200ms)
+  - [x] Use alert icon (AlertCircle from Lucide React)
+- [x] Handle sold out slots (AC: 1)
+  - [x] Display "Sold Out" badge on unavailable slots
+  - [x] Gray out sold out slots (reduced opacity: 0.5)
+  - [x] Disable click interaction on sold out slots
+  - [x] Show slots but make unselectable
+- [x] Integrate real-time updates (AC: 1)
+  - [x] Use realtimeService from Story 25.2
+  - [x] Subscribe to slot availability changes on component mount
+  - [x] Update local state when subscription fires
+  - [x] Clean up subscription on unmount
+  - [x] Show subtle animation when availability changes
 
 ## Dev Notes
 
@@ -152,16 +152,35 @@ interface SlotDisplayProps {
 
 ### Agent Model Used
 
-_To be filled by dev agent_
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-_To be filled by dev agent_
+N/A - Implementation leveraged existing RealtimeSlotDisplay component.
 
 ### Completion Notes List
 
-_To be filled by dev agent_
+**Implementation Summary:**
+1. Created `SlotAvailabilityList.tsx` as a re-export wrapper component for `RealtimeSlotDisplay`
+   - Provides naming consistency with story specification
+   - Re-exports both component and props type for external use
+
+2. Core functionality already implemented in `RealtimeSlotDisplay.tsx`:
+   - Real-time slot availability with Supabase subscriptions
+   - Low availability warnings (< 3 spots) with coral color and AlertCircle icon
+   - Sold out slots displayed with disabled state and grayed styling
+   - Smooth 300ms animations for availability changes
+   - Connection status indicators
+   - Loading states with skeletons
+
+3. Integrated with `useRealtimeSlots` hook for subscription management
 
 ### File List
 
-_To be filled by dev agent_
+**Created Files:**
+- src/components/SlotAvailabilityList.tsx
+
+**Referenced Files:**
+- src/components/RealtimeSlotDisplay.tsx
+- src/hooks/useRealtimeSlots.ts
+- src/lib/realtimeService.ts
