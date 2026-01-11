@@ -75,6 +75,33 @@ export interface ExperiencePerformanceResponse {
 export type SortColumn = 'title' | 'bookingCount' | 'slotUtilization' | 'averageRating' | 'revenue'
 export type SortDirection = 'asc' | 'desc'
 
+// Story 29.3: Payout History Types
+export type PayoutStatus = 'pending' | 'in_transit' | 'paid' | 'failed' | 'canceled'
+
+export interface PayoutRecord {
+  id: string
+  amount: number       // in cents
+  fee: number          // platform fee in cents
+  net: number          // net amount after fees in cents
+  currency: string     // 'usd', 'idr'
+  status: PayoutStatus
+  arrivalDate: Date    // expected or actual arrival
+  createdAt: Date
+  stripePayoutId: string
+  description?: string
+}
+
+export interface PayoutHistoryResponse {
+  payouts: PayoutRecord[]
+  hasMore: boolean
+  totalCount: number
+  summary: {
+    totalPaid: number
+    totalPending: number
+    totalInTransit: number
+  }
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -794,5 +821,212 @@ export async function getExperiencePerformanceMetrics(
   } catch (err) {
     console.error('Error in getExperiencePerformanceMetrics:', err)
     return defaultResponse
+  }
+}
+
+// ============================================================================
+// Story 29.3: Payout History
+// ============================================================================
+
+const PAYOUT_STATUSES: PayoutStatus[] = ['paid', 'paid', 'paid', 'in_transit', 'pending']
+
+function generateMockPayoutHistory(limit: number = 10): PayoutHistoryResponse {
+  const payouts: PayoutRecord[] = []
+  const now = Date.now()
+
+  for (let i = 0; i < limit; i++) {
+    const amount = Math.floor(Math.random() * 500000) + 50000 // $500-$5,500 in cents
+    const fee = Math.round(amount * 0.029) // ~2.9% Stripe fee
+    const status = PAYOUT_STATUSES[i % PAYOUT_STATUSES.length] ?? 'paid'
+    const daysAgo = i * 7 + Math.floor(Math.random() * 3) // Weekly payouts with some variance
+
+    payouts.push({
+      id: `po_${Date.now()}_${i}`,
+      amount,
+      fee,
+      net: amount - fee,
+      currency: 'usd',
+      status,
+      arrivalDate: new Date(now - daysAgo * 24 * 60 * 60 * 1000),
+      createdAt: new Date(now - (daysAgo + 2) * 24 * 60 * 60 * 1000),
+      stripePayoutId: `po_mock_${String(i).padStart(4, '0')}`,
+      description: `Weekly payout - ${new Date(now - daysAgo * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+    })
+  }
+
+  const totalPaid = payouts
+    .filter(p => p.status === 'paid')
+    .reduce((sum, p) => sum + p.net, 0)
+  const totalPending = payouts
+    .filter(p => p.status === 'pending')
+    .reduce((sum, p) => sum + p.net, 0)
+  const totalInTransit = payouts
+    .filter(p => p.status === 'in_transit')
+    .reduce((sum, p) => sum + p.net, 0)
+
+  return {
+    payouts,
+    hasMore: limit < 20, // Simulate having more data
+    totalCount: 20,
+    summary: {
+      totalPaid,
+      totalPending,
+      totalInTransit,
+    },
+  }
+}
+
+/**
+ * Get payout history from Stripe Connect
+ *
+ * @param vendorId - The vendor's UUID
+ * @param limit - Number of payouts to fetch (default 10)
+ * @param offset - Pagination offset (default 0)
+ */
+export async function getPayoutHistory(
+  vendorId: string,
+  limit: number = 10,
+  offset: number = 0
+): Promise<PayoutHistoryResponse> {
+  const defaultResponse: PayoutHistoryResponse = {
+    payouts: [],
+    hasMore: false,
+    totalCount: 0,
+    summary: {
+      totalPaid: 0,
+      totalPending: 0,
+      totalInTransit: 0,
+    },
+  }
+
+  if (USE_MOCK_DATA) {
+    return generateMockPayoutHistory(limit)
+  }
+
+  try {
+    const { data, error } = await supabase.functions.invoke('vendor-payout-status', {
+      body: { vendorId },
+    })
+
+    if (error) {
+      console.error('Error fetching payout history:', error)
+      return defaultResponse
+    }
+
+    // Transform edge function response to PayoutRecord format
+    const payouts: PayoutRecord[] = []
+
+    // Process pending payouts
+    for (const payout of data?.pending || []) {
+      payouts.push({
+        id: payout.stripe_transfer_id || `pending_${payouts.length}`,
+        amount: payout.amount,
+        fee: Math.round(payout.amount * 0.029), // Estimate fee
+        net: Math.round(payout.amount * 0.971),
+        currency: payout.currency || 'usd',
+        status: 'pending',
+        arrivalDate: new Date(payout.arrival_date * 1000),
+        createdAt: new Date(payout.arrival_date * 1000 - 2 * 24 * 60 * 60 * 1000),
+        stripePayoutId: payout.stripe_transfer_id || '',
+      })
+    }
+
+    // Process in-transit payouts
+    for (const payout of data?.scheduled || []) {
+      payouts.push({
+        id: payout.stripe_transfer_id,
+        amount: payout.amount,
+        fee: Math.round(payout.amount * 0.029),
+        net: Math.round(payout.amount * 0.971),
+        currency: payout.currency || 'usd',
+        status: 'in_transit',
+        arrivalDate: new Date(payout.arrival_date * 1000),
+        createdAt: new Date(payout.arrival_date * 1000 - 2 * 24 * 60 * 60 * 1000),
+        stripePayoutId: payout.stripe_transfer_id,
+      })
+    }
+
+    // Process completed payouts
+    for (const payout of data?.completed || []) {
+      payouts.push({
+        id: payout.stripe_transfer_id,
+        amount: payout.amount,
+        fee: Math.round(payout.amount * 0.029),
+        net: Math.round(payout.amount * 0.971),
+        currency: payout.currency || 'usd',
+        status: 'paid',
+        arrivalDate: new Date(payout.arrival_date * 1000),
+        createdAt: new Date(payout.arrival_date * 1000 - 2 * 24 * 60 * 60 * 1000),
+        stripePayoutId: payout.stripe_transfer_id,
+      })
+    }
+
+    // Sort by arrival date descending (most recent first)
+    payouts.sort((a, b) => b.arrivalDate.getTime() - a.arrivalDate.getTime())
+
+    // Apply pagination
+    const paginated = payouts.slice(offset, offset + limit)
+
+    const totalPaid = payouts
+      .filter(p => p.status === 'paid')
+      .reduce((sum, p) => sum + p.net, 0)
+    const totalPending = payouts
+      .filter(p => p.status === 'pending')
+      .reduce((sum, p) => sum + p.net, 0)
+    const totalInTransit = payouts
+      .filter(p => p.status === 'in_transit')
+      .reduce((sum, p) => sum + p.net, 0)
+
+    return {
+      payouts: paginated,
+      hasMore: offset + limit < payouts.length,
+      totalCount: payouts.length,
+      summary: {
+        totalPaid,
+        totalPending,
+        totalInTransit,
+      },
+    }
+  } catch (err) {
+    console.error('Error in getPayoutHistory:', err)
+    return defaultResponse
+  }
+}
+
+/**
+ * Export payout history to CSV format
+ */
+export function exportPayoutsToCSV(payouts: PayoutRecord[]): string {
+  const headers = ['Date', 'Status', 'Gross Amount', 'Fee', 'Net Amount', 'Currency', 'Payout ID']
+  const rows = payouts.map(p => [
+    p.arrivalDate.toISOString().split('T')[0],
+    p.status,
+    (p.amount / 100).toFixed(2),
+    (p.fee / 100).toFixed(2),
+    (p.net / 100).toFixed(2),
+    p.currency.toUpperCase(),
+    p.stripePayoutId,
+  ])
+
+  return [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+}
+
+/**
+ * Format payout status for display
+ */
+export function formatPayoutStatus(status: PayoutStatus): { label: string; color: string } {
+  switch (status) {
+    case 'paid':
+      return { label: 'Completed', color: 'green' }
+    case 'in_transit':
+      return { label: 'In Transit', color: 'blue' }
+    case 'pending':
+      return { label: 'Pending', color: 'yellow' }
+    case 'failed':
+      return { label: 'Failed', color: 'red' }
+    case 'canceled':
+      return { label: 'Canceled', color: 'gray' }
+    default:
+      return { label: status, color: 'gray' }
   }
 }

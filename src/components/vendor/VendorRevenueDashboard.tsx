@@ -43,6 +43,7 @@ import {
 import { RevenueSummaryCard } from './RevenueSummaryCard'
 import { RevenueChart } from './RevenueChart'
 import { ExperiencePerformanceTable } from './ExperiencePerformanceTable'
+import { PayoutHistoryTable } from './PayoutHistoryTable'
 
 // Error fallback for chart rendering failures
 function ChartErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
@@ -345,6 +346,9 @@ export function VendorRevenueDashboard({
           session={session}
           selectedPeriod={selectedPeriod}
         />
+
+        {/* Payout History Table (Story 29.3) */}
+        <PayoutHistoryTable session={session} />
       </div>
     </div>
   )
