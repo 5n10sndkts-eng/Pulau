@@ -44,6 +44,7 @@ import { RevenueSummaryCard } from './RevenueSummaryCard'
 import { RevenueChart } from './RevenueChart'
 import { ExperiencePerformanceTable } from './ExperiencePerformanceTable'
 import { PayoutHistoryTable } from './PayoutHistoryTable'
+import { BookingFunnelChart } from './BookingFunnelChart'
 
 // Error fallback for chart rendering failures
 function ChartErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
@@ -340,6 +341,12 @@ export function VendorRevenueDashboard({
             </div>
           </Card>
         )}
+
+        {/* Booking Funnel Chart (Story 29.4) */}
+        <BookingFunnelChart
+          session={session}
+          selectedPeriod={selectedPeriod}
+        />
 
         {/* Experience Performance Table (Story 29.2) */}
         <ExperiencePerformanceTable

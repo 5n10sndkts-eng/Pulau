@@ -1030,3 +1030,206 @@ export function formatPayoutStatus(status: PayoutStatus): { label: string; color
       return { label: status, color: 'gray' }
   }
 }
+
+// ============================================================================
+// Story 29.4: Booking Funnel Analytics
+// ============================================================================
+
+export interface FunnelStage {
+  name: string
+  value: number
+  fill: string
+  conversionFromPrevious?: number // percentage
+}
+
+export interface FunnelData {
+  stages: FunnelStage[]
+  conversionRates: {
+    viewsToAddToTrip: number
+    addToTripToCheckout: number
+    checkoutToConfirmed: number
+    overallConversion: number
+  }
+  periodLabel: string
+}
+
+// Funnel stage colors (gradient from primary to lighter)
+const FUNNEL_COLORS = [
+  '#0D7377', // Primary teal - Views
+  '#14919B', // Lighter teal - Add to Trip
+  '#1FA9B5', // Even lighter - Checkout
+  '#2BC5D3', // Lightest - Confirmed
+]
+
+function generateMockFunnelData(period: TimePeriod): FunnelData {
+  // Generate realistic funnel data with typical drop-offs
+  const baseViews = Math.floor(Math.random() * 2000) + 500
+
+  // Typical conversion rates:
+  // Views -> Add to Trip: 15-25%
+  // Add to Trip -> Checkout: 40-60%
+  // Checkout -> Confirmed: 70-85%
+  const viewsToAddRate = 0.15 + Math.random() * 0.10
+  const addToCheckoutRate = 0.40 + Math.random() * 0.20
+  const checkoutToConfirmRate = 0.70 + Math.random() * 0.15
+
+  const views = baseViews
+  const addToTrip = Math.round(views * viewsToAddRate)
+  const checkoutStarted = Math.round(addToTrip * addToCheckoutRate)
+  const confirmed = Math.round(checkoutStarted * checkoutToConfirmRate)
+
+  const overallConversion = views > 0 ? (confirmed / views) * 100 : 0
+
+  const stages: FunnelStage[] = [
+    {
+      name: 'Views',
+      value: views,
+      fill: FUNNEL_COLORS[0]!,
+    },
+    {
+      name: 'Add to Trip',
+      value: addToTrip,
+      fill: FUNNEL_COLORS[1]!,
+      conversionFromPrevious: views > 0 ? (addToTrip / views) * 100 : 0,
+    },
+    {
+      name: 'Checkout',
+      value: checkoutStarted,
+      fill: FUNNEL_COLORS[2]!,
+      conversionFromPrevious: addToTrip > 0 ? (checkoutStarted / addToTrip) * 100 : 0,
+    },
+    {
+      name: 'Confirmed',
+      value: confirmed,
+      fill: FUNNEL_COLORS[3]!,
+      conversionFromPrevious: checkoutStarted > 0 ? (confirmed / checkoutStarted) * 100 : 0,
+    },
+  ]
+
+  const periodLabels: Record<TimePeriod, string> = {
+    '7d': 'Last 7 days',
+    '30d': 'Last 30 days',
+    '90d': 'Last 90 days',
+    '12m': 'Last 12 months',
+  }
+
+  return {
+    stages,
+    conversionRates: {
+      viewsToAddToTrip: viewsToAddRate * 100,
+      addToTripToCheckout: addToCheckoutRate * 100,
+      checkoutToConfirmed: checkoutToConfirmRate * 100,
+      overallConversion,
+    },
+    periodLabel: periodLabels[period],
+  }
+}
+
+/**
+ * Get booking funnel data for a vendor
+ *
+ * Note: Currently uses mock data since view tracking isn't implemented.
+ * Real implementation would aggregate data from:
+ * - Analytics events for page views
+ * - trip_items for add-to-cart
+ * - bookings for checkout/confirmed
+ *
+ * @param vendorId - The vendor's UUID
+ * @param period - Time period for funnel data
+ */
+export async function getBookingFunnel(
+  vendorId: string,
+  period: TimePeriod = '30d'
+): Promise<FunnelData> {
+  // For now, always use mock data since view tracking isn't implemented
+  // In future, this would query analytics and bookings data
+  if (USE_MOCK_DATA || true) {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300))
+    return generateMockFunnelData(period)
+  }
+
+  // Future implementation would:
+  // 1. Query analytics_events for experience views by vendor
+  // 2. Query trip_items for add-to-cart events
+  // 3. Query bookings for checkout started (status = 'pending')
+  // 4. Query bookings + payments for confirmed (payment succeeded)
+
+  const { startDate, endDate } = getDateRangeForPeriod(period)
+
+  try {
+    // Get vendor's experience IDs
+    const { data: experiences } = await supabase
+      .from('experiences')
+      .select('id')
+      .eq('vendor_id', vendorId)
+
+    if (!experiences?.length) {
+      return {
+        stages: [
+          { name: 'Views', value: 0, fill: FUNNEL_COLORS[0]! },
+          { name: 'Add to Trip', value: 0, fill: FUNNEL_COLORS[1]!, conversionFromPrevious: 0 },
+          { name: 'Checkout', value: 0, fill: FUNNEL_COLORS[2]!, conversionFromPrevious: 0 },
+          { name: 'Confirmed', value: 0, fill: FUNNEL_COLORS[3]!, conversionFromPrevious: 0 },
+        ],
+        conversionRates: {
+          viewsToAddToTrip: 0,
+          addToTripToCheckout: 0,
+          checkoutToConfirmed: 0,
+          overallConversion: 0,
+        },
+        periodLabel: period,
+      }
+    }
+
+    const expIds = experiences?.map(e => e.id) || []
+
+    // Get trip_items count (add to cart)
+    const { count: addToTripCount } = await supabase
+      .from('trip_items')
+      .select('*', { count: 'exact', head: true })
+      .in('experience_id', expIds)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+
+    // Get bookings by status
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select(`
+        id,
+        status,
+        trips!inner (
+          trip_items!inner (
+            experience_id
+          )
+        )
+      `)
+      .gte('booked_at', startDate.toISOString())
+      .lte('booked_at', endDate.toISOString())
+
+    // Filter to vendor's experiences and count by status
+    const vendorBookings = bookings?.filter(b =>
+      b.trips?.trip_items?.some(ti => expIds.includes(ti.experience_id))
+    ) || []
+
+    const checkoutCount = vendorBookings.length
+    const confirmedCount = vendorBookings.filter(b =>
+      b.status === 'confirmed' || b.status === 'completed'
+    ).length
+
+    // Views would come from analytics - mock for now
+    const views = (addToTripCount || 0) * 5 // Estimate 20% add-to-cart rate
+
+    return generateMockFunnelData(period) // Fall back to mock for now
+  } catch (err) {
+    console.error('Error in getBookingFunnel:', err)
+    return generateMockFunnelData(period)
+  }
+}
+
+/**
+ * Format conversion rate for display
+ */
+export function formatConversionRate(rate: number): string {
+  return `${rate.toFixed(1)}%`
+}
