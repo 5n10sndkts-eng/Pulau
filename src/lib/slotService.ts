@@ -569,9 +569,31 @@ interface SlotAuditLogParams {
   metadata: Record<string, unknown>
 }
 
+/**
+ * Track failed audit log attempts for compliance monitoring.
+ * In production, this would ideally be sent to an error tracking service.
+ */
+let failedAuditAttempts: Array<{ timestamp: string; eventType: string; error: string }> = []
+
+/**
+ * Get count of failed audit attempts (for monitoring dashboards)
+ */
+export function getFailedAuditAttemptCount(): number {
+  return failedAuditAttempts.length
+}
+
+/**
+ * Get and clear failed audit attempts (for retry or reporting)
+ */
+export function getAndClearFailedAuditAttempts(): typeof failedAuditAttempts {
+  const attempts = [...failedAuditAttempts]
+  failedAuditAttempts = []
+  return attempts
+}
+
 async function createSlotAuditLog(params: SlotAuditLogParams): Promise<void> {
   try {
-    await supabase.from('audit_logs').insert({
+    const { error } = await supabase.from('audit_logs').insert({
       event_type: params.eventType,
       entity_type: 'experience_slot',
       entity_id: params.slotId,
@@ -581,9 +603,30 @@ async function createSlotAuditLog(params: SlotAuditLogParams): Promise<void> {
         ...params.metadata,
       },
     })
+
+    if (error) {
+      throw error
+    }
   } catch (e) {
-    // Don't fail the operation if audit log fails
-    console.error('Failed to create slot audit log:', e)
+    // Track failed audit attempts for compliance monitoring
+    const errorMessage = e instanceof Error ? e.message : 'Unknown error'
+    failedAuditAttempts.push({
+      timestamp: new Date().toISOString(),
+      eventType: params.eventType,
+      error: errorMessage,
+    })
+
+    // Limit stored failures to prevent memory issues (keep last 100)
+    if (failedAuditAttempts.length > 100) {
+      failedAuditAttempts = failedAuditAttempts.slice(-100)
+    }
+
+    // Don't fail the operation if audit log fails, but log for debugging
+    console.error('Failed to create slot audit log:', e, {
+      eventType: params.eventType,
+      slotId: params.slotId,
+      failedAttemptCount: failedAuditAttempts.length,
+    })
   }
 }
 

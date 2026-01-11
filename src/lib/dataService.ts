@@ -7,11 +7,88 @@ import { experiences as mockExperiences } from './mockData'
 // 2. Supabase is not configured (no valid credentials)
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupabaseConfigured()
 
+// ================================================
+// Database Record Types (for Supabase query results)
+// ================================================
+
+interface DBVendor {
+    id: string
+    business_name: string | null
+    photo: string | null
+    bio: string | null
+    since_year: number | null
+    rating: number | null
+    review_count: number | null
+    response_time: string | null
+    verified: boolean | null
+    created_at: string | null
+}
+
+interface DBExperienceImage {
+    id: string
+    image_url: string
+    display_order: number | null
+}
+
+interface DBExperienceInclusion {
+    id: string
+    item_text: string
+    inclusion_type: string  // Supabase returns string, we filter by literal values
+    display_order: number | null
+}
+
+interface DBReview {
+    id: string
+    author_name: string | null
+    country: string | null
+    rating: number
+    text: string | null
+    helpful_count: number | null
+    created_at: string
+}
+
+interface DBExperienceRecord {
+    id: string
+    title: string
+    category: string
+    subcategory: string | null
+    destination_id: string | null
+    vendor_id: string
+    price_amount: number
+    price_currency: string | null
+    price_per: string | null
+    duration_hours: number | null
+    start_time: string | null
+    group_size_min: number | null
+    group_size_max: number | null
+    difficulty: string | null
+    languages: string[] | null
+    description: string | null
+    meeting_point_name: string | null
+    meeting_point_address: string | null
+    meeting_point_lat: number | null
+    meeting_point_lng: number | null
+    meeting_point_instructions: string | null
+    cancellation_policy: string | null
+    tags: string[] | null
+    status: string | null
+    created_at: string
+    updated_at: string | null
+    published_at: string | null
+    instant_book_enabled: boolean | null
+    cutoff_hours: number | null
+    // Joined relations
+    vendors: DBVendor | null
+    experience_images: DBExperienceImage[] | null
+    experience_inclusions: DBExperienceInclusion[] | null
+    reviews: DBReview[] | null
+}
+
 /**
  * Helper to convert DB Record to UI Experience.
  * Exported for use by vendorService to avoid code duplication.
  */
-export function toExperience(record: any): Experience {
+export function toExperience(record: DBExperienceRecord): Experience {
     // Map vendor data from join
     const vendor = record.vendors
     const provider: Provider = {
@@ -28,28 +105,28 @@ export function toExperience(record: any): Experience {
 
     // Map images from join (sorted by display_order)
     const images = (record.experience_images || [])
-        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-        .map((img: any) => img.image_url)
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+        .map((img) => img.image_url)
 
     // Map inclusions from join
     const inclusions = record.experience_inclusions || []
     const included = inclusions
-        .filter((i: any) => i.inclusion_type === 'included')
-        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-        .map((i: any) => i.item_text)
+        .filter((i) => i.inclusion_type === 'included')
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+        .map((i) => i.item_text)
     const notIncluded = inclusions
-        .filter((i: any) => i.inclusion_type === 'not_included')
-        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-        .map((i: any) => i.item_text)
+        .filter((i) => i.inclusion_type === 'not_included')
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+        .map((i) => i.item_text)
     const whatToBring = inclusions
-        .filter((i: any) => i.inclusion_type === 'what_to_bring')
-        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-        .map((i: any) => i.item_text)
+        .filter((i) => i.inclusion_type === 'what_to_bring')
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+        .map((i) => i.item_text)
 
     // Map reviews from join
-    const reviews = (record.reviews || []).map((r: any) => ({
+    const reviews = (record.reviews || []).map((r) => ({
         id: r.id,
-        author: r.author_name,
+        author: r.author_name || 'Anonymous',
         country: r.country || '',
         date: r.created_at,
         rating: r.rating,
@@ -77,7 +154,7 @@ export function toExperience(record: any): Experience {
         },
         duration: durationStr,
         durationHours: durationHours,
-        startTime: record.start_time,
+        startTime: record.start_time ?? undefined,
         groupSize: { min: record.group_size_min || 1, max: record.group_size_max || 10 },
         difficulty: (record.difficulty as Difficulty) || 'Easy',
         languages: record.languages || ['English'],
@@ -87,20 +164,20 @@ export function toExperience(record: any): Experience {
         notIncluded: notIncluded,
         meetingPoint: {
             name: record.meeting_point_name || '',
-            address: record.meeting_point_address,
-            lat: record.meeting_point_lat,
-            lng: record.meeting_point_lng,
+            address: record.meeting_point_address ?? undefined,
+            lat: record.meeting_point_lat ?? undefined,
+            lng: record.meeting_point_lng ?? undefined,
             instructions: record.meeting_point_instructions || ''
         },
         cancellation: record.cancellation_policy || 'Free cancellation up to 24 hours before',
         whatToBring: whatToBring,
         reviews: reviews,
         tags: record.tags || [],
-        status: record.status as ExperienceStatus,
+        status: (record.status || 'draft') as ExperienceStatus,
         vendorId: record.vendor_id,
         createdAt: record.created_at,
-        updatedAt: record.updated_at,
-        publishedAt: record.published_at,
+        updatedAt: record.updated_at ?? undefined,
+        publishedAt: record.published_at ?? undefined,
         instantBookEnabled: record.instant_book_enabled ?? false,
         cutoffHours: record.cutoff_hours ?? 2
     }

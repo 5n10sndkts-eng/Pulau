@@ -41,6 +41,26 @@ interface SubscriptionMetadata {
 }
 
 // ================================================
+// VALIDATION HELPERS
+// ================================================
+
+/**
+ * UUID v4 validation regex pattern
+ * Prevents injection attacks by ensuring IDs match expected format
+ */
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+/**
+ * Validate that a string is a valid UUID
+ * @throws Error if the ID is not a valid UUID format
+ */
+function validateUUID(id: string, paramName: string): void {
+  if (!UUID_PATTERN.test(id)) {
+    throw new Error(`Invalid ${paramName}: must be a valid UUID format`)
+  }
+}
+
+// ================================================
 // STATE MANAGEMENT
 // ================================================
 
@@ -75,6 +95,9 @@ export function subscribeToSlotAvailability(
   experienceId: string,
   callback: SlotAvailabilityCallback
 ): string {
+  // Validate UUID to prevent filter injection attacks
+  validateUUID(experienceId, 'experienceId')
+
   // Generate unique subscription ID
   const subscriptionId = `slot-${experienceId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
 
@@ -126,6 +149,9 @@ export function subscribeToBookingStatus(
   bookingId: string,
   callback: BookingStatusCallback
 ): string {
+  // Validate UUID to prevent filter injection attacks
+  validateUUID(bookingId, 'bookingId')
+
   const subscriptionId = `booking-${bookingId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
   const channelName = `booking-${bookingId}-${subscriptionId}`
 

@@ -190,8 +190,11 @@ N/A - Standard component implementation.
 ### File List
 
 **Created Files:**
-- src/components/OfflineTicketDisplay.tsx
+- src/components/booking/TicketPage.tsx (main ticket display)
+- src/components/booking/OfflineBanner.tsx (offline indicator)
 - src/hooks/useOnlineStatus.ts
 
 **Modified Files:**
 - src/components/BookingConfirmation.tsx (QR code display)
+
+**Note:** Original story documented `OfflineTicketDisplay.tsx` but implementation used `TicketPage.tsx` + `OfflineBanner.tsx` as separate components per project conventions.

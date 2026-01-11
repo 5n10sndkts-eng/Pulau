@@ -34,6 +34,7 @@ interface VendorDashboardProps {
   session: VendorSession
   onNavigateToExperiences: () => void
   onNavigateToBookings: () => void
+  onNavigateToRevenue?: () => void
   onLogout: () => void
 }
 
@@ -41,6 +42,7 @@ export function VendorDashboard({
   session,
   onNavigateToExperiences,
   onNavigateToBookings,
+  onNavigateToRevenue,
   onLogout
 }: VendorDashboardProps) {
   const [experiences, setExperiences] = useState<Experience[]>([])
@@ -176,14 +178,17 @@ export function VendorDashboard({
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card
+            className={`p-6 ${onNavigateToRevenue ? 'cursor-pointer hover:bg-muted/50 transition-colors' : ''}`}
+            onClick={onNavigateToRevenue}
+          >
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Revenue This Month</p>
                 <p className="text-3xl font-bold mt-2">${stats.revenueThisMonth}</p>
                 <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
                   <TrendingUp className="h-3 w-3" />
-                  +0%
+                  {onNavigateToRevenue ? 'View Details →' : '+0%'}
                 </p>
               </div>
               <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">

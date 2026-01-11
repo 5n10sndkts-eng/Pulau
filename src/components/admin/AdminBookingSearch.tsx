@@ -86,9 +86,13 @@ async function searchBookings(
     query = query.gte('booked_at', startDate)
   }
 
-  // Apply search term filter (reference or trip name)
+  // Apply search term filter (reference only - sanitized)
   if (searchTerm.trim()) {
-    query = query.or(`reference.ilike.%${searchTerm}%`)
+    // Escape PostgREST special characters to prevent filter injection
+    const sanitizedSearch = searchTerm
+      .replace(/[%_\\]/g, '\\$&')  // Escape SQL wildcards
+      .replace(/[,()]/g, '')       // Remove PostgREST operators
+    query = query.ilike('reference', `%${sanitizedSearch}%`)
   }
 
   const { data, error } = await query

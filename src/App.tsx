@@ -25,6 +25,7 @@ import { PasswordReset } from './components/auth/PasswordReset'
 import { VendorLogin } from './components/vendor/VendorLogin'
 import { VendorRegister } from './components/vendor/VendorRegister'
 import { VendorDashboard } from './components/vendor/VendorDashboard'
+import { VendorRevenueDashboard } from './components/vendor/VendorRevenueDashboard'
 
 import { NavigationShellWithRouter } from './components/layout/NavigationShellWithRouter'
 import { MetaManager } from './components/common/MetaManager'
@@ -107,7 +108,7 @@ function CategoryBrowserRoute({ user, onQuickAdd, onToggleSave }: any) {
     <CategoryBrowser
       categoryId={id || ''}
       userPreferences={user.preferences}
-      savedExperiences={user.saved}
+      savedExperiences={user.saved || []}
       onBack={() => navigate('/')}
       onExperienceSelect={(expId) => navigate(`/experience/${expId}`)}
       onQuickAdd={onQuickAdd}
@@ -300,6 +301,33 @@ function AppContent() {
     navigate('/trips')
   }
 
+  const handleBookAgain = (originalTrip: Trip) => {
+    const clonedItems = originalTrip.items.map(item => ({
+      ...item,
+      date: undefined, // Clear scheduled dates
+      time: undefined
+    }))
+
+    const newTrip: Trip = {
+      ...defaultTrip,
+      id: `trip_${Date.now()}`,
+      userId: safeUser.id,
+      travelers: originalTrip.travelers,
+      destination: originalTrip.destination,
+      status: 'planning',
+      startDate: undefined,
+      endDate: undefined,
+      bookingReference: undefined,
+      bookedAt: undefined,
+      items: clonedItems,
+      ...calculateTripTotal(clonedItems)
+    }
+
+    updateAndSaveTrip(newTrip)
+    navigate('/plan')
+    toast.success('Trip cloned! Set your new dates in the Trip Builder.')
+  }
+
   return (
     <>
       <MetaManager />
@@ -418,20 +446,7 @@ function AppContent() {
                 onUpdateBookings={(b) => setBookings(b)}
                 onBack={() => navigate('/profile')}
                 onViewTrip={(t) => { /* Placeholder */ }}
-                onBookAgain={(t) => {
-                  const clonedItems = t.items.map(item => ({ ...item }))
-                  const newTrip = {
-                    ...defaultTrip,
-                    id: `trip_${Date.now()}`,
-                    userId: safeUser.id,
-                    travelers: t.travelers,
-                    items: clonedItems,
-                    ...calculateTripTotal(clonedItems)
-                  }
-                  updateAndSaveTrip(newTrip)
-                  navigate('/plan')
-                  toast.success('Trip cloned!')
-                }}
+                onBookAgain={handleBookAgain}
               />
             </ProtectedRoute>
           } />
@@ -460,7 +475,14 @@ function AppContent() {
               session={vendorSession!}
               onNavigateToExperiences={() => { }}
               onNavigateToBookings={() => { }}
+              onNavigateToRevenue={() => navigate('/vendor/revenue')}
               onLogout={() => { setVendorSession(null); navigate('/vendor/login') }}
+            />
+          } />
+          <Route path="/vendor/revenue" element={
+            <VendorRevenueDashboard
+              session={vendorSession!}
+              onBack={() => navigate('/vendor/dashboard')}
             />
           } />
 
