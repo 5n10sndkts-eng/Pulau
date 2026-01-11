@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { TicketPage } from './TicketPage'
@@ -14,7 +14,7 @@ export function TicketPageRoute() {
     const [loading, setLoading] = useState(true)
     const [booking, setBooking] = useState<Booking | null>(null)
 
-    const loadBooking = async () => {
+    const loadBooking = useCallback(async () => {
         if (!bookingId || !user) return
         setLoading(true)
         try {
@@ -34,11 +34,13 @@ export function TicketPageRoute() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [bookingId, user])
+
+
 
     useEffect(() => {
         loadBooking()
-    }, [bookingId])
+    }, [loadBooking])
 
     if (loading) {
         return <TicketPage loading={true} />

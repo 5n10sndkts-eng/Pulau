@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * Reusable Framer Motion Components
  * Pre-configured animation variants following Pulau design system

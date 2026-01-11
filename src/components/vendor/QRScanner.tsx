@@ -98,58 +98,9 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
     [lastScannedCode, onScan, onClose]
   )
 
-  useEffect(() => {
-    if (!isOpen) {
-      stopCamera()
-      setScanSuccess(false)
-      setLastScannedCode(null)
-      return
-    }
 
-    startCamera()
 
-    return () => {
-      stopCamera()
-    }
-  }, [isOpen])
-
-  const startCamera = async () => {
-    try {
-      setError(null)
-      
-      // Request camera permission
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' } // Use back camera on mobile
-      })
-
-      streamRef.current = stream
-      setHasPermission(true)
-
-      // Attach stream to video element
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.play()
-      }
-
-      // Start scanning for QR codes
-      startQRScanning()
-    } catch (err) {
-      console.error('Camera access error:', err)
-      setHasPermission(false)
-      
-      if (err instanceof Error) {
-        if (err.name === 'NotAllowedError') {
-          setError('Camera permission denied. Please allow camera access in your browser settings.')
-        } else if (err.name === 'NotFoundError') {
-          setError('No camera found on this device.')
-        } else {
-          setError('Failed to access camera. Please try again.')
-        }
-      }
-    }
-  }
-
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     if (scanIntervalRef.current) {
       clearInterval(scanIntervalRef.current)
       scanIntervalRef.current = null
@@ -159,9 +110,9 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
       streamRef.current = null
     }
     scanningRef.current = false
-  }
+  }, [])
 
-  const startQRScanning = () => {
+  const startQRScanning = useCallback(() => {
     if (!videoRef.current || scanningRef.current) return
 
     scanningRef.current = true
@@ -223,7 +174,58 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
         }
       }
     }, 100) // 100ms = 10 FPS
-  }
+  }, [parseQRData, handleQRDetected])
+
+  const startCamera = useCallback(async () => {
+    try {
+      setError(null)
+
+      // Request camera permission
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' } // Use back camera on mobile
+      })
+
+      streamRef.current = stream
+      setHasPermission(true)
+
+      // Attach stream to video element
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        videoRef.current.play()
+      }
+
+      // Start scanning for QR codes
+      startQRScanning()
+    } catch (err) {
+      console.error('Camera access error:', err)
+      setHasPermission(false)
+
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') {
+          setError('Camera permission denied. Please allow camera access in your browser settings.')
+        } else if (err.name === 'NotFoundError') {
+          setError('No camera found on this device.')
+        } else {
+          setError('Failed to access camera. Please try again.')
+        }
+      }
+    }
+  }, [startQRScanning])
+
+  useEffect(() => {
+    if (!isOpen) {
+      stopCamera()
+      setScanSuccess(false)
+      setLastScannedCode(null)
+      return
+    }
+
+    startCamera()
+
+    return () => {
+      stopCamera()
+    }
+  }, [isOpen, startCamera, stopCamera])
 
   const handleManualInput = () => {
     const bookingId = prompt('Enter booking ID manually:')
@@ -302,24 +304,20 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
                   {/* Corner markers - change color on success */}
                   <div className="w-64 h-64 relative">
                     <div
-                      className={`absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 transition-colors ${
-                        scanSuccess ? 'border-green-400' : 'border-white'
-                      }`}
+                      className={`absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
+                        }`}
                     ></div>
                     <div
-                      className={`absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 transition-colors ${
-                        scanSuccess ? 'border-green-400' : 'border-white'
-                      }`}
+                      className={`absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
+                        }`}
                     ></div>
                     <div
-                      className={`absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 transition-colors ${
-                        scanSuccess ? 'border-green-400' : 'border-white'
-                      }`}
+                      className={`absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
+                        }`}
                     ></div>
                     <div
-                      className={`absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 transition-colors ${
-                        scanSuccess ? 'border-green-400' : 'border-white'
-                      }`}
+                      className={`absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
+                        }`}
                     ></div>
 
                     {/* Success indicator or scanning line */}

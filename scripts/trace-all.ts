@@ -1,13 +1,11 @@
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { resolve, basename, dirname, join } from 'path';
+import { readFileSync, writeFileSync } from 'fs';
+import { basename } from 'path';
 import { execSync } from 'child_process';
 
 // Configuration
 const STORIES_DIR = '_bmad-output/stories';
 const OUTPUT_FILE = '_bmad-output/traceability/global-traceability-report.md';
-const SOURCE_DIR = 'src';
-const TEST_DIR = 'tests';
 
 interface Story {
     path: string;
@@ -29,7 +27,6 @@ interface TraceResult {
 
 // Helper: Find all story files
 function findStoryFiles(dir: string): string[] {
-    const results: string[] = [];
     try {
         const output = execSync(`find ${dir} -name "*.md" | grep -v "epic-"`, { encoding: 'utf-8' });
         return output.trim().split('\n').filter(Boolean);
@@ -72,12 +69,6 @@ function parseStory(filePath: string): Story {
 // Helper: Find tests for a file
 function findTestsForFile(sourceFile: string): string[] {
     const baseName = sourceFile.replace(/\.(ts|tsx)$/, '');
-    const searchPatterns = [
-        `${baseName}.test.ts`,
-        `${baseName}.test.tsx`,
-        `${baseName}.spec.ts`,
-        `**/tests/**/${baseName}.spec.ts`
-    ];
 
     const foundTests: string[] = [];
 

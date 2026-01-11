@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { format, startOfMonth, endOfMonth, addMonths } from 'date-fns'
 import { Button } from '@/components/ui/button'
@@ -46,12 +46,7 @@ export function ExperienceAvailabilityScreen({
   const [isSlotModalOpen, setIsSlotModalOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  // Load slots for visible date range
-  useEffect(() => {
-    loadSlots()
-  }, [experienceId, displayMonth])
-
-  const loadSlots = async () => {
+  const loadSlots = useCallback(async () => {
     setIsLoading(true)
     try {
       const startDate = format(startOfMonth(displayMonth), 'yyyy-MM-dd')
@@ -65,7 +60,14 @@ export function ExperienceAvailabilityScreen({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [experienceId, displayMonth])
+
+  // Load slots for visible date range
+  useEffect(() => {
+    loadSlots()
+  }, [loadSlots])
+
+
 
   // Group slots by date for calendar display
   const slotsByDate = useMemo(() => {

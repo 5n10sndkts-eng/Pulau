@@ -54,7 +54,7 @@ describe('realtimeService', () => {
 
   describe('subscribeToSlotAvailability', () => {
     it('should create a channel subscription for an experience', () => {
-      const experienceId = 'exp-123'
+      const experienceId = '123e4567-e89b-12d3-a456-426614174123'
       const callback = vi.fn()
 
       const subId = subscribeToSlotAvailability(experienceId, callback)
@@ -78,11 +78,11 @@ describe('realtimeService', () => {
       expect(mockSubscribe).toHaveBeenCalled()
 
       // Should return subscription ID
-      expect(subId).toMatch(/^slot-exp-123-[\d-]+$/)
+      expect(subId).toMatch(/^slot-123e4567-e89b-12d3-a456-426614174123-[\d-]+$/)
     })
 
     it('should track active subscriptions', () => {
-      const experienceId = 'exp-456'
+      const experienceId = '123e4567-e89b-12d3-a456-426614174456'
       const callback = vi.fn()
 
       expect(getActiveSubscriptionCount()).toBe(0)
@@ -94,7 +94,7 @@ describe('realtimeService', () => {
     })
 
     it('should allow multiple subscriptions to same experience', () => {
-      const experienceId = 'exp-789'
+      const experienceId = '123e4567-e89b-12d3-a456-426614174789'
       const callback1 = vi.fn()
       const callback2 = vi.fn()
 
@@ -108,7 +108,7 @@ describe('realtimeService', () => {
 
   describe('subscribeToBookingStatus', () => {
     it('should create a channel subscription for a booking', () => {
-      const bookingId = 'booking-123'
+      const bookingId = '223e4567-e89b-12d3-a456-426614174b23'
       const callback = vi.fn()
 
       const subId = subscribeToBookingStatus(bookingId, callback)
@@ -129,13 +129,13 @@ describe('realtimeService', () => {
       )
 
       // Should return subscription ID
-      expect(subId).toMatch(/^booking-booking-123-[\d-]+$/)
+      expect(subId).toMatch(/^booking-223e4567-e89b-12d3-a456-426614174b23-[\d-]+$/)
     })
   })
 
   describe('unsubscribe', () => {
     it('should remove a specific subscription', async () => {
-      const experienceId = 'exp-unsubscribe'
+      const experienceId = '123e4567-e89b-12d3-a456-426614174000'
       const callback = vi.fn()
 
       const subId = subscribeToSlotAvailability(experienceId, callback)
@@ -160,8 +160,8 @@ describe('realtimeService', () => {
 
     it('should not affect other subscriptions', async () => {
       const callback = vi.fn()
-      const subId1 = subscribeToSlotAvailability('exp-1', callback)
-      const subId2 = subscribeToSlotAvailability('exp-2', callback)
+      const subId1 = subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174001', callback)
+      const subId2 = subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174002', callback)
 
       expect(getActiveSubscriptionCount()).toBe(2)
 
@@ -177,9 +177,9 @@ describe('realtimeService', () => {
     it('should remove all active subscriptions', async () => {
       const callback = vi.fn()
 
-      subscribeToSlotAvailability('exp-1', callback)
-      subscribeToSlotAvailability('exp-2', callback)
-      subscribeToBookingStatus('booking-1', callback)
+      subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174001', callback)
+      subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174002', callback)
+      subscribeToBookingStatus('323e4567-e89b-12d3-a456-426614174b01', callback)
 
       expect(getActiveSubscriptionCount()).toBe(3)
 
@@ -204,10 +204,10 @@ describe('realtimeService', () => {
       expect(getActiveSubscriptionCount()).toBe(0)
 
       const callback = vi.fn()
-      subscribeToSlotAvailability('exp-1', callback)
+      subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174001', callback)
       expect(getActiveSubscriptionCount()).toBe(1)
 
-      subscribeToSlotAvailability('exp-2', callback)
+      subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174002', callback)
       expect(getActiveSubscriptionCount()).toBe(2)
     })
   })
@@ -217,8 +217,8 @@ describe('realtimeService', () => {
       expect(getActiveSubscriptionIds()).toEqual([])
 
       const callback = vi.fn()
-      const subId1 = subscribeToSlotAvailability('exp-1', callback)
-      const subId2 = subscribeToBookingStatus('booking-1', callback)
+      const subId1 = subscribeToSlotAvailability('123e4567-e89b-12d3-a456-426614174001', callback)
+      const subId2 = subscribeToBookingStatus('323e4567-e89b-12d3-a456-426614174b01', callback)
 
       const activeIds = getActiveSubscriptionIds()
       expect(activeIds).toHaveLength(2)

@@ -69,11 +69,13 @@ describe('useRealtimeSlots', () => {
 
     const { unmount } = renderHook(() => useRealtimeSlots('exp-456'))
 
-    unmount()
-
-    await waitFor(() => {
-      expect(realtimeService.unsubscribe).toHaveBeenCalledWith(mockSubId)
+    act(() => {
+      unmount()
     })
+
+    await vi.runAllTimersAsync()
+
+    expect(realtimeService.unsubscribe).toHaveBeenCalledWith(mockSubId)
   })
 
   it('should call callback when slot changes', async () => {
@@ -104,9 +106,7 @@ describe('useRealtimeSlots', () => {
     expect(result.current.connectionState).toBe('connected')
 
     // Should call user callback
-    await waitFor(() => {
-      expect(userCallback).toHaveBeenCalledWith(mockPayload)
-    })
+    expect(userCallback).toHaveBeenCalledWith(mockPayload)
   })
 
   it('should handle callback errors gracefully', async () => {
@@ -132,9 +132,7 @@ describe('useRealtimeSlots', () => {
     })
 
     // Should set error but not crash
-    await waitFor(() => {
-      expect(result.current.error).toBe('Callback error')
-    })
+    expect(result.current.error).toBe('Callback error')
 
     expect(consoleSpy).toHaveBeenCalled()
     consoleSpy.mockRestore()
@@ -171,9 +169,7 @@ describe('useRealtimeSlots', () => {
       vi.advanceTimersByTime(5000)
     })
 
-    await waitFor(() => {
-      expect(result.current.isStale).toBe(true)
-    })
+    expect(result.current.isStale).toBe(true)
   })
 
   it('should retry on error when enabled', async () => {
@@ -196,10 +192,8 @@ describe('useRealtimeSlots', () => {
     )
 
     // Should be in error state initially
-    await waitFor(() => {
-      expect(result.current.connectionState).toBe('error')
-      expect(result.current.error).toBe('Connection failed')
-    })
+    expect(result.current.connectionState).toBe('error')
+    expect(result.current.error).toBe('Connection failed')
 
     // Advance time to trigger retry
     act(() => {
@@ -207,9 +201,7 @@ describe('useRealtimeSlots', () => {
     })
 
     // Should retry and succeed
-    await waitFor(() => {
-      expect(callCount).toBe(2)
-    })
+    expect(callCount).toBe(2)
 
     consoleSpy.mockRestore()
     consoleLogSpy.mockRestore()
@@ -228,9 +220,7 @@ describe('useRealtimeSlots', () => {
     )
 
     // Should be in error state
-    await waitFor(() => {
-      expect(result.current.connectionState).toBe('error')
-    })
+    expect(result.current.connectionState).toBe('error')
 
     // Advance time
     act(() => {
@@ -257,12 +247,14 @@ describe('useRealtimeSlots', () => {
     expect(realtimeService.subscribeToSlotAvailability).toHaveBeenCalledWith('exp-1', expect.any(Function))
 
     // Change experienceId
-    rerender({ experienceId: 'exp-2' })
+    act(() => {
+      rerender({ experienceId: 'exp-2' })
+    })
+
+    await vi.runAllTimersAsync()
 
     // Should unsubscribe from old and subscribe to new
-    await waitFor(() => {
-      expect(mockUnsubscribe).toHaveBeenCalledWith('sub-1')
-      expect(realtimeService.subscribeToSlotAvailability).toHaveBeenCalledWith('exp-2', expect.any(Function))
-    })
+    expect(mockUnsubscribe).toHaveBeenCalledWith('sub-1')
+    expect(realtimeService.subscribeToSlotAvailability).toHaveBeenCalledWith('exp-2', expect.any(Function))
   })
 })

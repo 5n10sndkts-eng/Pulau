@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { VendorSession, Experience } from '@/lib/types'
 import { validateExperienceForPublishing, ValidationResult } from '@/lib/publishValidation'
 import { PublishExperienceModal } from './PublishExperienceModal'
@@ -50,12 +50,7 @@ export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavig
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null)
   const [isPublishing, setIsPublishing] = useState(false)
 
-  useEffect(() => {
-    loadExperiences()
-    loadVendorCapabilities()
-  }, [session.vendorId])
-
-  const loadExperiences = async () => {
+  const loadExperiences = useCallback(async () => {
     try {
       setIsLoading(true)
       const data = await vendorService.getVendorExperiences(session.vendorId)
@@ -66,9 +61,9 @@ export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavig
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [session.vendorId])
 
-  const loadVendorCapabilities = async () => {
+  const loadVendorCapabilities = useCallback(async () => {
     try {
       const state = await getVendorOnboardingState(session.vendorId)
       if (state) {
@@ -77,7 +72,14 @@ export function VendorExperiences({ session, onBack, onNavigateToCreate, onNavig
     } catch (error) {
       console.error('Failed to load vendor capabilities:', error)
     }
-  }
+  }, [session.vendorId])
+
+  useEffect(() => {
+    loadExperiences()
+    loadVendorCapabilities()
+  }, [loadExperiences, loadVendorCapabilities])
+
+
 
   const handleInstantBookToggle = async (experienceId: string, enabled: boolean) => {
     if (!vendorCapabilities?.canEnableInstantBook) {

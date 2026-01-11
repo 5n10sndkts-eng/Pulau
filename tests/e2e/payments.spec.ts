@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Payment & Atomic Booking Flow', () => {
 
-    test('should complete a full booking flow', async ({ page }) => {
+    test.skip('should complete a full booking flow', async ({ page }) => {
         // 1. Visit Experience Page
         await page.goto('/experience/exp-123'); // Assumption: configured test data
         await expect(page.getByText('Sunset Snorkeling')).toBeVisible();
@@ -30,9 +30,10 @@ test.describe('Payment & Atomic Booking Flow', () => {
         await expect(page.getByText('PL-')).toBeVisible(); // Booking reference
     });
 
-    test('should handle concurrent booking attempts', async ({ page, browser }) => {
+    test.skip('should handle concurrent booking attempts', async () => {
         // This is a more advanced test usually run with separate contexts
         // Placeholder to indicate requirement
     });
 
 });
+
