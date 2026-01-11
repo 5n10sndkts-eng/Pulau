@@ -321,12 +321,12 @@ development_status:
   # ============================================================================
 
   # Epic 29: Vendor Analytics & Payout Dashboard (5 stories)
-  epic-29: in-progress
+  epic-29: done
   29-1-create-vendor-revenue-dashboard: done
   29-2-build-experience-performance-metrics: done
   29-3-implement-payout-history-table: done
   29-4-create-booking-funnel-analytics: done
-  29-5-add-real-time-revenue-notifications: backlog
+  29-5-add-real-time-revenue-notifications: done
   epic-29-retrospective: optional
 
   # Epic 30: Customer Notification System (5 stories)
