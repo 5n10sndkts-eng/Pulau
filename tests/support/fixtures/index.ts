@@ -8,6 +8,7 @@ type TestFixtures = {
 export const test = base.extend<TestFixtures>({
     userFactory: async ({ }, use) => {
         const factory = new UserFactory();
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         await use(factory);
         await factory.cleanup(); // Auto-cleanup after each test
     },

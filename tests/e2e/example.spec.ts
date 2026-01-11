@@ -7,7 +7,7 @@ test.describe('Pulau - Basic Flows', () => {
         await page.goto('/');
 
         // Verify navigation bar or logo is present
-        await expect(page.locator('header')).toBeVisible();
+        await expect(page.locator('header').first()).toBeVisible();
         await expect(page).toHaveTitle(/Pulau/i);
     });
 
@@ -17,7 +17,7 @@ test.describe('Pulau - Basic Flows', () => {
         const onboardingButton = page.getByRole('button', { name: /start|get started|plan/i });
         if (await onboardingButton.isVisible()) {
             await onboardingButton.click();
-            await expect(page.getByText(/travel style|style|where/i)).toBeVisible();
+            await expect(page.getByText('Your Travel Style', { exact: false })).toBeVisible();
         }
     });
 

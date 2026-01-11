@@ -24,6 +24,7 @@ export const test = mergeTests(base, sparkFixture).extend<AuthFixture>({
         await page.reload();
       },
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(auth);
   },
 });

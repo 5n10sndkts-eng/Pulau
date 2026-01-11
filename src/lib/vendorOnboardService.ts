@@ -220,10 +220,10 @@ export async function getVendorPaymentStatus(
   // Default payout schedule for Stripe Express in Indonesia (T+7 weekly)
   const payoutSchedule: PayoutSchedule | null = onboardingComplete
     ? {
-        interval: 'weekly',
-        weeklyAnchor: 'friday',
-        delayDays: 7,
-      }
+      interval: 'weekly',
+      weeklyAnchor: 'friday',
+      delayDays: 7,
+    }
     : null
 
   // Get capabilities from state machine
@@ -279,15 +279,17 @@ export function formatPayoutSchedule(schedule: PayoutSchedule | null): string {
   switch (schedule.interval) {
     case 'daily':
       return `Daily${delayText}`
-    case 'weekly':
+    case 'weekly': {
       const day = schedule.weeklyAnchor
         ? schedule.weeklyAnchor.charAt(0).toUpperCase() + schedule.weeklyAnchor.slice(1)
         : 'Friday'
       return `Weekly on ${day}s${delayText}`
-    case 'monthly':
+    }
+    case 'monthly': {
       const dayOfMonth = schedule.monthlyAnchor || 1
       const suffix = dayOfMonth === 1 ? 'st' : dayOfMonth === 2 ? 'nd' : dayOfMonth === 3 ? 'rd' : 'th'
       return `Monthly on the ${dayOfMonth}${suffix}${delayText}`
+    }
     case 'manual':
       return 'Manual (on request)'
     default:

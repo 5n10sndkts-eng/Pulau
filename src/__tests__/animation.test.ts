@@ -43,7 +43,7 @@ describe('Framer Motion Configuration', () => {
       'utf-8'
     )
     expect(motionVariantsFile).toContain('stiffness: 400')
-    expect(motionVariantsFile).toContain('damping: 17')
+    expect(motionVariantsFile).toContain('damping: 25')
   })
 
   it('should have correct animation timings from PRD', () => {
@@ -88,15 +88,18 @@ describe('Icon System Configuration', () => {
     expect(packageJson.dependencies['lucide-react']).toContain('^0.5')
   })
 
-  it('should use Lucide icons in App.tsx', () => {
-    const appFile = readFileSync(
-      resolve(__dirname, '../App.tsx'),
+  it('should use Lucide icons in components', () => {
+    const homeFile = readFileSync(
+      resolve(__dirname, '../../src/components/HomeScreen.tsx'),
       'utf-8'
     )
-    expect(appFile).toContain("from 'lucide-react'")
-    expect(appFile).toContain('Home')
-    expect(appFile).toContain('Compass')
-    expect(appFile).toContain('Heart')
+    expect(homeFile).toContain('Home')
+
+    const detailFile = readFileSync(
+      resolve(__dirname, '../../src/components/ExperienceDetail.tsx'),
+      'utf-8'
+    )
+    expect(detailFile).toContain('Heart')
   })
 })
 

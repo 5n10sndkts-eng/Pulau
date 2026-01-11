@@ -23,6 +23,7 @@ export const test = mergeTests(base, tripFixture).extend<CheckoutFixture>({
         });
       }
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(checkout);
   },
 });

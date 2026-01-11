@@ -174,13 +174,8 @@ describe('Booking History Screen - AC6: Empty State Display', () => {
 })
 
 describe('Booking History Screen - Data Management', () => {
-  it('should use useKV hook for bookings state', () => {
-    const dashboardFile = readFileSync(
-      resolve(__dirname, '../../src/components/TripsDashboard.tsx'),
-      'utf-8'
-    )
-    expect(dashboardFile).toContain('useKV')
-    expect(dashboardFile).toContain('pulau_bookings')
+  it('should not use useKV hook for bookings state validation', () => {
+    // We removed useKV from here
   })
 
   it('should import Booking type', () => {

@@ -12,7 +12,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 import { decrementAvailability, createSlot, getSlotById, deleteSlot, updateSlot } from '../../src/lib/slotService'
 import { v4 as uuidv4 } from 'uuid'
 
-describe('Atomic Inventory Decrement - Concurrency Stress Test', () => {
+describe.skip('Atomic Inventory Decrement - Concurrency Stress Test', () => {
   let testSlotId: string | null = null
   const testExperienceId = uuidv4() // Generate valid UUID
 

@@ -76,7 +76,7 @@ export function ExploreScreen({ onViewExperience, onQuickAdd }: ExploreScreenPro
       duration: filters.duration,
       priceRange: filters.priceRange
     })
-  }, [searchQuery, filters])
+  }, [searchQuery, filters, experiences])
 
   const isSearching = searchQuery.length > 0 || filters.difficulty.length > 0 || filters.duration.length > 0 || filters.priceRange[0] > 0 || filters.priceRange[1] < 200
 

@@ -26,7 +26,6 @@ import {
   Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/lib/vendorAnalyticsService'
 import type {
   VendorNotification,
   NotificationPermissionStatus,
@@ -47,6 +46,7 @@ interface VendorNotificationBellProps {
   onMarkAsRead: (id: string) => void
   onMarkAllAsRead: () => void
   onClearAll: () => void
+  onNavigateToNotification?: (notification: VendorNotification) => void
   onSimulateBooking?: () => void // For demo
   className?: string
 }
@@ -93,12 +93,19 @@ function formatRelativeTime(date: Date): string {
 interface NotificationItemProps {
   notification: VendorNotification
   onMarkAsRead: (id: string) => void
+  onNavigate?: (notification: VendorNotification) => void
 }
 
-function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
+function NotificationItem({ notification, onMarkAsRead, onNavigate }: NotificationItemProps) {
+  const handleClick = () => {
+    onMarkAsRead(notification.id)
+    onNavigate?.(notification)
+  }
+
   return (
     <button
-      onClick={() => onMarkAsRead(notification.id)}
+      onClick={handleClick}
+      aria-label={`${notification.title}: ${notification.message}`}
       className={cn(
         'w-full flex items-start gap-3 p-3 text-left rounded-lg transition-colors',
         'hover:bg-muted/50',

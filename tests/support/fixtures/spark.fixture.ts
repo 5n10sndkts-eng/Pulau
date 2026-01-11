@@ -33,6 +33,7 @@ export const test = base.extend<SparkFixture>({
         }, key);
       }
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(spark);
   },
 });

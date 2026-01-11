@@ -66,3 +66,5 @@ The traceability analysis reveals a significant gap in automated test coverage a
 *   **High Risk:** Reduced to **Medium Risk**. Logic is now tested, but full integration/E2E tests are still pending execution in a CI environment.
 *   **Build Risk:** **Eliminated** (Types match migration).
 
+
+| **26-1** | Implement Service Worker for Ticket Caching | ⚠️ FAIL | 40% | E2E | Service Worker `public/sw.js` implemented with caching logic. Verified setup in main.tsx. ZERO automated tests verifying offline functionality. |

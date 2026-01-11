@@ -23,6 +23,7 @@ export const test = mergeTests(base, authFixture).extend<TripFixture>({
         expect(storedTrip.id).toBe(tripId);
       }
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(tripHelper);
   },
 });

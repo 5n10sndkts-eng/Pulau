@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "dev:test": "vite --port 5173",
+        "dev:test": "VITE_USE_MOCK_AUTH=true VITE_USE_MOCK_DATA=true vite --port 5173",
         "kill": "fuser -k 5000/tcp",
         "build": "tsc -b --noCheck && vite build",
         "lint": "eslint .",

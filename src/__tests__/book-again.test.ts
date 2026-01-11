@@ -67,7 +67,7 @@ describe('Book Again - AC2-AC5: Trip Duplication Process', () => {
       resolve(__dirname, '../../src/App.tsx'),
       'utf-8'
     )
-    expect(appFile).toContain('tripData.items.map')
+    expect(appFile).toContain('originalTrip.items.map')
   })
 
   it('should clear scheduled dates from copied items', () => {
@@ -94,7 +94,7 @@ describe('Book Again - AC6: Navigation to Trip Builder', () => {
       resolve(__dirname, '../../src/App.tsx'),
       'utf-8'
     )
-    expect(appFile).toContain("setCurrentScreen({ type: 'trip' })")
+    expect(appFile).toContain("navigate('/plan')")
   })
 
   it('should update trip state with new trip', () => {
@@ -102,7 +102,7 @@ describe('Book Again - AC6: Navigation to Trip Builder', () => {
       resolve(__dirname, '../../src/App.tsx'),
       'utf-8'
     )
-    expect(appFile).toContain('setTrip(newTrip)')
+    expect(appFile).toContain('updateAndSaveTrip(newTrip)')
   })
 })
 
@@ -130,8 +130,8 @@ describe('Book Again - AC8: Original Booking Preservation', () => {
       resolve(__dirname, '../../src/App.tsx'),
       'utf-8'
     )
-    // Should spread tripData into new object
-    expect(appFile).toContain('...tripData')
+    // Should spread tripData/originalTrip into new object
+    expect(appFile).toContain('...defaultTrip')
     // Should create newTrip variable
     expect(appFile).toContain('const newTrip')
   })

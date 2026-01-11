@@ -73,9 +73,10 @@ describe('CheckoutSuccess Component', () => {
       expect(componentCode).toContain('pollInterval')
     })
 
-    it('should query bookings table', () => {
-      expect(componentCode).toContain("from('bookings')")
+    it('should query payments table with booking relation', () => {
+      expect(componentCode).toContain("from('payments')")
       expect(componentCode).toContain('stripe_checkout_session_id')
+      expect(componentCode).toContain('bookings!inner')
     })
   })
 
