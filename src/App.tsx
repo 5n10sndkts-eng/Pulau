@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route, useNavigate, Navigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -128,7 +127,24 @@ function AppContent() {
   // const [bookings, setBookings] = useKV<Booking[]>('pulau_bookings', []) // Keep bookings local mostly for now or separate task
   const [bookings, setBookings] = useState<Booking[]>([])
 
-  const [vendorSession, setVendorSession] = useKV<VendorSession | null>('pulau_vendor_session', null)
+  // Vendor session with localStorage persistence (replaced useKV due to auth issues)
+  const [vendorSession, setVendorSessionState] = useState<VendorSession | null>(() => {
+    try {
+      const stored = localStorage.getItem('pulau_vendor_session')
+      return stored ? JSON.parse(stored) : null
+    } catch {
+      return null
+    }
+  })
+
+  const setVendorSession = useCallback((session: VendorSession | null) => {
+    setVendorSessionState(session)
+    if (session) {
+      localStorage.setItem('pulau_vendor_session', JSON.stringify(session))
+    } else {
+      localStorage.removeItem('pulau_vendor_session')
+    }
+  }, [])
 
   const navigate = useNavigate()
 

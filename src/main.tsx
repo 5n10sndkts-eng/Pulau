@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from "react-error-boundary";
 import { BrowserRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import "@github/spark/spark"
 
 // Initialize i18n before any components render
@@ -14,6 +15,17 @@ import { testSupabaseConnection } from '@/lib/supabase'
 import "./main.css"
 import "./styles/theme.css"
 import "./index.css"
+
+// Create React Query client with sensible defaults
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 // Test Supabase connection on app start (dev mode only)
 if (import.meta.env.DEV) {
@@ -54,10 +66,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <BrowserRouter>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <App />
-      </ErrorBoundary>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <App />
+        </ErrorBoundary>
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>
 )
