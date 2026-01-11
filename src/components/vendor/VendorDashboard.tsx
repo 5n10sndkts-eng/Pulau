@@ -29,6 +29,8 @@ import {
   Zap,
   Banknote
 } from 'lucide-react'
+import { useVendorNotifications } from '@/hooks/useVendorNotifications'
+import { VendorNotificationBell } from './VendorNotificationBell'
 
 interface VendorDashboardProps {
   session: VendorSession
@@ -53,6 +55,13 @@ export function VendorDashboard({
 
   // Use session.businessName directly, or fetch if needed
   const businessName = session.businessName
+
+  // Real-time notifications hook
+  const notifications = useVendorNotifications({
+    vendorId: session.vendorId,
+    enabled: true,
+    simulateForDemo: import.meta.env.DEV, // Enable simulation in dev mode
+  })
 
   useEffect(() => {
     async function load() {
@@ -132,6 +141,19 @@ export function VendorDashboard({
                   <span className="text-sm font-medium">Verified Vendor</span>
                 </div>
               )}
+              <VendorNotificationBell
+                notifications={notifications.notifications}
+                unreadCount={notifications.unreadCount}
+                permissionStatus={notifications.permissionStatus}
+                preferences={notifications.preferences}
+                onRequestPermission={notifications.requestPermission}
+                onUpdatePreferences={notifications.updatePreferences}
+                onMarkAsRead={notifications.markAsRead}
+                onMarkAllAsRead={notifications.markAllAsRead}
+                onClearAll={notifications.clearAll}
+                onSimulateBooking={import.meta.env.DEV ? notifications.simulateBooking : undefined}
+                className="text-white hover:bg-white/20"
+              />
               <Button
                 variant="secondary"
                 size="sm"

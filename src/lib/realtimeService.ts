@@ -235,3 +235,76 @@ export function getActiveSubscriptionCount(): number {
 export function getActiveSubscriptionIds(): string[] {
   return Array.from(activeSubscriptions.keys())
 }
+
+// ================================================
+// VENDOR NOTIFICATION SUBSCRIPTIONS
+// ================================================
+
+/**
+ * Callback function for vendor booking notifications
+ */
+export type VendorBookingCallback = (payload: BookingChangePayload) => void
+
+/**
+ * Subscribe to new bookings for a specific vendor
+ *
+ * Listens for INSERT events on the bookings table filtered by vendor_id.
+ * Used to notify vendors in real-time when new bookings are confirmed.
+ *
+ * @param vendorId - The vendor to monitor bookings for
+ * @param callback - Function called when a new booking is created
+ * @returns Subscription ID for cleanup
+ *
+ * @example
+ * ```typescript
+ * const subId = subscribeToVendorBookings('vendor-123', (payload) => {
+ *   if (payload.eventType === 'INSERT') {
+ *     const booking = payload.new
+ *     showNotification(`New booking: ${booking.total_amount}`)
+ *   }
+ * })
+ * // Later: unsubscribe(subId)
+ * ```
+ */
+export function subscribeToVendorBookings(
+  vendorId: string,
+  callback: VendorBookingCallback
+): string {
+  // Validate UUID to prevent filter injection attacks
+  validateUUID(vendorId, 'vendorId')
+
+  const subscriptionId = `vendor-bookings-${vendorId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const channelName = `vendor-bookings-${vendorId}-${subscriptionId}`
+
+  const channel = supabase
+    .channel(channelName)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'bookings',
+        filter: `vendor_id=eq.${vendorId}`
+      },
+      callback
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'bookings',
+        filter: `vendor_id=eq.${vendorId}`
+      },
+      callback
+    )
+    .subscribe()
+
+  activeSubscriptions.set(subscriptionId, {
+    channel,
+    type: 'booking',
+    id: vendorId
+  })
+
+  return subscriptionId
+}
