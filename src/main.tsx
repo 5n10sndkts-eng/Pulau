@@ -5,6 +5,13 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import "@github/spark/spark"
 
+// Initialize Sentry before any other code runs (Story 32.1 - AC #1)
+import { initSentry, reportWebVitals } from '@/lib/sentry'
+initSentry()
+
+// Report Web Vitals to Sentry (Story 32.2 - AC #2)
+reportWebVitals()
+
 // Initialize i18n before any components render
 import '@/lib/i18n'
 

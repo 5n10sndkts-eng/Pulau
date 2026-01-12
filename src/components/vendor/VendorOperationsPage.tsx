@@ -6,13 +6,15 @@
  * Uses Supabase real-time queries to fetch and update booking data.
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { QRScanner } from './QRScanner'
 import { ValidationCard } from './ValidationCard'
 import { bookingService, CheckInValidationResult } from '@/lib/bookingService'
+import { enqueueOfflineAction, flushOfflineQueue, getPendingActions } from '@/lib/offlineQueue'
+import { supabase } from '@/lib/supabase'
 import {
   Camera,
   Calendar,
@@ -26,8 +28,6 @@ import {
 import { motion } from 'framer-motion'
 import { formatDistanceToNow, format, startOfDay, endOfDay } from 'date-fns'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
-import { createAuditEntry } from '@/lib/auditService'
 import { VendorSession } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -56,8 +56,6 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
   const dayEnd = format(endOfDay(today), 'yyyy-MM-dd')
 
   // Query bookings through trip_items that reference vendor's experiences
-  // Note: User info comes from auth schema, which we can't join directly.
-  // We'll use trip.name as fallback or fetch user info separately if needed.
   const { data, error } = await supabase
     .from('bookings')
     .select(
@@ -66,10 +64,15 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
       reference,
       status,
       trip_id,
+      checked_in_at,
       trips!inner (
         id,
         user_id,
         name,
+        profiles!inner (
+          full_name,
+          email
+        ),
         trip_items!inner (
           id,
           experience_id,
@@ -100,28 +103,18 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
   const bookings: VendorBooking[] = []
 
   for (const row of data || []) {
-    const trip = row.trips as {
-      id: string
-      user_id: string
-      name: string | null
-      trip_items: Array<{
-        id: string
-        experience_id: string
-        date: string | null
-        time: string | null
-        guests: number | null
-        experiences: { id: string; title: string; vendor_id: string }
-      }>
-    }
+    const trip = row.trips as any
+    const profile = trip.profiles
 
     // Filter trip items that belong to this vendor
     const vendorItems = trip.trip_items.filter(
-      (item) => item.experiences.vendor_id === vendorId
+      (item: any) => item.experiences.vendor_id === vendorId
     )
 
     for (const item of vendorItems) {
-      // Use trip name as traveler name or fallback to "Guest"
-      const travelerName = trip.name || 'Guest'
+      // Use profile name as traveler name or fallback to trip name or "Guest"
+      const travelerName = profile?.full_name || trip.name || 'Guest'
+      const travelerEmail = profile?.email || ''
 
       // Build datetime from date and time
       const dateTime = item.date
@@ -134,76 +127,19 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
         id: row.id,
         bookingReference: row.reference,
         travelerName,
-        travelerEmail: '', // Not available without profile table
+        travelerEmail,
         experienceId: item.experience_id,
         experienceName: item.experiences.title,
         dateTime,
         guestCount: item.guests || 1,
         status: row.status as VendorBooking['status'],
-        checkedInAt: null,
+        checkedInAt: row.checked_in_at,
         tripId: trip.id,
       })
     }
   }
 
   return bookings
-}
-
-// Check in a booking
-async function checkInBooking(
-  bookingId: string,
-  vendorId: string
-): Promise<void> {
-  const now = new Date().toISOString()
-
-  const { error } = await supabase
-    .from('bookings')
-    .update({
-      status: 'checked_in',
-    })
-    .eq('id', bookingId)
-
-  if (error) {
-    console.error('Error checking in booking:', error)
-    throw new Error('Failed to check in booking')
-  }
-
-  // Create audit log
-  await createAuditEntry({
-    eventType: 'booking.checked_in',
-    entityType: 'booking',
-    entityId: bookingId,
-    metadata: {
-      vendor_id: vendorId,
-      checked_in_at: now,
-    },
-  })
-}
-
-// Mark booking as no-show
-async function markNoShow(bookingId: string, vendorId: string): Promise<void> {
-  const { error } = await supabase
-    .from('bookings')
-    .update({
-      status: 'no_show',
-    })
-    .eq('id', bookingId)
-
-  if (error) {
-    console.error('Error marking no-show:', error)
-    throw new Error('Failed to mark as no-show')
-  }
-
-  // Create audit log
-  await createAuditEntry({
-    eventType: 'booking.no_show',
-    entityType: 'booking',
-    entityId: bookingId,
-    metadata: {
-      vendor_id: vendorId,
-      marked_at: new Date().toISOString(),
-    },
-  })
 }
 
 export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
@@ -227,15 +163,72 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
     refetchInterval: 30000, // Refresh every 30 seconds
   })
 
+  // Flush any offline actions on mount or when coming online
+  useEffect(() => {
+    const flush = async () => {
+      const pending = getPendingActions().length
+      if (pending === 0) return
+      const { processed } = await flushOfflineQueue(async (action) => {
+        if (action.action === 'check_in') {
+          await bookingService.checkInBooking(action.bookingId, action.vendorId)
+        } else {
+          await bookingService.markNoShow(action.bookingId, action.vendorId)
+        }
+      })
+      if (processed > 0) {
+        queryClient.invalidateQueries({ queryKey: ['vendor-bookings-today', session.vendorId] })
+        toast.success(`Synced ${processed} offline action${processed === 1 ? '' : 's'}`)
+      }
+    }
+
+    flush()
+    const handler = () => flush()
+    window.addEventListener('online', handler)
+    return () => window.removeEventListener('online', handler)
+  }, [queryClient, session.vendorId])
+
+  const enqueueAndNotify = (bookingId: string, action: 'check_in' | 'no_show') => {
+    enqueueOfflineAction({ bookingId, vendorId: session.vendorId, action })
+    toast.success('Saved offline. Will sync when online.')
+    setSelectedBooking(null)
+    setValidationResult(null)
+  }
+
+  // Realtime refetch on booking changes (lightweight listener)
+  useEffect(() => {
+    const channel = supabase
+      .channel(`vendor-bookings-${session.vendorId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['vendor-bookings-today', session.vendorId] })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [queryClient, session.vendorId])
+
   // Check-in mutation
   const checkInMutation = useMutation({
-    mutationFn: (bookingId: string) =>
-      checkInBooking(bookingId, session.vendorId),
-    onSuccess: () => {
+    mutationFn: async (bookingId: string) => {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        enqueueAndNotify(bookingId, 'check_in')
+        return { queued: true }
+      }
+      await bookingService.checkInBooking(bookingId, session.vendorId)
+      return { queued: false }
+    },
+    onSuccess: (result) => {
       queryClient.invalidateQueries({
         queryKey: ['vendor-bookings-today', session.vendorId],
       })
-      toast.success('Guest checked in successfully')
+      if (!result?.queued) {
+        toast.success('Guest checked in successfully')
+      }
       setSelectedBooking(null)
       setValidationResult(null)
     },
@@ -246,12 +239,21 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
 
   // No-show mutation
   const noShowMutation = useMutation({
-    mutationFn: (bookingId: string) => markNoShow(bookingId, session.vendorId),
-    onSuccess: () => {
+    mutationFn: async (bookingId: string) => {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        enqueueAndNotify(bookingId, 'no_show')
+        return { queued: true }
+      }
+      await bookingService.markNoShow(bookingId, session.vendorId)
+      return { queued: false }
+    },
+    onSuccess: (result) => {
       queryClient.invalidateQueries({
         queryKey: ['vendor-bookings-today', session.vendorId],
       })
-      toast.success('Marked as no-show')
+      if (!result?.queued) {
+        toast.success('Marked as no-show')
+      }
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : 'Failed to mark no-show')

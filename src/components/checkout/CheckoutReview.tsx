@@ -344,12 +344,17 @@ export function CheckoutReview({
         if (!item.date || !item.time) continue
 
         try {
-          const slots = await slotService.getAvailableSlots(item.experienceId, {
+          const { data, error: slotsError } = await slotService.getAvailableSlots(item.experienceId, {
             startDate: item.date,
             endDate: item.date,
           })
 
-          const matchingSlot = slots.find(s => s.slot_time === item.time)
+          if (slotsError || !data) {
+            console.error(`Failed to load slot for ${item.experienceId}:`, slotsError)
+            continue
+          }
+
+          const matchingSlot = data.find(s => s.slot_time === item.time)
           if (matchingSlot) {
             const key = `${item.experienceId}-${item.date}-${item.time}`
             availabilityMap.set(key, matchingSlot)

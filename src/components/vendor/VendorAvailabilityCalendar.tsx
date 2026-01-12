@@ -145,8 +145,14 @@ export function VendorAvailabilityCalendar({
     setIsLoading(true)
     try {
       const dateRange = getDateRange()
-      const data = await slotService.getAllSlots(experienceId, dateRange)
-      setSlots(data)
+      const { data, error } = await slotService.getAllSlots(experienceId, dateRange)
+      if (error) {
+        console.error('Failed to load slots:', error)
+        toast.error('Failed to load availability data')
+        setSlots([])
+      } else {
+        setSlots(data || [])
+      }
     } catch (error) {
       console.error('Failed to load slots:', error)
       toast.error('Failed to load availability data')
@@ -250,13 +256,13 @@ export function VendorAvailabilityCalendar({
           : null,
       }
 
-      const result = await slotService.createSlot(input)
-      if (result.success) {
+      const { data, error } = await slotService.createSlot(input)
+      if (data) {
         toast.success('Slot created successfully')
         setShowCreateModal(false)
         loadSlots()
       } else {
-        toast.error(result.error || 'Failed to create slot')
+        toast.error(error || 'Failed to create slot')
       }
     } catch (error) {
       console.error('Create slot error:', error)
@@ -274,23 +280,23 @@ export function VendorAvailabilityCalendar({
     try {
       if (editBlocked !== selectedSlot.is_blocked) {
         // Toggle block status
-        const result = editBlocked
+        const { data, error } = editBlocked
           ? await slotService.blockSlot(selectedSlot.id, editBlockReason || undefined)
           : await slotService.unblockSlot(selectedSlot.id)
 
-        if (!result.success) {
-          toast.error(result.error || 'Failed to update slot')
+        if (!data) {
+          toast.error(error || 'Failed to update slot')
           return
         }
       }
 
       if (editCapacity !== selectedSlot.total_capacity) {
-        const result = await slotService.updateSlot(selectedSlot.id, {
+        const { data, error } = await slotService.updateSlot(selectedSlot.id, {
           totalCapacity: editCapacity,
           availableCount: Math.min(selectedSlot.available_count, editCapacity),
         })
-        if (!result.success) {
-          toast.error(result.error || 'Failed to update capacity')
+        if (!data) {
+          toast.error(error || 'Failed to update capacity')
           return
         }
       }
@@ -317,13 +323,13 @@ export function VendorAvailabilityCalendar({
 
     setIsUpdating(true)
     try {
-      const result = await slotService.deleteSlot(selectedSlot.id)
-      if (result.success) {
+      const { data, error } = await slotService.deleteSlot(selectedSlot.id)
+      if (data) {
         toast.success('Slot deleted')
         setShowDetailModal(false)
         loadSlots()
       } else {
-        toast.error(result.error || 'Failed to delete slot')
+        toast.error(error || 'Failed to delete slot')
       }
     } catch (error) {
       console.error('Delete slot error:', error)
@@ -398,7 +404,7 @@ export function VendorAvailabilityCalendar({
     // Don't go before current month
     const now = new Date()
     if (newMonth.getFullYear() > now.getFullYear() ||
-        (newMonth.getFullYear() === now.getFullYear() && newMonth.getMonth() >= now.getMonth())) {
+      (newMonth.getFullYear() === now.getFullYear() && newMonth.getMonth() >= now.getMonth())) {
       setCurrentMonth(newMonth)
     }
   }
@@ -558,8 +564,8 @@ export function VendorAvailabilityCalendar({
                                 ${slot.is_blocked
                                   ? 'bg-gray-300 text-gray-600'
                                   : slot.available_count === 0
-                                  ? 'bg-red-200 text-red-700'
-                                  : 'bg-white/50 text-inherit'
+                                    ? 'bg-red-200 text-red-700'
+                                    : 'bg-white/50 text-inherit'
                                 }
                               `}
                             >

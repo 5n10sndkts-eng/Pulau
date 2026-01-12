@@ -4,6 +4,8 @@ import { Map, Compass, Heart, UserCircle, PlusCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { CustomerNotificationBell } from "@/components/CustomerNotificationBell"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface NavigationShellWithRouterProps {
     children: ReactNode
@@ -16,6 +18,7 @@ export function NavigationShellWithRouter({
 }: NavigationShellWithRouterProps) {
     const location = useLocation()
     const navigate = useNavigate()
+    const { user } = useAuth()
 
     const tabs = [
         { id: '/', label: 'Trip', icon: Map },
@@ -48,7 +51,9 @@ export function NavigationShellWithRouter({
                     </div>
                     <h1 className="text-xl font-display font-bold tracking-tight text-primary">Pulau</h1>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                    {/* Notification Bell - only show when logged in */}
+                    {user && <CustomerNotificationBell />}
                     <Button
                         variant="ghost"
                         size="icon"
@@ -61,8 +66,8 @@ export function NavigationShellWithRouter({
                 </div>
             </header>
 
-            {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-screen-xl mx-auto px-4 pb-24 pt-4">
+            {/* Main Content Area - Increased bottom padding for dual-bar visibility (Nav + Trip Bar) */}
+            <main className="flex-1 w-full max-w-screen-xl mx-auto px-4 pb-48 pt-4">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={location.pathname}

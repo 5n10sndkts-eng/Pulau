@@ -1,8 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
+// ================================================
+// Auth Context - User Authentication State
+// Story: 32.1 - Integrate Error Tracking (Sentry)
+// AC #4: User Context (anonymized ID only)
+// ================================================
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../lib/types';
 import { authService } from '../lib/authService';
 import { supabase } from '../lib/supabase';
+import { setSentryUser } from '../lib/sentry';
 
 interface AuthContextType {
     user: User | null;
@@ -26,6 +33,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             try {
                 const currentUser = await authService.getCurrentUser();
                 setUser(currentUser);
+                // Set Sentry user context (AC #4 - anonymized ID only)
+                setSentryUser(currentUser?.id || null);
             } catch (error) {
                 console.error('Failed to get current user', error);
             } finally {
@@ -40,8 +49,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                 const currentUser = await authService.getCurrentUser();
                 setUser(currentUser);
+                // Set Sentry user context on sign in (AC #4)
+                setSentryUser(currentUser?.id || null);
             } else if (event === 'SIGNED_OUT') {
                 setUser(null);
+                // Clear Sentry user context on sign out (AC #4)
+                setSentryUser(null);
             }
         });
 

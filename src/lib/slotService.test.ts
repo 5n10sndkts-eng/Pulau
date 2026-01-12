@@ -38,6 +38,9 @@ vi.mock('./supabase', () => ({
         from: vi.fn(() => createMockSupabase()),
         tabe: vi.fn(() => createMockSupabase()),
         rpc: vi.fn(),
+        auth: {
+            getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+        },
     },
 }))
 
@@ -77,7 +80,7 @@ describe('slotService', () => {
                 totalCapacity: 10,
             })
 
-            expect(result.success).toBe(true)
+            expect(result.error).toBeNull()
             expect(result.data).toEqual(mockSlot)
             expect(supabase.from).toHaveBeenCalledWith('experience_slots')
         })
@@ -97,7 +100,7 @@ describe('slotService', () => {
                 totalCapacity: 10,
             })
 
-            expect(result.success).toBe(false)
+            expect(result.error).toBeTruthy()
             expect(result.error).toContain('already exists')
         })
     })
@@ -131,8 +134,9 @@ describe('slotService', () => {
                 endDate: '2026-06-30'
             })
 
-            expect(result).toHaveLength(1)
-            expect(result[0]?.id).toBe(mockSlotId)
+            expect(result.error).toBeNull()
+            expect(result.data).toHaveLength(1)
+            expect(result.data?.[0]?.id).toBe(mockSlotId)
         })
     })
 
@@ -143,7 +147,7 @@ describe('slotService', () => {
             vi.mocked(supabase.from).mockReturnValue(mockChain as any)
 
             const result = await getSlotById(mockSlotId)
-            expect(result?.id).toBe(mockSlotId)
+            expect(result.data?.id).toBe(mockSlotId)
         })
     })
 
@@ -158,7 +162,7 @@ describe('slotService', () => {
 
             const result = await updateSlot(mockSlotId, { totalCapacity: 15 })
 
-            expect(result.success).toBe(true)
+            expect(result.error).toBeNull()
             expect(result.data?.total_capacity).toBe(15)
             expect(vi.mocked(supabase.from)).toHaveBeenCalledWith('audit_logs')
         })
@@ -172,7 +176,7 @@ describe('slotService', () => {
 
             const result = await blockSlot(mockSlotId, 'Maintenance')
 
-            expect(result.success).toBe(true)
+            expect(result.error).toBeNull()
             expect(result.data?.is_blocked).toBe(true)
             expect(vi.mocked(supabase.from)).toHaveBeenCalledWith('audit_logs')
         })
@@ -193,7 +197,7 @@ describe('slotService', () => {
 
             const result = await decrementAvailability(mockSlotId, 1)
 
-            expect(result.success).toBe(true)
+            expect(result.error).toBeNull()
             expect(result.data?.available_count).toBe(9)
         })
 
@@ -205,7 +209,7 @@ describe('slotService', () => {
 
             const result = await decrementAvailability(mockSlotId, 1)
 
-            expect(result.success).toBe(false)
+            expect(result.data).toBeNull()
             expect(result.error).toContain('no longer available')
         })
     })
@@ -225,7 +229,7 @@ describe('slotService', () => {
 
             const result = await decrementAvailabilityWithLock(mockSlotId, 1)
 
-            expect(result.success).toBe(true)
+            expect(result.error).toBeNull()
             expect(supabase.rpc).toHaveBeenCalledWith('decrement_slot_inventory', expect.anything())
         })
     })
@@ -238,7 +242,7 @@ describe('slotService', () => {
 
             const result = await incrementAvailability(mockSlotId, 1)
 
-            expect(result.success).toBe(true)
+            expect(result.error).toBeNull()
             expect(result.data?.available_count).toBe(11)
         })
     })

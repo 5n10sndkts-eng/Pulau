@@ -20,7 +20,7 @@ CREATE POLICY "Vendors can update guest bookings for their experiences."
   USING (
     EXISTS (
       SELECT 1 FROM public.trip_items ti
-      JOIN public.experiences e ON ti.experience_id = e.id
+      JOIN public.experiences e ON ti.experience_id::uuid = e.id
       JOIN public.vendors v ON e.vendor_id = v.id
       WHERE ti.id = bookings.trip_item_id
       AND v.owner_id = auth.uid()

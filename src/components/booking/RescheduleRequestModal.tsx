@@ -142,10 +142,16 @@ export function RescheduleRequestModal({
         startDate: dateStr,
         endDate: dateStr,
       }
-      const slots = await slotService.getAvailableSlots(
+      const { data: slots, error: slotsError } = await slotService.getAvailableSlots(
         booking.experienceId,
         dateRange
       )
+
+      if (slotsError || !slots) {
+        console.error('Error fetching slots:', slotsError)
+        setAvailableSlots([])
+        return
+      }
 
       // Filter out the current slot if it's on the same date
       const filteredSlots = slots.filter(
@@ -382,13 +388,12 @@ export function RescheduleRequestModal({
                         <span className="text-sm font-medium">Price Change</span>
                       </div>
                       <span
-                        className={`font-semibold ${
-                          priceCalc.price_difference > 0
+                        className={`font-semibold ${priceCalc.price_difference > 0
                             ? 'text-destructive'
                             : priceCalc.price_difference < 0
-                            ? 'text-success'
-                            : ''
-                        }`}
+                              ? 'text-success'
+                              : ''
+                          }`}
                       >
                         {formatPriceDifference(priceCalc.price_difference)}
                       </span>
@@ -441,9 +446,8 @@ export function RescheduleRequestModal({
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Price adjustment</span>
                         <span
-                          className={`font-semibold ${
-                            priceCalc.price_difference > 0 ? 'text-destructive' : 'text-success'
-                          }`}
+                          className={`font-semibold ${priceCalc.price_difference > 0 ? 'text-destructive' : 'text-success'
+                            }`}
                         >
                           {formatPriceDifference(priceCalc.price_difference)}
                         </span>

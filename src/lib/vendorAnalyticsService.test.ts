@@ -10,6 +10,8 @@ import {
   getVendorRevenueStats,
   getRevenueByDateRange,
   getPayoutSummary,
+  getPayoutStatusLabel,
+  getPayoutStatusColor,
   TimePeriod,
 } from './vendorAnalyticsService'
 
@@ -211,6 +213,26 @@ describe('vendorAnalyticsService', () => {
         const date = new Date(summary.lastPayoutDate)
         expect(date.toString()).not.toBe('Invalid Date')
       }
+    })
+  })
+
+  describe('payout status helpers', () => {
+    it('maps payout status to labels', () => {
+      expect(getPayoutStatusLabel('pending')).toBe('Pending')
+      expect(getPayoutStatusLabel('in_transit')).toBe('In Transit')
+      expect(getPayoutStatusLabel('paid')).toBe('Paid')
+      expect(getPayoutStatusLabel('failed')).toBe('Failed')
+      expect(getPayoutStatusLabel('canceled')).toBe('Canceled')
+      expect(getPayoutStatusLabel('custom' as never)).toBe('custom')
+    })
+
+    it('maps payout status to tailwind badge colors', () => {
+      expect(getPayoutStatusColor('pending')).toContain('amber')
+      expect(getPayoutStatusColor('in_transit')).toContain('blue')
+      expect(getPayoutStatusColor('paid')).toContain('emerald')
+      expect(getPayoutStatusColor('failed')).toContain('red')
+      expect(getPayoutStatusColor('canceled')).toContain('gray')
+      expect(getPayoutStatusColor('custom' as never)).toBe('bg-gray-100 text-gray-700')
     })
   })
 })

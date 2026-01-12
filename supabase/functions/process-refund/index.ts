@@ -7,11 +7,19 @@
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@14?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import Stripe from 'stripe'
+import { createClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2023-10-16',
+const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')
+const supabaseUrlEnv = Deno.env.get('SUPABASE_URL')
+const supabaseServiceKeyEnv = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+
+if (!stripeSecret || !supabaseUrlEnv || !supabaseServiceKeyEnv) {
+  console.error('Missing required environment variables for refund function')
+}
+
+const stripe = new Stripe(stripeSecret || '', {
+  apiVersion: '2024-12-18.acacia',
 })
 
 const corsHeaders = {
@@ -48,9 +56,11 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   // Initialize Supabase client with service role
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  if (!supabaseUrlEnv || !supabaseServiceKeyEnv) {
+    return errorResponse('Server misconfigured', 'CONFIG_ERROR', 500)
+  }
+
+  const supabase = createClient(supabaseUrlEnv, supabaseServiceKeyEnv)
 
   try {
     // ================================================
@@ -81,6 +91,10 @@ serve(async (req: Request): Promise<Response> => {
     const { bookingId, amount, reason } = body
     if (!bookingId) {
       return errorResponse('bookingId is required', 'INVALID_REQUEST', 400)
+    }
+
+    if (amount !== undefined && (typeof amount !== 'number' || amount <= 0)) {
+      return errorResponse('amount must be a positive number of cents', 'INVALID_REQUEST', 400)
     }
 
     // ================================================
@@ -150,6 +164,10 @@ serve(async (req: Request): Promise<Response> => {
       )
     }
 
+    if (!payment.stripe_payment_intent_id) {
+      return errorResponse('Missing payment_intent on payment record', 'PAYMENT_NOT_REFUNDABLE', 400)
+    }
+
     // ================================================
     // Step 4: Calculate Refund Amount
     // ================================================
@@ -169,8 +187,8 @@ serve(async (req: Request): Promise<Response> => {
     let refund: Stripe.Refund
     try {
       // Generate idempotency key to prevent duplicate refunds
-      // Format: refund-{bookingId}-{timestamp} as specified in AC
-      const idempotencyKey = `refund-${bookingId}-${Date.now()}`
+      // Format: refund_${bookingId}_${timestamp} as specified in AC
+      const idempotencyKey = `refund_${bookingId}_${Date.now()}`
 
       refund = await stripe.refunds.create(
         {

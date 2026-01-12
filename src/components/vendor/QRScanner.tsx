@@ -12,7 +12,7 @@ import { Card } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { X, Camera, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import jsQR from 'jsqr'
+import { scanQRCode } from '@/lib/qrScannerHelper'
 
 interface QRScannerProps {
   onScan: (bookingId: string) => void
@@ -20,12 +20,6 @@ interface QRScannerProps {
   isOpen: boolean
 }
 
-// Expected QR data format: JSON with bookingId field or plain booking reference
-interface QRData {
-  bookingId?: string
-  bookingReference?: string
-  type?: 'pulau-ticket'
-}
 
 export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
   const [error, setError] = useState<string | null>(null)
@@ -38,38 +32,6 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
   const scanningRef = useRef(false)
   const scanIntervalRef = useRef<number | null>(null)
 
-  // Parse QR code data and extract booking ID
-  const parseQRData = useCallback((data: string): string | null => {
-    // Try parsing as JSON first (structured ticket format)
-    try {
-      const parsed: QRData = JSON.parse(data)
-
-      // Check for Pulau ticket format
-      if (parsed.type === 'pulau-ticket') {
-        return parsed.bookingId || parsed.bookingReference || null
-      }
-
-      // Fallback to any booking ID field
-      return parsed.bookingId || parsed.bookingReference || null
-    } catch {
-      // Not JSON - treat as plain booking reference
-      // Validate it looks like a booking reference (e.g., PUL-XXXXXX or UUID)
-      const uuidPattern =
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-      const refPattern = /^PUL-[A-Z0-9]{6,}$/i
-
-      if (uuidPattern.test(data) || refPattern.test(data)) {
-        return data
-      }
-
-      // Allow any alphanumeric string of reasonable length as fallback
-      if (/^[A-Za-z0-9-]{6,50}$/.test(data)) {
-        return data
-      }
-
-      return null
-    }
-  }, [])
 
   // Handle successful QR scan
   const handleQRDetected = useCallback(
@@ -112,7 +74,7 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
     scanningRef.current = false
   }, [])
 
-  const startQRScanning = useCallback(() => {
+  const startQRScanning = useCallback(async () => {
     if (!videoRef.current || scanningRef.current) return
 
     scanningRef.current = true
@@ -130,7 +92,7 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
     }
 
     // Scan at 10 FPS for balance between responsiveness and performance
-    scanIntervalRef.current = window.setInterval(() => {
+    scanIntervalRef.current = window.setInterval(async () => {
       if (!videoRef.current || !scanningRef.current) {
         if (scanIntervalRef.current) {
           clearInterval(scanIntervalRef.current)
@@ -153,28 +115,20 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
       // Draw current video frame to canvas
       context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-      // Get image data for jsQR processing
+      // Get image data for processing
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
 
-      // Detect QR code using jsQR
-      const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert',
-      })
+      // Detect QR code using helper
+      const result = scanQRCode(imageData)
 
-      if (qrCode && qrCode.data) {
-        console.log('[QRScanner] QR code detected:', qrCode.data)
-
-        // Parse and validate the QR data
-        const bookingId = parseQRData(qrCode.data)
-
-        if (bookingId) {
-          handleQRDetected(bookingId)
-        } else {
-          console.warn('[QRScanner] Invalid QR data format:', qrCode.data)
-        }
+      if (result.success && result.bookingId) {
+        console.log('[QRScanner] QR code detected:', result.bookingId)
+        handleQRDetected(result.bookingId)
+      } else if (result.error) {
+        console.debug('[QRScanner] Scan attempt failed:', result.error)
       }
     }, 100) // 100ms = 10 FPS
-  }, [parseQRData, handleQRDetected])
+  }, [handleQRDetected])
 
   const startCamera = useCallback(async () => {
     try {

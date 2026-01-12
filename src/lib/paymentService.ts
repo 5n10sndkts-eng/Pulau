@@ -8,6 +8,7 @@
  */
 
 import { supabase } from '@/lib/supabase'
+import { createAuditEntry } from '@/lib/auditService'
 import type { Payment, CheckoutResponse, ApiResponse } from '@/lib/types'
 
 // ================================================
@@ -221,6 +222,76 @@ export async function getPaymentBySessionId(
   }
 
   return { data: transformPayment(data), error: null }
+}
+
+// ================================================
+// Refund Handling (AC #5)
+// ================================================
+
+/**
+ * Record a refund against a booking's payment.
+ * Determines full vs partial refund based on the original amount.
+ */
+export async function recordRefund(
+  bookingId: string,
+  refundAmount: number,
+  reason?: string
+): Promise<ApiResponse<Payment>> {
+  if (refundAmount < 0) {
+    return { data: null, error: 'Refund amount cannot be negative' }
+  }
+
+  // Fetch payment to determine refund status
+  const { data: paymentRow, error: fetchError } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('booking_id', bookingId)
+    .single()
+
+  if (fetchError || !paymentRow) {
+    return { data: null, error: fetchError?.message || 'Payment not found' }
+  }
+
+  const originalAmount = Number(paymentRow.amount) || 0
+  const newStatus: Payment['status'] = refundAmount >= originalAmount
+    ? 'refunded'
+    : refundAmount > 0
+      ? 'partially_refunded'
+      : paymentRow.status as Payment['status']
+
+  const { data: updated, error: updateError } = await supabase
+    .from('payments')
+    .update({
+      refund_amount: refundAmount,
+      refund_reason: reason ?? null,
+      status: newStatus,
+    })
+    .eq('id', paymentRow.id)
+    .select()
+    .single()
+
+  if (updateError || !updated) {
+    return { data: null, error: updateError?.message || 'Failed to record refund' }
+  }
+
+  // Fire-and-forget audit entry; failures should not block refund persistence
+  createAuditEntry({
+    eventType: 'booking.refunded',
+    entityType: 'booking',
+    entityId: bookingId,
+    actorId: paymentRow.booking_id,
+    actorType: 'system',
+    metadata: {
+      refund_amount: refundAmount,
+      refund_reason: reason ?? null,
+      payment_id: paymentRow.id,
+      status: newStatus,
+    },
+  }).catch((err) => {
+    console.warn('[paymentService] Failed to write refund audit log', err)
+  })
+
+  return { data: transformPayment(updated), error: null }
 }
 
 // ================================================

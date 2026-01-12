@@ -298,6 +298,50 @@ src/hooks/
   useAuth.ts                 # Auth state hook
 ```
 
+### Component & Screen Organization (BMAD Standard)
+
+**Directory Structure:**
+```
+src/
+├── components/
+│   ├── ui/              # shadcn/ui primitives (Button, Dialog, Sheet, etc.)
+│   ├── common/          # Shared utility components (MetaManager, ErrorBoundary, etc.)
+│   ├── layout/          # Layout components (NavigationShell, AppHeader, etc.)
+│   ├── auth/            # Authentication components (LoginScreen, RegisterScreen, etc.)
+│   ├── booking/         # Booking-related components (TicketPage, BookingDetails, etc.)
+│   ├── checkout/        # Checkout flow components (CheckoutFlow, PaymentForm, etc.)
+│   ├── vendor/          # Vendor-specific components (VendorDashboard, SlotModal, etc.)
+│   ├── admin/           # Admin components (AdminPanel, AuditLog, etc.)
+│   └── features/        # Domain-specific feature components
+│       ├── trip/        # Trip management (TripBuilder, TripCanvas, StickyTripBar, etc.)
+│       ├── discovery/   # Experience discovery (CategoryBrowser, ExperienceDetail, etc.)
+│       └── profile/     # Profile features (LegalScreens, etc.)
+├── screens/             # Full-screen route components
+│   ├── customer/        # Customer-facing screens (Home, Explore, Profile, Saved, etc.)
+│   ├── vendor/          # Vendor portal screens (ExperienceAvailability, etc.)
+│   └── admin/           # Admin screens
+└── hooks/               # Custom React hooks (useAuth, useTrip, useExperiences, etc.)
+```
+
+**Organizational Rules:**
+
+1. **Components vs Screens:**
+   - **Screens** = Full-page route components (mapped in App.tsx `<Route>`)
+   - **Components** = Reusable UI pieces or feature-specific modules
+
+2. **Feature Organization:**
+   - Group related components by domain (trip, discovery, profile)
+   - Keep feature components DRY and domain-focused
+
+3. **Import Conventions:**
+   - Screens import from `@/screens/customer/ComponentName`
+   - Features import from `@/components/features/domain/ComponentName`
+   - UI primitives import from `@/components/ui/ComponentName`
+
+4. **Special Cases:**
+   - App-level components (PWAInstallPrompt, ErrorFallback) stay in `components/` root
+   - Role-specific components organized under `auth/`, `vendor/`, `admin/`
+
 **Feedback Components:**
 ```
 src/components/feedback/

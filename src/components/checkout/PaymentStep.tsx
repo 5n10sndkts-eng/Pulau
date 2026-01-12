@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Trip } from '@/lib/types'
 import { BookingData } from './CheckoutFlow'
 import { formatPrice } from '@/lib/helpers'
-import { ArrowLeft, CreditCard, Lock, Info, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, CreditCard, Lock, Info, ChevronDown, ChevronUp, Shield, Calendar } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface PaymentStepProps {
@@ -158,6 +158,32 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
       <Card className="p-6">
         <h2 className="font-display text-xl font-bold mb-4">Payment Method</h2>
 
+        {/* Express Checkout - Prominent Apple Pay (AC #4) */}
+        <div className="mb-6">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Express Checkout</p>
+          <button
+            type="button"
+            onClick={() => setPaymentMethod('applepay')}
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'applepay'
+                ? 'border-primary bg-primary/5'
+                : 'border-black bg-black text-white hover:bg-black/90'
+              }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+              </svg>
+              <span className="font-semibold">Pay with Apple Pay</span>
+            </div>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-muted-foreground">or pay with card</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
         <div className="space-y-3 mb-6">
           <button
             type="button"
@@ -196,22 +222,6 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
                 P
               </div>
               <span className="font-semibold">PayPal</span>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setPaymentMethod('applepay')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'applepay'
-                ? 'border-primary bg-primary/5'
-                : 'border-border hover:border-primary/50'
-              }`}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded bg-black flex items-center justify-center text-white text-xs font-bold">
-
-              </div>
-              <span className="font-semibold">Apple Pay</span>
             </div>
           </button>
         </div>
@@ -319,19 +329,38 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
         </div>
       </Card>
 
-      <Button type="submit" size="lg" className="w-full" disabled={!isValid || isProcessing}>
+      {/* Trust Signal: Free Cancellation (AC #5) */}
+      <div className="flex items-center justify-center gap-2 p-3 bg-success/10 rounded-lg border border-success/20">
+        <Calendar className="w-4 h-4 text-success" />
+        <span className="text-sm font-medium text-success">
+          Free cancellation until {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+        </span>
+      </div>
+
+      {/* Primary Payment Button */}
+      <Button type="submit" size="lg" className="w-full h-14 text-lg" disabled={!isValid || isProcessing}>
         {isProcessing ? (
           <span className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             Processing...
           </span>
         ) : (
-          `Pay ${formatPrice(finalTotal)}`
+          <span className="flex items-center gap-2">
+            <Shield className="w-5 h-5" />
+            Pay {formatPrice(finalTotal)}
+          </span>
         )}
       </Button>
 
-      <div className="text-center text-xs text-muted-foreground">
-        Your payment information is encrypted and secure. We never store your full card details.
+      {/* Price Breakdown Summary (AC #5) */}
+      <div className="text-center space-y-1">
+        <p className="text-xs text-muted-foreground">
+          {formatPrice(trip.subtotal)} subtotal + {formatPrice(trip.serviceFee)} service fee
+          {promoApplied && ` - ${formatPrice(discount)} discount`}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Your payment information is encrypted and secure. We never store your full card details.
+        </p>
       </div>
     </form>
   )

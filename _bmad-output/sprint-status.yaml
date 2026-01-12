@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
 
 generated: 2026-01-09
-last_updated: 2026-01-09
+last_updated: 2026-01-12
 project: Pulau
 project_key: pulau
 tracking_system: file-system
@@ -39,7 +39,9 @@ story_location: "_bmad-output/stories"
 # ================
 # Phase 1 (Epics 1-20): MVP with KV Store - COMPLETE
 # Phase 2a (Epics 21-28): Core Transactional - COMPLETE
-# Phase 2b (Epics 29-32): Enhanced Operations & Notifications - PLANNED
+# Phase 2b (Epics 29-32): Enhanced Operations & Notifications - COMPLETE
+# Phase 3 (Epic 33): UX Refinement - READY FOR DEV
+# Launch Readiness Sprint: Email + Production + Monitoring - BACKLOG
 
 development_status:
   # ============================================================================
@@ -277,19 +279,20 @@ development_status:
   24-5-create-booking-confirmation-edge-function: done
   24-6-generate-and-send-pdf-ticket: done
   24-7-create-payment-service-module: done
-  epic-24-retrospective: optional
+  epic-24-retrospective: last_updated: 2026-01-12
 
-  # Epic 25: Real-Time Inventory & Availability (5 stories)
+  # Epic 25: Real-Time Inventory & Availability (5 stories + 1 remediation)
   epic-25: done
   25-1-implement-supabase-realtime-subscriptions: done
   25-2-create-real-time-service-module: done
   25-3-implement-atomic-inventory-decrement: done
   25-4-add-instant-confirmation-filter: done
   25-5-display-real-time-slot-availability: done
+  25-6-fix-type-errors: done  # P0: Build-breaking fixes
   epic-25-retrospective: done
 
   # Epic 26: Offline Ticket Access PWA (5 stories)
-  epic-26: done
+  epic-26: needs-rework  # P2: Implementation gaps
   26-1-implement-service-worker-for-ticket-caching: done
   26-2-build-offline-ticket-display: done
   26-3-show-last-updated-timestamp: done
@@ -297,16 +300,17 @@ development_status:
   26-5-pwa-installation-and-offline-indicator: done
   epic-26-retrospective: done
 
-  # Epic 27: Vendor Check-In & Operations (5 stories)
+  # Epic 27: Vendor Check-In & Operations (5 stories + 1 remediation)
   epic-27: done
   27-1-build-qr-code-scanner-interface: done
   27-2-implement-ticket-validation-logic: done
   27-3-record-check-in-status: done
   27-4-view-todays-bookings-dashboard: done
   27-5-create-vendor-payout-status-edge-function: done
+  27-6-implement-critical-features: done
   epic-27-retrospective: done
 
-  # Epic 28: Admin Refunds & Audit Trail (6 stories)
+  # Epic 28: Admin Refunds & Audit Trail (6 stories + 1 remediation)
   epic-28: done
   28-1-build-booking-search-interface: done
   28-2-create-refund-processing-interface: done
@@ -314,6 +318,7 @@ development_status:
   28-4-display-immutable-audit-log: done
   28-5-create-audit-service-module: done
   28-6-enforce-audit-log-retention-policy: done
+  28-7-implement-refund-processing: done
   epic-28-retrospective: done
 
   # ============================================================================
@@ -361,10 +366,42 @@ development_status:
   # ============================================================================
 
   # Epic 33: UX 2.0 - Core Experience Improvements (5 stories)
-  epic-33: done
+  epic-33: backlog
   33-1-sticky-trip-bar-implementation: done
-  33-2-single-screen-onboarding-redesign: done
-  33-3-quick-add-interaction-loop: done
-  33-4-checkout-form-optimization: done
-  33-5-budget-helper-implementation: done
+  33-2-single-screen-onboarding-redesign: ready-for-dev
+  33-3-quick-add-interaction-loop: ready-for-dev
+  33-4-checkout-form-optimization: ready-for-dev
+  33-5-budget-helper-implementation: ready-for-dev
   epic-33-retrospective: optional
+
+  # ============================================================================
+  # LAUNCH READINESS SPRINT (CRITICAL PATH TO PRODUCTION)
+  # ============================================================================
+
+  # Epic 30.1: Email Notification System (5 stories) - P0
+  epic-30-1: in-progress
+  30-1-1-implement-send-email-edge-function: done
+  30-1-2-create-email-templates: done
+  30-1-3-integrate-resend-api: blocked-manual-setup  # Requires Resend account + DNS setup
+  30-1-4-add-email-triggers-to-checkout: done
+  30-1-5-test-email-delivery-e2e: in-progress  # Review findings: Phony placeholder tests; requires implementation of rendering and DNS logic
+
+  # Production Environment Setup (8 tasks) - P0
+  production-setup: done  # ✅ LIVE IN PRODUCTION - https://pulau.vercel.app
+  2-1-create-production-supabase-project: done  # Project wzuvzcydenvuzxmoryzt configured, all keys set
+  2-2-run-migrations-on-production: done  # 18 migrations deployed and synced successfully
+  2-3-configure-production-environment-variables: done  # Supabase, Stripe, Sentry configured; Vercel env vars set; Resend blocked
+  2-4-setup-stripe-production-account: done  # API keys configured, webhook endpoint created (we_1SofgQCHQf4enAG7LRijXhKj)
+  2-5-configure-hosting-platform: done  # Vercel project created (prj_cMq72Oj3blflOcswf6jGphwBMF3m), all VITE vars configured
+  2-6-setup-custom-domain-ssl: skipped  # Using pulau.vercel.app (custom domain can be added later)
+  2-7-deploy-production-build: done  # Deployed to https://pulau.vercel.app, Edge Functions deployed, Stripe secrets set
+  2-8-verify-all-integrations-production: done  # App loads, Sentry active, Service Worker working, Auth functional, Database connected
+
+  # Epic 32.1: Error Monitoring & Observability (6 stories) - P0
+  epic-32-1: done  # All Sentry implementation complete
+  32-1-1-install-configure-sentry-sdk: done  # @sentry/react installed, sentry.ts configured
+  32-1-2-add-error-boundaries: done  # ErrorBoundary in main.tsx and components
+  32-1-3-configure-sourcemaps: done  # Vite plugin configured, sourcemap: true
+  32-1-4-setup-performance-monitoring: done  # BrowserTracing, Web Vitals, APM tracking
+  32-1-5-test-error-reporting-e2e: done  # E2E test suite created (sentry-error-tracking.spec.ts)
+  32-1-6-configure-alert-rules: done  # Alert configuration guide created

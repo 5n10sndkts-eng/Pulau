@@ -1,7 +1,8 @@
-import { supabase } from './supabase'
+import { supabase, isSupabaseConfigured } from './supabase'
 import { Booking, Trip, TripItem } from './types'
 import { Database } from './database.types'
 import { calculateTripTotal } from './helpers'
+import { createAuditEntry } from './auditService'
 
 const isMockMode = () => import.meta.env.VITE_USE_MOCK_AUTH === 'true'
 
@@ -12,30 +13,40 @@ type BookingInsert = Database['public']['Tables']['bookings']['Insert']
  * RPC function parameter types for validate_booking_for_checkin
  */
 interface ValidateBookingParams {
-  p_booking_id: string
-  p_vendor_id: string
+    p_booking_id: string
+    p_vendor_id: string
 }
 
 /**
  * RPC function return type for validate_booking_for_checkin
  */
 interface ValidateBookingRpcResponse {
-  valid: boolean
-  reason?: CheckInValidationReason
-  message?: string
-  booking?: {
-    id: string
-    reference: string
-    items: Array<{
-      id: string
-      experience_name: string
-      slot_time: string
-      date: string
-      guests: number
-      status: string
-      is_today: boolean
-    }>
-  }
+    valid: boolean
+    reason?: CheckInValidationReason
+    message?: string
+    booking?: {
+        id: string
+        reference: string
+        items: Array<{
+            id: string
+            experience_name: string
+            slot_time: string
+            date: string
+            guests: number
+            status: string
+            is_today: boolean
+        }>
+    }
+}
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function normalizeBookingId(raw: string): string {
+    return raw.trim()
+}
+
+function isValidUuid(id: string): boolean {
+    return UUID_PATTERN.test(id)
 }
 
 export type CheckInValidationReason =
@@ -77,6 +88,11 @@ export const bookingService = {
             return booking
         }
 
+        if (!isSupabaseConfigured()) {
+            console.warn('[bookingService] Supabase not configured; createBooking skipped')
+            return null
+        }
+
         const payload: BookingInsert = {
             id: booking.id,
             trip_id: booking.tripId,
@@ -108,6 +124,11 @@ export const bookingService = {
             const stored = localStorage.getItem('pulau_bookings')
             const bookings: Booking[] = stored ? JSON.parse(stored) : []
             return bookings.filter(b => b.trip.userId === userId)
+        }
+
+        if (!isSupabaseConfigured()) {
+            console.warn('[bookingService] Supabase not configured; returning empty bookings')
+            return []
         }
 
         // Join bookings with trips to filter by userId
@@ -173,10 +194,28 @@ export const bookingService = {
 
     // Validate a booking for check-in (Epic 27.2)
     validateBookingForCheckIn: async (bookingId: string, vendorId: string): Promise<CheckInValidationResult> => {
+        const normalizedBookingId = normalizeBookingId(bookingId)
+
+        if (!normalizedBookingId) {
+            return {
+                valid: false,
+                reason: 'booking_not_found',
+                message: 'Missing booking identifier'
+            }
+        }
+
+        if (!isValidUuid(vendorId)) {
+            return {
+                valid: false,
+                reason: 'unauthorized',
+                message: 'Invalid vendor identifier'
+            }
+        }
+
         if (isMockMode()) {
             const stored = localStorage.getItem('pulau_bookings')
             const bookings: Booking[] = stored ? JSON.parse(stored) : []
-            const booking = bookings.find(b => b.id === bookingId || b.reference === bookingId)
+            const booking = bookings.find(b => b.id === normalizedBookingId || b.reference === normalizedBookingId)
 
             if (!booking) {
                 return {
@@ -220,10 +259,19 @@ export const bookingService = {
             }
         }
 
-        // Call RPC function - use type assertion since this is a custom RPC not in generated types
+        if (!isSupabaseConfigured()) {
+            console.warn('[bookingService] Supabase not configured; validation failed')
+            return {
+                valid: false,
+                reason: 'internal_error',
+                message: 'Supabase not configured on this client.'
+            }
+        }
+
+        // Call RPC function - custom name so we type-assert
         const { data, error } = await supabase.rpc(
-            'validate_booking_for_checkin' as 'confirm_booking_atomic', // Type workaround for custom RPC
-            { p_booking_id: bookingId, p_vendor_id: vendorId } as any
+            'validate_booking_for_checkin' as any,
+            { p_booking_id: normalizedBookingId, p_vendor_id: vendorId } satisfies ValidateBookingParams
         )
 
         if (error) {
@@ -249,8 +297,73 @@ export const bookingService = {
         return {
             valid: true,
             reason: null,
-            message: 'Valid ticket',
+            message: response.message || 'Valid ticket',
             booking: response.booking
         }
+    },
+
+    // Check a guest in and persist audit trail (Epic 27.3)
+    checkInBooking: async (bookingId: string, vendorId: string): Promise<void> => {
+        if (!isSupabaseConfigured()) {
+            throw new Error('Supabase not configured; cannot persist check-in')
+        }
+
+        const { error } = await supabase
+            .from('bookings')
+            .update({
+                status: 'checked_in',
+                checked_in_at: new Date().toISOString()
+            })
+            .eq('id', bookingId)
+
+        if (error) {
+            console.error('Error checking in booking:', error)
+            throw new Error('Failed to check in booking')
+        }
+
+        await createAuditEntry({
+            eventType: 'booking.checked_in',
+            entityType: 'booking',
+            entityId: bookingId,
+            actorId: vendorId,
+            actorType: 'vendor',
+            metadata: {
+                vendor_id: vendorId,
+                checked_in_at: new Date().toISOString(),
+            },
+        })
+    },
+
+    // Mark booking as no-show with audit trail (Epic 27.4)
+    markNoShow: async (bookingId: string, vendorId: string): Promise<void> => {
+        if (!isSupabaseConfigured()) {
+            throw new Error('Supabase not configured; cannot persist no-show')
+        }
+
+        const { error } = await supabase
+            .from('bookings')
+            .update({
+                status: 'no_show',
+                // We use a custom metadata or column for no-show time if available
+                // for now we just use the status update
+            })
+            .eq('id', bookingId)
+
+        if (error) {
+            console.error('Error marking no-show:', error)
+            throw new Error('Failed to mark as no-show')
+        }
+
+        await createAuditEntry({
+            eventType: 'booking.no_show',
+            entityType: 'booking',
+            entityId: bookingId,
+            actorId: vendorId,
+            actorType: 'vendor',
+            metadata: {
+                vendor_id: vendorId,
+                marked_at: new Date().toISOString(),
+            },
+        })
     }
 }

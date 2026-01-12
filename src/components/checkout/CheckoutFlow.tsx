@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Trip } from '@/lib/types'
 import { ReviewStep } from './ReviewStep'
@@ -6,6 +6,10 @@ import { TravelerDetailsStep } from './TravelerDetailsStep'
 import { PaymentStep } from './PaymentStep'
 import { ConfirmationStep } from './ConfirmationStep'
 import { CheckoutProgress } from './CheckoutProgress'
+import { trackCheckoutStep, measureTiming } from '@/lib/sentry'
+import { initiateCheckout } from '@/lib/paymentService'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { toast } from 'sonner'
 
 export type CheckoutStep = 'review' | 'details' | 'payment' | 'confirmation'
 
@@ -55,6 +59,28 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
   const currentStep = session?.currentStep || 'review'
   const completedSteps = session?.completedSteps || []
 
+  // Track checkout step changes for APM (Story 32-2)
+  const [stepStartTime] = useState(() => performance.now())
+  useEffect(() => {
+    const stepMap = {
+      review: 'review',
+      details: 'traveler-details',
+      payment: 'payment',
+      confirmation: 'confirmation',
+    } as const
+
+    trackCheckoutStep(stepMap[currentStep], {
+      itemCount: trip.items.length,
+      total: trip.total,
+    })
+
+    // Measure time on each step when leaving
+    return () => {
+      const duration = performance.now() - stepStartTime
+      measureTiming(`checkout.step.${currentStep}`, duration)
+    }
+  }, [currentStep, trip.items.length, trip.total, stepStartTime])
+
   const updateSession = (updates: Partial<NonNullable<typeof session>>) => {
     setSession((prev) => {
       const base = prev || {
@@ -93,7 +119,7 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
     })
   }
 
-  const handlePaymentContinue = (data: {
+  const handlePaymentContinue = async (data: {
     promoCode?: string
     paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay'
     cardDetails?: BookingData['cardDetails']
@@ -101,6 +127,29 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
   }) => {
     updateSession({ ...data })
 
+    // If Supabase is configured and payment method is card, try real checkout
+    if (isSupabaseConfigured() && data.paymentMethod === 'card') {
+      try {
+        const { data: response, error } = await initiateCheckout(trip.id)
+
+        if (error || !response?.success) {
+          toast.error(error || 'Failed to initiate checkout')
+          return
+        }
+
+        if (response.sessionUrl) {
+          // Redirect to Stripe Hosted Checkout
+          window.location.href = response.sessionUrl
+          return
+        }
+      } catch (err) {
+        console.error('Checkout error:', err)
+        toast.error('An unexpected error occurred')
+        return
+      }
+    }
+
+    // Fallback / Mock Flow (Demo Mode or other methods)
     setTimeout(() => {
       const bookingRef = `PUL-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`
       updateSession({
@@ -108,7 +157,6 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
         completedSteps: [...new Set([...completedSteps, 'payment' as CheckoutStep])]
       })
       onComplete(bookingRef)
-      // We keep the session for the confirmation screen but it should be cleared when leaving
     }, 1500)
   }
 

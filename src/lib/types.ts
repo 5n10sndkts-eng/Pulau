@@ -263,7 +263,7 @@ export interface VendorStats {
   averageRating: number
 }
 
-export type FilterType = 'all' | 'beginner' | 'halfday' | 'fullday' | 'private' | 'group' | 'under50' | 'toprated' | 'instant'
+export type FilterType = 'all' | 'beginner' | 'halfday' | 'fullday' | 'private' | 'group' | 'under50' | 'toprated' | 'instant' | 'underbudget'
 
 /**
  * Discriminated Union for Screen Routing

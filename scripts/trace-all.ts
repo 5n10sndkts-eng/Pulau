@@ -79,7 +79,7 @@ function findTestsForFile(sourceFile: string): string[] {
         const output = execSync(cmd, { encoding: 'utf-8' });
         const lines = output.trim().split('\n').filter(Boolean);
         foundTests.push(...lines);
-    } catch (e) {
+    } catch {
         // ignore
     }
 
@@ -104,7 +104,7 @@ function checkCoverage(testPaths: string[], ac: string): boolean {
             // If 50% of keywords are present, we count it as "likely covered"
             const hits = keywords.filter(k => content.includes(k.toLowerCase())).length;
             if (hits / keywords.length >= 0.3) return true;
-        } catch (e) { continue; }
+        } catch { continue; }
     }
     return false;
 }

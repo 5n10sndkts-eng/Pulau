@@ -52,8 +52,15 @@ export function ExperienceAvailabilityScreen({
       const startDate = format(startOfMonth(displayMonth), 'yyyy-MM-dd')
       const endDate = format(endOfMonth(addMonths(displayMonth, 1)), 'yyyy-MM-dd')
 
-      const data = await slotService.getAllSlots(experienceId, { startDate, endDate })
-      setSlots(data)
+      const { data, error } = await slotService.getAllSlots(experienceId, { startDate, endDate })
+
+      if (error) {
+        console.error('Failed to load slots:', error)
+        toast.error('Failed to load availability')
+        setSlots([])
+      } else {
+        setSlots(data || [])
+      }
     } catch (error) {
       console.error('Failed to load slots:', error)
       toast.error('Failed to load availability')
@@ -130,36 +137,36 @@ export function ExperienceAvailabilityScreen({
   }
 
   const handleBlockSlot = async (slotId: string, reason: string) => {
-    const result = await blockSlot(slotId, reason)
-    if (result.success) {
+    const { data, error } = await blockSlot(slotId, reason)
+    if (data) {
       setSlots((prev) =>
         prev.map((s) => (s.id === slotId ? { ...s, is_blocked: true } : s))
       )
       toast.success('Slot blocked')
     } else {
-      toast.error(result.error || 'Failed to block slot')
+      toast.error(error || 'Failed to block slot')
     }
   }
 
   const handleUnblockSlot = async (slotId: string) => {
-    const result = await unblockSlot(slotId)
-    if (result.success) {
+    const { data, error } = await unblockSlot(slotId)
+    if (data) {
       setSlots((prev) =>
         prev.map((s) => (s.id === slotId ? { ...s, is_blocked: false } : s))
       )
       toast.success('Slot unblocked')
     } else {
-      toast.error(result.error || 'Failed to unblock slot')
+      toast.error(error || 'Failed to unblock slot')
     }
   }
 
   const handleDeleteSlot = async (slotId: string) => {
-    const result = await deleteSlot(slotId)
-    if (result.success) {
+    const { data, error } = await deleteSlot(slotId)
+    if (data) {
       setSlots((prev) => prev.filter((s) => s.id !== slotId))
       toast.success('Slot deleted')
     } else {
-      toast.error(result.error || 'Failed to delete slot')
+      toast.error(error || 'Failed to delete slot')
     }
   }
 
@@ -167,14 +174,14 @@ export function ExperienceAvailabilityScreen({
     slotId: string,
     updates: { totalCapacity?: number }
   ) => {
-    const result = await updateSlot(slotId, updates)
-    if (result.success && result.data) {
+    const { data, error } = await updateSlot(slotId, updates)
+    if (data) {
       setSlots((prev) =>
-        prev.map((s) => (s.id === slotId ? result.data! : s))
+        prev.map((s) => (s.id === slotId ? data : s))
       )
       toast.success('Slot updated')
     } else {
-      toast.error(result.error || 'Failed to update slot')
+      toast.error(error || 'Failed to update slot')
     }
   }
 

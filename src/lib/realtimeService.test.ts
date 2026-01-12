@@ -19,8 +19,9 @@ import { supabase } from './supabase'
 vi.mock('./supabase', () => ({
   supabase: {
     channel: vi.fn(),
-    removeChannel: vi.fn()
-  }
+    removeChannel: vi.fn().mockResolvedValue('ok' as 'ok' | 'error' | 'timed out')
+  },
+  isSupabaseConfigured: vi.fn().mockReturnValue(true)
 }))
 
 describe('realtimeService', () => {
@@ -44,7 +45,7 @@ describe('realtimeService', () => {
 
     // Setup supabase.channel to return mock channel
     vi.mocked(supabase.channel).mockReturnValue(mockChannel as any)
-    vi.mocked(supabase.removeChannel).mockResolvedValue('ok')
+    vi.mocked(supabase.removeChannel).mockResolvedValue('ok' as const)
   })
 
   afterEach(async () => {

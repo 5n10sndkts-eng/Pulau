@@ -49,7 +49,7 @@ export function RealtimeSlotDisplay({
       setSlots(prevSlots => {
         // Find and update the changed slot
         const slotIndex = prevSlots.findIndex(s => s.id === newSlot.id)
-        
+
         if (slotIndex === -1) return prevSlots
 
         // Trigger animation for this slot
@@ -73,7 +73,7 @@ export function RealtimeSlotDisplay({
         setSlots(prevSlots => {
           // Avoid duplicates
           if (prevSlots.some(s => s.id === newSlot.id)) return prevSlots
-          return [...prevSlots, newSlot as ExperienceSlot].sort((a, b) => 
+          return [...prevSlots, newSlot as ExperienceSlot].sort((a, b) =>
             a.slot_time.localeCompare(b.slot_time)
           )
         })
@@ -88,7 +88,7 @@ export function RealtimeSlotDisplay({
   const { connectionState, lastUpdate, error: realtimeError, isStale } = useRealtimeSlots(
     experienceId,
     handleSlotChange,
-    { staleThresholdMs: 60000 } // 1 minute staleness threshold
+    { staleThresholdMs: 60000 }
   )
 
   // Load initial slots
@@ -100,13 +100,17 @@ export function RealtimeSlotDisplay({
       setLoadError(null)
 
       try {
-        const slotsData = await getAvailableSlots(experienceId, {
+        const { data, error } = await getAvailableSlots(experienceId, {
           startDate: selectedDate,
           endDate: selectedDate
         })
 
         if (isMounted) {
-          setSlots(slotsData)
+          if (error) {
+            setLoadError(error)
+          } else if (data) {
+            setSlots(data)
+          }
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load slots'
@@ -173,11 +177,11 @@ export function RealtimeSlotDisplay({
             <Alert variant={connectionState === 'error' ? 'destructive' : 'default'}>
               <WifiOff className="h-4 w-4" />
               <AlertDescription className="text-xs">
-                {connectionState === 'error' && realtimeError 
+                {connectionState === 'error' && realtimeError
                   ? `Connection error: ${realtimeError}`
                   : isStale
-                  ? 'Data may be outdated - last updated ' + (lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : 'unknown')
-                  : 'Real-time updates disconnected'}
+                    ? 'Data may be outdated - last updated ' + (lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : 'unknown')
+                    : 'Real-time updates disconnected'}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -230,7 +234,7 @@ export function RealtimeSlotDisplay({
                         {slot.slot_time.substring(0, 5)}
                       </span>
                     </div>
-                    
+
                     {/* Availability indicator with animation */}
                     <motion.div
                       className="mt-1 flex items-center gap-2"
@@ -281,7 +285,7 @@ export function RealtimeSlotDisplay({
                       Blocked
                     </Badge>
                   )}
-                  
+
                   {/* Price */}
                   {isAvailable && (
                     <div className="text-right">

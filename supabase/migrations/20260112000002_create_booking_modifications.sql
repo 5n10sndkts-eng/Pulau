@@ -8,21 +8,29 @@
 -- ============================================================================
 
 -- Modification request statuses
-CREATE TYPE IF NOT EXISTS modification_request_status AS ENUM (
-  'pending',      -- Awaiting vendor approval
-  'approved',     -- Vendor approved, awaiting execution
-  'rejected',     -- Vendor rejected the request
-  'executed',     -- Modification completed
-  'cancelled',    -- Customer cancelled the request
-  'expired'       -- Request expired without action
-);
+DO $$ BEGIN
+  CREATE TYPE modification_request_status AS ENUM (
+    'pending',      -- Awaiting vendor approval
+    'approved',     -- Vendor approved, awaiting execution
+    'rejected',     -- Vendor rejected the request
+    'executed',     -- Modification completed
+    'cancelled',    -- Customer cancelled the request
+    'expired'       -- Request expired without action
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Modification types
-CREATE TYPE IF NOT EXISTS modification_type AS ENUM (
-  'reschedule',      -- Change date/time
-  'guest_change',    -- Change number of guests
-  'combined'         -- Both reschedule and guest change
-);
+DO $$ BEGIN
+  CREATE TYPE modification_type AS ENUM (
+    'reschedule',      -- Change date/time
+    'guest_change',    -- Change number of guests
+    'combined'         -- Both reschedule and guest change
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create booking_modifications table
 CREATE TABLE IF NOT EXISTS booking_modifications (

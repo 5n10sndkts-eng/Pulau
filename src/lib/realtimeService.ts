@@ -7,7 +7,7 @@
  * Handles connection lifecycle, reconnection, and cleanup automatically.
  */
 
-import { supabase } from './supabase'
+import { supabase, isSupabaseConfigured } from './supabase'
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import type { Database } from './database.types'
 
@@ -36,7 +36,7 @@ export type BookingStatusCallback = (payload: BookingChangePayload) => void
  */
 interface SubscriptionMetadata {
   channel: RealtimeChannel
-  type: 'slot' | 'booking'
+  type: 'slot' | 'booking' | 'notification'
   id: string
 }
 
@@ -70,6 +70,14 @@ function validateUUID(id: string, paramName: string): void {
  */
 const activeSubscriptions = new Map<string, SubscriptionMetadata>()
 
+function realtimeEnabled(): boolean {
+  if (!isSupabaseConfigured()) {
+    console.warn('[realtimeService] Supabase not configured; skipping subscription')
+    return false
+  }
+  return true
+}
+
 // ================================================
 // SUBSCRIPTION FUNCTIONS
 // ================================================
@@ -95,6 +103,7 @@ export function subscribeToSlotAvailability(
   experienceId: string,
   callback: SlotAvailabilityCallback
 ): string {
+  if (!realtimeEnabled()) return 'realtime-disabled'
   // Validate UUID to prevent filter injection attacks
   validateUUID(experienceId, 'experienceId')
 
@@ -105,8 +114,11 @@ export function subscribeToSlotAvailability(
   // The filter param controls what data we receive, channel name is just a handle
   const channelName = `experience-slots-${experienceId}-${subscriptionId}`
 
-  const channel = supabase
-    .channel(channelName)
+  // Keep reference to the channel object (not the subscribe() return) so we
+  // can reliably clean it up later in unsubscribe/removeChannel calls.
+  const channel = supabase.channel(channelName)
+
+  channel
     .on(
       'postgres_changes',
       {
@@ -149,14 +161,16 @@ export function subscribeToBookingStatus(
   bookingId: string,
   callback: BookingStatusCallback
 ): string {
+  if (!realtimeEnabled()) return 'realtime-disabled'
   // Validate UUID to prevent filter injection attacks
   validateUUID(bookingId, 'bookingId')
 
   const subscriptionId = `booking-${bookingId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
   const channelName = `booking-${bookingId}-${subscriptionId}`
 
-  const channel = supabase
-    .channel(channelName)
+  const channel = supabase.channel(channelName)
+
+  channel
     .on(
       'postgres_changes',
       {
@@ -214,6 +228,7 @@ export async function unsubscribe(subscriptionId: string): Promise<void> {
  * ```
  */
 export async function unsubscribeAll(): Promise<void> {
+  if (activeSubscriptions.size === 0) return
   const promises = Array.from(activeSubscriptions.values()).map(sub =>
     supabase.removeChannel(sub.channel)
   )
@@ -270,14 +285,16 @@ export function subscribeToVendorBookings(
   vendorId: string,
   callback: VendorBookingCallback
 ): string {
+  if (!realtimeEnabled()) return 'realtime-disabled'
   // Validate UUID to prevent filter injection attacks
   validateUUID(vendorId, 'vendorId')
 
   const subscriptionId = `vendor-bookings-${vendorId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
   const channelName = `vendor-bookings-${vendorId}-${subscriptionId}`
 
-  const channel = supabase
-    .channel(channelName)
+  const channel = supabase.channel(channelName)
+
+  channel
     .on(
       'postgres_changes',
       {
@@ -304,6 +321,92 @@ export function subscribeToVendorBookings(
     channel,
     type: 'booking',
     id: vendorId
+  })
+
+  return subscriptionId
+}
+
+// ================================================
+// CUSTOMER NOTIFICATION SUBSCRIPTIONS
+// Story: 30.4 - Create In-App Notification Center
+// ================================================
+
+/**
+ * Customer notification row type
+ * Matches the customer_notifications table schema
+ */
+export interface CustomerNotificationRow {
+  id: string
+  user_id: string
+  type: string
+  title: string
+  message: string
+  booking_id: string | null
+  read: boolean
+  created_at: string
+}
+
+/**
+ * Payload for customer notification changes
+ */
+export type CustomerNotificationChangePayload = RealtimePostgresChangesPayload<CustomerNotificationRow>
+
+/**
+ * Callback function for customer notification updates
+ */
+export type CustomerNotificationCallback = (payload: CustomerNotificationChangePayload) => void
+
+/**
+ * Subscribe to new notifications for a specific user
+ *
+ * Listens for INSERT events on the customer_notifications table filtered by user_id.
+ * Used to show real-time notification updates in the notification center.
+ *
+ * @param userId - The user to monitor notifications for
+ * @param callback - Function called when a new notification is created
+ * @returns Subscription ID for cleanup
+ *
+ * @example
+ * ```typescript
+ * const subId = subscribeToCustomerNotifications('user-123', (payload) => {
+ *   if (payload.eventType === 'INSERT') {
+ *     const notification = payload.new
+ *     addNotificationToList(notification)
+ *   }
+ * })
+ * // Later: unsubscribe(subId)
+ * ```
+ */
+export function subscribeToCustomerNotifications(
+  userId: string,
+  callback: CustomerNotificationCallback
+): string {
+  if (!realtimeEnabled()) return 'realtime-disabled'
+  // Validate UUID to prevent filter injection attacks
+  validateUUID(userId, 'userId')
+
+  const subscriptionId = `customer-notifications-${userId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const channelName = `customer-notifications-${userId}-${subscriptionId}`
+
+  const channel = supabase.channel(channelName)
+
+  channel
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'customer_notifications',
+        filter: `user_id=eq.${userId}`
+      },
+      callback
+    )
+    .subscribe()
+
+  activeSubscriptions.set(subscriptionId, {
+    channel,
+    type: 'notification',
+    id: userId
   })
 
   return subscriptionId

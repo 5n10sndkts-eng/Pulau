@@ -59,8 +59,20 @@ serve(async (req) => {
     }
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+
+    if (!supabaseUrl || !supabaseKey || !stripeKey) {
+      return new Response(
+        JSON.stringify({ error: 'Server misconfigured' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     // Get vendor's Stripe account ID
@@ -80,9 +92,6 @@ serve(async (req) => {
       )
     }
 
-    // Fetch payout status from Stripe
-    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')!
-    
     // Fetch payouts from Stripe API
     const payoutsResponse = await fetch(
       `https://api.stripe.com/v1/payouts?limit=10`,

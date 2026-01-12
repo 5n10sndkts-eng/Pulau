@@ -39,10 +39,10 @@ alter table public.vendors
 update public.vendors
 set onboarding_state =
   case
-    when stripe_onboarding_complete = true and instant_book_enabled = true then 'active'
-    when stripe_onboarding_complete = true then 'bank_linked'
-    when stripe_account_id is not null then 'kyc_submitted'
-    else 'registered'
+    when stripe_onboarding_complete = true and instant_book_enabled = true then 'active'::vendor_onboarding_state
+    when stripe_onboarding_complete = true then 'bank_linked'::vendor_onboarding_state
+    when stripe_account_id is not null then 'kyc_submitted'::vendor_onboarding_state
+    else 'registered'::vendor_onboarding_state
   end
 where onboarding_state = 'registered';
 

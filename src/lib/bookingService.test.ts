@@ -10,6 +10,7 @@ vi.mock('./supabase', () => ({
         from: vi.fn(),
         rpc: vi.fn(),
     },
+    isSupabaseConfigured: vi.fn().mockReturnValue(true),
 }))
 
 vi.mock('./helpers', () => ({
@@ -176,7 +177,7 @@ describe('bookingService', () => {
     })
 
     describe('validateBookingForCheckIn', () => {
-        const mockVendorId = 'vendor-999'
+        const mockVendorId = '123e4567-e89b-12d3-a456-426614174000'
 
         it('calls Supabase RPC with correct arguments', async () => {
             const mockRpcResponse = {
@@ -232,5 +233,11 @@ describe('bookingService', () => {
             expect(result.valid).toBe(false)
             expect(result.reason).toBe('booking_not_found')
         })
+
+            it('rejects invalid vendor id', async () => {
+                const result = await bookingService.validateBookingForCheckIn(mockBookingId, 'not-a-uuid')
+                expect(result.valid).toBe(false)
+                expect(result.reason).toBe('unauthorized')
+            })
     })
 })

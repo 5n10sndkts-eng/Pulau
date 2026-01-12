@@ -553,6 +553,12 @@ async function handleCheckoutCompleted(
     console.error(`Ticket generation error for booking ${booking.reference}:`, error)
   })
 
+  // ================================================
+  // Step 7: Send confirmation email (Story 30.1)
+  // Async - fire and forget, don't block webhook
+  // ================================================
+  sendConfirmationEmail(supabaseUrl, supabaseServiceKey, booking.id, userId)
+
   console.log(`Checkout completed: payment=${payment.id}, booking=${booking.reference}`)
 }
 
@@ -771,6 +777,83 @@ async function handleChargeRefunded(
 // ================================================
 // Helpers
 // ================================================
+
+/**
+ * Send booking confirmation email via send-email Edge Function (Story 30.1)
+ * Fire and forget - does not block webhook response (AC #5)
+ */
+async function sendConfirmationEmail(
+  supabaseUrl: string,
+  supabaseServiceKey: string,
+  bookingId: string,
+  userId: string
+) {
+  try {
+    // Fetch booking details for email
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .select(`
+        id,
+        reference,
+        guest_count,
+        total_amount,
+        profiles!inner(email, full_name),
+        experiences!inner(title, meeting_point),
+        experience_slots!inner(slot_date, slot_time)
+      `)
+      .eq('id', bookingId)
+      .single()
+
+    if (bookingError || !booking) {
+      console.error('Failed to fetch booking for email:', bookingError?.message)
+      return
+    }
+
+    // Extract data with type safety
+    const profile = booking.profiles as { email: string; full_name: string }
+    const experience = booking.experiences as { title: string; meeting_point?: string }
+    const slot = booking.experience_slots as { slot_date: string; slot_time: string }
+
+    // Send email (fire and forget)
+    fetch(`${supabaseUrl}/functions/v1/send-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseServiceKey}`,
+      },
+      body: JSON.stringify({
+        type: 'booking_confirmation',
+        to: profile.email,
+        booking_id: bookingId,
+        data: {
+          booking_reference: booking.reference,
+          experience_name: experience.title,
+          experience_date: slot.slot_date,
+          experience_time: slot.slot_time,
+          guest_count: booking.guest_count || 1,
+          total_amount: (booking.total_amount || 0) / 100, // Convert from cents
+          currency: 'USD',
+          traveler_name: profile.full_name || 'Traveler',
+          meeting_point: experience.meeting_point,
+        },
+      }),
+    }).then(response => {
+      if (response.ok) {
+        console.log(`Confirmation email sent for booking ${booking.reference}`)
+      } else {
+        console.error(`Confirmation email failed for booking ${booking.reference}:`, response.status)
+      }
+    }).catch(error => {
+      console.error(`Confirmation email error for booking ${booking.reference}:`, error)
+    })
+
+  } catch (error) {
+    console.error('Error preparing confirmation email:', error)
+    // Don't throw - email is non-blocking
+  }
+}
 
 interface AuditLogParams {
   eventType: string

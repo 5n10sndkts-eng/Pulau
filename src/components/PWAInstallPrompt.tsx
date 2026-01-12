@@ -5,7 +5,7 @@
  * Shows install prompt for PWA with offline indicator
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { X, Download, WifiOff } from 'lucide-react'
@@ -23,6 +23,14 @@ export function PWAInstallPrompt() {
   const [isInstalled, setIsInstalled] = useState(false)
   const isOnline = useOnlineStatus()
 
+  const dismissedRecently = useCallback(() => {
+    const dismissed = localStorage.getItem('pwa-prompt-dismissed')
+    if (!dismissed) return false
+    const dismissedTime = parseInt(dismissed, 10)
+    const sevenDays = 7 * 24 * 60 * 60 * 1000
+    return Date.now() - dismissedTime < sevenDays
+  }, [])
+
   useEffect(() => {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -32,12 +40,16 @@ export function PWAInstallPrompt() {
 
     // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
+      if (dismissedRecently()) return
+
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)
       
       // Show prompt after a delay (don't be too pushy)
       setTimeout(() => {
-        setShowPrompt(true)
+        if (!dismissedRecently()) {
+          setShowPrompt(true)
+        }
       }, 5000)
     }
 
@@ -83,16 +95,10 @@ export function PWAInstallPrompt() {
 
   // Check if dismissed recently
   useEffect(() => {
-    const dismissed = localStorage.getItem('pwa-prompt-dismissed')
-    if (dismissed) {
-      const dismissedTime = parseInt(dismissed, 10)
-      const sevenDays = 7 * 24 * 60 * 60 * 1000
-      
-      if (Date.now() - dismissedTime < sevenDays) {
-        setShowPrompt(false)
-      }
+    if (dismissedRecently()) {
+      setShowPrompt(false)
     }
-  }, [])
+  }, [dismissedRecently])
 
   if (isInstalled || !deferredPrompt) {
     return null

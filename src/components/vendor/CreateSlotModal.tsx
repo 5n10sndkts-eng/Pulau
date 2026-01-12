@@ -68,7 +68,7 @@ export function CreateSlotModal({
 
       const result = await createSlot(input)
 
-      if (result.success && result.data) {
+      if (result.data) {
         onSlotCreated(result.data)
         onClose()
       } else {

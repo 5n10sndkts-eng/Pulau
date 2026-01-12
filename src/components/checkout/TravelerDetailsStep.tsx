@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Trip } from '@/lib/types'
 import { TravelerInfo } from './CheckoutFlow'
-import { ArrowLeft, Plus, X } from 'lucide-react'
+import { ArrowLeft, Plus, X, Shield, CheckCircle } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface TravelerDetailsStepProps {
   trip: Trip
@@ -25,8 +26,28 @@ interface TravelerDetailsStepProps {
 }
 
 export function TravelerDetailsStep({ trip, initialData, onBack, onContinue }: TravelerDetailsStepProps) {
-  const [leadTraveler, setLeadTraveler] = useState<TravelerInfo>(
-    initialData?.leadTraveler || {
+  const { user } = useAuth()
+
+  // Pre-fill from user profile if available
+  const getInitialLeadTraveler = (): TravelerInfo => {
+    if (initialData?.leadTraveler) {
+      return initialData.leadTraveler
+    }
+
+    // Pre-fill from logged-in user
+    if (user) {
+      const nameParts = (user.name || '').split(' ')
+      return {
+        firstName: nameParts[0] || '',
+        lastName: nameParts.slice(1).join(' ') || '',
+        email: user.email || '',
+        phone: '',
+        countryCode: '+1',
+        nationality: '',
+      }
+    }
+
+    return {
       firstName: '',
       lastName: '',
       email: '',
@@ -34,7 +55,10 @@ export function TravelerDetailsStep({ trip, initialData, onBack, onContinue }: T
       countryCode: '+1',
       nationality: '',
     }
-  )
+  }
+
+  const [leadTraveler, setLeadTraveler] = useState<TravelerInfo>(getInitialLeadTraveler())
+  const isUserLoggedIn = !!user
 
   const [additionalTravelers, setAdditionalTravelers] = useState<
     Omit<TravelerInfo, 'email' | 'phone' | 'countryCode'>[]

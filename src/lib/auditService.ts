@@ -86,6 +86,11 @@ export async function createAuditEntry(input: CreateAuditEntryInput): Promise<{ 
   try {
     const { data: session } = await supabase.auth.getSession()
 
+    // Resolve actor details so actor_type is always present for the audit record
+    const sessionActorId = session?.session?.user?.id ?? null
+    const actorId = input.actorId ?? sessionActorId
+    const actorType: ActorType = input.actorType ?? (actorId ? 'user' : 'system')
+
     // Redact sensitive data from metadata before storing
     const safeMetadata = input.metadata ? redactSensitiveData(input.metadata) : {}
 
@@ -95,8 +100,8 @@ export async function createAuditEntry(input: CreateAuditEntryInput): Promise<{ 
         event_type: input.eventType,
         entity_type: input.entityType,
         entity_id: input.entityId,
-        actor_id: input.actorId || session?.session?.user?.id || null,
-        actor_type: input.actorType || 'user',
+        actor_id: actorId,
+        actor_type: actorType,
         metadata: safeMetadata,
         stripe_event_id: input.stripeEventId || null
       })

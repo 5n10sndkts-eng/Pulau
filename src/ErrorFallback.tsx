@@ -1,5 +1,13 @@
+// ================================================
+// Error Fallback Component
+// Story: 32.1 - Integrate Error Tracking (Sentry)
+// AC #3: Error Boundary Integration
+// ================================================
+
+import { useEffect } from "react";
 import { Alert, AlertTitle, AlertDescription } from "./components/ui/alert";
 import { Button } from "./components/ui/button";
+import { captureError } from "./lib/sentry";
 
 import { AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
 
@@ -13,14 +21,28 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps)
   // The parent UI will take care of showing a more helpful dialog.
   if (import.meta.env.DEV) throw error;
 
+  // Capture error to Sentry in production (AC #3)
+  useEffect(() => {
+    captureError(error, {
+      tags: {
+        error_boundary: 'app_root',
+        error_type: error.name,
+      },
+      extra: {
+        error_message: error.message,
+        stack: error.stack,
+      },
+    });
+  }, [error]);
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Alert variant="destructive" className="mb-6">
           <AlertTriangleIcon />
-          <AlertTitle>This spark has encountered a runtime error</AlertTitle>
+          <AlertTitle>Something went wrong</AlertTitle>
           <AlertDescription>
-            Something unexpected happened while running the application. The error details are shown below. Contact the spark author and let them know about this issue.
+            We've been notified and are looking into the issue. Please try again or contact support if the problem persists.
           </AlertDescription>
         </Alert>
 

@@ -35,7 +35,9 @@ describe('RealtimeSlotDisplay Integration', () => {
             total_capacity: 10,
             available_count: 5,
             is_blocked: false,
-            price_override_amount: null
+            price_override_amount: null,
+            created_at: '2026-01-01T00:00:00Z',
+            updated_at: '2026-01-01T00:00:00Z'
         }
     ]
 
@@ -45,7 +47,7 @@ describe('RealtimeSlotDisplay Integration', () => {
         vi.clearAllMocks()
 
         // Mock initial slots load
-        vi.mocked(getAvailableSlots).mockResolvedValue(mockSlots as any)
+        vi.mocked(getAvailableSlots).mockResolvedValue({ data: mockSlots, error: null })
 
         // Mock realtime subscription
         vi.mocked(subscribeToSlotAvailability).mockImplementation((id, cb) => {

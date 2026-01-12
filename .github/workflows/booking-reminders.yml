@@ -1,0 +1,80 @@
+# ================================================
+# Booking Reminder Scheduler
+# Story: 30.3 - Implement Booking Reminder Scheduler
+# AC #5: Scheduler Reliability
+# ================================================
+# Runs hourly to send booking reminder emails.
+# Triggers the booking-reminders Edge Function.
+# ================================================
+
+name: Booking Reminders
+
+on:
+  schedule:
+    # Run every hour at minute 0
+    - cron: '0 * * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5 # Prevent runaway jobs
+
+    steps:
+      - name: Trigger Booking Reminders Function
+        id: trigger
+        run: |
+          echo "Triggering booking reminders at $(date -u)"
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/booking-reminders")
+
+          # Extract HTTP status code (last line)
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          # Output for next steps
+          echo "http_code=$http_code" >> $GITHUB_OUTPUT
+          echo "body=$body" >> $GITHUB_OUTPUT
+
+          # Fail if not 200
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Reminder function failed with status $http_code"
+            exit 1
+          fi
+
+          echo "::notice::Reminders processed successfully"
+
+      - name: Parse Results
+        if: success()
+        run: |
+          echo "${{ steps.trigger.outputs.body }}" | jq '.'
+
+          # Extract counts
+          sent=$(echo "${{ steps.trigger.outputs.body }}" | jq -r '.results.sent // 0')
+          skipped=$(echo "${{ steps.trigger.outputs.body }}" | jq -r '.results.skipped // 0')
+          failed=$(echo "${{ steps.trigger.outputs.body }}" | jq -r '.results.failed // 0')
+          duration=$(echo "${{ steps.trigger.outputs.body }}" | jq -r '.duration_ms // 0')
+
+          echo "::notice::Sent: $sent, Skipped: $skipped, Failed: $failed (${duration}ms)"
+
+          # Warn if there were failures
+          if [ "$failed" != "0" ]; then
+            echo "::warning::$failed reminders failed to send"
+          fi
+
+      - name: Handle Failure
+        if: failure()
+        run: |
+          echo "::error::Booking reminder scheduler failed!"
+          echo "Consider checking:"
+          echo "- Supabase Edge Function logs"
+          echo "- booking_reminders table for failed entries"
+          echo "- Network connectivity to Supabase"

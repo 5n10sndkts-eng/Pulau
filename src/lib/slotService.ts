@@ -9,6 +9,7 @@
 
 import { supabase } from './supabase'
 import type { Database } from './database.types'
+import { ApiResponse } from './types'
 
 // ================================================
 // TYPE DEFINITIONS
@@ -47,14 +48,7 @@ export interface DateRange {
   endDate: string    // YYYY-MM-DD
 }
 
-/**
- * Result of a slot operation
- */
-export interface SlotOperationResult<T = ExperienceSlot> {
-  success: boolean
-  data?: T
-  error?: string
-}
+// ApiResponse imported from types.ts
 
 /**
  * Result for bulk operations
@@ -75,7 +69,7 @@ export interface SlotBulkResult {
  */
 export async function createSlot(
   input: SlotCreateInput
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   try {
     const slotData: ExperienceSlotInsert = {
       experience_id: input.experienceId,
@@ -97,18 +91,20 @@ export async function createSlot(
       // Handle duplicate slot error
       if (error.code === '23505') {
         return {
-          success: false,
+          data: null,
           error: `A slot already exists for ${input.slotDate} at ${input.slotTime}`,
         }
       }
-      return { success: false, error: error.message }
+      return { data: null, error: error.message }
     }
 
     // Create audit log
+    const { data: session } = await supabase.auth.getSession()
     await createSlotAuditLog({
       eventType: 'slot.created',
       slotId: data.id,
       experienceId: input.experienceId,
+      actorId: session?.session?.user?.id,
       metadata: {
         slot_date: input.slotDate,
         slot_time: input.slotTime,
@@ -117,10 +113,10 @@ export async function createSlot(
       },
     })
 
-    return { success: true, data }
+    return { data, error: null }
   } catch (e) {
     console.error('createSlot error:', e)
-    return { success: false, error: 'Failed to create slot' }
+    return { data: null, error: 'Failed to create slot' }
   }
 }
 
@@ -139,7 +135,7 @@ export async function createBulkSlots(
 
   for (const input of inputs) {
     const res = await createSlot(input)
-    if (res.success) {
+    if (res.data) {
       result.created++
     } else {
       result.failed++
@@ -161,7 +157,7 @@ export async function createBulkSlots(
 export async function getAvailableSlots(
   experienceId: string,
   dateRange: DateRange
-): Promise<ExperienceSlot[]> {
+): Promise<ApiResponse<ExperienceSlot[]>> {
   const { data, error } = await supabase
     .from('experience_slots')
     .select('*')
@@ -175,10 +171,10 @@ export async function getAvailableSlots(
 
   if (error) {
     console.error('getAvailableSlots error:', error)
-    return []
+    return { data: null, error: error.message }
   }
 
-  return data || []
+  return { data: data || [], error: null }
 }
 
 /**
@@ -187,7 +183,7 @@ export async function getAvailableSlots(
 export async function getAllSlots(
   experienceId: string,
   dateRange: DateRange
-): Promise<ExperienceSlot[]> {
+): Promise<ApiResponse<ExperienceSlot[]>> {
   const { data, error } = await supabase
     .from('experience_slots')
     .select('*')
@@ -199,10 +195,10 @@ export async function getAllSlots(
 
   if (error) {
     console.error('getAllSlots error:', error)
-    return []
+    return { data: null, error: error.message }
   }
 
-  return data || []
+  return { data: data || [], error: null }
 }
 
 /**
@@ -210,7 +206,7 @@ export async function getAllSlots(
  */
 export async function getSlotById(
   slotId: string
-): Promise<ExperienceSlot | null> {
+): Promise<ApiResponse<ExperienceSlot>> {
   const { data, error } = await supabase
     .from('experience_slots')
     .select('*')
@@ -219,10 +215,14 @@ export async function getSlotById(
 
   if (error) {
     console.error('getSlotById error:', error)
-    return null
+    return { data: null, error: error.message }
   }
 
-  return data
+  if (!data) {
+    return { data: null, error: 'Slot not found' }
+  }
+
+  return { data, error: null }
 }
 
 // ================================================
@@ -235,7 +235,7 @@ export async function getSlotById(
 export async function updateSlot(
   slotId: string,
   updates: SlotUpdateInput
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   try {
     const updateData: ExperienceSlotUpdate = {}
 
@@ -260,21 +260,23 @@ export async function updateSlot(
       .single()
 
     if (error) {
-      return { success: false, error: error.message }
+      return { data: null, error: error.message }
     }
 
     // Create audit log
+    const { data: session } = await supabase.auth.getSession()
     await createSlotAuditLog({
       eventType: 'slot.updated',
       slotId,
       experienceId: data.experience_id,
+      actorId: session?.session?.user?.id,
       metadata: { updates },
     })
 
-    return { success: true, data }
+    return { data, error: null }
   } catch (e) {
     console.error('updateSlot error:', e)
-    return { success: false, error: 'Failed to update slot' }
+    return { data: null, error: 'Failed to update slot' }
   }
 }
 
@@ -288,7 +290,7 @@ export async function updateSlot(
 export async function blockSlot(
   slotId: string,
   reason?: string
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   try {
     const { data, error } = await supabase
       .from('experience_slots')
@@ -298,21 +300,23 @@ export async function blockSlot(
       .single()
 
     if (error) {
-      return { success: false, error: error.message }
+      return { data: null, error: error.message }
     }
 
     // Create audit log
+    const { data: session } = await supabase.auth.getSession()
     await createSlotAuditLog({
       eventType: 'slot.blocked',
       slotId,
       experienceId: data.experience_id,
+      actorId: session?.session?.user?.id,
       metadata: { reason: reason || 'No reason provided' },
     })
 
-    return { success: true, data }
+    return { data, error: null }
   } catch (e) {
     console.error('blockSlot error:', e)
-    return { success: false, error: 'Failed to block slot' }
+    return { data: null, error: 'Failed to block slot' }
   }
 }
 
@@ -321,7 +325,7 @@ export async function blockSlot(
  */
 export async function unblockSlot(
   slotId: string
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   try {
     const { data, error } = await supabase
       .from('experience_slots')
@@ -331,21 +335,23 @@ export async function unblockSlot(
       .single()
 
     if (error) {
-      return { success: false, error: error.message }
+      return { data: null, error: error.message }
     }
 
     // Create audit log
+    const { data: session } = await supabase.auth.getSession()
     await createSlotAuditLog({
       eventType: 'slot.unblocked',
       slotId,
       experienceId: data.experience_id,
+      actorId: session?.session?.user?.id,
       metadata: {},
     })
 
-    return { success: true, data }
+    return { data, error: null }
   } catch (e) {
     console.error('unblockSlot error:', e)
-    return { success: false, error: 'Failed to unblock slot' }
+    return { data: null, error: 'Failed to unblock slot' }
   }
 }
 
@@ -363,9 +369,9 @@ export async function unblockSlot(
 export async function decrementAvailability(
   slotId: string,
   count: number
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   if (count <= 0) {
-    return { success: false, error: 'Count must be positive' }
+    return { data: null, error: 'Count must be positive' }
   }
 
   // Use optimistic locking approach for atomic decrement
@@ -382,29 +388,31 @@ export async function decrementAvailability(
 export async function decrementAvailabilityWithLock(
   slotId: string,
   count: number
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   try {
     // Call PostgreSQL function with SELECT FOR UPDATE
-    const { data, error } = await supabase.rpc('decrement_slot_inventory', {
+    const rpcArgs: Database['public']['Functions']['decrement_slot_inventory']['Args'] = {
       p_slot_id: slotId,
       p_count: count
-    })
+    }
+
+    const { data, error } = await supabase.rpc('decrement_slot_inventory', rpcArgs)
 
     if (error) {
       console.error('RPC error in decrement_slot_inventory:', error)
       return {
-        success: false,
+        data: null,
         error: 'Database error occurred during inventory decrement'
       }
     }
 
-    // Parse JSON response from PostgreSQL function
-    const result = data as { success: boolean; error: string | null; available_count: number | null }
+    // Parse JSON response from PostgreSQL function; tolerate missing RPC typing
+    const result = data as { success?: boolean; error?: string | null; available_count?: number | null } | null
 
-    if (!result.success) {
+    if (!result?.success) {
       return {
-        success: false,
-        error: result.error || 'Unknown error during inventory decrement'
+        data: null,
+        error: result?.error || 'Unknown error during inventory decrement'
       }
     }
 
@@ -423,10 +431,12 @@ export async function decrementAvailabilityWithLock(
 
     // Create audit log (best effort - don't fail on audit errors)
     if (updatedSlot) {
+      const { data: session } = await supabase.auth.getSession()
       await createSlotAuditLog({
         eventType: 'slot.availability_decremented',
         slotId,
         experienceId: updatedSlot.experience_id,
+        actorId: session?.session?.user?.id,
         metadata: {
           count_decremented: count,
           new_available_count: result.available_count,
@@ -438,16 +448,16 @@ export async function decrementAvailabilityWithLock(
     }
 
     return {
-      success: true,
       data: updatedSlot || {
         id: slotId,
         available_count: result.available_count
-      } as ExperienceSlot
+      } as ExperienceSlot,
+      error: null
     }
   } catch (err) {
     console.error('Unexpected error in decrementAvailabilityWithLock:', err)
     return {
-      success: false,
+      data: null,
       error: err instanceof Error ? err.message : 'Unexpected error during inventory decrement'
     }
   }
@@ -459,9 +469,9 @@ export async function decrementAvailabilityWithLock(
 export async function incrementAvailability(
   slotId: string,
   count: number
-): Promise<SlotOperationResult> {
+): Promise<ApiResponse<ExperienceSlot>> {
   if (count <= 0) {
-    return { success: false, error: 'Count must be positive' }
+    return { data: null, error: 'Count must be positive' }
   }
 
   try {
@@ -472,7 +482,7 @@ export async function incrementAvailability(
       .single()
 
     if (fetchError || !slot) {
-      return { success: false, error: 'Slot not found' }
+      return { data: null, error: 'Slot not found' }
     }
 
     const newCount = Math.min(slot.available_count + count, slot.total_capacity)
@@ -485,24 +495,26 @@ export async function incrementAvailability(
       .single()
 
     if (error) {
-      return { success: false, error: error.message }
+      return { data: null, error: error.message }
     }
 
     // Create audit log
+    const { data: session } = await supabase.auth.getSession()
     await createSlotAuditLog({
       eventType: 'slot.availability_incremented',
       slotId,
       experienceId: data.experience_id,
+      actorId: session?.session?.user?.id,
       metadata: {
         count_incremented: count,
         new_available_count: data.available_count,
       },
     })
 
-    return { success: true, data }
+    return { data, error: null }
   } catch (e) {
     console.error('incrementAvailability error:', e)
-    return { success: false, error: 'Failed to increment availability' }
+    return { data: null, error: 'Failed to increment availability' }
   }
 }
 
@@ -515,18 +527,18 @@ export async function incrementAvailability(
  */
 export async function deleteSlot(
   slotId: string
-): Promise<SlotOperationResult<{ deleted: boolean }>> {
+): Promise<ApiResponse<{ deleted: boolean }>> {
   try {
     // First get the slot for audit logging
-    const slot = await getSlotById(slotId)
-    if (!slot) {
-      return { success: false, error: 'Slot not found' }
+    const { data: slot, error: fetchError } = await getSlotById(slotId)
+    if (fetchError || !slot) {
+      return { data: null, error: fetchError || 'Slot not found' }
     }
 
     // Check if slot has any bookings (available_count < total_capacity)
     if (slot.available_count < slot.total_capacity) {
       return {
-        success: false,
+        data: null,
         error: 'Cannot delete slot with existing bookings',
       }
     }
@@ -537,24 +549,26 @@ export async function deleteSlot(
       .eq('id', slotId)
 
     if (error) {
-      return { success: false, error: error.message }
+      return { data: null, error: error.message }
     }
 
     // Create audit log
+    const { data: session } = await supabase.auth.getSession()
     await createSlotAuditLog({
       eventType: 'slot.deleted',
       slotId,
       experienceId: slot.experience_id,
+      actorId: session?.session?.user?.id,
       metadata: {
         slot_date: slot.slot_date,
         slot_time: slot.slot_time,
       },
     })
 
-    return { success: true, data: { deleted: true } }
+    return { data: { deleted: true }, error: null }
   } catch (e) {
     console.error('deleteSlot error:', e)
-    return { success: false, error: 'Failed to delete slot' }
+    return { data: null, error: 'Failed to delete slot' }
   }
 }
 
@@ -566,6 +580,7 @@ interface SlotAuditLogParams {
   eventType: string
   slotId: string
   experienceId: string
+  actorId?: string
   metadata: Record<string, unknown>
 }
 
@@ -597,6 +612,7 @@ async function createSlotAuditLog(params: SlotAuditLogParams): Promise<void> {
       event_type: params.eventType,
       entity_type: 'experience_slot',
       entity_id: params.slotId,
+      actor_id: params.actorId || null,
       actor_type: 'vendor', // Slot operations are typically vendor-initiated
       metadata: {
         experience_id: params.experienceId,

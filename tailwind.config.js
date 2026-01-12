@@ -180,8 +180,22 @@ const defaultTheme = {
     80: "var(--size-80)",
     96: "var(--size-96)",
   },
-  plugins: [
-    require('tailwindcss-safe-area'),
-    require("tailwindcss-animate")
-  ],
 };
+
+const plugins = [];
+
+const config = {
+  darkMode: ['class'],
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+    './public/**/*.html',
+  ],
+  theme: {
+    ...defaultTheme,
+    ...theme,
+  },
+  plugins,
+};
+
+export default config;

@@ -7,7 +7,7 @@ export function MetaManager() {
 
     useEffect(() => {
         let title = 'Pulau | Discover Bali Your Way'
-        let description = 'Exquisite Bali travel experiences tailored to your style. Plan, book, and explore the best of Bali.'
+        const description = 'Exquisite Bali travel experiences tailored to your style. Plan, book, and explore the best of Bali.'
 
         if (path === '/') {
             title = 'Pulau | Home - Bali Experiences'

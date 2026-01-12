@@ -102,7 +102,8 @@ describe('Book Again - AC6: Navigation to Trip Builder', () => {
       resolve(__dirname, '../../src/App.tsx'),
       'utf-8'
     )
-    expect(appFile).toContain('updateAndSaveTrip(newTrip)')
+    // Uses TripContext replaceTrip
+    expect(appFile).toContain('replaceTrip')
   })
 })
 
@@ -130,10 +131,10 @@ describe('Book Again - AC8: Original Booking Preservation', () => {
       resolve(__dirname, '../../src/App.tsx'),
       'utf-8'
     )
-    // Should spread tripData/originalTrip into new object
-    expect(appFile).toContain('...defaultTrip')
-    // Should create newTrip variable
-    expect(appFile).toContain('const newTrip')
+    // Should spread originalTrip into new object
+    expect(appFile).toContain('...originalTrip')
+    // Should create newTripPartial variable
+    expect(appFile).toContain('newTripPartial')
   })
 
   it('should clear booking-specific fields', () => {

@@ -526,6 +526,36 @@ export function formatPercentChange(percent: number): string {
   return `${sign}${percent}%`
 }
 
+/**
+ * Human-readable label for payout status values.
+ */
+export function getPayoutStatusLabel(status: PayoutStatus): string {
+  const labels: Record<PayoutStatus, string> = {
+    pending: 'Pending',
+    in_transit: 'In Transit',
+    paid: 'Paid',
+    failed: 'Failed',
+    canceled: 'Canceled',
+  }
+
+  return labels[status] ?? status
+}
+
+/**
+ * UI color classes for payout status badges.
+ */
+export function getPayoutStatusColor(status: PayoutStatus): string {
+  const colors: Record<PayoutStatus, string> = {
+    pending: 'bg-amber-100 text-amber-800',
+    in_transit: 'bg-blue-100 text-blue-800',
+    paid: 'bg-emerald-100 text-emerald-800',
+    failed: 'bg-red-100 text-red-800',
+    canceled: 'bg-gray-100 text-gray-700',
+  }
+
+  return colors[status] ?? 'bg-gray-100 text-gray-700'
+}
+
 // ============================================================================
 // Story 29.2: Experience Performance Metrics
 // ============================================================================
