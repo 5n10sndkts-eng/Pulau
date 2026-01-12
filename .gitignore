@@ -26,3 +26,17 @@ coverage/
 # Logs
 *.log
 npm-debug.log*
+.env.production
+.vercel
+
+# E2E / Test artifacts
+playwright-report/
+test-results/
+tests/.cache/
+test_results.json
+test_output*.txt
+tsc_output*.txt
+lint_report*.txt
+
+# Supabase local state
+supabase/.branches/
