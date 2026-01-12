@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { User } from './types';
 import { Database } from './database.types';
+import { validatePassword } from './validation';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
@@ -122,6 +123,12 @@ export const authService = {
   },
 
   register: async (name: string, email: string, password: string, firstName?: string, lastName?: string): Promise<User> => {
+    // Validate password BEFORE any other processing
+    const validation = validatePassword(password);
+    if (!validation.valid) {
+      throw new Error(validation.errors[0]);
+    }
+
     if (USE_MOCK_AUTH) {
       if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK register');
       return new Promise((resolve, reject) => {
@@ -217,6 +224,12 @@ export const authService = {
   },
 
   updatePassword: async (newPassword: string): Promise<void> => {
+    // Validate new password
+    const validation = validatePassword(newPassword);
+    if (!validation.valid) {
+      throw new Error(validation.errors[0]);
+    }
+
     if (USE_MOCK_AUTH) {
       if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK password update');
       return new Promise((resolve) => setTimeout(resolve, DELAY_MS));
