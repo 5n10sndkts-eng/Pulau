@@ -267,6 +267,10 @@ serve(async (req: Request): Promise<Response> => {
     // ================================================
     // Step 5: Validate Inventory and Cutoff Times (AC #1)
     // ================================================
+    
+    // Track reserved slots for potential rollback
+    const reservedSlots: Array<{ slotId: string; guestCount: number }> = []
+    
     for (const item of tripItems) {
       const experience = experienceMap.get(item.experience_id)
       if (!experience) continue
@@ -279,6 +283,9 @@ serve(async (req: Request): Promise<Response> => {
         const hoursUntilSlot = (slotDateTime.getTime() - now.getTime()) / (1000 * 60 * 60)
 
         if (hoursUntilSlot < cutoffHours) {
+          // Rollback any previously reserved slots
+          await rollbackSlotReservations(supabase, reservedSlots)
+          
           await createAuditLog(supabase, {
             eventType: 'checkout.failed',
             entityType: 'trip',
@@ -299,52 +306,73 @@ serve(async (req: Request): Promise<Response> => {
           )
         }
 
-        // Check slot availability
-        const { data: slot, error: slotError } = await supabase
+        // ================================================
+        // ATOMIC RESERVATION: Decrement inventory with atomic WHERE clause
+        // This prevents race conditions by ensuring only ONE request succeeds
+        // if available_count drops below the required amount
+        // ================================================
+        const guestCount = item.guests || 1
+        
+        const { data: updatedSlot, error: reserveError } = await supabase
           .from('experience_slots')
-          .select('id, available_count, is_blocked')
+          .update({ 
+            available_count: supabase.raw(`available_count - ${guestCount}`)
+          })
           .eq('experience_id', item.experience_id)
           .eq('slot_date', item.date)
           .eq('slot_time', item.time)
-          .single()
+          .gte('available_count', guestCount) // CRITICAL: Only update if enough capacity
+          .eq('is_blocked', false) // Also check not blocked
+          .select('id, available_count')
+          .maybeSingle()
 
-        if (slotError && slotError.code !== 'PGRST116') {
-          // PGRST116 = no rows returned (slot doesn't exist yet - OK for now)
-          // Log without exposing internal details
-          console.error('Slot query failed for experience:', item.experience_id)
+        if (reserveError) {
+          // Rollback previously reserved slots
+          await rollbackSlotReservations(supabase, reservedSlots)
+          
+          console.error('Slot reservation failed:', reserveError)
+          return errorResponse(
+            'Failed to reserve slot. Please try again.',
+            'RESERVATION_FAILED',
+            500
+          )
         }
 
-        if (slot) {
-          if (slot.is_blocked) {
-            return errorResponse(
-              `The slot for "${experience.title}" on ${item.date} at ${item.time} is not available`,
-              'SLOT_BLOCKED',
-              400
-            )
-          }
-
-          const guestCount = item.guests || 1
-          if (slot.available_count < guestCount) {
-            await createAuditLog(supabase, {
-              eventType: 'checkout.failed',
-              entityType: 'trip',
-              entityId: tripId,
-              actorId: user.id,
-              actorType: 'user',
-              metadata: {
-                error: 'Insufficient inventory',
-                experience_id: item.experience_id,
-                requested: guestCount,
-                available: slot.available_count,
-              },
-            })
-            return errorResponse(
-              `Not enough availability for "${experience.title}". Requested: ${guestCount}, Available: ${slot.available_count}`,
-              'INSUFFICIENT_INVENTORY',
-              400
-            )
-          }
+        if (!updatedSlot) {
+          // Atomic reservation failed - either:
+          // 1. Slot doesn't exist
+          // 2. available_count < guestCount (race condition - another request got it first)
+          // 3. Slot is blocked
+          
+          // Rollback previously reserved slots
+          await rollbackSlotReservations(supabase, reservedSlots)
+          
+          await createAuditLog(supabase, {
+            eventType: 'checkout.failed',
+            entityType: 'trip',
+            entityId: tripId,
+            actorId: user.id,
+            actorType: 'user',
+            metadata: {
+              error: 'Inventory unavailable (atomic check failed)',
+              experience_id: item.experience_id,
+              requested: guestCount,
+              date: item.date,
+              time: item.time,
+            },
+          })
+          
+          return errorResponse(
+            `"${experience.title}" is no longer available for ${guestCount} ${guestCount === 1 ? 'guest' : 'guests'} on ${item.date} at ${item.time}. Please select a different time.`,
+            'INVENTORY_EXHAUSTED',
+            409 // HTTP 409 Conflict - resource state changed
+          )
         }
+
+        // Success! Track this reservation for potential rollback
+        reservedSlots.push({ slotId: updatedSlot.id, guestCount })
+        
+        console.log(`✓ Reserved ${guestCount} spots for slot ${updatedSlot.id}, new available_count: ${updatedSlot.available_count}`)
       }
     }
 
@@ -440,13 +468,18 @@ serve(async (req: Request): Promise<Response> => {
           trip_id: tripId,
           user_id: user.id,
           platform: 'pulau',
+          slots_reserved: 'true', // Flag to prevent double-decrement in webhook
+          reserved_slot_ids: reservedSlots.map(s => s.slotId).join(','),
         },
       }, {
         idempotencyKey,
       })
     } catch (stripeError) {
+      // Rollback slot reservations - Stripe failed, so release inventory
+      await rollbackSlotReservations(supabase, reservedSlots)
+      
       // Log Stripe error without exposing full error object
-    console.error('Stripe session creation failed for trip:', tripId)
+      console.error('Stripe session creation failed for trip:', tripId)
 
       await createAuditLog(supabase, {
         eventType: 'checkout.stripe_error',
@@ -456,6 +489,7 @@ serve(async (req: Request): Promise<Response> => {
         actorType: 'user',
         metadata: {
           error: stripeError instanceof Error ? stripeError.message : 'Unknown Stripe error',
+          slots_rolled_back: reservedSlots.length,
         },
       })
 
@@ -602,5 +636,37 @@ async function createAuditLog(
   } catch (e) {
     // Don't fail the main operation if audit logging fails
     console.error('Failed to create audit log:', e)
+  }
+}
+
+/**
+ * Rollback slot reservations if checkout fails after atomic reservation
+ * This prevents inventory from being locked if Stripe session creation fails
+ */
+async function rollbackSlotReservations(
+  supabase: ReturnType<typeof createClient>,
+  reservedSlots: Array<{ slotId: string; guestCount: number }>
+): Promise<void> {
+  if (reservedSlots.length === 0) return
+  
+  console.log(`Rolling back ${reservedSlots.length} slot reservations...`)
+  
+  for (const { slotId, guestCount } of reservedSlots) {
+    try {
+      const { error } = await supabase
+        .from('experience_slots')
+        .update({ 
+          available_count: supabase.raw(`available_count + ${guestCount}`)
+        })
+        .eq('id', slotId)
+      
+      if (error) {
+        console.error(`Failed to rollback slot ${slotId}:`, error)
+      } else {
+        console.log(`✓ Rolled back ${guestCount} spots for slot ${slotId}`)
+      }
+    } catch (e) {
+      console.error(`Exception rolling back slot ${slotId}:`, e)
+    }
   }
 }

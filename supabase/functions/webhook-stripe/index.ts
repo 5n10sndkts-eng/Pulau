@@ -443,53 +443,63 @@ async function handleCheckoutCompleted(
       .update({ status: 'confirmed', booked_at: new Date().toISOString() })
       .eq('id', booking.id)
 
-    // Decrement each slot using the atomic RPC for row-level locking
-    // This provides per-slot atomicity even if full transaction atomicity isn't available
-    const { data: tripItems } = await supabase
-      .from('trip_items')
-      .select('id, experience_id, guests, date, time')
-      .eq('trip_id', booking.trip_id)
+    // Check if slots were already reserved in checkout (atomic reservation)
+    const slotsAlreadyReserved = session.metadata?.slots_reserved === 'true'
+    
+    if (slotsAlreadyReserved) {
+      console.log('Slots already atomically reserved in checkout, skipping decrement')
+    } else {
+      // Legacy path: Decrement slots here (old behavior before atomic reservation)
+      console.log('Decrementing slots in webhook (legacy path)')
+      
+      // Decrement each slot using the atomic RPC for row-level locking
+      // This provides per-slot atomicity even if full transaction atomicity isn't available
+      const { data: tripItems } = await supabase
+        .from('trip_items')
+        .select('id, experience_id, guests, date, time')
+        .eq('trip_id', booking.trip_id)
 
-    if (tripItems) {
-      const slotResults: Array<{ slotId: string; success: boolean; error?: string }> = []
-      for (const item of tripItems) {
-        if (item.date && item.time) {
-          // Use decrement_slot_availability RPC which has row-level locking
-          const { data: decrementResult, error: decrementError } = await supabase.rpc(
-            'decrement_slot_availability',
-            {
-              p_experience_id: item.experience_id,
-              p_slot_date: item.date,
-              p_slot_time: item.time,
-              p_count: item.guests || 1,
-            }
-          )
+      if (tripItems) {
+        const slotResults: Array<{ slotId: string; success: boolean; error?: string }> = []
+        for (const item of tripItems) {
+          if (item.date && item.time) {
+            // Use decrement_slot_availability RPC which has row-level locking
+            const { data: decrementResult, error: decrementError } = await supabase.rpc(
+              'decrement_slot_availability',
+              {
+                p_experience_id: item.experience_id,
+                p_slot_date: item.date,
+                p_slot_time: item.time,
+                p_count: item.guests || 1,
+              }
+            )
 
-          if (decrementError) {
-            // Fallback to manual decrement if RPC not available
-            console.warn('decrement_slot_availability RPC failed, using manual update:', decrementError.message)
-            const { data: slot } = await supabase
-              .from('experience_slots')
-              .select('id, available_count')
-              .eq('experience_id', item.experience_id)
-              .eq('slot_date', item.date)
-              .eq('slot_time', item.time)
-              .single()
-
-            if (slot) {
-              const newCount = Math.max(0, slot.available_count - (item.guests || 1))
-              await supabase
+            if (decrementError) {
+              // Fallback to manual decrement if RPC not available
+              console.warn('decrement_slot_availability RPC failed, using manual update:', decrementError.message)
+              const { data: slot } = await supabase
                 .from('experience_slots')
-                .update({ available_count: newCount })
-                .eq('id', slot.id)
-              slotResults.push({ slotId: slot.id, success: true })
+                .select('id, available_count')
+                .eq('experience_id', item.experience_id)
+                .eq('slot_date', item.date)
+                .eq('slot_time', item.time)
+                .single()
+
+              if (slot) {
+                const newCount = Math.max(0, slot.available_count - (item.guests || 1))
+                await supabase
+                  .from('experience_slots')
+                  .update({ available_count: newCount })
+                  .eq('id', slot.id)
+                slotResults.push({ slotId: slot.id, success: true })
+              }
+            } else {
+              slotResults.push({ slotId: decrementResult?.slot_id || 'unknown', success: decrementResult?.success || false })
             }
-          } else {
-            slotResults.push({ slotId: decrementResult?.slot_id || 'unknown', success: decrementResult?.success || false })
           }
         }
+        console.log('Fallback slot decrements completed:', JSON.stringify(slotResults))
       }
-      console.log('Fallback slot decrements completed:', JSON.stringify(slotResults))
     }
 
     // Update trip status manually
