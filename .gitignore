@@ -40,3 +40,4 @@ lint_report*.txt
 
 # Supabase local state
 supabase/.branches/
+supabase/.temp/
