@@ -13,10 +13,10 @@ Reviewer: Dev Agent (Adversarial Code Review)
 | -------- | ----- | ---- | -------- | ------------------------------------ |
 | P0       | 4     | 0    | 4        | Build-breaking / Production blockers |
 | P1       | 8     | 0    | 8        | Critical missing functionality       |
-| P2       | 6     | 1    | 5        | Implementation gaps                  |
+| P2       | 6     | 0    | 6        | Implementation gaps (1 deferred)     |
 | P3       | 3     | 1    | 2        | Documentation / Process              |
 
-**Total Defects: 21 | Open: 2 | Resolved: 19**
+**Total Defects: 21 | Open: 1 | Deferred: 1 | Resolved: 19**
 
 ---
 

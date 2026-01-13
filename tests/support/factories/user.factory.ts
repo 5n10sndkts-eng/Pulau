@@ -7,6 +7,7 @@ export type User = {
   password?: string;
   role: 'traveler' | 'vendor' | 'admin';
   createdAt: Date;
+  hasCompletedOnboarding?: boolean;
   preferences?: {
     currency: string;
     language: string;
