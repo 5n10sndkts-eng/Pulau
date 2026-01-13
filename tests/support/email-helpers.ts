@@ -1,6 +1,6 @@
 /**
  * Email Testing Utilities
- * 
+ *
  * Helper functions for E2E email tests
  */
 
@@ -51,7 +51,7 @@ export async function waitForEmail(
   options: {
     timeout?: number;
     subject?: string;
-  } = {}
+  } = {},
 ): Promise<Message> {
   const serverId = process.env.MAILOSAUR_SERVER_ID;
   if (!serverId) {
@@ -73,7 +73,7 @@ export async function waitForEmail(
  */
 export async function getEmailsForAddress(
   mailosaur: MailosaurClient,
-  email: string
+  email: string,
 ): Promise<Message[]> {
   const serverId = process.env.MAILOSAUR_SERVER_ID;
   if (!serverId) {
@@ -81,15 +81,15 @@ export async function getEmailsForAddress(
   }
 
   const messages = await mailosaur.messages.list(serverId);
-  return messages.items.filter(m =>
-    m.to?.some(t => t.email === email)
-  );
+  return messages.items.filter((m) => m.to?.some((t) => t.email === email));
 }
 
 /**
  * Delete all emails in Mailosaur server (cleanup)
  */
-export async function deleteAllEmails(mailosaur: MailosaurClient): Promise<void> {
+export async function deleteAllEmails(
+  mailosaur: MailosaurClient,
+): Promise<void> {
   const serverId = process.env.MAILOSAUR_SERVER_ID;
   if (!serverId) {
     throw new Error('MAILOSAUR_SERVER_ID must be set');
@@ -104,7 +104,7 @@ export async function deleteAllEmails(mailosaur: MailosaurClient): Promise<void>
  */
 export async function fillStripeTestCard(
   page: Page,
-  cardType: 'success' | 'decline' | 'insufficient_funds' = 'success'
+  cardType: 'success' | 'decline' | 'insufficient_funds' = 'success',
 ): Promise<void> {
   const cardNumbers: Record<string, string> = {
     success: '4242424242424242', // Visa - succeeds
@@ -115,7 +115,9 @@ export async function fillStripeTestCard(
   const cardNumber = cardNumbers[cardType];
 
   // Wait for Stripe iframe to load
-  const stripeFrame = page.frameLocator('iframe[name^="__privateStripeFrame"]').first();
+  const stripeFrame = page
+    .frameLocator('iframe[name^="__privateStripeFrame"]')
+    .first();
 
   await stripeFrame.locator('input[name="cardnumber"]').fill(cardNumber);
   await stripeFrame.locator('input[name="exp-date"]').fill('12/34');
@@ -134,7 +136,7 @@ export async function completeBookingFlow(
     phone?: string;
     guestCount?: number;
     experienceId?: number;
-  } = {}
+  } = {},
 ): Promise<void> {
   const {
     fullName = 'Test User',
@@ -186,7 +188,9 @@ export async function completeBookingFlow(
  * Extract booking reference from confirmation page
  */
 export async function getBookingReference(page: Page): Promise<string> {
-  const bookingRef = await page.locator('[data-testid="booking-reference"]').textContent();
+  const bookingRef = await page
+    .locator('[data-testid="booking-reference"]')
+    .textContent();
   if (!bookingRef) {
     throw new Error('Booking reference not found on page');
   }
@@ -196,13 +200,17 @@ export async function getBookingReference(page: Page): Promise<string> {
 /**
  * Validate email contains all required fields
  */
-export function validateEmailContent(email: Message, requiredFields: string[]): void {
+export function validateEmailContent(
+  email: Message,
+  requiredFields: string[],
+): void {
   const htmlBody = email.html?.body?.toLowerCase() || '';
   const textBody = email.text?.body?.toLowerCase() || '';
 
   for (const field of requiredFields) {
     const fieldLower = field.toLowerCase();
-    const found = htmlBody.includes(fieldLower) || textBody.includes(fieldLower);
+    const found =
+      htmlBody.includes(fieldLower) || textBody.includes(fieldLower);
 
     if (!found) {
       throw new Error(`Email missing required field: ${field}`);
@@ -214,9 +222,13 @@ export function validateEmailContent(email: Message, requiredFields: string[]): 
  * Check if email has PDF attachment
  */
 export function hasTicketAttachment(email: Message): boolean {
-  return email.attachments?.some(a =>
-    a.fileName?.toLowerCase().includes('ticket') || a.contentType === 'application/pdf'
-  ) || false;
+  return (
+    email.attachments?.some(
+      (a) =>
+        a.fileName?.toLowerCase().includes('ticket') ||
+        a.contentType === 'application/pdf',
+    ) || false
+  );
 }
 
 /**
@@ -224,11 +236,11 @@ export function hasTicketAttachment(email: Message): boolean {
  */
 export function findEmailLink(
   email: Message,
-  pattern: string | RegExp
+  pattern: string | RegExp,
 ): { text: string; href: string } | undefined {
   const links = email.html?.links || [];
 
-  return links.find(link => {
+  return links.find((link) => {
     if (typeof pattern === 'string') {
       return link.text?.includes(pattern) || link.href?.includes(pattern);
     } else {
@@ -269,9 +281,8 @@ export function getEmailSize(email: Message): number {
   // Rough estimation based on string lengths
   const htmlSize = Buffer.from(email.html?.body || '').length;
   const textSize = Buffer.from(email.text?.body || '').length;
-  const attachmentSize = email.attachments?.reduce((acc, a) =>
-    acc + (a.length || 0), 0
-  ) || 0;
+  const attachmentSize =
+    email.attachments?.reduce((acc, a) => acc + (a.length || 0), 0) || 0;
 
   return (htmlSize + textSize + attachmentSize) / 1024; // KB
 }
@@ -285,21 +296,32 @@ export interface ResendMockConfig {
   delay?: number;
 }
 
-export async function mockResendAPI(page: Page, config: ResendMockConfig = {}): Promise<void> {
+export async function mockResendAPI(
+  page: Page,
+  config: ResendMockConfig = {},
+): Promise<void> {
   let alreadyFailed = false;
 
-  await page.route('**/api.resend.com/emails', async route => {
+  await page.route('**/api.resend.com/emails', async (route) => {
     if (config.alwaysFail) {
-      await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal Server Error' }) });
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Internal Server Error' }),
+      });
     } else if (config.failFirst && !alreadyFailed) {
       alreadyFailed = true;
-      await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal Server Error' }) });
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Internal Server Error' }),
+      });
     } else {
       if (config.delay) await page.waitForTimeout(config.delay);
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ id: `mock-${Date.now()}` })
+        body: JSON.stringify({ id: `mock-${Date.now()}` }),
       });
     }
   });
@@ -308,9 +330,7 @@ export async function mockResendAPI(page: Page, config: ResendMockConfig = {}): 
 /**
  * Query email_logs table for email delivery status
  */
-export async function getEmailLogStatus(
-  bookingId: string
-): Promise<any> {
+export async function getEmailLogStatus(bookingId: string): Promise<any> {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -326,10 +346,10 @@ export async function getEmailLogStatus(
     .eq('booking_id', bookingId)
     .single();
 
-  if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows found'
+  if (error && error.code !== 'PGRST116') {
+    // PGRST116 is 'no rows found'
     throw error;
   }
 
   return data;
 }
-

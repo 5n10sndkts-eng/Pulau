@@ -1,11 +1,11 @@
-import { AlertTriangle, ChevronRight } from 'lucide-react'
-import { motion } from 'framer-motion'
-import type { Conflict } from '@/lib/conflictDetection'
+import { AlertTriangle, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import type { Conflict } from '@/lib/conflictDetection';
 
 interface ConflictWarningBannerProps {
-  conflict: Conflict
-  otherExperienceTitle: string
-  onTap: () => void
+  conflict: Conflict;
+  otherExperienceTitle: string;
+  onTap: () => void;
 }
 
 export function ConflictWarningBanner({
@@ -13,9 +13,10 @@ export function ConflictWarningBanner({
   otherExperienceTitle,
   onTap,
 }: ConflictWarningBannerProps) {
-  const truncatedTitle = otherExperienceTitle.length > 40
-    ? otherExperienceTitle.slice(0, 40) + '...'
-    : otherExperienceTitle
+  const truncatedTitle =
+    otherExperienceTitle.length > 40
+      ? otherExperienceTitle.slice(0, 40) + '...'
+      : otherExperienceTitle;
 
   return (
     <motion.div
@@ -32,11 +33,12 @@ export function ConflictWarningBanner({
             Schedule conflict with {truncatedTitle}
           </p>
           <p className="text-xs text-gray-600">
-            {conflict.overlapMinutes} minute{conflict.overlapMinutes !== 1 ? 's' : ''} overlap
+            {conflict.overlapMinutes} minute
+            {conflict.overlapMinutes !== 1 ? 's' : ''} overlap
           </p>
         </div>
         <ChevronRight className="h-5 w-5 shrink-0 text-gray-600" />
       </div>
     </motion.div>
-  )
+  );
 }

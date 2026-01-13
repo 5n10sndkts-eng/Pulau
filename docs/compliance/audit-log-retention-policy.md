@@ -68,17 +68,17 @@ CREATE POLICY "audit_logs_no_delete" ON audit_logs
 
 Each audit log entry contains:
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| id | Unique identifier (UUID) | `550e8400-e29b-41d4-a716-446655440000` |
-| event_type | Category of event | `booking.created`, `refund.processed` |
-| actor_id | User/system performing action | `user-uuid-here` |
-| actor_type | Type of actor | `user`, `admin`, `system` |
-| resource_type | Type of resource affected | `booking`, `payment` |
-| resource_id | ID of affected resource | `booking-uuid-here` |
-| metadata | Structured event data (JSONB) | `{"amount": 10000, "reason": "..."}` |
-| ip_address | Client IP address | `192.168.1.1` |
-| created_at | Timestamp (UTC) | `2026-01-10T14:30:00Z` |
+| Field         | Description                   | Example                                |
+| ------------- | ----------------------------- | -------------------------------------- |
+| id            | Unique identifier (UUID)      | `550e8400-e29b-41d4-a716-446655440000` |
+| event_type    | Category of event             | `booking.created`, `refund.processed`  |
+| actor_id      | User/system performing action | `user-uuid-here`                       |
+| actor_type    | Type of actor                 | `user`, `admin`, `system`              |
+| resource_type | Type of resource affected     | `booking`, `payment`                   |
+| resource_id   | ID of affected resource       | `booking-uuid-here`                    |
+| metadata      | Structured event data (JSONB) | `{"amount": 10000, "reason": "..."}`   |
+| ip_address    | Client IP address             | `192.168.1.1`                          |
+| created_at    | Timestamp (UTC)               | `2026-01-10T14:30:00Z`                 |
 
 ## 6. Archival Strategy
 
@@ -91,6 +91,7 @@ Each audit log entry contains:
 ### 6.2 Archive Storage
 
 After 90 days:
+
 - Logs may be moved to cold storage (e.g., S3 Glacier)
 - Compressed and encrypted at rest
 - Retrievable within 24 hours upon request
@@ -98,6 +99,7 @@ After 90 days:
 ### 6.3 Deletion
 
 After 7 years:
+
 - Logs may be permanently deleted
 - Deletion must be documented and approved
 - Bulk deletion only (no selective deletion)
@@ -121,6 +123,7 @@ After 7 years:
 ### 8.1 Legal Hold
 
 When litigation is reasonably anticipated:
+
 - Affected logs must be preserved indefinitely
 - Legal hold overrides standard retention
 - Removal requires explicit legal clearance
@@ -128,22 +131,24 @@ When litigation is reasonably anticipated:
 ### 8.2 Data Subject Requests
 
 Under GDPR/CCPA:
+
 - Audit logs are exempt from deletion requests (legitimate interest)
 - Access requests may be fulfilled with appropriate safeguards
 - Redaction of personal data may be applied after retention period
 
 ## 9. Responsibilities
 
-| Role | Responsibility |
-|------|----------------|
-| Platform Team | Implement and maintain technical controls |
-| Data Protection Officer | Oversee compliance and handle exceptions |
-| System Administrators | Monitor storage and access patterns |
-| Legal Team | Approve legal holds and exceptions |
+| Role                    | Responsibility                            |
+| ----------------------- | ----------------------------------------- |
+| Platform Team           | Implement and maintain technical controls |
+| Data Protection Officer | Oversee compliance and handle exceptions  |
+| System Administrators   | Monitor storage and access patterns       |
+| Legal Team              | Approve legal holds and exceptions        |
 
 ## 10. Review Schedule
 
 This policy shall be reviewed:
+
 - Annually as part of compliance certification
 - When regulatory requirements change
 - Following any significant data incident
@@ -152,18 +157,18 @@ This policy shall be reviewed:
 
 ## Appendix A: Event Types
 
-| Event Type | Description |
-|------------|-------------|
-| `booking.created` | New booking confirmed |
-| `booking.cancelled` | Booking cancelled by user or admin |
-| `booking.no_show` | Traveler marked as no-show |
-| `check_in.completed` | Vendor checked in traveler |
-| `refund.processed` | Refund issued for booking |
-| `payment.captured` | Payment successfully charged |
-| `payment.failed` | Payment attempt failed |
-| `auth.login` | User authentication |
-| `auth.logout` | User session ended |
-| `admin.action` | Administrative operation |
+| Event Type           | Description                        |
+| -------------------- | ---------------------------------- |
+| `booking.created`    | New booking confirmed              |
+| `booking.cancelled`  | Booking cancelled by user or admin |
+| `booking.no_show`    | Traveler marked as no-show         |
+| `check_in.completed` | Vendor checked in traveler         |
+| `refund.processed`   | Refund issued for booking          |
+| `payment.captured`   | Payment successfully charged       |
+| `payment.failed`     | Payment attempt failed             |
+| `auth.login`         | User authentication                |
+| `auth.logout`        | User session ended                 |
+| `admin.action`       | Administrative operation           |
 
 ---
 
@@ -176,4 +181,4 @@ This policy shall be reviewed:
 
 ---
 
-*This document is maintained as part of the Pulau platform compliance documentation.*
+_This document is maintained as part of the Pulau platform compliance documentation._

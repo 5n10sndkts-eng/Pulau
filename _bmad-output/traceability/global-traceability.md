@@ -4,7 +4,7 @@
 **Scope:** All Epics and Stories
 
 | Story ID | Story Title | Status | Coverage | Critical Gaps | Evidence |
-|----------|-------------|--------|----------|---------------|----------|
+| -------- | ----------- | ------ | -------- | ------------- | -------- |
 
 | **20-1** | Setup & Initialization | ✅ DONE | 90% | None | Manual verification confirmed in `src/lib/supabase.ts`. `isSupabaseConfigured` and `testSupabaseConnection` implemented as per AC. No automated tests required per story. |
 | **20-2** | Database Schema DDL | ✅ DONE | 100% | None | `database.types.ts` matches schema. Migration file `20260108000005_complete_schema.sql` verified. |
@@ -35,15 +35,15 @@ The traceability analysis reveals a significant gap in automated test coverage a
 ### Key Findings:
 
 1.  **Zero Automation for Critical Flows:**
-    *   **Payments (Epic 21, 24):** No automated tests for payment table creation, atomic booking logic, or PDF ticket generation.
-    *   **Vendor Onboarding (Epic 22):** No automated tests for state machine transitions or UI gating logic.
-    *   **Offline Mode (Epic 26):** No automated e2e tests for Service Worker caching or offline ticket display.
+    - **Payments (Epic 21, 24):** No automated tests for payment table creation, atomic booking logic, or PDF ticket generation.
+    - **Vendor Onboarding (Epic 22):** No automated tests for state machine transitions or UI gating logic.
+    - **Offline Mode (Epic 26):** No automated e2e tests for Service Worker caching or offline ticket display.
 
 2.  **Manual Verification Reliance:**
-    *   Current "DONE" status is largely based on manual verification by the developer (or AI agent). This is not scalable or reliable for a production-grade financial platform.
+    - Current "DONE" status is largely based on manual verification by the developer (or AI agent). This is not scalable or reliable for a production-grade financial platform.
 
 3.  **Database & Type Mismatches:**
-    *   **Critical:** `database.types.ts` is missing the `onboarding_state` column, contradicting the specific story (22-4) that claims it was added. This will likely cause build errors or runtime crashes when TypeScript checks run.
+    - **Critical:** `database.types.ts` is missing the `onboarding_state` column, contradicting the specific story (22-4) that claims it was added. This will likely cause build errors or runtime crashes when TypeScript checks run.
 
 ### Recommendations:
 
@@ -51,7 +51,6 @@ The traceability analysis reveals a significant gap in automated test coverage a
 2.  **Prioritize E2E Testing:** Implement Playwright E2E tests for the "Golden Path" (Vendor Signup -> Experience Creation -> User Booking -> Payment -> Offline Ticket).
 3.  **Fix Type Definitions:** Regenerate `database.types.ts` immediately to reflect the actual database schema (specifically `onboarding_state`).
 4.  **Unit Tests for State Machines:** Write Jest unit tests for `vendorStateMachine.ts` to cover all transition edge cases.
-
 
 ## Remediation Update (Session 2)
 
@@ -63,8 +62,8 @@ The traceability analysis reveals a significant gap in automated test coverage a
 4.  **E2E Scaffolding:** Created `e2e/payments.spec.ts` and `e2e/offline.spec.ts` to guide future E2E implementation.
 
 **Updated Risk Assessment:**
-*   **High Risk:** Reduced to **Medium Risk**. Logic is now tested, but full integration/E2E tests are still pending execution in a CI environment.
-*   **Build Risk:** **Eliminated** (Types match migration).
 
+- **High Risk:** Reduced to **Medium Risk**. Logic is now tested, but full integration/E2E tests are still pending execution in a CI environment.
+- **Build Risk:** **Eliminated** (Types match migration).
 
 | **26-1** | Implement Service Worker for Ticket Caching | ⚠️ FAIL | 40% | E2E | Service Worker `public/sw.js` implemented with caching logic. Verified setup in main.tsx. ZERO automated tests verifying offline functionality. |

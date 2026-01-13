@@ -13,20 +13,21 @@ So that the platform can support multiple locations.
 **Given** the database schema
 **When** destinations table is created
 **Then** table includes:
-  - id (UUID, primary key)
-  - name (string, e.g., "Bali")
-  - slug (string, unique, e.g., "bali")
-  - country (string, e.g., "Indonesia")
-  - currency (string, e.g., "USD")
-  - timezone (string, e.g., "Asia/Makassar")
-  - language_default (string, e.g., "en")
-  - description (text)
-  - hero_image_url (string)
-  - is_active (boolean)
-  - created_at, updated_at
-**And** experiences.destination_id foreign key references destinations
-**And** seed data includes Bali as first destination
-**And** index on slug for quick lookup
+
+- id (UUID, primary key)
+- name (string, e.g., "Bali")
+- slug (string, unique, e.g., "bali")
+- country (string, e.g., "Indonesia")
+- currency (string, e.g., "USD")
+- timezone (string, e.g., "Asia/Makassar")
+- language_default (string, e.g., "en")
+- description (text)
+- hero_image_url (string)
+- is_active (boolean)
+- created_at, updated_at
+  **And** experiences.destination_id foreign key references destinations
+  **And** seed data includes Bali as first destination
+  **And** index on slug for quick lookup
 
 ### Story 19.2: Implement Destination Selector
 
@@ -94,11 +95,11 @@ So that I know the platform is expanding.
 **Given** additional destinations are planned but not active
 **When** I view destination selector or explore screen
 **Then** "Coming Soon" section shows teaser cards:
-  - Destination name and image (grayed or with overlay)
-  - "Coming Soon" badge
-  - "Notify Me" button
-**When** I tap "Notify Me"
-**Then** my email added to destination_waitlist table (user_id, destination_id, created_at)
-**And** toast: "We'll let you know when [destination] launches!"
-**And** inactive destinations don't appear in main browse
 
+- Destination name and image (grayed or with overlay)
+- "Coming Soon" badge
+- "Notify Me" button
+  **When** I tap "Notify Me"
+  **Then** my email added to destination_waitlist table (user_id, destination_id, created_at)
+  **And** toast: "We'll let you know when [destination] launches!"
+  **And** inactive destinations don't appear in main browse

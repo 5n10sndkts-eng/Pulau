@@ -3,6 +3,7 @@
 A Bali vacation builder connecting travelers with authentic local tours, activities, and hospitality services through seamless digital booking.
 
 **Experience Qualities:**
+
 1. **Aspirational** - Every interaction should evoke wanderlust and the excitement of building a dream vacation
 2. **Trustworthy** - Clear pricing, authentic reviews, and transparent operator information build confidence in booking decisions
 3. **Effortless** - Complex itinerary planning feels simple through intuitive visual organization and smart recommendations
@@ -12,6 +13,7 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 ## Essential Features
 
 **Trip Canvas Building**
+
 - Functionality: Visual itinerary builder where travelers add experiences that populate a calendar-style trip view
 - Purpose: Transforms overwhelming planning into creative, enjoyable composition process
 - Trigger: User taps category card from home screen
@@ -19,6 +21,7 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 - Success: User can build 5-day trip with 6+ activities in under 10 minutes; total cost visible at all times
 
 **Experience Discovery & Filtering**
+
 - Functionality: Browse categorized local experiences with smart filtering and personalized recommendations
 - Purpose: Surface authentic local operators while reducing choice paralysis
 - Trigger: User taps category or uses search
@@ -26,6 +29,7 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 - Success: Users find relevant experiences within 3 taps; filter results update instantly
 
 **Detailed Experience Pages**
+
 - Functionality: Rich multimedia experience pages with operator stories, reviews, pricing calculator, and booking action
 - Purpose: Build trust and provide decision-making confidence through transparency
 - Trigger: User taps experience card
@@ -33,6 +37,7 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 - Success: Users feel confident booking without contacting operator; 80%+ of needed info visible without scrolling
 
 **Multi-Step Checkout Flow**
+
 - Functionality: Guided booking process with trip review, traveler details, and payment
 - Purpose: Convert trip plans into confirmed bookings with clear progress indication
 - Trigger: User taps "Continue to Booking" from trip view
@@ -40,6 +45,7 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 - Success: Zero abandoned checkouts due to confusion; clear progress at each step
 
 **Onboarding Preferences**
+
 - Functionality: Quick 3-screen preference capture for personalized recommendations
 - Purpose: Tailor experience suggestions to traveler style, group type, and budget
 - Trigger: First app launch
@@ -47,6 +53,7 @@ A Bali vacation builder connecting travelers with authentic local tours, activit
 - Success: Preferences stored; recommendations feel relevant to user selections
 
 **Booking History & Trip Management Dashboard**
+
 - Functionality: Comprehensive dashboard for viewing all bookings, managing upcoming trips, and accessing past travel history with status tracking
 - Purpose: Centralize trip management and provide easy access to booking confirmations, cancellations, and rebooking functionality
 - Trigger: User navigates to Profile → My Trips or completes a booking
@@ -76,7 +83,7 @@ The design should evoke the feeling of planning an adventure through a luxury tr
 Inspired by Bali's natural palette: teal ocean waters, coral sunsets, golden sand, and deep volcanic stone.
 
 - **Primary Color**: Deep Teal `oklch(0.48 0.09 210)` #0D7377 - Evokes tropical ocean waters and establishes trustworthy, premium feel; used for primary CTAs and navigation highlights
-- **Secondary Colors**: 
+- **Secondary Colors**:
   - Warm Coral `oklch(0.68 0.17 25)` #FF6B6B - Sunset warmth for secondary actions and attention-drawing elements
   - Golden Sand `oklch(0.87 0.12 85)` #F4D03F - Highlights, star ratings, premium badges
   - Soft Green `oklch(0.65 0.14 155)` #27AE60 - Success states and confirmations
@@ -96,6 +103,7 @@ Typography should feel modern and sophisticated while maintaining exceptional re
 - **Accent**: Optional Caveat or Dancing Script for special "Local Favorite" callouts (extremely sparingly)
 
 **Typographic Hierarchy**:
+
 - Large Title (Trip Canvas Header): Plus Jakarta Sans Bold / 32px / -0.02em tracking / 1.1 line height
 - Section Titles: Plus Jakarta Sans SemiBold / 24px / -0.01em tracking / 1.2 line height
 - Experience Title: Plus Jakarta Sans SemiBold / 20px / normal tracking / 1.3 line height
@@ -109,7 +117,8 @@ Animations serve as functional signifiers and moments of delight—purposeful, n
 
 ## Component Selection
 
-**Components**: 
+**Components**:
+
 - Dialog for date picker and guest count selectors with custom calendar styling
 - Card for experience tiles, trip items, and operator profiles with 16px radius and subtle shadows
 - Sheet for bottom-up filter panels and quick-add category selector on mobile
@@ -124,6 +133,7 @@ Animations serve as functional signifiers and moments of delight—purposeful, n
 - Icons from Phosphor (rounded, 2px stroke): Waves, Bicycle, Buildings, ForkKnife, Van, Heart, MagnifyingGlass, Plus, User, MapPin
 
 **Customizations**:
+
 - Custom trip timeline component with connecting lines between day cards
 - Custom price calculator with guest count stepper and live total updates
 - Custom category cards with background images, gradient overlays, and icon badges
@@ -131,18 +141,21 @@ Animations serve as functional signifiers and moments of delight—purposeful, n
 - Custom empty states with illustrations and contextual CTAs
 
 **States**:
+
 - Buttons: Default with subtle shadow, hover with -2px translate and deeper shadow, active with scale(0.98), disabled at 50% opacity
 - Inputs: Default with border, focus with ring in primary teal, error with destructive border and helper text, success with green checkmark
 - Cards: Default flat, hover with shadow elevation increase and subtle scale(1.01), selected with teal border
 - Images: Lazy load with skeleton, error with placeholder gradient, zoom on tap in detail view
 
 **Icon Selection**:
+
 - Navigation: House (home), Compass (explore), PlusCircle (quick add), Heart (saved), User (profile)
 - Categories: Waves (water), Bicycle (land), Buildings (culture), ForkKnife (food), Van (transport), Bed (stays)
 - Actions: MagnifyingGlass (search), FunnelSimple (filter), ShareNetwork (share), Calendar (dates), MapPin (location)
 - UI: CaretRight (chevron), X (close), Check (success), Warning (alert), Star (rating)
 
-**Spacing**: 
+**Spacing**:
+
 - Card padding: 20px
 - Screen margins: 20px horizontal, 24px vertical
 - Section spacing: 32px between major sections, 16px between related elements
@@ -150,6 +163,7 @@ Animations serve as functional signifiers and moments of delight—purposeful, n
 - Stack spacing: 8px for tight groups, 16px for moderate, 24px for loose
 
 **Mobile**:
+
 - Bottom tab bar fixed at 64px height with safe area inset
 - Category grid shifts from 2 columns to single column under 640px
 - Experience cards stack vertically on mobile, 2-column grid on tablet, 3-column on desktop

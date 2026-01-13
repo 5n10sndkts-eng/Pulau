@@ -1,4 +1,5 @@
 ### 30-3: Implement Booking Reminder Scheduler
+
 - Send reminder 24 hours before experience
 - Send morning-of reminder with meeting point
 - Configurable reminder timing per vendor

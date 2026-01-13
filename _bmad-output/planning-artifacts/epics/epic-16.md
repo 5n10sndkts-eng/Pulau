@@ -13,13 +13,14 @@ So that layouts adapt properly across devices.
 **Given** Tailwind CSS is configured
 **When** breakpoints are applied
 **Then** breakpoints follow mobile-first approach:
-  - Default (no prefix): mobile < 640px
-  - sm: >= 640px (large phones, small tablets)
-  - md: >= 768px (tablets)
-  - lg: >= 1024px (desktops)
-**And** all components use mobile-first classes
-**And** testing confirms layouts at all breakpoints
-**And** no horizontal scroll on any screen size
+
+- Default (no prefix): mobile < 640px
+- sm: >= 640px (large phones, small tablets)
+- md: >= 768px (tablets)
+- lg: >= 1024px (desktops)
+  **And** all components use mobile-first classes
+  **And** testing confirms layouts at all breakpoints
+  **And** no horizontal scroll on any screen size
 
 ### Story 16.2: Ensure Touch Target Compliance
 
@@ -48,16 +49,17 @@ So that the app feels polished and on-brand.
 **Given** design tokens are configured
 **When** components render
 **Then** colors match PRD specifications:
-  - Primary: Deep Teal #0D7377
-  - Secondary/Accent: Warm Coral #FF6B6B
-  - Highlight: Golden Sand #F4D03F
-  - Success: Soft Green #27AE60
-  - Backgrounds: Off-white, pure white cards
-**And** typography uses:
-  - Headings: Plus Jakarta Sans (Bold/SemiBold)
-  - Body: Inter (Regular/Medium)
-**And** border radius: 12-16px cards, 8px buttons, 24px pills
-**And** shadows: subtle elevation for cards and buttons
+
+- Primary: Deep Teal #0D7377
+- Secondary/Accent: Warm Coral #FF6B6B
+- Highlight: Golden Sand #F4D03F
+- Success: Soft Green #27AE60
+- Backgrounds: Off-white, pure white cards
+  **And** typography uses:
+- Headings: Plus Jakarta Sans (Bold/SemiBold)
+- Body: Inter (Regular/Medium)
+  **And** border radius: 12-16px cards, 8px buttons, 24px pills
+  **And** shadows: subtle elevation for cards and buttons
 
 ### Story 16.4: Implement Physics-Based Animations
 
@@ -70,14 +72,15 @@ So that the app feels responsive and premium.
 **Given** Framer Motion is configured
 **When** animations trigger
 **Then** animations use spring physics (not linear timing):
-  - Quick Add fly-to-trip: 150ms ease-out
-  - Heart pop: 200ms bounce
-  - Page transitions: 300ms ease-in-out (slide)
-  - Success confetti: 500ms
-**And** all animations run at 60fps
-**And** AnimatePresence wraps conditional elements for exit animations
-**When** user has reduced-motion preference
-**Then** animations are disabled (prefers-reduced-motion media query)
+
+- Quick Add fly-to-trip: 150ms ease-out
+- Heart pop: 200ms bounce
+- Page transitions: 300ms ease-in-out (slide)
+- Success confetti: 500ms
+  **And** all animations run at 60fps
+  **And** AnimatePresence wraps conditional elements for exit animations
+  **When** user has reduced-motion preference
+  **Then** animations are disabled (prefers-reduced-motion media query)
 
 ### Story 16.5: Ensure WCAG 2.1 AA Accessibility
 
@@ -90,14 +93,15 @@ So that I can use it effectively.
 **Given** accessibility standards apply
 **When** components render
 **Then** color contrast ratios meet WCAG 2.1 AA:
-  - Primary on white: 6.2:1 ✓
-  - Coral on white: 4.6:1 ✓
-  - Text on backgrounds: >4.5:1
-**And** all images have meaningful alt text
-**And** form inputs have associated labels
-**And** focus states are clearly visible (focus ring)
-**And** keyboard navigation works for all interactive elements
-**And** Radix UI primitives provide ARIA attributes automatically
-**And** screen reader testing confirms usability
+
+- Primary on white: 6.2:1 ✓
+- Coral on white: 4.6:1 ✓
+- Text on backgrounds: >4.5:1
+  **And** all images have meaningful alt text
+  **And** form inputs have associated labels
+  **And** focus states are clearly visible (focus ring)
+  **And** keyboard navigation works for all interactive elements
+  **And** Radix UI primitives provide ARIA attributes automatically
+  **And** screen reader testing confirms usability
 
 ---

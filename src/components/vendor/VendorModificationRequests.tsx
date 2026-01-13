@@ -7,15 +7,22 @@
  * Vendors can approve or reject requests with optional notes.
  */
 
-import { useState, useEffect } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   ArrowLeft,
   Calendar,
@@ -29,9 +36,9 @@ import {
   RefreshCw,
   Bell,
   ChevronRight,
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { format, parseISO, formatDistanceToNow } from 'date-fns'
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format, parseISO, formatDistanceToNow } from 'date-fns';
 import {
   getVendorPendingModifications,
   getVendorModifications,
@@ -42,15 +49,15 @@ import {
   BookingModification,
   ModificationStatus,
   ModificationType,
-} from '@/lib/modificationService'
+} from '@/lib/modificationService';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 interface VendorModificationRequestsProps {
-  vendorId: string
-  onBack?: () => void
+  vendorId: string;
+  onBack?: () => void;
 }
 
 // ============================================================================
@@ -60,43 +67,85 @@ interface VendorModificationRequestsProps {
 function getStatusBadge(status: ModificationStatus) {
   switch (status) {
     case 'pending':
-      return <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Pending</Badge>
+      return (
+        <Badge
+          variant="outline"
+          className="bg-amber-50 text-amber-700 border-amber-200"
+        >
+          Pending
+        </Badge>
+      );
     case 'approved':
-      return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Approved</Badge>
+      return (
+        <Badge
+          variant="outline"
+          className="bg-blue-50 text-blue-700 border-blue-200"
+        >
+          Approved
+        </Badge>
+      );
     case 'executed':
-      return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Completed</Badge>
+      return (
+        <Badge
+          variant="outline"
+          className="bg-green-50 text-green-700 border-green-200"
+        >
+          Completed
+        </Badge>
+      );
     case 'rejected':
-      return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Rejected</Badge>
+      return (
+        <Badge
+          variant="outline"
+          className="bg-red-50 text-red-700 border-red-200"
+        >
+          Rejected
+        </Badge>
+      );
     case 'cancelled':
-      return <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200">Cancelled</Badge>
+      return (
+        <Badge
+          variant="outline"
+          className="bg-gray-50 text-gray-600 border-gray-200"
+        >
+          Cancelled
+        </Badge>
+      );
     case 'expired':
-      return <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">Expired</Badge>
+      return (
+        <Badge
+          variant="outline"
+          className="bg-gray-50 text-gray-500 border-gray-200"
+        >
+          Expired
+        </Badge>
+      );
     default:
-      return <Badge variant="outline">{status}</Badge>
+      return <Badge variant="outline">{status}</Badge>;
   }
 }
 
 function getTypeLabel(type: ModificationType): string {
   switch (type) {
     case 'reschedule':
-      return 'Date/Time Change'
+      return 'Date/Time Change';
     case 'guest_change':
-      return 'Guest Count Change'
+      return 'Guest Count Change';
     case 'combined':
-      return 'Date & Guest Change'
+      return 'Date & Guest Change';
     default:
-      return type
+      return type;
   }
 }
 
 function getTypeIcon(type: ModificationType) {
   switch (type) {
     case 'reschedule':
-      return <Calendar className="w-4 h-4" />
+      return <Calendar className="w-4 h-4" />;
     case 'guest_change':
-      return <Users className="w-4 h-4" />
+      return <Users className="w-4 h-4" />;
     case 'combined':
-      return <RefreshCw className="w-4 h-4" />
+      return <RefreshCw className="w-4 h-4" />;
   }
 }
 
@@ -109,39 +158,44 @@ export function VendorModificationRequests({
   onBack,
 }: VendorModificationRequestsProps) {
   // State
-  const [pendingRequests, setPendingRequests] = useState<BookingModification[]>([])
-  const [allRequests, setAllRequests] = useState<BookingModification[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState('pending')
+  const [pendingRequests, setPendingRequests] = useState<BookingModification[]>(
+    [],
+  );
+  const [allRequests, setAllRequests] = useState<BookingModification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('pending');
 
   // Modal state
-  const [selectedRequest, setSelectedRequest] = useState<BookingModification | null>(null)
-  const [modalAction, setModalAction] = useState<'approve' | 'reject' | null>(null)
-  const [notes, setNotes] = useState('')
-  const [processing, setProcessing] = useState(false)
+  const [selectedRequest, setSelectedRequest] =
+    useState<BookingModification | null>(null);
+  const [modalAction, setModalAction] = useState<'approve' | 'reject' | null>(
+    null,
+  );
+  const [notes, setNotes] = useState('');
+  const [processing, setProcessing] = useState(false);
 
   // Load data
   useEffect(() => {
-    loadRequests()
-  }, [vendorId])
+    loadRequests();
+  }, [vendorId]);
 
   async function loadRequests() {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const [pending, all] = await Promise.all([
         getVendorPendingModifications(vendorId),
         getVendorModifications(vendorId),
-      ])
+      ]);
 
-      setPendingRequests(pending)
-      setAllRequests(all)
+      setPendingRequests(pending);
+      setAllRequests(all);
     } catch (err) {
-      setError('Failed to load modification requests')
+      setError('Failed to load modification requests');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -150,74 +204,79 @@ export function VendorModificationRequests({
   // ============================================================================
 
   function openApproveModal(request: BookingModification) {
-    setSelectedRequest(request)
-    setModalAction('approve')
-    setNotes('')
+    setSelectedRequest(request);
+    setModalAction('approve');
+    setNotes('');
   }
 
   function openRejectModal(request: BookingModification) {
-    setSelectedRequest(request)
-    setModalAction('reject')
-    setNotes('')
+    setSelectedRequest(request);
+    setModalAction('reject');
+    setNotes('');
   }
 
   function closeModal() {
-    setSelectedRequest(null)
-    setModalAction(null)
-    setNotes('')
+    setSelectedRequest(null);
+    setModalAction(null);
+    setNotes('');
   }
 
   async function handleApprove() {
-    if (!selectedRequest) return
+    if (!selectedRequest) return;
 
-    setProcessing(true)
+    setProcessing(true);
 
     try {
       // First approve the request
-      const approveResult = await approveModification(selectedRequest.id, notes || undefined)
+      const approveResult = await approveModification(
+        selectedRequest.id,
+        notes || undefined,
+      );
 
       if (!approveResult.success) {
-        setError(approveResult.error || 'Failed to approve request')
-        return
+        setError(approveResult.error || 'Failed to approve request');
+        return;
       }
 
       // Then execute it (update trip item, handle slots, etc.)
-      const executeResult = await executeModification(selectedRequest.id)
+      const executeResult = await executeModification(selectedRequest.id);
 
       if (!executeResult.success) {
         // Approved but not executed - show warning
-        setError(`Request approved but execution failed: ${executeResult.error}`)
+        setError(
+          `Request approved but execution failed: ${executeResult.error}`,
+        );
       }
 
       // Refresh the list
-      await loadRequests()
-      closeModal()
+      await loadRequests();
+      closeModal();
     } catch (err) {
-      setError('An error occurred while processing the request')
+      setError('An error occurred while processing the request');
     } finally {
-      setProcessing(false)
+      setProcessing(false);
     }
   }
 
   async function handleReject() {
-    if (!selectedRequest || !notes.trim()) return
+    if (!selectedRequest || !notes.trim()) return;
 
-    setProcessing(true)
+    setProcessing(true);
 
     try {
-      const result = await rejectModification(selectedRequest.id, notes)
+      const result = await rejectModification(selectedRequest.id, notes);
 
       if (!result.success) {
-        setError(result.error || 'Failed to reject request')
-        return
+        setError(result.error || 'Failed to reject request');
+        return;
       }
 
-      await loadRequests()
-      closeModal()
+      await loadRequests();
+      closeModal();
     } catch (err) {
-      setError('An error occurred while processing the request')
+      setError('An error occurred while processing the request');
     } finally {
-      setProcessing(false)
+      setProcessing(false);
     }
   }
 
@@ -242,9 +301,12 @@ export function VendorModificationRequests({
           )}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-display font-bold">Modification Requests</h1>
+              <h1 className="text-3xl font-display font-bold">
+                Modification Requests
+              </h1>
               <p className="text-white/80 mt-1">
-                {pendingRequests.length} pending {pendingRequests.length === 1 ? 'request' : 'requests'}
+                {pendingRequests.length} pending{' '}
+                {pendingRequests.length === 1 ? 'request' : 'requests'}
               </p>
             </div>
             <Button
@@ -253,7 +315,9 @@ export function VendorModificationRequests({
               onClick={loadRequests}
               disabled={loading}
             >
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`}
+              />
               Refresh
             </Button>
           </div>
@@ -275,7 +339,10 @@ export function VendorModificationRequests({
               <Bell className="w-4 h-4" />
               Pending
               {pendingRequests.length > 0 && (
-                <Badge variant="secondary" className="ml-1 bg-amber-100 text-amber-700">
+                <Badge
+                  variant="secondary"
+                  className="ml-1 bg-amber-100 text-amber-700"
+                >
                   {pendingRequests.length}
                 </Badge>
               )}
@@ -292,8 +359,12 @@ export function VendorModificationRequests({
             ) : pendingRequests.length === 0 ? (
               <Card className="p-12 text-center">
                 <div className="text-5xl mb-4">🎉</div>
-                <h3 className="font-display text-xl font-semibold mb-2">All caught up!</h3>
-                <p className="text-muted-foreground">No pending modification requests at this time.</p>
+                <h3 className="font-display text-xl font-semibold mb-2">
+                  All caught up!
+                </h3>
+                <p className="text-muted-foreground">
+                  No pending modification requests at this time.
+                </p>
               </Card>
             ) : (
               <div className="space-y-4">
@@ -326,7 +397,9 @@ export function VendorModificationRequests({
               </div>
             ) : allRequests.length === 0 ? (
               <Card className="p-12 text-center">
-                <p className="text-muted-foreground">No modification requests yet.</p>
+                <p className="text-muted-foreground">
+                  No modification requests yet.
+                </p>
               </Card>
             ) : (
               <div className="space-y-3">
@@ -369,13 +442,15 @@ export function VendorModificationRequests({
                     <div>
                       <span className="text-muted-foreground">From:</span>
                       <p className="font-medium">
-                        {selectedRequest.original_date} at {selectedRequest.original_time}
+                        {selectedRequest.original_date} at{' '}
+                        {selectedRequest.original_time}
                       </p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">To:</span>
                       <p className="font-medium">
-                        {selectedRequest.requested_date} at {selectedRequest.requested_time}
+                        {selectedRequest.requested_date} at{' '}
+                        {selectedRequest.requested_time}
                       </p>
                     </div>
                   </div>
@@ -385,18 +460,24 @@ export function VendorModificationRequests({
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-muted-foreground">From:</span>
-                      <p className="font-medium">{selectedRequest.original_guests} guests</p>
+                      <p className="font-medium">
+                        {selectedRequest.original_guests} guests
+                      </p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">To:</span>
-                      <p className="font-medium">{selectedRequest.requested_guests} guests</p>
+                      <p className="font-medium">
+                        {selectedRequest.requested_guests} guests
+                      </p>
                     </div>
                   </div>
                 )}
 
                 {selectedRequest.price_difference !== 0 && (
                   <div className="mt-3 pt-3 border-t">
-                    <span className="text-sm text-muted-foreground">Price change: </span>
+                    <span className="text-sm text-muted-foreground">
+                      Price change:{' '}
+                    </span>
                     <span
                       className={`font-medium ${
                         (selectedRequest.price_difference ?? 0) > 0
@@ -404,15 +485,21 @@ export function VendorModificationRequests({
                           : 'text-red-600'
                       }`}
                     >
-                      {formatPriceDifference(selectedRequest.price_difference ?? 0)}
+                      {formatPriceDifference(
+                        selectedRequest.price_difference ?? 0,
+                      )}
                     </span>
                   </div>
                 )}
 
                 {selectedRequest.customer_notes && (
                   <div className="mt-3 pt-3 border-t">
-                    <span className="text-sm text-muted-foreground">Customer note: </span>
-                    <p className="text-sm mt-1">{selectedRequest.customer_notes}</p>
+                    <span className="text-sm text-muted-foreground">
+                      Customer note:{' '}
+                    </span>
+                    <p className="text-sm mt-1">
+                      {selectedRequest.customer_notes}
+                    </p>
                   </div>
                 )}
               </Card>
@@ -420,7 +507,9 @@ export function VendorModificationRequests({
               {/* Notes Input */}
               <div>
                 <Label htmlFor="vendor-notes">
-                  {modalAction === 'approve' ? 'Notes (optional)' : 'Rejection reason (required)'}
+                  {modalAction === 'approve'
+                    ? 'Notes (optional)'
+                    : 'Rejection reason (required)'}
                 </Label>
                 <Textarea
                   id="vendor-notes"
@@ -446,7 +535,11 @@ export function VendorModificationRequests({
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={closeModal} disabled={processing}>
+            <Button
+              variant="outline"
+              onClick={closeModal}
+              disabled={processing}
+            >
               Cancel
             </Button>
             {modalAction === 'approve' ? (
@@ -486,7 +579,7 @@ export function VendorModificationRequests({
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -498,12 +591,16 @@ function ModificationRequestCard({
   onApprove,
   onReject,
 }: {
-  request: BookingModification
-  onApprove: () => void
-  onReject: () => void
+  request: BookingModification;
+  onApprove: () => void;
+  onReject: () => void;
 }) {
-  const expiresIn = formatDistanceToNow(parseISO(request.expires_at), { addSuffix: true })
-  const createdAgo = formatDistanceToNow(parseISO(request.created_at), { addSuffix: true })
+  const expiresIn = formatDistanceToNow(parseISO(request.expires_at), {
+    addSuffix: true,
+  });
+  const createdAgo = formatDistanceToNow(parseISO(request.created_at), {
+    addSuffix: true,
+  });
 
   return (
     <Card className="p-6 border-l-4 border-l-amber-400">
@@ -513,7 +610,9 @@ function ModificationRequestCard({
           <div className="flex items-center gap-3 mb-3">
             <div className="flex items-center gap-2 text-primary">
               {getTypeIcon(request.modification_type)}
-              <span className="font-semibold">{getTypeLabel(request.modification_type)}</span>
+              <span className="font-semibold">
+                {getTypeLabel(request.modification_type)}
+              </span>
             </div>
             {getStatusBadge(request.status)}
           </div>
@@ -544,7 +643,9 @@ function ModificationRequestCard({
                 <div className="flex items-center gap-2 text-sm">
                   <Users className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">From:</span>
-                  <span className="font-medium">{request.original_guests} guests</span>
+                  <span className="font-medium">
+                    {request.original_guests} guests
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <ChevronRight className="w-4 h-4 text-primary" />
@@ -564,7 +665,9 @@ function ModificationRequestCard({
               <span className="text-muted-foreground">Price change:</span>
               <span
                 className={`font-semibold ${
-                  (request.price_difference ?? 0) > 0 ? 'text-green-600' : 'text-red-600'
+                  (request.price_difference ?? 0) > 0
+                    ? 'text-green-600'
+                    : 'text-red-600'
                 }`}
               >
                 {formatPriceDifference(request.price_difference ?? 0)}
@@ -593,27 +696,38 @@ function ModificationRequestCard({
             <Check className="w-4 h-4" />
             Approve
           </Button>
-          <Button onClick={onReject} variant="outline" size="sm" className="gap-1">
+          <Button
+            onClick={onReject}
+            variant="outline"
+            size="sm"
+            className="gap-1"
+          >
             <X className="w-4 h-4" />
             Reject
           </Button>
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
 function ModificationRequestRow({ request }: { request: BookingModification }) {
-  const createdAgo = formatDistanceToNow(parseISO(request.created_at), { addSuffix: true })
+  const createdAgo = formatDistanceToNow(parseISO(request.created_at), {
+    addSuffix: true,
+  });
 
   return (
     <Card className="p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="text-muted-foreground">{getTypeIcon(request.modification_type)}</div>
+          <div className="text-muted-foreground">
+            {getTypeIcon(request.modification_type)}
+          </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-medium">{getTypeLabel(request.modification_type)}</span>
+              <span className="font-medium">
+                {getTypeLabel(request.modification_type)}
+              </span>
               {getStatusBadge(request.status)}
             </div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -635,7 +749,9 @@ function ModificationRequestRow({ request }: { request: BookingModification }) {
           {request.price_difference !== 0 && (
             <p
               className={`text-sm font-medium ${
-                (request.price_difference ?? 0) > 0 ? 'text-green-600' : 'text-red-600'
+                (request.price_difference ?? 0) > 0
+                  ? 'text-green-600'
+                  : 'text-red-600'
               }`}
             >
               {formatPriceDifference(request.price_difference ?? 0)}
@@ -644,7 +760,7 @@ function ModificationRequestRow({ request }: { request: BookingModification }) {
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
-export default VendorModificationRequests
+export default VendorModificationRequests;

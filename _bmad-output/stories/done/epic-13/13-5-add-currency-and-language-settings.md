@@ -11,11 +11,13 @@ So that the app displays in my preferences.
 ## Acceptance Criteria
 
 ### AC 1: Preferences Screen Display
+
 **Given** I tap "Preferences" from profile
 **When** the preferences screen loads
 **Then** I see currency selector: USD (default), EUR, GBP, AUD, SGD, IDR and language selector: English (default), Indonesian, Mandarin
 
 ### AC 2: Currency Change
+
 **Given** I change currency
 **When** the new currency is selected
 **Then** all prices throughout app convert and display in new currency
@@ -23,6 +25,7 @@ So that the app displays in my preferences.
 **And** user_preferences.currency persists selection
 
 ### AC 3: Language Change
+
 **Given** I change language
 **When** the new language is selected
 **Then** app interface text changes to selected language
@@ -32,12 +35,14 @@ So that the app displays in my preferences.
 ## Tasks / Subtasks
 
 ### Task 1: Create Preferences Screen (AC: #1)
+
 - [x] Create screen in `app/profile/preferences.tsx`
 - [x] Add currency picker with 6 options
 - [x] Add language picker with 3 options
 - [x] Display current selections
 
 ### Task 2: Implement Currency Selection (AC: #2)
+
 - [x] Save selected currency to user_preferences KV namespace
 - [x] Create currency context/provider for app-wide access
 - [x] Fetch exchange rates from API (exchangerate-api.com)
@@ -45,6 +50,7 @@ So that the app displays in my preferences.
 - [x] Update all price displays reactively
 
 ### Task 3: Implement Language Selection (AC: #3)
+
 - [x] Set up i18n (react-i18next or expo-localization)
 - [x] Add translation files for English, Indonesian, Mandarin
 - [x] Save language to user_preferences
@@ -52,6 +58,7 @@ So that the app displays in my preferences.
 - [x] Restart/reload app sections as needed
 
 ### Task 4: Add Exchange Rate Service
+
 - [x] Fetch rates from API daily
 - [x] Store in local storage
 - [x] Create useCurrency hook for price conversion
@@ -60,6 +67,7 @@ So that the app displays in my preferences.
 ## Dev Notes
 
 ### Currency Conversion
+
 ```typescript
 const useCurrency = () => {
   const { currency } = usePreferences();
@@ -97,5 +105,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

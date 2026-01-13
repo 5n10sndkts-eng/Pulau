@@ -1,4 +1,5 @@
 # Production-Ready Launch Sprint
+
 **Sprint Duration**: January 13 - February 2, 2026 (3 weeks)  
 **Sprint Goal**: Production deployment with all critical systems operational  
 **Scrum Master**: Bob  
@@ -9,6 +10,7 @@
 ## Sprint Overview
 
 This sprint delivers a **production-ready launch** with:
+
 - ✅ Full production infrastructure (Supabase + Vercel + Domain)
 - ✅ Email notifications system (booking confirmations)
 - ✅ Error monitoring & alerting (Sentry)
@@ -26,6 +28,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 1 (Mon): Production Environment Setup**
 
 #### Morning: Supabase Production
+
 - [ ] Create production Supabase project
 - [ ] Run all 17 migrations in order
 - [ ] Verify schema matches development
@@ -36,6 +39,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Production database live and verified
 
 #### Afternoon: Stripe Production
+
 - [ ] Activate Stripe production account
 - [ ] Complete business verification (if needed)
 - [ ] Configure Stripe Connect platform settings
@@ -52,6 +56,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 2 (Tue): Deployment & Configuration**
 
 #### Morning: Vercel Deployment
+
 - [ ] Create Vercel production project
 - [ ] Configure build settings (Vite + React)
 - [ ] Deploy initial production build
@@ -62,6 +67,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: App live on Vercel (temp domain)
 
 #### Afternoon: Domain & Environment Variables
+
 - [ ] Purchase/configure pulau.app domain
 - [ ] Set up DNS records (A, CNAME)
 - [ ] Configure SSL certificate (auto via Vercel)
@@ -79,6 +85,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 3 (Wed): Email Integration - Part 1**
 
 #### Morning: Resend Setup
+
 - [ ] Create Resend account
 - [ ] Configure sending domain (noreply@pulau.app)
 - [ ] Add DNS records (SPF, DKIM, DMARC)
@@ -89,6 +96,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Resend configured and verified
 
 #### Afternoon: send-email Edge Function
+
 - [ ] Install @resend/node in Edge Function
 - [ ] Replace stub with real Resend integration
 - [ ] Add email template rendering
@@ -106,6 +114,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 4 (Thu): Email Templates & Testing**
 
 #### Morning: Template Development
+
 - [ ] Create booking confirmation HTML template
 - [ ] Make mobile-responsive (80%+ mobile users)
 - [ ] Add booking details (reference, date, items, total)
@@ -117,6 +126,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Professional email templates
 
 #### Afternoon: Integration Testing
+
 - [ ] Add email trigger after payment.succeeded
 - [ ] Test confirmation email delivery
 - [ ] Verify email appears in inbox (not spam)
@@ -133,6 +143,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 5 (Fri): Email Validation & Monitoring**
 
 #### All Day: End-to-End Email Testing
+
 - [ ] Complete 10 test bookings
 - [ ] Verify 100% delivery rate
 - [ ] Check spam scores (aim for <5)
@@ -155,6 +166,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 1 (Mon): Error Monitoring Setup**
 
 #### Morning: Sentry Installation
+
 - [ ] Create Sentry project
 - [ ] Install @sentry/react + @sentry/vite-plugin
 - [ ] Configure Sentry.init() in main.tsx
@@ -165,6 +177,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Sentry SDK integrated
 
 #### Afternoon: Error Boundaries
+
 - [ ] Create root ErrorBoundary component
 - [ ] Wrap Checkout flow in boundary
 - [ ] Wrap TripBuilder in boundary
@@ -182,6 +195,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 2 (Tue): Monitoring Configuration**
 
 #### Morning: Sourcemaps & Performance
+
 - [ ] Configure vite-plugin-sentry for sourcemap upload
 - [ ] Verify readable stack traces in Sentry
 - [ ] Set up performance monitoring
@@ -192,6 +206,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Readable production errors
 
 #### Afternoon: Alert Rules
+
 - [ ] Configure Slack integration for Sentry
 - [ ] Set up critical error alerts (email + Slack)
 - [ ] Configure alert thresholds
@@ -208,6 +223,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 3 (Wed): P1 Stub Functions - Part 1**
 
 #### Morning: Refund Processing
+
 - [ ] Install stripe SDK in process-refund function
 - [ ] Replace stub with real Stripe refund call
 - [ ] Update payment record status
@@ -219,6 +235,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Refunds actually process
 
 #### Afternoon: QR Code Scanner
+
 - [ ] Install jsQR or html5-qrcode library
 - [ ] Implement detectQRCode() in QRScanner.tsx
 - [ ] Add camera permission handling
@@ -235,7 +252,8 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 4 (Thu): Testing & Validation**
 
 #### Morning: Unit Test Coverage
-- [ ] Create src/__tests__/slotService.test.ts
+
+- [ ] Create src/**tests**/slotService.test.ts
 - [ ] Test atomic decrement logic
 - [ ] Test concurrency scenarios (race conditions)
 - [ ] Test error handling
@@ -245,6 +263,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Core transaction logic tested
 
 #### Afternoon: Checkout Validation
+
 - [ ] Add slot availability check before payment
 - [ ] Show sold-out error if unavailable
 - [ ] Prevent double-booking race condition
@@ -261,6 +280,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 5 (Fri): Security & Reliability**
 
 #### Morning: RLS Policy Audit
+
 - [ ] Review all audit_logs RLS policies
 - [ ] Add missing policies (if any)
 - [ ] Test unauthorized access attempts
@@ -271,6 +291,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Data access secured
 
 #### Afternoon: Webhook Reliability
+
 - [ ] Add exponential backoff for payment webhooks
 - [ ] Implement idempotency handling
 - [ ] Add webhook retry queue
@@ -291,6 +312,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 1 (Mon): Staging Environment**
 
 #### All Day: Staging Setup
+
 - [ ] Create staging Supabase project
 - [ ] Clone production migrations to staging
 - [ ] Create Vercel preview deployment
@@ -309,6 +331,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 2 (Tue): End-to-End Testing**
 
 #### All Day: Production Flow Testing
+
 - [ ] Test complete booking flow (staging)
   - Browse experiences
   - Add to trip
@@ -335,6 +358,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 3 (Wed): Security & Performance Audit**
 
 #### Morning: Security Review
+
 - [ ] Audit all environment variables
 - [ ] Check for exposed API keys in code
 - [ ] Test unauthorized data access
@@ -346,6 +370,7 @@ This sprint delivers a **production-ready launch** with:
 **Deliverable**: Security vulnerabilities addressed
 
 #### Afternoon: Performance Testing
+
 - [ ] Run Lighthouse audit (aim for >90 score)
 - [ ] Test Core Web Vitals
 - [ ] Load test concurrent bookings (10 simultaneous)
@@ -361,6 +386,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 4 (Thu): Documentation & Runbooks**
 
 #### All Day: Knowledge Transfer
+
 - [ ] Create deployment runbook
   - Build & deploy process
   - Rollback procedure
@@ -382,6 +408,7 @@ This sprint delivers a **production-ready launch** with:
 ### **Day 5 (Fri): LAUNCH DAY 🚀**
 
 #### Morning: Final Checks
+
 - [ ] Run full test suite (unit + E2E)
 - [ ] Verify all env vars set in production
 - [ ] Check Stripe production keys active
@@ -391,6 +418,7 @@ This sprint delivers a **production-ready launch** with:
 - [ ] Backup production database
 
 **Go/No-Go Decision Criteria**:
+
 - ✅ Zero TypeScript errors
 - ✅ 95%+ test pass rate
 - ✅ Email delivery >99%
@@ -400,6 +428,7 @@ This sprint delivers a **production-ready launch** with:
 - ✅ Security audit passed
 
 #### Afternoon: Launch
+
 - [ ] Deploy final production build
 - [ ] Verify deployment successful
 - [ ] Complete 3 real test bookings
@@ -415,6 +444,7 @@ This sprint delivers a **production-ready launch** with:
 ## Success Metrics (Week 1 Post-Launch)
 
 **Technical Health**:
+
 - Error rate < 1%
 - Email delivery > 99%
 - Payment success rate > 95%
@@ -422,6 +452,7 @@ This sprint delivers a **production-ready launch** with:
 - Zero critical Sentry alerts
 
 **Business Metrics**:
+
 - Track first 10 real bookings
 - Monitor conversion funnel
 - Collect user feedback
@@ -432,12 +463,14 @@ This sprint delivers a **production-ready launch** with:
 ## Risk Mitigation
 
 **High-Risk Areas**:
+
 1. **Payment Processing**: Test thoroughly with Stripe test cards
 2. **Email Deliverability**: Monitor spam scores, use Resend best practices
 3. **Concurrent Bookings**: Load test atomic inventory extensively
 4. **RLS Policies**: Triple-check vendor data isolation
 
 **Rollback Plan**:
+
 - Keep previous Vercel deployment ready
 - Database migrations are reversible
 - Feature flags for risky features
@@ -451,11 +484,13 @@ This sprint delivers a **production-ready launch** with:
 **Duration**: 15 minutes
 
 **Format**:
+
 - What I completed yesterday
 - What I'm working on today
 - Any blockers
 
 **Scrum Master (Bob) Responsibilities**:
+
 - Update sprint-status.yaml daily
 - Track todo list progress
 - Unblock dependencies
@@ -471,13 +506,14 @@ This sprint delivers a **production-ready launch** with:
 ✅ TypeScript errors: zero  
 ✅ Deployed to staging and validated  
 ✅ Documentation updated  
-✅ Security considerations addressed  
+✅ Security considerations addressed
 
 ---
 
 ## Launch Checklist (Print & Post)
 
 **Infrastructure**:
+
 - [ ] Production Supabase live
 - [ ] Production Stripe configured
 - [ ] Vercel deployment working
@@ -485,30 +521,35 @@ This sprint delivers a **production-ready launch** with:
 - [ ] All env vars set
 
 **Email System**:
+
 - [ ] Resend DNS verified
 - [ ] Email templates tested
 - [ ] Confirmation emails sending
 - [ ] Delivery rate >99%
 
 **Monitoring**:
+
 - [ ] Sentry capturing errors
 - [ ] Alerts configured
 - [ ] Performance monitoring active
 - [ ] Sourcemaps uploading
 
 **Critical Fixes**:
+
 - [ ] Refund processing works
 - [ ] QR scanner works
 - [ ] Slot validation prevents overbooking
 - [ ] RLS policies secure
 
 **Testing**:
+
 - [ ] Full E2E test passed
 - [ ] Security audit complete
 - [ ] Load testing passed
 - [ ] Mobile testing done
 
 **Documentation**:
+
 - [ ] Deployment runbook ready
 - [ ] Incident response guide written
 - [ ] Vendor onboarding guide created

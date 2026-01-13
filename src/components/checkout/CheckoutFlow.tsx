@@ -1,85 +1,87 @@
-import { useState, useMemo, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
-import { Trip } from '@/lib/types'
-import { ReviewStep } from './ReviewStep'
-import { TravelerDetailsStep } from './TravelerDetailsStep'
-import { PaymentStep } from './PaymentStep'
-import { ConfirmationStep } from './ConfirmationStep'
-import { CheckoutProgress } from './CheckoutProgress'
-import { trackCheckoutStep, measureTiming } from '@/lib/sentry'
-import { initiateCheckout } from '@/lib/paymentService'
-import { isSupabaseConfigured } from '@/lib/supabase'
-import { toast } from 'sonner'
+import { useState, useMemo, useEffect } from 'react';
+import { useKV } from '@github/spark/hooks';
+import { Trip } from '@/lib/types';
+import { ReviewStep } from './ReviewStep';
+import { TravelerDetailsStep } from './TravelerDetailsStep';
+import { PaymentStep } from './PaymentStep';
+import { ConfirmationStep } from './ConfirmationStep';
+import { CheckoutProgress } from './CheckoutProgress';
+import { trackCheckoutStep, measureTiming } from '@/lib/sentry';
+import { initiateCheckout } from '@/lib/paymentService';
+import { isSupabaseConfigured } from '@/lib/supabase';
+import { toast } from 'sonner';
 
-export type CheckoutStep = 'review' | 'details' | 'payment' | 'confirmation'
+export type CheckoutStep = 'review' | 'details' | 'payment' | 'confirmation';
 
 export interface TravelerInfo {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  countryCode: string
-  nationality: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  countryCode: string;
+  nationality: string;
 }
 
 export interface BookingData {
-  leadTraveler: TravelerInfo
-  additionalTravelers: Omit<TravelerInfo, 'email' | 'phone' | 'countryCode'>[]
-  specialRequests: string
-  promoCode?: string
-  paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay'
+  leadTraveler: TravelerInfo;
+  additionalTravelers: Omit<TravelerInfo, 'email' | 'phone' | 'countryCode'>[];
+  specialRequests: string;
+  promoCode?: string;
+  paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay';
   cardDetails?: {
-    number: string
-    expiry: string
-    cvv: string
-    name: string
-  }
-  termsAccepted: boolean
+    number: string;
+    expiry: string;
+    cvv: string;
+    name: string;
+  };
+  termsAccepted: boolean;
 }
 
 interface CheckoutFlowProps {
-  trip: Trip
-  onBack: () => void
-  onComplete: (bookingRef: string) => void
+  trip: Trip;
+  onBack: () => void;
+  onComplete: (bookingRef: string) => void;
 }
 
 export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
-  const [session, setSession] = useKV<Partial<BookingData> & {
-    currentStep: CheckoutStep,
-    completedSteps: CheckoutStep[]
-  }>('pulau_checkout_session', {
+  const [session, setSession] = useKV<
+    Partial<BookingData> & {
+      currentStep: CheckoutStep;
+      completedSteps: CheckoutStep[];
+    }
+  >('pulau_checkout_session', {
     currentStep: 'review',
     completedSteps: [],
     additionalTravelers: [],
     specialRequests: '',
     paymentMethod: 'card',
     termsAccepted: false,
-  })
+  });
 
-  const currentStep = session?.currentStep || 'review'
-  const completedSteps = session?.completedSteps || []
+  const currentStep = session?.currentStep || 'review';
+  const completedSteps = session?.completedSteps || [];
 
   // Track checkout step changes for APM (Story 32-2)
-  const [stepStartTime] = useState(() => performance.now())
+  const [stepStartTime] = useState(() => performance.now());
   useEffect(() => {
     const stepMap = {
       review: 'review',
       details: 'traveler-details',
       payment: 'payment',
       confirmation: 'confirmation',
-    } as const
+    } as const;
 
     trackCheckoutStep(stepMap[currentStep], {
       itemCount: trip.items.length,
       total: trip.total,
-    })
+    });
 
     // Measure time on each step when leaving
     return () => {
-      const duration = performance.now() - stepStartTime
-      measureTiming(`checkout.step.${currentStep}`, duration)
-    }
-  }, [currentStep, trip.items.length, trip.total, stepStartTime])
+      const duration = performance.now() - stepStartTime;
+      measureTiming(`checkout.step.${currentStep}`, duration);
+    };
+  }, [currentStep, trip.items.length, trip.total, stepStartTime]);
 
   const updateSession = (updates: Partial<NonNullable<typeof session>>) => {
     setSession((prev) => {
@@ -90,92 +92,101 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
         specialRequests: '',
         paymentMethod: 'card' as const,
         termsAccepted: false,
-      }
-      const next = { ...base, ...updates }
+      };
+      const next = { ...base, ...updates };
       return {
         ...next,
         currentStep: next.currentStep || 'review',
-        completedSteps: next.completedSteps || []
-      }
-    })
-  }
+        completedSteps: next.completedSteps || [],
+      };
+    });
+  };
 
   const handleReviewContinue = () => {
     updateSession({
       currentStep: 'details',
-      completedSteps: [...new Set([...completedSteps, 'review' as CheckoutStep])]
-    })
-  }
+      completedSteps: [
+        ...new Set([...completedSteps, 'review' as CheckoutStep]),
+      ],
+    });
+  };
 
   const handleDetailsContinue = (data: {
-    leadTraveler: TravelerInfo
-    additionalTravelers: Omit<TravelerInfo, 'email' | 'phone' | 'countryCode'>[]
-    specialRequests: string
+    leadTraveler: TravelerInfo;
+    additionalTravelers: Omit<
+      TravelerInfo,
+      'email' | 'phone' | 'countryCode'
+    >[];
+    specialRequests: string;
   }) => {
     updateSession({
       ...data,
       currentStep: 'payment',
-      completedSteps: [...new Set([...completedSteps, 'details' as CheckoutStep])]
-    })
-  }
+      completedSteps: [
+        ...new Set([...completedSteps, 'details' as CheckoutStep]),
+      ],
+    });
+  };
 
   const handlePaymentContinue = async (data: {
-    promoCode?: string
-    paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay'
-    cardDetails?: BookingData['cardDetails']
-    termsAccepted: boolean
+    promoCode?: string;
+    paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay';
+    cardDetails?: BookingData['cardDetails'];
+    termsAccepted: boolean;
   }) => {
-    updateSession({ ...data })
+    updateSession({ ...data });
 
     // If Supabase is configured and payment method is card, try real checkout
     if (isSupabaseConfigured() && data.paymentMethod === 'card') {
       try {
-        const { data: response, error } = await initiateCheckout(trip.id)
+        const { data: response, error } = await initiateCheckout(trip.id);
 
         if (error || !response?.success) {
-          toast.error(error || 'Failed to initiate checkout')
-          return
+          toast.error(error || 'Failed to initiate checkout');
+          return;
         }
 
         if (response.sessionUrl) {
           // Redirect to Stripe Hosted Checkout
-          window.location.href = response.sessionUrl
-          return
+          window.location.href = response.sessionUrl;
+          return;
         }
       } catch (err) {
-        console.error('Checkout error:', err)
-        toast.error('An unexpected error occurred')
-        return
+        console.error('Checkout error:', err);
+        toast.error('An unexpected error occurred');
+        return;
       }
     }
 
     // Fallback / Mock Flow (Demo Mode or other methods)
     setTimeout(() => {
-      const bookingRef = `PUL-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`
+      const bookingRef = `PUL-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`;
       updateSession({
         currentStep: 'confirmation',
-        completedSteps: [...new Set([...completedSteps, 'payment' as CheckoutStep])]
-      })
-      onComplete(bookingRef)
-    }, 1500)
-  }
+        completedSteps: [
+          ...new Set([...completedSteps, 'payment' as CheckoutStep]),
+        ],
+      });
+      onComplete(bookingRef);
+    }, 1500);
+  };
 
   const handleStepBack = () => {
     if (currentStep === 'details') {
-      updateSession({ currentStep: 'review' })
+      updateSession({ currentStep: 'review' });
     } else if (currentStep === 'payment') {
-      updateSession({ currentStep: 'details' })
+      updateSession({ currentStep: 'details' });
     } else if (currentStep === 'review') {
-      onBack()
+      onBack();
     }
-  }
+  };
 
   const handleStepClick = (stepId: CheckoutStep) => {
     // Only allow navigating to current or completed steps
     if (stepId === currentStep || completedSteps.includes(stepId)) {
-      updateSession({ currentStep: stepId })
+      updateSession({ currentStep: stepId });
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -190,7 +201,11 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
       )}
 
       {currentStep === 'review' && (
-        <ReviewStep trip={trip} onBack={handleStepBack} onContinue={handleReviewContinue} />
+        <ReviewStep
+          trip={trip}
+          onBack={handleStepBack}
+          onContinue={handleReviewContinue}
+        />
       )}
 
       {currentStep === 'details' && (
@@ -223,5 +238,5 @@ export function CheckoutFlow({ trip, onBack, onComplete }: CheckoutFlowProps) {
         />
       )}
     </div>
-  )
+  );
 }

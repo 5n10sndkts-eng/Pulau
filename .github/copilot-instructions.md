@@ -23,11 +23,13 @@
 ### Component System (shadcn/ui Pattern)
 
 All UI components in `src/components/ui/` follow this structure:
+
 - Variants defined separately in `*.variants.ts` using `class-variance-authority` (cva)
 - Components import variants and use `cn()` utility to merge classNames
 - Always destructure `asChild` prop for polymorphic components using `@radix-ui/react-slot`
 
 **Example pattern:**
+
 ```tsx
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -37,7 +39,7 @@ export const buttonVariants = cva("base-classes", {
 })
 
 // In component file:
-function Button({ variant, size, asChild, ...props }: 
+function Button({ variant, size, asChild, ...props }:
   ComponentProps<"button"> & VariantProps<typeof buttonVariants> & { asChild?: boolean }) {
   const Comp = asChild ? Slot : "button"
   return <Comp className={cn(buttonVariants({ variant, size }))} {...props} />
@@ -47,6 +49,7 @@ function Button({ variant, size, asChild, ...props }:
 ### Service Layer Pattern
 
 All business logic lives in `src/lib/*Service.ts` files, NOT in components:
+
 - `authService.ts` - Login, signup, session management
 - `bookingService.ts` - CRUD for bookings with payment validation
 - `experienceService.ts` - Experience listing, filtering, availability
@@ -58,37 +61,41 @@ All business logic lives in `src/lib/*Service.ts` files, NOT in components:
 ### Supabase Edge Functions (Deno)
 
 Located in `supabase/functions/*/index.ts`:
+
 - Use Deno imports: `https://deno.land/std@0.168.0/http/server.ts`
 - Required CORS headers for all responses (see `checkout/index.ts` for template)
 - Invoke from client: `supabase.functions.invoke('function-name', { body: {...} })`
 - **Critical**: Edge functions run server-side with Row Level Security (RLS) - create service role client for admin operations
 
 **Edge function pattern:**
+
 ```typescript
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  
+  if (req.method === 'OPTIONS')
+    return new Response('ok', { headers: corsHeaders });
+
   try {
-    const authHeader = req.headers.get('Authorization')!
+    const authHeader = req.headers.get('Authorization')!;
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    })
+      global: { headers: { Authorization: authHeader } },
+    });
     // ... logic
     return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});
 ```
 
 ### Form Handling
 
 Always use React Hook Form + Zod v4 for forms:
+
 ```tsx
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -114,8 +121,7 @@ Validation errors appear via `form.formState.errors` - display with Sonner toast
 1. **Unit tests** (Vitest): Run `npm test` for watch mode, `npm run test:run` for CI
    - Setup in `src/__tests__/setup.ts` with jsdom environment
    - Mock Supabase calls in tests - see existing patterns in `src/__tests__/`
-   
-2. **E2E tests** (Playwright): Run `npm run test:e2e` 
+2. **E2E tests** (Playwright): Run `npm run test:e2e`
    - Tests in `tests/e2e/` directory
    - Use `baseURL: 'http://localhost:5173'` - starts dev server automatically
    - Retry on failure in CI (2x), screenshots on failure
@@ -123,6 +129,7 @@ Validation errors appear via `form.formState.errors` - display with Sonner toast
 ### Working with Supabase
 
 **Local development:**
+
 ```bash
 # .env.example contains template
 VITE_SUPABASE_URL=https://your-project.supabase.co
@@ -132,17 +139,19 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 **RLS is always enabled** - test policies by switching user contexts. Anonymous users can read published experiences, authenticated users manage their own bookings.
 
 **Realtime subscriptions** for slot inventory:
+
 ```typescript
-import { realtimeService } from '@/lib/realtimeService'
+import { realtimeService } from '@/lib/realtimeService';
 
 realtimeService.subscribeToSlots(experienceId, (slots) => {
   // Update UI with live availability
-})
+});
 ```
 
 ### BMAD Methodology
 
 This project uses the `_bmad-output/` workflow system:
+
 - **User stories** in `_bmad-output/stories/` follow Epic.Story format (e.g., `epic-25-story-2.md`)
 - **Sprint status** tracked in `_bmad-output/sprint-status.yaml` - update story status as you work
 - **Implementation artifacts** (sequence diagrams, traceability) stored in `_bmad-output/implementation-artifacts/`

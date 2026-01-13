@@ -4,12 +4,12 @@
  */
 
 declare module 'lucide-react/dist/esm/icons/*' {
-  import { ForwardRefExoticComponent, RefAttributes, SVGProps } from 'react'
-  
+  import { ForwardRefExoticComponent, RefAttributes, SVGProps } from 'react';
+
   export type LucideIcon = ForwardRefExoticComponent<
     Omit<SVGProps<SVGSVGElement>, 'ref'> & RefAttributes<SVGSVGElement>
-  >
-  
-  const Icon: LucideIcon
-  export default Icon
+  >;
+
+  const Icon: LucideIcon;
+  export default Icon;
 }

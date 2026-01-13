@@ -22,16 +22,19 @@ export const test = base.extend<SparkFixture>({
         if (page.url() === 'about:blank') {
           await page.goto('/');
         }
-        await page.evaluate(({ k, v }) => {
-          localStorage.setItem(k, JSON.stringify(v));
-        }, { k: key, v: value });
+        await page.evaluate(
+          ({ k, v }) => {
+            localStorage.setItem(k, JSON.stringify(v));
+          },
+          { k: key, v: value },
+        );
       },
       getKey: async (key: string) => {
         return await page.evaluate((k) => {
           const val = localStorage.getItem(k);
           return val ? JSON.parse(val) : null;
         }, key);
-      }
+      },
     };
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(spark);

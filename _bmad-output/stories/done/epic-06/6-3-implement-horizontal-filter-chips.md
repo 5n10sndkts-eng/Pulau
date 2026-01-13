@@ -105,6 +105,7 @@ so that I find relevant options quickly.
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ Animations: Framer Motion → CSS transitions with Tailwind
 2. ✅ Icons: Generic checkmark → Lucide React Check icon
 3. ✅ Filtering: Supabase queries → Client-side filtering with useMemo
@@ -130,5 +131,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

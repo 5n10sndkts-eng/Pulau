@@ -66,6 +66,7 @@ updatePassword: async (newPassword: string): Promise<void>
 ### Environment Configuration
 
 The auth system respects `VITE_USE_MOCK_AUTH`:
+
 - `true` - Uses localStorage-based mock auth (for testing)
 - `false` or unset - Uses real Supabase Auth
 
@@ -107,15 +108,16 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Change Summary
 
-| File | Change Type | Description |
-|------|-------------|-------------|
-| `src/components/auth/CustomerLogin.tsx` | Modified | Use authService, add error handling |
-| `src/components/auth/CustomerRegister.tsx` | Modified | Use authService, remove KV/crypto |
-| `src/lib/authService.ts` | Modified | Add resetPassword, updatePassword |
+| File                                       | Change Type | Description                         |
+| ------------------------------------------ | ----------- | ----------------------------------- |
+| `src/components/auth/CustomerLogin.tsx`    | Modified    | Use authService, add error handling |
+| `src/components/auth/CustomerRegister.tsx` | Modified    | Use authService, remove KV/crypto   |
+| `src/lib/authService.ts`                   | Modified    | Add resetPassword, updatePassword   |
 
 ### File List
 
 **Files modified:**
+
 - `src/components/auth/CustomerLogin.tsx`
 - `src/components/auth/CustomerRegister.tsx`
 - `src/lib/authService.ts`
@@ -125,6 +127,7 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 To test authentication:
 
 1. **With Mock Mode** (no Supabase needed):
+
    ```
    VITE_USE_MOCK_AUTH=true npm run dev
    ```
@@ -143,14 +146,14 @@ To test authentication:
 
 ### Issues Found & Fixed
 
-| # | Severity | Issue | Resolution |
-|---|----------|-------|------------|
-| 1 | MEDIUM | Mock login auto-creates user instead of rejecting | Fixed: Now rejects with "Invalid login credentials" |
-| 2 | MEDIUM | Profile fetch uses .single() which errors on missing | Fixed: Changed to .maybeSingle() |
-| 3 | MEDIUM | Register doesn't store first_name/last_name in Supabase | Fixed: Added profile update after signup |
-| 4 | LOW | Password error message says "6 chars" but Zod requires 8 | Fixed: Updated error message to "8 characters" |
-| 5 | LOW | Missing autoComplete on password fields in register | Fixed: Added autoComplete="new-password" |
-| 6 | LOW | Console.log statements not wrapped in DEV check | Fixed: Added import.meta.env.DEV guards |
+| #   | Severity | Issue                                                    | Resolution                                          |
+| --- | -------- | -------------------------------------------------------- | --------------------------------------------------- |
+| 1   | MEDIUM   | Mock login auto-creates user instead of rejecting        | Fixed: Now rejects with "Invalid login credentials" |
+| 2   | MEDIUM   | Profile fetch uses .single() which errors on missing     | Fixed: Changed to .maybeSingle()                    |
+| 3   | MEDIUM   | Register doesn't store first_name/last_name in Supabase  | Fixed: Added profile update after signup            |
+| 4   | LOW      | Password error message says "6 chars" but Zod requires 8 | Fixed: Updated error message to "8 characters"      |
+| 5   | LOW      | Missing autoComplete on password fields in register      | Fixed: Added autoComplete="new-password"            |
+| 6   | LOW      | Console.log statements not wrapped in DEV check          | Fixed: Added import.meta.env.DEV guards             |
 
 ### Files Modified by Review
 

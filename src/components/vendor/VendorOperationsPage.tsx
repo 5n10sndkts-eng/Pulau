@@ -6,15 +6,19 @@
  * Uses Supabase real-time queries to fetch and update booking data.
  */
 
-import { useState, useCallback, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { QRScanner } from './QRScanner'
-import { ValidationCard } from './ValidationCard'
-import { bookingService, CheckInValidationResult } from '@/lib/bookingService'
-import { enqueueOfflineAction, flushOfflineQueue, getPendingActions } from '@/lib/offlineQueue'
-import { supabase } from '@/lib/supabase'
+import { useState, useCallback, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { QRScanner } from './QRScanner';
+import { ValidationCard } from './ValidationCard';
+import { bookingService, CheckInValidationResult } from '@/lib/bookingService';
+import {
+  enqueueOfflineAction,
+  flushOfflineQueue,
+  getPendingActions,
+} from '@/lib/offlineQueue';
+import { supabase } from '@/lib/supabase';
 import {
   Camera,
   Calendar,
@@ -24,36 +28,42 @@ import {
   Clock,
   Loader2,
   RefreshCw,
-} from 'lucide-react'
-import { motion } from 'framer-motion'
-import { formatDistanceToNow, format, startOfDay, endOfDay } from 'date-fns'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { VendorSession } from '@/lib/types'
-import { toast } from 'sonner'
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { formatDistanceToNow, format, startOfDay, endOfDay } from 'date-fns';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { VendorSession } from '@/lib/types';
+import { toast } from 'sonner';
 
 interface VendorBooking {
-  id: string
-  bookingReference: string
-  travelerName: string
-  travelerEmail: string
-  experienceId: string
-  experienceName: string
-  dateTime: string
-  guestCount: number
-  status: 'pending' | 'confirmed' | 'checked_in' | 'no_show' | 'cancelled' | 'refunded'
-  checkedInAt?: string | null
-  tripId: string
+  id: string;
+  bookingReference: string;
+  travelerName: string;
+  travelerEmail: string;
+  experienceId: string;
+  experienceName: string;
+  dateTime: string;
+  guestCount: number;
+  status:
+    | 'pending'
+    | 'confirmed'
+    | 'checked_in'
+    | 'no_show'
+    | 'cancelled'
+    | 'refunded';
+  checkedInAt?: string | null;
+  tripId: string;
 }
 
 interface VendorOperationsPageProps {
-  session: VendorSession
+  session: VendorSession;
 }
 
 // Fetch today's bookings for vendor's experiences
 async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
-  const today = new Date()
-  const dayStart = format(startOfDay(today), 'yyyy-MM-dd')
-  const dayEnd = format(endOfDay(today), 'yyyy-MM-dd')
+  const today = new Date();
+  const dayStart = format(startOfDay(today), 'yyyy-MM-dd');
+  const dayEnd = format(endOfDay(today), 'yyyy-MM-dd');
 
   // Query bookings through trip_items that reference vendor's experiences
   const { data, error } = await supabase
@@ -86,42 +96,42 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
           )
         )
       )
-    `
+    `,
     )
     .eq('trips.trip_items.experiences.vendor_id', vendorId)
     .gte('trips.trip_items.date', dayStart)
     .lte('trips.trip_items.date', dayEnd)
     .in('status', ['confirmed', 'pending', 'checked_in', 'no_show'])
-    .order('booked_at', { ascending: false })
+    .order('booked_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching vendor bookings:', error)
-    throw new Error('Failed to load bookings')
+    console.error('Error fetching vendor bookings:', error);
+    throw new Error('Failed to load bookings');
   }
 
   // Transform the nested data into flat VendorBooking objects
-  const bookings: VendorBooking[] = []
+  const bookings: VendorBooking[] = [];
 
   for (const row of data || []) {
-    const trip = row.trips as any
-    const profile = trip.profiles
+    const trip = row.trips as any;
+    const profile = trip.profiles;
 
     // Filter trip items that belong to this vendor
     const vendorItems = trip.trip_items.filter(
-      (item: any) => item.experiences.vendor_id === vendorId
-    )
+      (item: any) => item.experiences.vendor_id === vendorId,
+    );
 
     for (const item of vendorItems) {
       // Use profile name as traveler name or fallback to trip name or "Guest"
-      const travelerName = profile?.full_name || trip.name || 'Guest'
-      const travelerEmail = profile?.email || ''
+      const travelerName = profile?.full_name || trip.name || 'Guest';
+      const travelerEmail = profile?.email || '';
 
       // Build datetime from date and time
       const dateTime = item.date
         ? item.time
           ? `${item.date}T${item.time}`
           : item.date
-        : new Date().toISOString()
+        : new Date().toISOString();
 
       bookings.push({
         id: row.id,
@@ -135,21 +145,22 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
         status: row.status as VendorBooking['status'],
         checkedInAt: row.checked_in_at,
         tripId: trip.id,
-      })
+      });
     }
   }
 
-  return bookings
+  return bookings;
 }
 
 export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
-  const queryClient = useQueryClient()
-  const [scannerOpen, setScannerOpen] = useState(false)
+  const queryClient = useQueryClient();
+  const [scannerOpen, setScannerOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<VendorBooking | null>(
-    null
-  )
-  const [validationResult, setValidationResult] = useState<CheckInValidationResult | null>(null)
-  const [isValidating, setIsValidating] = useState(false)
+    null,
+  );
+  const [validationResult, setValidationResult] =
+    useState<CheckInValidationResult | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   // Fetch today's bookings
   const {
@@ -161,38 +172,48 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
     queryKey: ['vendor-bookings-today', session.vendorId],
     queryFn: () => fetchTodaysBookings(session.vendorId),
     refetchInterval: 30000, // Refresh every 30 seconds
-  })
+  });
 
   // Flush any offline actions on mount or when coming online
   useEffect(() => {
     const flush = async () => {
-      const pending = getPendingActions().length
-      if (pending === 0) return
+      const pending = getPendingActions().length;
+      if (pending === 0) return;
       const { processed } = await flushOfflineQueue(async (action) => {
         if (action.action === 'check_in') {
-          await bookingService.checkInBooking(action.bookingId, action.vendorId)
+          await bookingService.checkInBooking(
+            action.bookingId,
+            action.vendorId,
+          );
         } else {
-          await bookingService.markNoShow(action.bookingId, action.vendorId)
+          await bookingService.markNoShow(action.bookingId, action.vendorId);
         }
-      })
+      });
       if (processed > 0) {
-        queryClient.invalidateQueries({ queryKey: ['vendor-bookings-today', session.vendorId] })
-        toast.success(`Synced ${processed} offline action${processed === 1 ? '' : 's'}`)
+        queryClient.invalidateQueries({
+          queryKey: ['vendor-bookings-today', session.vendorId],
+        });
+        toast.success(
+          `Synced ${processed} offline action${processed === 1 ? '' : 's'}`,
+        );
       }
-    }
+    };
 
-    flush()
-    const handler = () => flush()
-    window.addEventListener('online', handler)
-    return () => window.removeEventListener('online', handler)
-  }, [queryClient, session.vendorId])
+    flush();
+    const handler = () => flush();
+    window.addEventListener('online', handler);
+    return () => window.removeEventListener('online', handler);
+  }, [queryClient, session.vendorId]);
 
-  const enqueueAndNotify = (bookingId: string, action: 'check_in' | 'no_show') => {
-    enqueueOfflineAction({ bookingId, vendorId: session.vendorId, action })
-    toast.success('Saved offline. Will sync when online.')
-    setSelectedBooking(null)
-    setValidationResult(null)
-  }
+  const enqueueAndNotify = (
+    bookingId: string,
+    action: 'check_in' | 'no_show',
+  ) => {
+    enqueueOfflineAction({ bookingId, vendorId: session.vendorId, action });
+    toast.success('Saved offline. Will sync when online.');
+    setSelectedBooking(null);
+    setValidationResult(null);
+  };
 
   // Realtime refetch on booking changes (lightweight listener)
   useEffect(() => {
@@ -202,102 +223,111 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'bookings' },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['vendor-bookings-today', session.vendorId] })
-        }
+          queryClient.invalidateQueries({
+            queryKey: ['vendor-bookings-today', session.vendorId],
+          });
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [queryClient, session.vendorId])
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, session.vendorId]);
 
   // Check-in mutation
   const checkInMutation = useMutation({
     mutationFn: async (bookingId: string) => {
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
-        enqueueAndNotify(bookingId, 'check_in')
-        return { queued: true }
+        enqueueAndNotify(bookingId, 'check_in');
+        return { queued: true };
       }
-      await bookingService.checkInBooking(bookingId, session.vendorId)
-      return { queued: false }
+      await bookingService.checkInBooking(bookingId, session.vendorId);
+      return { queued: false };
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({
         queryKey: ['vendor-bookings-today', session.vendorId],
-      })
+      });
       if (!result?.queued) {
-        toast.success('Guest checked in successfully')
+        toast.success('Guest checked in successfully');
       }
-      setSelectedBooking(null)
-      setValidationResult(null)
+      setSelectedBooking(null);
+      setValidationResult(null);
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : 'Check-in failed')
+      toast.error(err instanceof Error ? err.message : 'Check-in failed');
     },
-  })
+  });
 
   // No-show mutation
   const noShowMutation = useMutation({
     mutationFn: async (bookingId: string) => {
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
-        enqueueAndNotify(bookingId, 'no_show')
-        return { queued: true }
+        enqueueAndNotify(bookingId, 'no_show');
+        return { queued: true };
       }
-      await bookingService.markNoShow(bookingId, session.vendorId)
-      return { queued: false }
+      await bookingService.markNoShow(bookingId, session.vendorId);
+      return { queued: false };
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({
         queryKey: ['vendor-bookings-today', session.vendorId],
-      })
+      });
       if (!result?.queued) {
-        toast.success('Marked as no-show')
+        toast.success('Marked as no-show');
       }
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : 'Failed to mark no-show')
+      toast.error(
+        err instanceof Error ? err.message : 'Failed to mark no-show',
+      );
     },
-  })
+  });
 
   const handleQRScan = useCallback(
     async (bookingId: string) => {
-      setScannerOpen(false)
-      setIsValidating(true)
+      setScannerOpen(false);
+      setIsValidating(true);
       try {
-        const result = await bookingService.validateBookingForCheckIn(bookingId, session.vendorId)
-        setValidationResult(result)
+        const result = await bookingService.validateBookingForCheckIn(
+          bookingId,
+          session.vendorId,
+        );
+        setValidationResult(result);
       } catch (err) {
-        console.error('Validation error:', err)
-        toast.error('Failed to validate ticket. Please try again.')
+        console.error('Validation error:', err);
+        toast.error('Failed to validate ticket. Please try again.');
       } finally {
-        setIsValidating(false)
+        setIsValidating(false);
       }
     },
-    [session.vendorId]
-  )
+    [session.vendorId],
+  );
 
   const handleCheckIn = useCallback(
     (bookingId: string) => {
-      checkInMutation.mutate(bookingId)
+      checkInMutation.mutate(bookingId);
     },
-    [checkInMutation]
-  )
+    [checkInMutation],
+  );
 
   const handleNoShow = useCallback(
     (bookingId: string) => {
-      noShowMutation.mutate(bookingId)
+      noShowMutation.mutate(bookingId);
     },
-    [noShowMutation]
-  )
+    [noShowMutation],
+  );
 
   // Filter to show pending/confirmed (actionable) and checked_in/no_show (today's activity)
   const actionableBookings = bookings.filter(
-    (b) => b.status === 'pending' || b.status === 'confirmed'
-  )
-  const pendingCount = actionableBookings.length
-  const checkedInCount = bookings.filter((b) => b.status === 'checked_in').length
-  const totalGuests = bookings.reduce((sum, b) => sum + b.guestCount, 0)
+    (b) => b.status === 'pending' || b.status === 'confirmed',
+  );
+  const pendingCount = actionableBookings.length;
+  const checkedInCount = bookings.filter(
+    (b) => b.status === 'checked_in',
+  ).length;
+  const totalGuests = bookings.reduce((sum, b) => sum + b.guestCount, 0);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -384,7 +414,7 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
           </h2>
 
           <div className="space-y-3">
-            {bookings.map(booking => (
+            {bookings.map((booking) => (
               <motion.div
                 key={booking.id}
                 layout
@@ -424,55 +454,63 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
-                          {new Date(booking.dateTime).toLocaleTimeString('en-US', {
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
+                          {new Date(booking.dateTime).toLocaleTimeString(
+                            'en-US',
+                            {
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            },
+                          )}
                         </div>
                         <div className="flex items-center gap-1">
                           <Users className="w-3.5 h-3.5" />
-                          {booking.guestCount} {booking.guestCount === 1 ? 'guest' : 'guests'}
+                          {booking.guestCount}{' '}
+                          {booking.guestCount === 1 ? 'guest' : 'guests'}
                         </div>
                       </div>
 
-                      {booking.status === 'checked_in' && booking.checkedInAt && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Checked in {formatDistanceToNow(booking.checkedInAt, { addSuffix: true })}
-                        </p>
-                      )}
+                      {booking.status === 'checked_in' &&
+                        booking.checkedInAt && (
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Checked in{' '}
+                            {formatDistanceToNow(booking.checkedInAt, {
+                              addSuffix: true,
+                            })}
+                          </p>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-2">
                       {(booking.status === 'pending' ||
                         booking.status === 'confirmed') && (
-                          <>
-                            <Button
-                              size="sm"
-                              onClick={() => handleCheckIn(booking.id)}
-                              disabled={checkInMutation.isPending}
-                            >
-                              {checkInMutation.isPending ? (
-                                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                              ) : (
-                                <CheckCircle className="w-4 h-4 mr-1" />
-                              )}
-                              Check In
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleNoShow(booking.id)}
-                              disabled={noShowMutation.isPending}
-                            >
-                              {noShowMutation.isPending ? (
-                                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                              ) : (
-                                <XCircle className="w-4 h-4 mr-1" />
-                              )}
-                              No Show
-                            </Button>
-                          </>
-                        )}
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() => handleCheckIn(booking.id)}
+                            disabled={checkInMutation.isPending}
+                          >
+                            {checkInMutation.isPending ? (
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                            ) : (
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                            )}
+                            Check In
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleNoShow(booking.id)}
+                            disabled={noShowMutation.isPending}
+                          >
+                            {noShowMutation.isPending ? (
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                            ) : (
+                              <XCircle className="w-4 h-4 mr-1" />
+                            )}
+                            No Show
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </Card>
@@ -544,21 +582,28 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
               <div className="space-y-3 mb-6">
                 <div>
                   <p className="text-sm text-muted-foreground">Traveler</p>
-                  <p className="font-semibold">{selectedBooking.travelerName}</p>
+                  <p className="font-semibold">
+                    {selectedBooking.travelerName}
+                  </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-muted-foreground">Experience</p>
-                  <p className="font-semibold">{selectedBooking.experienceName}</p>
+                  <p className="font-semibold">
+                    {selectedBooking.experienceName}
+                  </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-muted-foreground">Time</p>
                   <p className="font-semibold">
-                    {new Date(selectedBooking.dateTime).toLocaleTimeString('en-US', {
-                      hour: 'numeric',
-                      minute: '2-digit'
-                    })}
+                    {new Date(selectedBooking.dateTime).toLocaleTimeString(
+                      'en-US',
+                      {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      },
+                    )}
                   </p>
                 </div>
 
@@ -569,8 +614,8 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
               </div>
 
               <div className="flex gap-2">
-                {(selectedBooking.status === 'pending' ||
-                  selectedBooking.status === 'confirmed') ? (
+                {selectedBooking.status === 'pending' ||
+                selectedBooking.status === 'confirmed' ? (
                   <>
                     <Button
                       onClick={() => handleCheckIn(selectedBooking.id)}
@@ -606,5 +651,5 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

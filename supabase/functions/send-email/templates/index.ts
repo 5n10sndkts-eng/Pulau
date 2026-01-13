@@ -4,7 +4,7 @@
 // ================================================
 
 // Base template and components
-export { wrapInBaseTemplate, components } from './base.ts'
+export { wrapInBaseTemplate, components } from './base.ts';
 
 // Utility functions
 export {
@@ -19,20 +19,20 @@ export {
   toHtmlList,
   formatDuration,
   getImageUrl,
-} from './utils.ts'
+} from './utils.ts';
 
 // Email templates
 export {
   generateBookingConfirmationEmail,
   type BookingConfirmationData,
-} from './booking-confirmation.ts'
+} from './booking-confirmation.ts';
 
 export {
   generateBookingCancellationEmail,
   type BookingCancellationData,
-} from './booking-cancellation.ts'
+} from './booking-cancellation.ts';
 
 export {
   generateBookingReminderEmail,
   type BookingReminderData,
-} from './booking-reminder.ts'
+} from './booking-reminder.ts';

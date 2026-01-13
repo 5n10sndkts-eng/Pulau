@@ -6,10 +6,10 @@
  * with three distinct sections: Vibe, Group Type, and Budget.
  */
 
-import { useState, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
-import { PremiumContainer } from '@/components/ui/premium-container'
-import { UserPreferences } from '@/lib/types'
+import { useState, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { PremiumContainer } from '@/components/ui/premium-container';
+import { UserPreferences } from '@/lib/types';
 import {
   Mountain,
   Heart,
@@ -23,68 +23,81 @@ import {
   TrendingUp,
   Gem,
   Check,
-  Map
-} from 'lucide-react'
-import { motion } from 'framer-motion'
-import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants'
+  Map,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants';
 
 interface OnboardingSingleScreenProps {
-  onComplete: (preferences: UserPreferences) => void
-  onSkip: () => void
+  onComplete: (preferences: UserPreferences) => void;
+  onSkip: () => void;
 }
 
 const TRAVEL_STYLES = [
-  { id: 'adventure', label: 'Adventure', icon: Mountain, color: 'text-primary' },
+  {
+    id: 'adventure',
+    label: 'Adventure',
+    icon: Mountain,
+    color: 'text-primary',
+  },
   { id: 'relaxation', label: 'Relaxation', icon: Heart, color: 'text-accent' },
   { id: 'culture', label: 'Culture', icon: Sparkles, color: 'text-golden' },
   { id: 'wellness', label: 'Wellness', icon: Palmtree, color: 'text-success' },
-] as const
+] as const;
 
 const GROUP_TYPES = [
   { id: 'solo', label: 'Solo', icon: User },
   { id: 'couple', label: 'Couple', icon: Users },
   { id: 'friends', label: 'Friends', icon: UsersRound },
   { id: 'family', label: 'Family', icon: Baby },
-] as const
+] as const;
 
 const BUDGET_LEVELS = [
   { id: 'budget', label: 'Budget', icon: Wallet, color: 'text-success' },
-  { id: 'midrange', label: 'Mid-Range', icon: TrendingUp, color: 'text-accent' },
+  {
+    id: 'midrange',
+    label: 'Mid-Range',
+    icon: TrendingUp,
+    color: 'text-accent',
+  },
   { id: 'luxury', label: 'Luxury', icon: Gem, color: 'text-golden' },
-] as const
+] as const;
 
-type TravelStyle = typeof TRAVEL_STYLES[number]['id']
-type GroupType = typeof GROUP_TYPES[number]['id']
-type BudgetLevel = typeof BUDGET_LEVELS[number]['id']
+type TravelStyle = (typeof TRAVEL_STYLES)[number]['id'];
+type GroupType = (typeof GROUP_TYPES)[number]['id'];
+type BudgetLevel = (typeof BUDGET_LEVELS)[number]['id'];
 
-export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleScreenProps) {
-  const [travelStyles, setTravelStyles] = useState<TravelStyle[]>([])
-  const [groupType, setGroupType] = useState<GroupType | undefined>(undefined)
-  const [budget, setBudget] = useState<BudgetLevel | undefined>(undefined)
+export function OnboardingSingleScreen({
+  onComplete,
+  onSkip,
+}: OnboardingSingleScreenProps) {
+  const [travelStyles, setTravelStyles] = useState<TravelStyle[]>([]);
+  const [groupType, setGroupType] = useState<GroupType | undefined>(undefined);
+  const [budget, setBudget] = useState<BudgetLevel | undefined>(undefined);
 
   // Validation: at least one vibe, group, and budget selected
   const isValid = useMemo(() => {
-    return travelStyles.length > 0 && groupType !== undefined && budget !== undefined
-  }, [travelStyles, groupType, budget])
+    return (
+      travelStyles.length > 0 && groupType !== undefined && budget !== undefined
+    );
+  }, [travelStyles, groupType, budget]);
 
   const handleTravelStyleToggle = (style: TravelStyle) => {
-    setTravelStyles(prev =>
-      prev.includes(style)
-        ? prev.filter(s => s !== style)
-        : [...prev, style]
-    )
-  }
+    setTravelStyles((prev) =>
+      prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style],
+    );
+  };
 
   const handleStartPlanning = () => {
-    if (!isValid) return
+    if (!isValid) return;
 
     const preferences: UserPreferences = {
       travelStyles,
       groupType,
       budget,
-    }
-    onComplete(preferences)
-  }
+    };
+    onComplete(preferences);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
@@ -102,8 +115,12 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
                 <Map className="w-8 h-8 text-primary-foreground" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">Plan Your Dream Trip</h1>
-            <p className="text-muted-foreground">Tell us your preferences to discover perfect experiences</p>
+            <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">
+              Plan Your Dream Trip
+            </h1>
+            <p className="text-muted-foreground">
+              Tell us your preferences to discover perfect experiences
+            </p>
           </motion.div>
 
           {/* Section 1: Vibe (Multi-select) */}
@@ -111,12 +128,14 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
             <h2 className="text-lg font-display font-bold mb-3 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
               What's Your Vibe?
-              <span className="text-xs text-muted-foreground font-normal">(select all that apply)</span>
+              <span className="text-xs text-muted-foreground font-normal">
+                (select all that apply)
+              </span>
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {TRAVEL_STYLES.map((style) => {
-                const isSelected = travelStyles.includes(style.id)
-                const Icon = style.icon
+                const isSelected = travelStyles.includes(style.id);
+                const Icon = style.icon;
                 return (
                   <button
                     key={style.id}
@@ -142,7 +161,7 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
                       </motion.div>
                     )}
                   </button>
-                )
+                );
               })}
             </div>
           </motion.div>
@@ -155,8 +174,8 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {GROUP_TYPES.map((group) => {
-                const isSelected = groupType === group.id
-                const Icon = group.icon
+                const isSelected = groupType === group.id;
+                const Icon = group.icon;
                 return (
                   <button
                     key={group.id}
@@ -182,7 +201,7 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
                       </motion.div>
                     )}
                   </button>
-                )
+                );
               })}
             </div>
           </motion.div>
@@ -195,8 +214,8 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
             </h2>
             <div className="grid grid-cols-3 gap-3">
               {BUDGET_LEVELS.map((level) => {
-                const isSelected = budget === level.id
-                const Icon = level.icon
+                const isSelected = budget === level.id;
+                const Icon = level.icon;
                 return (
                   <button
                     key={level.id}
@@ -222,13 +241,16 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
                       </motion.div>
                     )}
                   </button>
-                )
+                );
               })}
             </div>
           </motion.div>
 
           {/* Actions */}
-          <motion.div variants={fadeInUp} className="flex flex-col items-center gap-3">
+          <motion.div
+            variants={fadeInUp}
+            className="flex flex-col items-center gap-3"
+          >
             <Button
               onClick={handleStartPlanning}
               disabled={!isValid}
@@ -249,5 +271,5 @@ export function OnboardingSingleScreen({ onComplete, onSkip }: OnboardingSingleS
         </PremiumContainer>
       </motion.div>
     </div>
-  )
+  );
 }

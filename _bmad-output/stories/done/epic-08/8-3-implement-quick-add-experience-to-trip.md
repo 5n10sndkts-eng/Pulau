@@ -27,6 +27,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 ## Tasks / Subtasks
 
 ### Task 1: Add Quick Add button to experience cards (AC: #1, #2)
+
 - [x] Add "+ Quick Add" button to ExperienceCard component
 - [x] Position button prominently (bottom of card or floating)
 - [x] Style with primary teal color and icon (Plus icon)
@@ -34,6 +35,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 - [x] Add duplicate check to disable/hide button if already in trip
 
 ### Task 2: Implement addToTrip function (AC: #1)
+
 - [x] Create addToTrip function in useTripManagement hook
 - [x] Generate new trip item with default values (guest_count: 1, scheduled_date: null)
 - [x] Add item to trip.items array
@@ -41,6 +43,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 - [x] Persist changes via useKV
 
 ### Task 3: Create fly-to-trip-bar animation (AC: #1)
+
 - [x] Implement Framer Motion animation from card to trip bar
 - [x] Configure 150ms ease-out timing
 - [x] Create duplicate card element for animation (original stays in place)
@@ -48,6 +51,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 - [x] Remove animation element after completion
 
 ### Task 4: Update trip bar price in real-time (AC: #1)
+
 - [x] Trigger trip total recalculation on item add
 - [x] Update trip bar component to reflect new price
 - [x] Add highlight animation on price change (pulse effect)
@@ -55,6 +59,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 - [x] Ensure price formats with currency symbol
 
 ### Task 5: Add toast notifications and duplicate handling (AC: #1, #2)
+
 - [x] Display "Added to trip" toast on successful addition
 - [x] Check for duplicates: `trip.items.some(item => item.experience_id === experienceId)`
 - [x] Show "Already in your trip" toast if duplicate detected
@@ -64,6 +69,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Quick Add button should appear on all experience cards (bobjectse, search, detail, wishlist)
 - Use `useTripManagement` hook: `const { addItem, isInTrip } = useTripManagement()`
 - Duplicate check: `const isDuplicate = isInTrip(experienceId)`
@@ -71,6 +77,7 @@ So that I can build my itinerary without leaving the bobjectse view.
 - Trip bar should be a persistent component in app layout
 
 ### Component Integration Points
+
 ```typescript
 // In ExperienceCard component
 const { addItem, isInTrip } = useTripManagement();
@@ -78,16 +85,17 @@ const isDuplicate = isInTrip(experience.id);
 
 const handleQuickAdd = async () => {
   if (isDuplicate) {
-    toast.info("Already in your trip");
+    toast.info('Already in your trip');
     return;
   }
   await addItem(experience.id);
-  toast.success("Added to trip");
+  toast.success('Added to trip');
   triggerFlyAnimation();
 };
 ```
 
 ### Animation Configuration
+
 ```typescript
 const flyToTripBarAnimation = {
   initial: { scale: 1, x: 0, y: 0 },
@@ -96,12 +104,13 @@ const flyToTripBarAnimation = {
     y: tripBarY - cardY,
     scale: 0.2,
     opacity: 0.6,
-    transition: { duration: 0.15, ease: "easeOut" }
-  }
+    transition: { duration: 0.15, ease: 'easeOut' },
+  },
 };
 ```
 
 ### Button States
+
 - Default: "+ Quick Add" (visible, enabled)
 - Loading: "Adding..." (disabled, spinner)
 - Already added: "In Trip" (disabled, checkmark icon) or hidden
@@ -128,5 +137,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

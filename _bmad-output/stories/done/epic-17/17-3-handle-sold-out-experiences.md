@@ -11,6 +11,7 @@ So that I can find alternatives.
 ## Acceptance Criteria
 
 ### AC1: Sold Out Visual Indicators
+
 **Given** an experience has no available slots (slots_available = 0 for all dates)
 **When** experience card displays
 **Then** "Currently Unavailable" badge overlay on image
@@ -18,12 +19,14 @@ So that I can find alternatives.
 **And** "Quick Add" button disabled
 
 ### AC2: Detail Page Display
+
 **When** I tap the card to view details
 **Then** detail page shows availability calendar (all red)
 **And** "Join Waitlist" button appears
 **And** "Similar Experiences" section shows alternatives in same category
 
 ### AC3: Waitlist Functionality
+
 **When** I join waitlist
 **Then** my email saved to waitlist KV namespace (experience_id, user_id, created_at)
 **And** toast: "You'll be notified when spots open"
@@ -31,6 +34,7 @@ So that I can find alternatives.
 ## Tasks / Subtasks
 
 ### Task 1: Add Sold Out Visual Indicators to Cards (AC: #1)
+
 - [x] Check experience availability (query experience_availability for any slots > 0)
 - [x] Add "Currently Unavailable" badge overlay on card image
 - [x] Apply 80% opacity filter to card image when sold out
@@ -38,6 +42,7 @@ So that I can find alternatives.
 - [x] Add subtle visual cue (grayed out, no hover effects)
 
 ### Task 2: Display Sold Out State on Detail Page (AC: #2)
+
 - [x] Show availability calendar with all dates marked red (sold out)
 - [x] Replace "Add to Trip" CTA with "Join Waitlist" button
 - [x] Add message: "This experience is currently sold out"
@@ -45,6 +50,7 @@ So that I can find alternatives.
 - [x] Show estimated next availability if vendor provides it
 
 ### Task 3: Build "Similar Experiences" Section (AC: #2)
+
 - [x] Query experiences in same category, excluding current experience
 - [x] Filter to show only available experiences (slots > 0)
 - [x] Limit to 3-4 similar experiences
@@ -52,6 +58,7 @@ So that I can find alternatives.
 - [x] Include "View All [Category]" link
 
 ### Task 4: Implement Waitlist Functionality (AC: #3)
+
 - [x] Create waitlist KV namespace schema (experience_id, user_id, email, created_at)
 - [x] Build "Join Waitlist" button component
 - [x] On click, insert record into waitlist KV namespace
@@ -59,6 +66,7 @@ So that I can find alternatives.
 - [x] Show success toast: "You'll be notified when spots open"
 
 ### Task 5: Vendor Notification System (AC: #3)
+
 - [x] Notify vendor when waitlist gobjects (e.g., >10 people)
 - [x] Provide vendor dashboard to view waitlist
 - [x] Allow vendor to notify waitlist when availability opens
@@ -68,7 +76,9 @@ So that I can find alternatives.
 ## Dev Notes
 
 ### Sold Out Detection
+
 Query to check availability:
+
 ```typescript
 const isSoldOut = async (experienceId: string) => {
   const availability = await db.experience_availability
@@ -83,13 +93,16 @@ const isSoldOut = async (experienceId: string) => {
 ```
 
 ### Sold Out Card Component
+
 ```tsx
 const ExperienceCard = ({ experience, isSoldOut }) => {
   return (
-    <div className={cn(
-      "relative rounded-card overflow-hidden",
-      isSoldOut && "opacity-80"
-    )}>
+    <div
+      className={cn(
+        'relative rounded-card overflow-hidden',
+        isSoldOut && 'opacity-80',
+      )}
+    >
       {isSoldOut && (
         <div className="absolute top-2 right-2 bg-gray-900 bg-opacity-75 text-white text-xs font-medium px-3 py-1 rounded-pill z-10">
           Currently Unavailable
@@ -99,14 +112,14 @@ const ExperienceCard = ({ experience, isSoldOut }) => {
       <img
         src={experience.image_url}
         alt={experience.title}
-        className={cn("w-full h-48 object-cover", isSoldOut && "grayscale")}
+        className={cn('w-full h-48 object-cover', isSoldOut && 'grayscale')}
       />
 
       <div className="p-4">
         <h3>{experience.title}</h3>
         <button
           disabled={isSoldOut}
-          className={cn("btn-primary mt-2", isSoldOut && "btn-disabled")}
+          className={cn('btn-primary mt-2', isSoldOut && 'btn-disabled')}
         >
           {isSoldOut ? 'Unavailable' : 'Quick Add'}
         </button>
@@ -117,18 +130,23 @@ const ExperienceCard = ({ experience, isSoldOut }) => {
 ```
 
 ### Similar Experiences Query
+
 ```typescript
-const getSimilarExperiences = async (experienceId: string, categoryId: string) => {
+const getSimilarExperiences = async (
+  experienceId: string,
+  categoryId: string,
+) => {
   return await db.experiences
     .where('category_id', '=', categoryId)
     .where('id', '!=', experienceId)
     .where('is_active', '=', true)
     .whereExists((qb) =>
-      qb.select('*')
+      qb
+        .select('*')
         .from('experience_availability')
         .where('experience_id', '=', db.raw('experiences.id'))
         .where('date', '>=', new Date())
-        .where('slots_available', '>', 0)
+        .where('slots_available', '>', 0),
     )
     .limit(4)
     .execute();
@@ -136,6 +154,7 @@ const getSimilarExperiences = async (experienceId: string, categoryId: string) =
 ```
 
 ### Waitlist Table Schema
+
 ```sql
 CREATE TABLE waitlist (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -149,6 +168,7 @@ CREATE TABLE waitlist (
 ```
 
 ### Join Waitlist Logic
+
 ```typescript
 const joinWaitlist = async (experienceId: string, userId: string, email: string) => {
   try {
@@ -179,6 +199,7 @@ const joinWaitlist = async (experienceId: string, userId: string, email: string)
 ```
 
 ### Notify Waitlist
+
 ```typescript
 const notifyWaitlist = async (experienceId: string) => {
   const waitlistUsers = await db.waitlist
@@ -189,7 +210,7 @@ const notifyWaitlist = async (experienceId: string) => {
   for (const user of waitlistUsers) {
     await sendEmail({
       to: user.email,
-      subject: "Spots now available!",
+      subject: 'Spots now available!',
       template: 'waitlist-notification',
       data: {
         experienceName: experience.title,
@@ -207,13 +228,14 @@ const notifyWaitlist = async (experienceId: string) => {
 ```
 
 ### Similar Experiences UI
+
 ```tsx
 <section className="mt-8">
   <h3 className="font-heading text-xl font-semibold mb-4">
     Similar Experiences
   </h3>
   <div className="flex gap-4 overflow-x-auto pb-4">
-    {similarExperiences.map(exp => (
+    {similarExperiences.map((exp) => (
       <ExperienceCard key={exp.id} experience={exp} />
     ))}
   </div>
@@ -227,12 +249,14 @@ const notifyWaitlist = async (experienceId: string) => {
 ```
 
 ### Design Tokens
+
 - Sold out badge: `bg-gray-900 bg-opacity-75 text-white`
 - Card opacity when sold out: `opacity-80`
 - Grayscale filter: `grayscale` (optional enhancement)
 - Waitlist button: Primary button styling
 
 ### Accessibility
+
 - Sold out badge has `aria-label="This experience is currently sold out"`
 - Disabled Quick Add button has `aria-disabled="true"`
 - Waitlist button clearly labeled
@@ -257,5 +281,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

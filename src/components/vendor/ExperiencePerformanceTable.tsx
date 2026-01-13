@@ -6,9 +6,9 @@
  * booking counts, slot utilization, ratings, and revenue.
  */
 
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Card } from '@/components/ui/card'
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card } from '@/components/ui/card';
 import {
   ArrowUpDown,
   ArrowUp,
@@ -16,8 +16,8 @@ import {
   Star,
   Package,
   RefreshCw,
-} from 'lucide-react'
-import { VendorSession } from '@/lib/types'
+} from 'lucide-react';
+import { VendorSession } from '@/lib/types';
 import {
   getExperiencePerformanceMetrics,
   formatCurrency,
@@ -25,36 +25,39 @@ import {
   SortColumn,
   SortDirection,
   ExperiencePerformanceMetrics,
-} from '@/lib/vendorAnalyticsService'
-import { cn } from '@/lib/utils'
+} from '@/lib/vendorAnalyticsService';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // UtilizationBar Component
 // ============================================================================
 
 interface UtilizationBarProps {
-  percentage: number
-  className?: string
+  percentage: number;
+  className?: string;
 }
 
 function UtilizationBar({ percentage, className }: UtilizationBarProps) {
   const getColorClass = (pct: number) => {
-    if (pct >= 70) return 'bg-green-500'
-    if (pct >= 40) return 'bg-yellow-500'
-    return 'bg-red-500'
-  }
+    if (pct >= 70) return 'bg-green-500';
+    if (pct >= 40) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
         <div
-          className={cn('h-full rounded-full transition-all', getColorClass(percentage))}
+          className={cn(
+            'h-full rounded-full transition-all',
+            getColorClass(percentage),
+          )}
           style={{ width: `${Math.min(percentage, 100)}%` }}
         />
       </div>
       <span className="text-sm font-medium w-10 text-right">{percentage}%</span>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -62,12 +65,12 @@ function UtilizationBar({ percentage, className }: UtilizationBarProps) {
 // ============================================================================
 
 interface SortableHeaderProps {
-  label: string
-  column: SortColumn
-  currentSort: SortColumn
-  currentDir: SortDirection
-  onSort: (column: SortColumn) => void
-  className?: string
+  label: string;
+  column: SortColumn;
+  currentSort: SortColumn;
+  currentDir: SortDirection;
+  onSort: (column: SortColumn) => void;
+  className?: string;
 }
 
 function SortableHeader({
@@ -78,7 +81,7 @@ function SortableHeader({
   onSort,
   className,
 }: SortableHeaderProps) {
-  const isActive = currentSort === column
+  const isActive = currentSort === column;
 
   return (
     <button
@@ -86,7 +89,7 @@ function SortableHeader({
       className={cn(
         'flex items-center gap-1 font-medium text-sm hover:text-primary transition-colors',
         isActive ? 'text-primary' : 'text-muted-foreground',
-        className
+        className,
       )}
       aria-label={`Sort by ${label}`}
     >
@@ -101,7 +104,7 @@ function SortableHeader({
         <ArrowUpDown className="h-4 w-4 opacity-50" />
       )}
     </button>
-  )
+  );
 }
 
 // ============================================================================
@@ -109,7 +112,7 @@ function SortableHeader({
 // ============================================================================
 
 interface TableRowProps {
-  experience: ExperiencePerformanceMetrics
+  experience: ExperiencePerformanceMetrics;
 }
 
 function TableRow({ experience }: TableRowProps) {
@@ -153,7 +156,9 @@ function TableRow({ experience }: TableRowProps) {
         {experience.averageRating !== null ? (
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="font-medium">{experience.averageRating.toFixed(1)}</span>
+            <span className="font-medium">
+              {experience.averageRating.toFixed(1)}
+            </span>
             <span className="text-xs text-muted-foreground">
               ({experience.reviewCount})
             </span>
@@ -165,10 +170,12 @@ function TableRow({ experience }: TableRowProps) {
 
       {/* Revenue */}
       <td className="py-4 px-4 text-right">
-        <span className="font-semibold">{formatCurrency(experience.revenue)}</span>
+        <span className="font-semibold">
+          {formatCurrency(experience.revenue)}
+        </span>
       </td>
     </tr>
-  )
+  );
 }
 
 // ============================================================================
@@ -204,7 +211,7 @@ function TableSkeleton() {
         </tr>
       ))}
     </>
-  )
+  );
 }
 
 // ============================================================================
@@ -222,7 +229,7 @@ function EmptyState() {
         </p>
       </td>
     </tr>
-  )
+  );
 }
 
 // ============================================================================
@@ -230,47 +237,52 @@ function EmptyState() {
 // ============================================================================
 
 interface ExperiencePerformanceTableProps {
-  session: VendorSession
-  selectedPeriod: TimePeriod
+  session: VendorSession;
+  selectedPeriod: TimePeriod;
 }
 
 export function ExperiencePerformanceTable({
   session,
   selectedPeriod,
 }: ExperiencePerformanceTableProps) {
-  const [sortBy, setSortBy] = useState<SortColumn>('revenue')
-  const [sortDir, setSortDir] = useState<SortDirection>('desc')
+  const [sortBy, setSortBy] = useState<SortColumn>('revenue');
+  const [sortDir, setSortDir] = useState<SortDirection>('desc');
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-  } = useQuery({
-    queryKey: ['experience-performance', session.vendorId, selectedPeriod, sortBy, sortDir],
-    queryFn: () => getExperiencePerformanceMetrics(
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: [
+      'experience-performance',
       session.vendorId,
       selectedPeriod,
       sortBy,
-      sortDir
-    ),
+      sortDir,
+    ],
+    queryFn: () =>
+      getExperiencePerformanceMetrics(
+        session.vendorId,
+        selectedPeriod,
+        sortBy,
+        sortDir,
+      ),
     staleTime: 5 * 60 * 1000, // 5 minutes
-  })
+  });
 
   const handleSort = (column: SortColumn) => {
     if (sortBy === column) {
       // Toggle direction
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
     } else {
       // New column, default to desc
-      setSortBy(column)
-      setSortDir('desc')
+      setSortBy(column);
+      setSortDir('desc');
     }
-  }
+  };
 
   return (
     <Card className="overflow-hidden">
       <div className="px-6 py-4 border-b flex items-center justify-between">
-        <h3 className="text-lg font-display font-semibold">Experience Performance</h3>
+        <h3 className="text-lg font-display font-semibold">
+          Experience Performance
+        </h3>
         {isFetching && !isLoading && (
           <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
         )}
@@ -364,5 +376,5 @@ export function ExperiencePerformanceTable({
         </table>
       </div>
     </Card>
-  )
+  );
 }

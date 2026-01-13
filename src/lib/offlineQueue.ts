@@ -4,68 +4,73 @@
  */
 
 export type OfflineAction = {
-  id: string
-  bookingId: string
-  vendorId: string
-  action: 'check_in' | 'no_show'
-  createdAt: string
-}
+  id: string;
+  bookingId: string;
+  vendorId: string;
+  action: 'check_in' | 'no_show';
+  createdAt: string;
+};
 
-const STORAGE_KEY = 'pulau_offline_checkins'
+const STORAGE_KEY = 'pulau_offline_checkins';
 
 function loadQueue(): OfflineAction[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as OfflineAction[]) : []
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as OfflineAction[]) : [];
   } catch {
-    return []
+    return [];
   }
 }
 
 function saveQueue(queue: OfflineAction[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(queue))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
   } catch (err) {
-    console.warn('Failed to persist offline queue', err)
+    console.warn('Failed to persist offline queue', err);
   }
 }
 
-export function enqueueOfflineAction(action: Omit<OfflineAction, 'id' | 'createdAt'>): OfflineAction {
-  const queue = loadQueue()
+export function enqueueOfflineAction(
+  action: Omit<OfflineAction, 'id' | 'createdAt'>,
+): OfflineAction {
+  const queue = loadQueue();
 
   // Prevent duplicate entries for the same booking/action pair
   const existing = queue.find(
-    (item) => item.bookingId === action.bookingId && item.vendorId === action.vendorId && item.action === action.action
-  )
+    (item) =>
+      item.bookingId === action.bookingId &&
+      item.vendorId === action.vendorId &&
+      item.action === action.action,
+  );
 
   if (existing) {
-    return existing
+    return existing;
   }
 
   const entry: OfflineAction = {
     ...action,
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
-  }
-  queue.push(entry)
-  saveQueue(queue)
-  return entry
+  };
+  queue.push(entry);
+  saveQueue(queue);
+  return entry;
 }
 
 export function dequeueById(id: string): void {
-  const queue = loadQueue().filter(item => item.id !== id)
-  saveQueue(queue)
+  const queue = loadQueue().filter((item) => item.id !== id);
+  saveQueue(queue);
 }
 
 export function getPendingActions(): OfflineAction[] {
-  return loadQueue()
+  return loadQueue();
 }
 
 /**
  * Clear all queued actions (useful for tests or manual reset).
  */
 export function clearOfflineQueue(): void {
-  saveQueue([])
+  saveQueue([]);
 }
 
 /**
@@ -73,22 +78,22 @@ export function clearOfflineQueue(): void {
  * Removes successfully processed actions; leaves failures for retry.
  */
 export async function flushOfflineQueue(
-  executor: (action: OfflineAction) => Promise<void>
+  executor: (action: OfflineAction) => Promise<void>,
 ): Promise<{ processed: number; remaining: number }> {
-  const queue = loadQueue()
-  let processed = 0
-  const remaining: OfflineAction[] = []
+  const queue = loadQueue();
+  let processed = 0;
+  const remaining: OfflineAction[] = [];
 
   for (const action of queue) {
     try {
-      await executor(action)
-      processed += 1
+      await executor(action);
+      processed += 1;
     } catch (err) {
-      console.warn('Failed to flush offline action', action, err)
-      remaining.push(action)
+      console.warn('Failed to flush offline action', action, err);
+      remaining.push(action);
     }
   }
 
-  saveQueue(remaining)
-  return { processed, remaining: remaining.length }
+  saveQueue(remaining);
+  return { processed, remaining: remaining.length };
 }

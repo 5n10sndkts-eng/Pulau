@@ -35,19 +35,26 @@ const GROUP_TYPES = [
 ];
 
 const BUDGET_LEVELS = [
-  { id: 'Budget-Conscious', label: 'Budget-Conscious', description: 'Under $50/day' },
+  {
+    id: 'Budget-Conscious',
+    label: 'Budget-Conscious',
+    description: 'Under $50/day',
+  },
   { id: 'Mid-Range', label: 'Mid-Range', description: '$50-150/day' },
   { id: 'Luxury', label: 'Luxury', description: 'Over $150/day' },
 ];
 
-export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) {
+export function PreferenceScreen({
+  onContinue,
+  onBack,
+}: PreferenceScreenProps) {
   const [travelStyle, setTravelStyle] = useState<string[]>([]);
   const [groupType, setGroupType] = useState<string>('');
   const [budgetLevel, setBudgetLevel] = useState<string>('');
 
   const toggleTravelStyle = (style: string) => {
-    setTravelStyle(prev =>
-      prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style]
+    setTravelStyle((prev) =>
+      prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style],
     );
   };
 
@@ -63,7 +70,9 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
     <div className="flex min-h-screen flex-col bg-slate-50">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white px-6 py-4 shadow-sm">
-        <div className="text-center text-sm font-medium text-slate-600">2 of 3</div>
+        <div className="text-center text-sm font-medium text-slate-600">
+          2 of 3
+        </div>
         <h2 className="mt-2 text-center text-2xl font-bold text-slate-900">
           Personalize Your Experience
         </h2>
@@ -78,9 +87,11 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <h3 className="mb-4 text-lg font-semibold text-slate-900">Travel Style</h3>
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">
+              Travel Style
+            </h3>
             <div className="grid grid-cols-2 gap-3">
-              {TRAVEL_STYLES.map(style => (
+              {TRAVEL_STYLES.map((style) => (
                 <button
                   key={style.id}
                   onClick={() => toggleTravelStyle(style.id)}
@@ -88,11 +99,13 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
                     'flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all',
                     travelStyle.includes(style.id)
                       ? 'border-teal-600 bg-teal-50'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
+                      : 'border-slate-200 bg-white hover:border-slate-300',
                   )}
                 >
                   <span className="text-2xl">{style.icon}</span>
-                  <span className="flex-1 font-medium text-slate-900">{style.label}</span>
+                  <span className="flex-1 font-medium text-slate-900">
+                    {style.label}
+                  </span>
                   {travelStyle.includes(style.id) && (
                     <Check className="h-5 w-5 text-teal-600" />
                   )}
@@ -107,9 +120,11 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h3 className="mb-4 text-lg font-semibold text-slate-900">Group Type</h3>
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">
+              Group Type
+            </h3>
             <div className="grid grid-cols-2 gap-3">
-              {GROUP_TYPES.map(type => (
+              {GROUP_TYPES.map((type) => (
                 <button
                   key={type.id}
                   onClick={() => setGroupType(type.id)}
@@ -117,12 +132,16 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
                     'flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all',
                     groupType === type.id
                       ? 'border-teal-600 bg-teal-50'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
+                      : 'border-slate-200 bg-white hover:border-slate-300',
                   )}
                 >
                   <span className="text-2xl">{type.icon}</span>
-                  <span className="flex-1 font-medium text-slate-900">{type.label}</span>
-                  {groupType === type.id && <Check className="h-5 w-5 text-teal-600" />}
+                  <span className="flex-1 font-medium text-slate-900">
+                    {type.label}
+                  </span>
+                  {groupType === type.id && (
+                    <Check className="h-5 w-5 text-teal-600" />
+                  )}
                 </button>
               ))}
             </div>
@@ -134,9 +153,11 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <h3 className="mb-4 text-lg font-semibold text-slate-900">Budget Feel</h3>
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">
+              Budget Feel
+            </h3>
             <div className="space-y-3">
-              {BUDGET_LEVELS.map(budget => (
+              {BUDGET_LEVELS.map((budget) => (
                 <button
                   key={budget.id}
                   onClick={() => setBudgetLevel(budget.id)}
@@ -144,14 +165,20 @@ export function PreferenceScreen({ onContinue, onBack }: PreferenceScreenProps) 
                     'flex w-full items-center justify-between rounded-xl border-2 p-4 text-left transition-all',
                     budgetLevel === budget.id
                       ? 'border-teal-600 bg-teal-50'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
+                      : 'border-slate-200 bg-white hover:border-slate-300',
                   )}
                 >
                   <div>
-                    <div className="font-medium text-slate-900">{budget.label}</div>
-                    <div className="text-sm text-slate-600">{budget.description}</div>
+                    <div className="font-medium text-slate-900">
+                      {budget.label}
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      {budget.description}
+                    </div>
                   </div>
-                  {budgetLevel === budget.id && <Check className="h-5 w-5 text-teal-600" />}
+                  {budgetLevel === budget.id && (
+                    <Check className="h-5 w-5 text-teal-600" />
+                  )}
                 </button>
               ))}
             </div>

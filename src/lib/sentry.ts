@@ -7,7 +7,7 @@
 // PII is scrubbed before sending to Sentry.
 // ================================================
 
-import * as Sentry from '@sentry/react'
+import * as Sentry from '@sentry/react';
 
 /**
  * Initialize Sentry error tracking
@@ -17,15 +17,15 @@ import * as Sentry from '@sentry/react'
 export function initSentry(): void {
   // Skip Sentry in development (AC #5)
   if (!import.meta.env.PROD) {
-    console.log('[Sentry] Skipping initialization in development mode')
-    return
+    console.log('[Sentry] Skipping initialization in development mode');
+    return;
   }
 
-  const dsn = import.meta.env.VITE_SENTRY_DSN
+  const dsn = import.meta.env.VITE_SENTRY_DSN;
 
   if (!dsn) {
-    console.warn('[Sentry] No DSN configured, error tracking disabled')
-    return
+    console.warn('[Sentry] No DSN configured, error tracking disabled');
+    return;
   }
 
   Sentry.init({
@@ -81,9 +81,9 @@ export function initSentry(): void {
     beforeSend(event) {
       // Remove sensitive user data
       if (event.user) {
-        delete event.user.email
-        delete event.user.username
-        delete event.user.ip_address
+        delete event.user.email;
+        delete event.user.username;
+        delete event.user.ip_address;
         // Keep only the anonymized ID
       }
 
@@ -92,26 +92,26 @@ export function initSentry(): void {
         event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => {
           if (breadcrumb.data) {
             // Remove any potential PII from breadcrumb data
-            const sanitized = { ...breadcrumb.data }
-            delete sanitized.email
-            delete sanitized.password
-            delete sanitized.token
-            delete sanitized.authorization
-            return { ...breadcrumb, data: sanitized }
+            const sanitized = { ...breadcrumb.data };
+            delete sanitized.email;
+            delete sanitized.password;
+            delete sanitized.token;
+            delete sanitized.authorization;
+            return { ...breadcrumb, data: sanitized };
           }
-          return breadcrumb
-        })
+          return breadcrumb;
+        });
       }
 
-      return event
+      return event;
     },
 
     // Performance optimization
     maxBreadcrumbs: 50,
     attachStacktrace: true,
-  })
+  });
 
-  console.log('[Sentry] Initialized for production')
+  console.log('[Sentry] Initialized for production');
 }
 
 /**
@@ -119,13 +119,13 @@ export function initSentry(): void {
  * AC #4: User context (anonymized ID only)
  */
 export function setSentryUser(userId: string | null): void {
-  if (!import.meta.env.PROD) return
+  if (!import.meta.env.PROD) return;
 
   if (userId) {
     // Only send anonymized user ID, no PII
-    Sentry.setUser({ id: userId })
+    Sentry.setUser({ id: userId });
   } else {
-    Sentry.setUser(null)
+    Sentry.setUser(null);
   }
 }
 
@@ -136,25 +136,28 @@ export function setSentryUser(userId: string | null): void {
 export function captureError(
   error: Error | unknown,
   context?: {
-    componentStack?: string
-    extra?: Record<string, unknown>
-    tags?: Record<string, string>
-  }
+    componentStack?: string;
+    extra?: Record<string, unknown>;
+    tags?: Record<string, string>;
+  },
 ): void {
   if (!import.meta.env.PROD) {
-    console.error('[Sentry] Would capture in production:', error)
-    return
+    console.error('[Sentry] Would capture in production:', error);
+    return;
   }
 
-  const errorToCapture = error instanceof Error ? error : new Error(String(error))
+  const errorToCapture =
+    error instanceof Error ? error : new Error(String(error));
 
   Sentry.captureException(errorToCapture, {
     extra: {
       ...context?.extra,
-      ...(context?.componentStack && { componentStack: context.componentStack }),
+      ...(context?.componentStack && {
+        componentStack: context.componentStack,
+      }),
     },
     tags: context?.tags,
-  })
+  });
 }
 
 /**
@@ -163,17 +166,17 @@ export function captureError(
 export function captureMessage(
   message: string,
   level: 'info' | 'warning' | 'error' = 'info',
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ): void {
   if (!import.meta.env.PROD) {
-    console.log(`[Sentry] Would capture message (${level}):`, message)
-    return
+    console.log(`[Sentry] Would capture message (${level}):`, message);
+    return;
   }
 
   Sentry.captureMessage(message, {
     level,
     extra: context,
-  })
+  });
 }
 
 /**
@@ -182,32 +185,35 @@ export function captureMessage(
 export function addBreadcrumb(
   message: string,
   category: string,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ): void {
-  if (!import.meta.env.PROD) return
+  if (!import.meta.env.PROD) return;
 
   Sentry.addBreadcrumb({
     message,
     category,
     data,
     level: 'info',
-  })
+  });
 }
 
 /**
  * Set custom tags for filtering in Sentry
  */
 export function setTag(key: string, value: string): void {
-  if (!import.meta.env.PROD) return
-  Sentry.setTag(key, value)
+  if (!import.meta.env.PROD) return;
+  Sentry.setTag(key, value);
 }
 
 /**
  * Set extra context data
  */
-export function setContext(name: string, context: Record<string, unknown>): void {
-  if (!import.meta.env.PROD) return
-  Sentry.setContext(name, context)
+export function setContext(
+  name: string,
+  context: Record<string, unknown>,
+): void {
+  if (!import.meta.env.PROD) return;
+  Sentry.setContext(name, context);
 }
 
 // ================================================
@@ -221,18 +227,18 @@ export function setContext(name: string, context: Record<string, unknown>): void
 export function startTransaction(
   name: string,
   operation: string,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ): Sentry.Span | undefined {
   if (!import.meta.env.PROD) {
-    console.log(`[Sentry APM] Would start transaction: ${name} (${operation})`)
-    return undefined
+    console.log(`[Sentry APM] Would start transaction: ${name} (${operation})`);
+    return undefined;
   }
 
   return Sentry.startInactiveSpan({
     name,
     op: operation,
     attributes: data as Record<string, string | number | boolean | undefined>,
-  })
+  });
 }
 
 /**
@@ -242,17 +248,14 @@ export function startTransaction(
 export function startSpan<T>(
   name: string,
   operation: string,
-  callback: () => T | Promise<T>
+  callback: () => T | Promise<T>,
 ): T | Promise<T> {
   if (!import.meta.env.PROD) {
-    console.log(`[Sentry APM] Would track span: ${name} (${operation})`)
-    return callback()
+    console.log(`[Sentry APM] Would track span: ${name} (${operation})`);
+    return callback();
   }
 
-  return Sentry.startSpan(
-    { name, op: operation },
-    callback
-  )
+  return Sentry.startSpan({ name, op: operation }, callback);
 }
 
 /**
@@ -261,19 +264,19 @@ export function startSpan<T>(
  */
 export function trackCheckoutStep(
   step: 'review' | 'traveler-details' | 'payment' | 'confirmation',
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ): void {
   if (!import.meta.env.PROD) {
-    console.log(`[Sentry APM] Checkout step: ${step}`, data)
-    return
+    console.log(`[Sentry APM] Checkout step: ${step}`, data);
+    return;
   }
 
-  addBreadcrumb(`Checkout step: ${step}`, 'checkout', data)
+  addBreadcrumb(`Checkout step: ${step}`, 'checkout', data);
   setContext('checkout', {
     currentStep: step,
     timestamp: new Date().toISOString(),
     ...data,
-  })
+  });
 }
 
 /**
@@ -283,34 +286,34 @@ export function trackCheckoutStep(
 export async function trackApiCall<T>(
   name: string,
   apiCall: () => Promise<T>,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): Promise<T> {
-  const startTime = performance.now()
+  const startTime = performance.now();
 
   try {
-    const result = await startSpan(name, 'http.client', apiCall)
-    const duration = performance.now() - startTime
+    const result = await startSpan(name, 'http.client', apiCall);
+    const duration = performance.now() - startTime;
 
     if (import.meta.env.PROD) {
       addBreadcrumb(`API call succeeded: ${name}`, 'api', {
         duration: `${duration.toFixed(2)}ms`,
         ...metadata,
-      })
+      });
     }
 
-    return result
+    return result;
   } catch (error) {
-    const duration = performance.now() - startTime
+    const duration = performance.now() - startTime;
 
     if (import.meta.env.PROD) {
       addBreadcrumb(`API call failed: ${name}`, 'api', {
         duration: `${duration.toFixed(2)}ms`,
         error: error instanceof Error ? error.message : 'Unknown error',
         ...metadata,
-      })
+      });
     }
 
-    throw error
+    throw error;
   }
 }
 
@@ -320,8 +323,8 @@ export async function trackApiCall<T>(
  */
 export function reportWebVitals(): void {
   if (!import.meta.env.PROD) {
-    console.log('[Sentry APM] Would report Web Vitals in production')
-    return
+    console.log('[Sentry APM] Would report Web Vitals in production');
+    return;
   }
 
   // Web Vitals are automatically captured by Sentry's browserTracingIntegration
@@ -330,13 +333,13 @@ export function reportWebVitals(): void {
     // LCP (Largest Contentful Paint)
     try {
       const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries()
-        const lastEntry = entries[entries.length - 1]
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
         if (lastEntry) {
-          Sentry.setMeasurement('lcp', lastEntry.startTime, 'millisecond')
+          Sentry.setMeasurement('lcp', lastEntry.startTime, 'millisecond');
         }
-      })
-      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true })
+      });
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
     } catch (e) {
       // LCP not supported
     }
@@ -344,31 +347,36 @@ export function reportWebVitals(): void {
     // FID (First Input Delay)
     try {
       const fidObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries()
+        const entries = entryList.getEntries();
         entries.forEach((entry) => {
           if ('processingStart' in entry) {
-            const fid = (entry as PerformanceEventTiming).processingStart - entry.startTime
-            Sentry.setMeasurement('fid', fid, 'millisecond')
+            const fid =
+              (entry as PerformanceEventTiming).processingStart -
+              entry.startTime;
+            Sentry.setMeasurement('fid', fid, 'millisecond');
           }
-        })
-      })
-      fidObserver.observe({ type: 'first-input', buffered: true })
+        });
+      });
+      fidObserver.observe({ type: 'first-input', buffered: true });
     } catch (e) {
       // FID not supported
     }
 
     // CLS (Cumulative Layout Shift)
     try {
-      let clsValue = 0
+      let clsValue = 0;
       const clsObserver = new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
-          if (!(entry as PerformanceEntry & { hadRecentInput?: boolean }).hadRecentInput) {
-            clsValue += (entry as PerformanceEntry & { value: number }).value
+          if (
+            !(entry as PerformanceEntry & { hadRecentInput?: boolean })
+              .hadRecentInput
+          ) {
+            clsValue += (entry as PerformanceEntry & { value: number }).value;
           }
         }
-        Sentry.setMeasurement('cls', clsValue, 'none')
-      })
-      clsObserver.observe({ type: 'layout-shift', buffered: true })
+        Sentry.setMeasurement('cls', clsValue, 'none');
+      });
+      clsObserver.observe({ type: 'layout-shift', buffered: true });
     } catch (e) {
       // CLS not supported
     }
@@ -378,14 +386,17 @@ export function reportWebVitals(): void {
 /**
  * Track page navigation performance
  */
-export function trackPageView(pageName: string, data?: Record<string, unknown>): void {
+export function trackPageView(
+  pageName: string,
+  data?: Record<string, unknown>,
+): void {
   if (!import.meta.env.PROD) {
-    console.log(`[Sentry APM] Page view: ${pageName}`, data)
-    return
+    console.log(`[Sentry APM] Page view: ${pageName}`, data);
+    return;
   }
 
-  addBreadcrumb(`Page view: ${pageName}`, 'navigation', data)
-  setTag('page', pageName)
+  addBreadcrumb(`Page view: ${pageName}`, 'navigation', data);
+  setTag('page', pageName);
 }
 
 /**
@@ -395,15 +406,17 @@ export function trackPageView(pageName: string, data?: Record<string, unknown>):
 export function measureTiming(
   name: string,
   value: number,
-  unit: 'millisecond' | 'second' | 'none' = 'millisecond'
+  unit: 'millisecond' | 'second' | 'none' = 'millisecond',
 ): void {
   if (!import.meta.env.PROD) {
-    console.log(`[Sentry APM] Timing ${name}: ${value}${unit === 'none' ? '' : unit.slice(0, 2)}`)
-    return
+    console.log(
+      `[Sentry APM] Timing ${name}: ${value}${unit === 'none' ? '' : unit.slice(0, 2)}`,
+    );
+    return;
   }
 
-  Sentry.setMeasurement(name, value, unit)
+  Sentry.setMeasurement(name, value, unit);
 }
 
 // Re-export Sentry for advanced usage
-export { Sentry }
+export { Sentry };

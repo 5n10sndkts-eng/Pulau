@@ -35,24 +35,24 @@ so that **all application data can be persisted with full type safety**.
 
 ### New Tables
 
-| Table | Description |
-|-------|-------------|
-| `destinations` | Multi-destination support (Bali default) |
-| `experience_images` | Image gallery for experiences |
-| `experience_inclusions` | What's included/not included/what to bring |
-| `experience_availability` | Daily slot availability |
-| `reviews` | User reviews for experiences |
-| `payment_methods` | Saved payment methods (tokenized) |
+| Table                     | Description                                |
+| ------------------------- | ------------------------------------------ |
+| `destinations`            | Multi-destination support (Bali default)   |
+| `experience_images`       | Image gallery for experiences              |
+| `experience_inclusions`   | What's included/not included/what to bring |
+| `experience_availability` | Daily slot availability                    |
+| `reviews`                 | User reviews for experiences               |
+| `payment_methods`         | Saved payment methods (tokenized)          |
 
 ### Updated Tables
 
-| Table | Columns Added |
-|-------|---------------|
-| `profiles` | first_name, last_name, has_completed_onboarding, email_verified |
-| `vendors` | owner_first_name, owner_last_name, phone, since_year, photo, bio, response_time, rating, review_count |
-| `experiences` | destination_id, subcategory, price_per, duration_hours, start_time, group_size_*, difficulty, languages, meeting_point_*, cancellation_policy, tags, published_at |
-| `trips` | name, subtotal, service_fee, total, booking_reference, booked_at, cancelled_at, cancellation_reason, share_token |
-| `trip_items` | notes |
+| Table         | Columns Added                                                                                                                                                     |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `profiles`    | first_name, last_name, has_completed_onboarding, email_verified                                                                                                   |
+| `vendors`     | owner_first_name, owner_last_name, phone, since_year, photo, bio, response_time, rating, review_count                                                             |
+| `experiences` | destination*id, subcategory, price_per, duration_hours, start_time, group_size*_, difficulty, languages, meeting*point*_, cancellation_policy, tags, published_at |
+| `trips`       | name, subtotal, service_fee, total, booking_reference, booked_at, cancelled_at, cancellation_reason, share_token                                                  |
+| `trip_items`  | notes                                                                                                                                                             |
 
 ## Migration File
 
@@ -77,6 +77,7 @@ so that **all application data can be persisted with full type safety**.
 ### Indexes
 
 Performance indexes on:
+
 - experiences (vendor_id, category, status, destination_id)
 - trips (user_id, status)
 - trip_items (trip_id)
@@ -110,17 +111,19 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Change Summary
 
-| File | Change Type | Description |
-|------|-------------|-------------|
-| `supabase/migrations/20260108000005_complete_schema.sql` | Created | Complete schema migration |
-| `src/lib/database.types.ts` | Modified | Updated with all table types |
+| File                                                     | Change Type | Description                  |
+| -------------------------------------------------------- | ----------- | ---------------------------- |
+| `supabase/migrations/20260108000005_complete_schema.sql` | Created     | Complete schema migration    |
+| `src/lib/database.types.ts`                              | Modified    | Updated with all table types |
 
 ### File List
 
 **Files created:**
+
 - `supabase/migrations/20260108000005_complete_schema.sql`
 
 **Files modified:**
+
 - `src/lib/database.types.ts`
 
 ### Next Steps
@@ -146,13 +149,13 @@ To apply this migration to your Supabase project:
 
 ### Issues Found & Fixed
 
-| # | Severity | Issue | Resolution |
-|---|----------|-------|------------|
-| 1 | MEDIUM | Missing index on experience_inclusions(experience_id) | Fixed: Added idx_experience_inclusions_experience |
-| 2 | MEDIUM | No updated_at column on profiles table | Fixed: Added column + trigger |
-| 3 | MEDIUM | Seed data in schema migration (noted) | Documented as improvement for future - not blocking |
-| 4 | LOW | No composite index on reviews for rating queries | Fixed: Added idx_reviews_experience_rating |
-| 5 | LOW | Missing index on reviews.user_id | Fixed: Added idx_reviews_user |
+| #   | Severity | Issue                                                 | Resolution                                          |
+| --- | -------- | ----------------------------------------------------- | --------------------------------------------------- |
+| 1   | MEDIUM   | Missing index on experience_inclusions(experience_id) | Fixed: Added idx_experience_inclusions_experience   |
+| 2   | MEDIUM   | No updated_at column on profiles table                | Fixed: Added column + trigger                       |
+| 3   | MEDIUM   | Seed data in schema migration (noted)                 | Documented as improvement for future - not blocking |
+| 4   | LOW      | No composite index on reviews for rating queries      | Fixed: Added idx_reviews_experience_rating          |
+| 5   | LOW      | Missing index on reviews.user_id                      | Fixed: Added idx_reviews_user                       |
 
 ### Files Modified by Review
 

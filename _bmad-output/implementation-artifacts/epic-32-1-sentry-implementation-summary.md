@@ -22,6 +22,7 @@ Epic 32.1 (Error Monitoring & Observability) is **already fully implemented** in
 **Implementation:** [src/lib/sentry.ts](../src/lib/sentry.ts) (410 lines)
 
 **Features Implemented:**
+
 - @sentry/react SDK installed (v10.32.1)
 - @sentry/vite-plugin configured (v4.6.1)
 - Production-only initialization (skips dev mode)
@@ -33,21 +34,23 @@ Epic 32.1 (Error Monitoring & Observability) is **already fully implemented** in
 - Error filtering (ignores common non-actionable errors)
 
 **Key Functions:**
+
 ```typescript
-initSentry()              // Initialize Sentry in production
-setSentryUser()           // Set anonymized user context
-captureError()            // Capture exceptions with context
-captureMessage()          // Capture info/warning messages
-addBreadcrumb()           // Add debugging breadcrumbs
-setTag()                  // Set custom tags for filtering
-setContext()              // Set extra context data
+initSentry(); // Initialize Sentry in production
+setSentryUser(); // Set anonymized user context
+captureError(); // Capture exceptions with context
+captureMessage(); // Capture info/warning messages
+addBreadcrumb(); // Add debugging breadcrumbs
+setTag(); // Set custom tags for filtering
+setContext(); // Set extra context data
 ```
 
 **Configuration:**
+
 ```typescript
 // Sampling rates
 tracesSampleRate: 0.1              // 10% of transactions
-replaysSessionSampleRate: 0.1       // 10% of sessions  
+replaysSessionSampleRate: 0.1       // 10% of sessions
 replaysOnErrorSampleRate: 1.0       // 100% of error sessions
 
 // Privacy protection
@@ -59,12 +62,14 @@ replaysOnErrorSampleRate: 1.0       // 100% of error sessions
 
 ### ✅ Story 32-1-2: Add Error Boundaries - DONE
 
-**Implementation:** 
+**Implementation:**
+
 - [src/ErrorFallback.tsx](../src/ErrorFallback.tsx) (100 lines)
 - [src/main.tsx](../src/main.tsx) (ErrorBoundary wrapper)
 - [src/components/vendor/VendorRevenueDashboard.tsx](../src/components/vendor/VendorRevenueDashboard.tsx) (Chart error boundary)
 
 **Features:**
+
 - App-level error boundary wraps entire application
 - Custom ErrorFallback component with user-friendly UI
 - "Try Again" recovery button
@@ -74,6 +79,7 @@ replaysOnErrorSampleRate: 1.0       // 100% of error sessions
 - Graceful degradation in production
 
 **User Experience:**
+
 - Clear error message: "Something went wrong"
 - Error details (in dev mode)
 - One-click recovery button
@@ -84,6 +90,7 @@ replaysOnErrorSampleRate: 1.0       // 100% of error sessions
 **Implementation:** [vite.config.ts](../vite.config.ts) (lines 20-36, 51)
 
 **Features:**
+
 - Sentry Vite plugin configured
 - Sourcemap generation enabled (`sourcemap: true`)
 - Automatic sourcemap upload to Sentry
@@ -92,22 +99,24 @@ replaysOnErrorSampleRate: 1.0       // 100% of error sessions
 - Only uploads when `SENTRY_AUTH_TOKEN` is set
 
 **Configuration:**
+
 ```typescript
 sentryVitePlugin({
-  org: process.env.SENTRY_ORG || "pulau",
-  project: process.env.SENTRY_PROJECT || "pulau-web",
+  org: process.env.SENTRY_ORG || 'pulau',
+  project: process.env.SENTRY_PROJECT || 'pulau-web',
   authToken: process.env.SENTRY_AUTH_TOKEN,
   sourcemaps: {
-    filesToDeleteAfterUpload: ["./dist/**/*.map"],
+    filesToDeleteAfterUpload: ['./dist/**/*.map'],
   },
   release: {
-    name: `pulau@${process.env.npm_package_version || "0.0.0"}`,
+    name: `pulau@${process.env.npm_package_version || '0.0.0'}`,
   },
-})
+});
 ```
 
-**Result:** 
+**Result:**
 In Sentry dashboard, stack traces show:
+
 - ✅ Original TypeScript source code (not minified)
 - ✅ Exact line numbers
 - ✅ Full variable names
@@ -118,6 +127,7 @@ In Sentry dashboard, stack traces show:
 **Implementation:** [src/lib/sentry.ts](../src/lib/sentry.ts) (lines 200-410)
 
 **Features Implemented:**
+
 - Browser performance tracing
 - Core Web Vitals monitoring (LCP, FID, CLS)
 - Custom transaction tracking
@@ -127,17 +137,19 @@ In Sentry dashboard, stack traces show:
 - Custom timing measurements
 
 **Functions:**
+
 ```typescript
-reportWebVitals()           // Track LCP, FID, CLS automatically
-startTransaction()          // Start custom transaction
-startSpan()                 // Track sub-operations
-trackCheckoutStep()         // Monitor checkout flow
-trackApiCall()              // Wrap API calls with timing
-trackPageView()             // Track navigation
-measureTiming()             // Custom performance metrics
+reportWebVitals(); // Track LCP, FID, CLS automatically
+startTransaction(); // Start custom transaction
+startSpan(); // Track sub-operations
+trackCheckoutStep(); // Monitor checkout flow
+trackApiCall(); // Wrap API calls with timing
+trackPageView(); // Track navigation
+measureTiming(); // Custom performance metrics
 ```
 
 **Monitoring Capabilities:**
+
 - **Core Web Vitals:**
   - LCP (Largest Contentful Paint) - Target: < 2.5s
   - FID (First Input Delay) - Target: < 100ms
@@ -191,13 +203,14 @@ measureTiming()             // Custom performance metrics
 **Total:** 17 comprehensive E2E tests
 
 **To Run Tests:**
+
 ```bash
 npm run test:e2e -- sentry-error-tracking.spec.ts
 ```
 
 ### ✅ Story 32-1-6: Configure Alert Rules - DONE
 
-**Implementation:** [_bmad-output/planning-artifacts/sentry-alert-configuration.md](_bmad-output/planning-artifacts/sentry-alert-configuration.md) (600+ lines)
+**Implementation:** [\_bmad-output/planning-artifacts/sentry-alert-configuration.md](_bmad-output/planning-artifacts/sentry-alert-configuration.md) (600+ lines)
 
 **Alert Categories Configured:**
 
@@ -223,6 +236,7 @@ npm run test:e2e -- sentry-error-tracking.spec.ts
    - Unusual Error Pattern (Warning) - Slack + Email
 
 **Alert Channels:**
+
 - #pulau-alerts (critical)
 - #pulau-errors (warnings)
 - #pulau-performance (performance issues)
@@ -231,6 +245,7 @@ npm run test:e2e -- sentry-error-tracking.spec.ts
 - Email distribution lists
 
 **Documentation Includes:**
+
 - Step-by-step Sentry configuration
 - Slack integration setup
 - PagerDuty integration setup
@@ -244,10 +259,12 @@ npm run test:e2e -- sentry-error-tracking.spec.ts
 ## Files Created/Modified
 
 **New Files:**
+
 1. `/tests/e2e/sentry-error-tracking.spec.ts` (400+ lines) - E2E test suite
 2. `/_bmad-output/planning-artifacts/sentry-alert-configuration.md` (600+ lines) - Alert config guide
 
 **Existing Files (Already Implemented):**
+
 1. `/src/lib/sentry.ts` (410 lines) - Core Sentry configuration
 2. `/src/ErrorFallback.tsx` (100 lines) - Error boundary UI
 3. `/src/main.tsx` (lines 8-12) - Sentry initialization
@@ -258,12 +275,14 @@ npm run test:e2e -- sentry-error-tracking.spec.ts
 ## Environment Variables Required
 
 ### Development
+
 ```bash
 # Sentry not active in development (logs to console only)
 # No env vars needed
 ```
 
 ### Staging/Production
+
 ```bash
 # Required
 VITE_SENTRY_DSN=https://xxxx@oxxxx.ingest.sentry.io/xxxxx
@@ -298,11 +317,12 @@ VITE_APP_VERSION=1.0.0
    - Copy token
 
 4. **Add Environment Variables** (5 min)
+
    ```bash
    # Add to .env.production
    VITE_SENTRY_DSN=<your-dsn-here>
    SENTRY_AUTH_TOKEN=<your-auth-token-here>
-   
+
    # Add to Vercel/hosting platform
    # Same variables
    ```
@@ -321,6 +341,7 @@ VITE_APP_VERSION=1.0.0
 ## Production Deployment Checklist
 
 ### Pre-Deployment
+
 - [x] Sentry SDK installed (@sentry/react, @sentry/vite-plugin)
 - [x] Sentry configuration implemented (sentry.ts)
 - [x] Error boundaries added (ErrorFallback.tsx)
@@ -330,6 +351,7 @@ VITE_APP_VERSION=1.0.0
 - [x] Alert configuration documented
 
 ### Manual Setup Required
+
 - [ ] Create Sentry account (free tier)
 - [ ] Create "pulau-web" project in Sentry
 - [ ] Copy DSN to environment variables
@@ -341,6 +363,7 @@ VITE_APP_VERSION=1.0.0
 - [ ] Verify sourcemaps uploaded correctly
 
 ### Post-Deployment Verification
+
 - [ ] Trigger test error in production
 - [ ] Verify error appears in Sentry dashboard
 - [ ] Check stack trace shows original TypeScript code
@@ -353,6 +376,7 @@ VITE_APP_VERSION=1.0.0
 ## Success Metrics
 
 **Error Tracking:**
+
 - ✅ All unhandled errors captured
 - ✅ Stack traces show original TypeScript source
 - ✅ User context (anonymized) attached
@@ -360,6 +384,7 @@ VITE_APP_VERSION=1.0.0
 - ✅ Similar errors grouped together
 
 **Performance Monitoring:**
+
 - ✅ LCP tracked (target: < 2.5s)
 - ✅ FID tracked (target: < 100ms)
 - ✅ CLS tracked (target: < 0.1)
@@ -367,12 +392,14 @@ VITE_APP_VERSION=1.0.0
 - ✅ Checkout flow performance tracked
 
 **Alerting:**
+
 - ✅ Critical errors trigger PagerDuty
 - ✅ Warning errors post to Slack
 - ✅ Performance degradations detected
 - ✅ Alert fatigue minimized (< 10 alerts/week)
 
 **Privacy:**
+
 - ✅ No PII sent to Sentry
 - ✅ Email addresses scrubbed
 - ✅ Only anonymized user IDs
@@ -385,6 +412,7 @@ VITE_APP_VERSION=1.0.0
 ### Sentry Pricing Tiers
 
 **Free Tier (Current Recommendation):**
+
 - 5,000 errors/month
 - 10,000 performance events/month
 - 30-day data retention
@@ -392,16 +420,19 @@ VITE_APP_VERSION=1.0.0
 - **Cost:** $0/month
 
 **Projected Usage (First 6 Months):**
+
 - Estimated errors: 500-1,000/month
 - Estimated performance events: 5,000/month
 - **Fits within free tier ✓**
 
 **Upgrade Triggers:**
+
 - If errors > 4,000/month → Upgrade to Team ($26/month)
 - If performance events > 8,000/month → Upgrade
 - If need > 30 days retention → Upgrade
 
 **ROI:**
+
 - Average time to diagnose production bug: 2 hours → 15 minutes
 - Cost of production downtime: $500/hour
 - Monthly value: $2,000+ in prevented downtime
@@ -412,18 +443,21 @@ VITE_APP_VERSION=1.0.0
 ## Next Steps
 
 ### Immediate (Today)
+
 1. ✅ Verify Sentry implementation complete (DONE)
 2. ✅ Create E2E test suite (DONE)
 3. ✅ Document alert configuration (DONE)
 4. ✅ Update sprint status (DONE)
 
 ### This Week
+
 1. Create Sentry account (DevOps) - 5 min
 2. Add environment variables (DevOps) - 5 min
 3. Run E2E tests (QA) - 30 min
 4. Configure alerts (DevOps) - 30 min
 
 ### Before Production Launch
+
 1. Test error capture in staging
 2. Verify sourcemaps uploaded
 3. Confirm alerts working
@@ -435,6 +469,7 @@ VITE_APP_VERSION=1.0.0
 ## Related Stories
 
 **Epic 32.1 Stories (All Complete):**
+
 - ✅ 32-1-1: Install & Configure Sentry SDK
 - ✅ 32-1-2: Add Error Boundaries
 - ✅ 32-1-3: Configure Sourcemaps
@@ -443,11 +478,13 @@ VITE_APP_VERSION=1.0.0
 - ✅ 32-1-6: Configure Alert Rules
 
 **Dependencies:**
+
 - ✅ React 19.0.0 (compatible)
 - ✅ Vite 7.2.6 (compatible)
 - ✅ TypeScript 5.7.2 (compatible)
 
 **Blocks:**
+
 - Production launch (error monitoring is P0 requirement)
 
 ---
@@ -457,6 +494,7 @@ VITE_APP_VERSION=1.0.0
 Epic 32.1 (Error Monitoring & Observability) is **100% implementation complete**. The Pulau application has enterprise-grade error tracking, performance monitoring, and alerting infrastructure already in place.
 
 **All that remains:**
+
 1. Create Sentry account (~1 hour)
 2. Add environment variables (~5 min)
 3. Configure alerts (~30 min)

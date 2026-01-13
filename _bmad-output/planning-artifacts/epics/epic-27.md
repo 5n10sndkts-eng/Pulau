@@ -15,11 +15,12 @@ So that I can validate their tickets at check-in.
 **Then** the device camera activates for QR scanning
 **And** I can scan any booking QR code
 **And** after successful scan, I see booking details:
-  - Traveler name
-  - Experience name
-  - Time slot
-  - Guest count
-  - Check-in status
+
+- Traveler name
+- Experience name
+- Time slot
+- Guest count
+- Check-in status
 
 ---
 
@@ -34,12 +35,13 @@ So that I only admit travelers with valid reservations.
 **Given** I scan a QR code
 **When** the booking ID is decoded
 **Then** the system validates:
-  - Booking exists and is confirmed
-  - Booking is for today's date
-  - Booking is for one of my experiences
-  - Booking hasn't already been checked in
-**And** if valid, I see green "VALID" indicator with details
-**And** if invalid, I see red "INVALID" with reason
+
+- Booking exists and is confirmed
+- Booking is for today's date
+- Booking is for one of my experiences
+- Booking hasn't already been checked in
+  **And** if valid, I see green "VALID" indicator with details
+  **And** if invalid, I see red "INVALID" with reason
 
 ---
 
@@ -72,13 +74,14 @@ So that I can prepare for my guests.
 **Given** I am on my vendor operations page
 **When** I view "Today's Bookings"
 **Then** I see a list of all bookings for today's date:
-  - Time slot
-  - Traveler name
-  - Guest count
-  - Check-in status (Pending / Checked In / No Show)
-**And** I can filter by experience (if I have multiple)
-**And** I can mark no-shows after the experience time passes
-**And** total guest count is summarized at top
+
+- Time slot
+- Traveler name
+- Guest count
+- Check-in status (Pending / Checked In / No Show)
+  **And** I can filter by experience (if I have multiple)
+  **And** I can mark no-shows after the experience time passes
+  **And** total guest count is summarized at top
 
 ---
 
@@ -93,11 +96,12 @@ So that I know when to expect payment.
 **Given** I have completed bookings
 **When** I call the `vendor-payout-status` Edge Function
 **Then** it returns:
-  - Pending payouts (funds in escrow)
-  - Scheduled payouts (with expected date)
-  - Completed payouts (with Stripe transfer ID)
-  - Payout schedule settings from Stripe account
-**And** data is fetched from Stripe Connect API
-**And** response is cached for 5 minutes to reduce API calls
+
+- Pending payouts (funds in escrow)
+- Scheduled payouts (with expected date)
+- Completed payouts (with Stripe transfer ID)
+- Payout schedule settings from Stripe account
+  **And** data is fetched from Stripe Connect API
+  **And** response is cached for 5 minutes to reduce API calls
 
 ---

@@ -27,6 +27,7 @@ So that I can easily revisit and compare options.
 ## Tasks / Subtasks
 
 ### Task 1: Build SavedScreen layout component (AC: #1, #2)
+
 - [x] Create SavedScreen component with header and list container
 - [x] Add "Saved" header with count badge (e.g., "12 saved")
 - [x] Implement scrollable list layout with proper spacing
@@ -34,6 +35,7 @@ So that I can easily revisit and compare options.
 - [x] Ensure safe area insets for bottom navigation
 
 ### Task 2: Create SavedExperienceCard component (AC: #1)
+
 - [x] Design card layout: hero image, title, price, rating, saved date
 - [x] Add filled heart icon in top-right corner (integrated with Story 7.1)
 - [x] Include "Add to Trip" button with primary styling
@@ -41,6 +43,7 @@ So that I can easily revisit and compare options.
 - [x] Make entire card tappable to navigate to experience detail
 
 ### Task 3: Implement data fetching and sorting (AC: #1)
+
 - [x] Create useSavedExperiences hook to fetch from useKV
 - [x] Join saved_experiences with experiences data
 - [x] Sort by saved_at DESC (most recent first)
@@ -48,6 +51,7 @@ So that I can easily revisit and compare options.
 - [x] Add error handling for data fetch failures
 
 ### Task 4: Build empty state component (AC: #2)
+
 - [x] Create EmptyWishlist component with heart illustration SVG
 - [x] Add centered text: "Your wishlist is empty"
 - [x] Include descriptive subtext: "Save experiences to view them here"
@@ -55,6 +59,7 @@ So that I can easily revisit and compare options.
 - [x] Ensure empty state is vertically centered
 
 ### Task 5: Integrate heart icon unsave functionality (AC: #1)
+
 - [x] Connect heart icon to unsave handler from Story 7.1
 - [x] Remove card from list with fade-out animation on unsave
 - [x] Show toast notification: "Removed from wishlist"
@@ -64,6 +69,7 @@ So that I can easily revisit and compare options.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use Spark's `useKV` for saved experiences: `const [savedExperiences] = useKV<SavedExperience[]>('saved_experiences', [])`
 - Bottom navigation tab should highlight "Saved" when active
 - Card layout should match experience cards from bobjectse views for consistency
@@ -71,6 +77,7 @@ So that I can easily revisit and compare options.
 - Relative time formatting: use `date-fns` library's `formatDistanceToNow`
 
 ### Data Structure
+
 ```typescript
 interface SavedExperienceWithDetails extends SavedExperience {
   experience: {
@@ -85,6 +92,7 @@ interface SavedExperienceWithDetails extends SavedExperience {
 ```
 
 ### Layout Specifications
+
 - Card spacing: 16px vertical gap between cards
 - Card padding: 12px internal padding
 - Image aspect ratio: 16:9, height 180px
@@ -92,6 +100,7 @@ interface SavedExperienceWithDetails extends SavedExperience {
 - Empty state illustration: max width 240px
 
 ### Performance Considerations
+
 - Implement virtual scrolling if user has 50+ saved items
 - Lazy load experience images with placeholder
 - Cache joined experience data to avoid repeated lookups
@@ -118,5 +127,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

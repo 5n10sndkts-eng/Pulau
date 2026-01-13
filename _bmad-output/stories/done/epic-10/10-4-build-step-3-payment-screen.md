@@ -16,12 +16,13 @@ So that I can complete my purchase.
 **Then** I see order summary: item count, total price
 **And** saved payment methods display (if any from user profile)
 **And** "Add New Card" option with fields:
-  - Card Number (with card brand icon detection)
-  - Expiry Date (MM/YY)
-  - CVV
-  - Cardholder Name
-**And** alternative payment buttons: PayPal, Apple Pay (if available), Google Pay (if available)
-**And** "Save this card for future bookings" checkbox
+
+- Card Number (with card brand icon detection)
+- Expiry Date (MM/YY)
+- CVV
+- Cardholder Name
+  **And** alternative payment buttons: PayPal, Apple Pay (if available), Google Pay (if available)
+  **And** "Save this card for future bookings" checkbox
 
 **AC #2: Require CVV for saved cards**
 **When** I select a saved card
@@ -36,6 +37,7 @@ So that I can complete my purchase.
 ## Tasks / Subtasks
 
 ### Task 1: Create PaymentStep component layout (AC: #1)
+
 - [x] Build PaymentStep with order summary sidebar
 - [x] Display trip total, item count, "Need help?" link
 - [x] Add saved payment methods list (if any)
@@ -43,6 +45,7 @@ So that I can complete my purchase.
 - [x] Include alternative payment buttons (PayPal, Apple Pay, Google Pay)
 
 ### Task 2: Implement card input fields with formatting (AC: #3)
+
 - [x] Add Card Number input with auto-formatting (#### #### #### ####)
 - [x] Detect card brand (Visa, Mastercard, Amex) and show icon
 - [x] Add Expiry Date input with MM/YY formatting
@@ -50,6 +53,7 @@ So that I can complete my purchase.
 - [x] Add Cardholder Name input (text)
 
 ### Task 3: Add saved card selection with CVV re-entry (AC: #2)
+
 - [x] Display list of saved cards (last 4 digits, brand, expiry)
 - [x] Add radio buttons for card selection
 - [x] Show CVV re-entry field when saved card selected
@@ -57,6 +61,7 @@ So that I can complete my purchase.
 - [x] Add "Use new card" option
 
 ### Task 4: Implement card validation (AC: #3)
+
 - [x] Validate card number with Luhn algorithm
 - [x] Validate expiry date: MM/YY format, not expired
 - [x] Validate CVV: 3 digits (Visa/MC) or 4 (Amex)
@@ -64,6 +69,7 @@ So that I can complete my purchase.
 - [x] Show inline errors on invalid fields
 
 ### Task 5: Add alternative payment options (AC: #1)
+
 - [x] Create PayPal button integration
 - [x] Add Apple Pay button (if window.ApplePaySession exists)
 - [x] Add Google Pay button (if Google Pay available)
@@ -73,6 +79,7 @@ So that I can complete my purchase.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Card formatting: use `react-credit-cards` or custom formatter
 - Luhn algorithm: validate card number checksum
 - Card brand detection: check first digits (4=Visa, 5=MC, 3=Amex)
@@ -80,6 +87,7 @@ So that I can complete my purchase.
 - Validation: use Zod schema from Story 10.7
 
 ### Card Number Formatting
+
 ```typescript
 const formatCardNumber = (value: string): string => {
   const cleaned = value.replace(/\s/g, '');
@@ -87,7 +95,9 @@ const formatCardNumber = (value: string): string => {
   return chunks.join(' ').substr(0, 19); // Max 16 digits + 3 spaces
 };
 
-const detectCardBrand = (number: string): 'visa' | 'mastercard' | 'amex' | 'unknown' => {
+const detectCardBrand = (
+  number: string,
+): 'visa' | 'mastercard' | 'amex' | 'unknown' => {
   const cleaned = number.replace(/\s/g, '');
   if (/^4/.test(cleaned)) return 'visa';
   if (/^5[1-5]/.test(cleaned)) return 'mastercard';
@@ -97,6 +107,7 @@ const detectCardBrand = (number: string): 'visa' | 'mastercard' | 'amex' | 'unkn
 ```
 
 ### Luhn Algorithm Validation
+
 ```typescript
 const validateCardNumber = (cardNumber: string): boolean => {
   const cleaned = cardNumber.replace(/\s/g, '');
@@ -118,6 +129,7 @@ const validateCardNumber = (cardNumber: string): boolean => {
 ```
 
 ### Visual Specifications
+
 - Card form: centered, max-width 500px
 - Card number input: mono font, auto-spacing
 - Card brand icon: 40px width, right side of input
@@ -145,5 +157,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

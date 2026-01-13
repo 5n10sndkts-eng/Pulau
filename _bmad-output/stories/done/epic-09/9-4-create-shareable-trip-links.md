@@ -14,8 +14,9 @@ So that travel companions can see the itinerary.
 **Given** I am on the trip builder screen
 **When** I tap the share button (top right)
 **Then** a share modal opens with options:
-  - "Copy Link" - copies shareable URL to clipboard
-  - "Share via..." - opens native share sheet (mobile)
+
+- "Copy Link" - copies shareable URL to clipboard
+- "Share via..." - opens native share sheet (mobile)
 
 **AC #2: Generate shareable link with token**
 **And** shareable link format: `https://pulau.app/trip/{share_token}`
@@ -31,6 +32,7 @@ So that travel companions can see the itinerary.
 ## Tasks / Subtasks
 
 ### Task 1: Add share button to trip builder header (AC: #1)
+
 - [x] Add share icon button (Share2 from Lucide) to header
 - [x] Position button in top-right corner next to trip name
 - [x] Style with secondary/outline button styling
@@ -38,6 +40,7 @@ So that travel companions can see the itinerary.
 - [x] Ensure 44px touch target for mobile
 
 ### Task 2: Create share modal with copy and native share options (AC: #1)
+
 - [x] Build ShareTripModal component using shadcn/ui Dialog
 - [x] Add "Copy Link" button with clipboard API integration
 - [x] Add "Share via..." button triggering Web Share API
@@ -45,6 +48,7 @@ So that travel companions can see the itinerary.
 - [x] Handle Web Share API not available (desktop) gracefully
 
 ### Task 3: Generate and store share token (AC: #2)
+
 - [x] Add share_token field to Trip data model (nullable string)
 - [x] Generate UUID on first share: `crypto.randomUUID()`
 - [x] Store share_token in trip via useKV
@@ -52,6 +56,7 @@ So that travel companions can see the itinerary.
 - [x] Construct shareable URL: `${window.location.origin}/trip/${shareToken}`
 
 ### Task 4: Create read-only trip view page (AC: #3)
+
 - [x] Build SharedTripView component/route
 - [x] Parse share_token from URL path parameter
 - [x] Fetch trip data by share_token from storage
@@ -60,6 +65,7 @@ So that travel companions can see the itinerary.
 - [x] Handle invalid/expired tokens with 404 page
 
 ### Task 5: Add "Create your own trip" CTA (AC: #3)
+
 - [x] Add CTA button at bottom of shared trip view
 - [x] Button text: "Plan your own adventure"
 - [x] Navigate to home screen or trip builder on click
@@ -69,6 +75,7 @@ So that travel companions can see the itinerary.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Share token: store in trip.share_token field (add to Trip interface)
 - Clipboard API: `navigator.clipboard.writeText(url)`
 - Web Share API: `navigator.share({ title, text, url })` with fallback
@@ -76,6 +83,7 @@ So that travel companions can see the itinerary.
 - Route: add `/trip/:shareToken` route to handle shared links
 
 ### Share Modal Implementation
+
 ```typescript
 const ShareTripModal = ({ trip, isOpen, onClose }) => {
   const [shareToken, setShareToken] = useState(trip.share_token);
@@ -128,6 +136,7 @@ const ShareTripModal = ({ trip, isOpen, onClose }) => {
 ```
 
 ### Shared Trip View Route
+
 ```typescript
 // In routing setup
 <Route path="/trip/:shareToken" element={<SharedTripView />} />
@@ -155,6 +164,7 @@ const SharedTripView = () => {
 ```
 
 ### Data Structure Updates
+
 ```typescript
 interface Trip {
   // ... existing fields
@@ -164,6 +174,7 @@ interface Trip {
 ```
 
 ### Visual Specifications
+
 - Share modal: centered, max-width 400px
 - Copy/Share buttons: full width, stacked vertically, 16px gap
 - Read-only view: identical layout to trip builder, but no interactive elements
@@ -191,5 +202,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

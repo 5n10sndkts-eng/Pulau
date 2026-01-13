@@ -14,25 +14,26 @@ So that travelers can discover and book my offerings.
 **When** I click "Create New Experience"
 **Then** Supabase client is configured for database operations if needed
 **And** the experiences table schema is verified/created with columns:
-  - id (UUID, primary key)
-  - vendor_id (UUID, foreign key to vendors)
-  - title (string, max 200 chars)
-  - category (enum: water_adventures, land_explorations, culture_experiences, food_nightlife, transportation, stays)
-  - subcategory (string)
-  - destination_id (UUID, foreign key to destinations)
-  - description (text)
-  - price_amount (decimal), price_currency (string), price_per (enum)
-  - duration_hours (decimal), start_time (time)
-  - group_size_min/max (integer), difficulty (enum)
-  - languages (array), status (enum: draft, active, inactive)
-  - created_at, updated_at
-**And** related tables are created: experience_images, experience_inclusions, experience_availability
-**And** indexes are created on: vendor_id, category, destination_id, status
-**And** a new experience form loads with required fields
-**And** form validation prevents submission with incomplete data
-**And** successful creation stores experience in Supabase database
-**And** experience status is set to "DRAFT" for vendor review
-**And** RLS policies ensure vendors only access their own experiences
+
+- id (UUID, primary key)
+- vendor_id (UUID, foreign key to vendors)
+- title (string, max 200 chars)
+- category (enum: water_adventures, land_explorations, culture_experiences, food_nightlife, transportation, stays)
+- subcategory (string)
+- destination_id (UUID, foreign key to destinations)
+- description (text)
+- price_amount (decimal), price_currency (string), price_per (enum)
+- duration_hours (decimal), start_time (time)
+- group_size_min/max (integer), difficulty (enum)
+- languages (array), status (enum: draft, active, inactive)
+- created_at, updated_at
+  **And** related tables are created: experience_images, experience_inclusions, experience_availability
+  **And** indexes are created on: vendor_id, category, destination_id, status
+  **And** a new experience form loads with required fields
+  **And** form validation prevents submission with incomplete data
+  **And** successful creation stores experience in Supabase database
+  **And** experience status is set to "DRAFT" for vendor review
+  **And** RLS policies ensure vendors only access their own experiences
 
 ### Story 5.2: Build Vendor Experience Creation Form
 
@@ -45,18 +46,19 @@ So that travelers can discover and book my offering.
 **Given** I am logged in to the vendor portal
 **When** I navigate to "Add New Experience"
 **Then** I see a multi-step creation form with sections:
-  - Basic Info: Title, Category dropdown, Subcategory, Description textarea
-  - Pricing: Price amount, Currency, Per (person/vehicle/group)
-  - Details: Duration (hours), Start time, Group size (min/max), Difficulty dropdown, Languages multi-select
-  - Location: Meeting point address, Latitude, Longitude (map picker)
-  - What's Included: Add multiple inclusions (checkmark items), Add multiple exclusions (X mark items)
-**When** I fill all required fields and submit
-**Then** a new record is created in experiences table with status = "draft"
-**And** vendor_id is set to my logged-in vendor ID
-**And** created_at timestamp is set
-**And** I see success message "Experience created as draft"
-**And** I am redirected to image upload step
-**And** validation prevents submission with: empty title, invalid price, min > max group size
+
+- Basic Info: Title, Category dropdown, Subcategory, Description textarea
+- Pricing: Price amount, Currency, Per (person/vehicle/group)
+- Details: Duration (hours), Start time, Group size (min/max), Difficulty dropdown, Languages multi-select
+- Location: Meeting point address, Latitude, Longitude (map picker)
+- What's Included: Add multiple inclusions (checkmark items), Add multiple exclusions (X mark items)
+  **When** I fill all required fields and submit
+  **Then** a new record is created in experiences table with status = "draft"
+  **And** vendor_id is set to my logged-in vendor ID
+  **And** created_at timestamp is set
+  **And** I see success message "Experience created as draft"
+  **And** I am redirected to image upload step
+  **And** validation prevents submission with: empty title, invalid price, min > max group size
 
 ### Story 5.3: Implement Experience Image Upload
 
@@ -134,17 +136,18 @@ So that travelers can discover and book it.
 **Given** I have a draft experience with all required fields completed
 **When** I click "Publish Experience"
 **Then** system validates:
-  - Title, description, price, duration, group size are filled
-  - At least 3 images are uploaded
-  - At least one availability date is set
-  - Meeting point information is complete
-**When** validation passes
-**Then** experience status changes from "draft" to "active"
-**And** experience becomes visible in customer search and browse
-**And** published_at timestamp is set
-**And** I see confirmation "Experience is now live!"
-**When** validation fails
-**Then** specific missing items are highlighted
-**And** error message lists requirements: "Complete these before publishing: [list]"
+
+- Title, description, price, duration, group size are filled
+- At least 3 images are uploaded
+- At least one availability date is set
+- Meeting point information is complete
+  **When** validation passes
+  **Then** experience status changes from "draft" to "active"
+  **And** experience becomes visible in customer search and browse
+  **And** published_at timestamp is set
+  **And** I see confirmation "Experience is now live!"
+  **When** validation fails
+  **Then** specific missing items are highlighted
+  **And** error message lists requirements: "Complete these before publishing: [list]"
 
 ---

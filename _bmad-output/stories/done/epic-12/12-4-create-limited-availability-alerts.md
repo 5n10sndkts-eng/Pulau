@@ -11,36 +11,42 @@ So that I can book before they sell out.
 ## Acceptance Criteria
 
 ### AC 1: Section Display
+
 **Given** I am on the Explore screen
 **When** "Limited Availability" section loads
 **Then** I see experiences with low remaining slots
 **And** the section creates urgency
 
 ### AC 2: Limited Availability Criteria
+
 **Given** experiences are being filtered for limited availability
 **When** the selection algorithm runs
 **Then** limited = experience_availability.slots_available <= 5 for next 7 days
 **And** only experiences meeting criteria are shown
 
 ### AC 3: Card Content Display
+
 **Given** limited availability cards are displayed
 **When** I view a card
 **Then** cards display: image, title, "Only X spots left!" badge (red/coral), date, price
 **And** the urgency is visually communicated
 
 ### AC 4: Urgency Styling
+
 **Given** a limited availability card is rendered
 **When** the card styling is applied
 **Then** urgency styling includes: coral border, pulsing badge animation
 **And** the visual design creates FOMO (fear of missing out)
 
 ### AC 5: Dynamic Availability Updates
+
 **Given** availability data changes over time
 **When** availability updates (spots fill)
 **Then** section content refreshes on next load
 **And** fully booked experiences move to "Sold Out" state
 
 ### AC 6: Sold Out State
+
 **Given** an experience becomes fully booked
 **When** slots_available reaches 0
 **Then** the experience shows "Sold Out" state
@@ -49,6 +55,7 @@ So that I can book before they sell out.
 ## Tasks / Subtasks
 
 ### Task 1: Create Limited Availability Query (AC: #2)
+
 - [x] Create `useLimitedAvailability` hook in `src/hooks/useLimitedAvailability.ts`
 - [x] Query KV store for experiences with low availability (slots_available <= 5)
 - [x] Filter experiences with dates between today and today+7 days
@@ -58,6 +65,7 @@ So that I can book before they sell out.
 - [x] Add TypeScript interface for `LimitedAvailabilityExperience`
 
 ### Task 2: Build LimitedAvailabilityCard Component (AC: #3, #4)
+
 - [x] Create `LimitedAvailabilityCard` component in `src/components/explore/LimitedAvailabilityCard.tsx`
 - [x] Display experience image with proper aspect ratio
 - [x] Add "Only X spots left!" badge with Tailwind: `bg-red-500 text-white`
@@ -67,6 +75,7 @@ So that I can book before they sell out.
 - [x] Set card dimensions with Tailwind: `w-56 h-72 md:w-64 md:h-80`
 
 ### Task 3: Implement Urgency Badge with Animation (AC: #4)
+
 - [x] Create `UrgencyBadge` component in `src/components/explore/UrgencyBadge.tsx`
 - [x] Add pulsing animation using Tailwind: `animate-pulse` or custom CSS keyframes
 - [x] Display "Only X spots left!" text dynamically
@@ -75,6 +84,7 @@ So that I can book before they sell out.
 - [x] Ensure animation is smooth at 60fps
 
 ### Task 4: Add Urgency Visual Styling (AC: #4)
+
 - [x] Apply red/coral border to card container
 - [x] Add Tailwind shadow: `shadow-red-500/50 shadow-lg`
 - [x] Use urgent color palette with dark mode support
@@ -83,6 +93,7 @@ So that I can book before they sell out.
 - [x] Add aria-live="polite" for screen reader urgency announcements
 
 ### Task 5: Implement Real-Time Updates (AC: #5, #6)
+
 - [x] Create `useAvailabilityUpdates` hook to poll KV store every 5 minutes
 - [x] Update card data when slots_available changes in KV store
 - [x] Remove experiences from carousel when slots_available reaches 0
@@ -91,6 +102,7 @@ So that I can book before they sell out.
 - [x] Implement optimistic updates for better UX
 
 ### Task 6: Build Horizontal Carousel (AC: #1)
+
 - [x] Implement horizontal scroll container with Tailwind: `flex gap-4 overflow-x-auto snap-x snap-mandatory`
 - [x] Configure snap-to-point: `snap-start` on each card
 - [x] Add proper spacing: `px-4 md:px-6` for container padding
@@ -99,6 +111,7 @@ So that I can book before they sell out.
 - [x] Add left/right navigation buttons for desktop (optional)
 
 ### Task 7: Handle Empty and Sold Out States (AC: #6)
+
 - [x] Create skeleton loader using Tailwind `animate-pulse` and gray rectangles
 - [x] Handle empty state with friendly message: "All experiences have plenty of availability!"
 - [x] Show "Sold Out" badge with `bg-gray-500` when slots_available = 0
@@ -109,6 +122,7 @@ So that I can book before they sell out.
 ## Dev Notes
 
 ### Limited Availability Hook
+
 ```typescript
 // src/hooks/useLimitedAvailability.ts
 import { useKV } from '@github-spark/app';
@@ -131,15 +145,18 @@ export function useLimitedAvailability() {
     queryKey: ['limited-availability', today],
     queryFn: async () => {
       // Query KV store for experiences with low availability
-      const experiences = await kv.get<LimitedAvailabilityExperience[]>('experiences:limited');
-      
+      const experiences = await kv.get<LimitedAvailabilityExperience[]>(
+        'experiences:limited',
+      );
+
       // Filter and sort
       const filtered = experiences
-        ?.filter(exp => 
-          exp.slotsAvailable <= 5 &&
-          exp.slotsAvailable > 0 &&
-          exp.availabilityDate >= today &&
-          exp.availabilityDate <= sevenDaysLater
+        ?.filter(
+          (exp) =>
+            exp.slotsAvailable <= 5 &&
+            exp.slotsAvailable > 0 &&
+            exp.availabilityDate >= today &&
+            exp.availabilityDate <= sevenDaysLater,
         )
         .sort((a, b) => a.slotsAvailable - b.slotsAvailable)
         .slice(0, 10);
@@ -153,6 +170,7 @@ export function useLimitedAvailability() {
 ```
 
 ### Pulsing Badge Animation
+
 ```typescript
 // src/components/explore/UrgencyBadge.tsx
 import { AlertCircle } from 'lucide-react';
@@ -174,6 +192,7 @@ export function UrgencyBadge({ spotsLeft }: UrgencyBadgeProps) {
 ```
 
 ### Card Component
+
 ```typescript
 // src/components/explore/LimitedAvailabilityCard.tsx
 import { format } from 'date-fns';
@@ -188,8 +207,8 @@ export function LimitedAvailabilityCard({ experience }: LimitedAvailabilityCardP
     <div className="w-56 h-72 md:w-64 md:h-80 rounded-lg border-2 border-red-500 dark:border-red-400 shadow-lg shadow-red-500/50 overflow-hidden snap-start flex-shrink-0 hover:scale-105 transition-transform">
       {/* Image */}
       <div className="relative h-40">
-        <img 
-          src={experience.imageUrl} 
+        <img
+          src={experience.imageUrl}
           alt={experience.title}
           className="w-full h-full object-cover"
         />
@@ -197,7 +216,7 @@ export function LimitedAvailabilityCard({ experience }: LimitedAvailabilityCardP
           <UrgencyBadge spotsLeft={experience.slotsAvailable} />
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="p-4 space-y-2">
         <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2">
@@ -216,6 +235,7 @@ export function LimitedAvailabilityCard({ experience }: LimitedAvailabilityCardP
 ```
 
 ### Real-Time Updates Hook
+
 ```typescript
 // src/hooks/useAvailabilityUpdates.ts
 import { useEffect } from 'react';
@@ -229,18 +249,21 @@ export function useAvailabilityUpdates() {
 
   useEffect(() => {
     // Poll KV store for updates every 5 minutes
-    const interval = setInterval(async () => {
-      const updated = await kv.get('experiences:limited:updated');
-      if (updated) {
-        queryClient.invalidateQueries(['limited-availability']);
-        
-        // Check for sold out experiences
-        const soldOut = await kv.get<string[]>('experiences:sold-out');
-        if (soldOut && soldOut.length > 0) {
-          toast.error('An experience just sold out!');
+    const interval = setInterval(
+      async () => {
+        const updated = await kv.get('experiences:limited:updated');
+        if (updated) {
+          queryClient.invalidateQueries(['limited-availability']);
+
+          // Check for sold out experiences
+          const soldOut = await kv.get<string[]>('experiences:sold-out');
+          if (soldOut && soldOut.length > 0) {
+            toast.error('An experience just sold out!');
+          }
         }
-      }
-    }, 1000 * 60 * 5); // 5 minutes
+      },
+      1000 * 60 * 5,
+    ); // 5 minutes
 
     return () => clearInterval(interval);
   }, [kv, queryClient]);
@@ -248,6 +271,7 @@ export function useAvailabilityUpdates() {
 ```
 
 ### Horizontal Carousel Container
+
 ```typescript
 // Usage in parent component
 <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 md:px-6 scroll-smooth">
@@ -258,6 +282,7 @@ export function useAvailabilityUpdates() {
 ```
 
 ### Custom CSS for Scrollbar Hide
+
 ```css
 /* src/styles/globals.css */
 .scrollbar-hide::-webkit-scrollbar {
@@ -271,6 +296,7 @@ export function useAvailabilityUpdates() {
 ```
 
 ### Testing Considerations
+
 - Test with 0, 3, and 10+ limited experiences
 - Verify urgency styling meets WCAG contrast requirements
 - Test pulsing animation performance (60fps target)
@@ -281,17 +307,18 @@ export function useAvailabilityUpdates() {
 - Verify dark mode color contrast for red badges
 
 ### Analytics Events
+
 ```typescript
 // Track user interactions
 analytics.track('limited_availability_section_viewed', {
   experience_count: limitedExperiences.length,
-  min_slots: Math.min(...limitedExperiences.map(e => e.slotsAvailable))
+  min_slots: Math.min(...limitedExperiences.map((e) => e.slotsAvailable)),
 });
 
 analytics.track('limited_availability_card_clicked', {
   experience_id: experience.id,
   slots_remaining: experience.slotsAvailable,
-  urgency_level: experience.slotsAvailable <= 2 ? 'critical' : 'moderate'
+  urgency_level: experience.slotsAvailable <= 2 ? 'critical' : 'moderate',
 });
 ```
 
@@ -321,6 +348,7 @@ GitHub Spark AI Agent
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ Supabase queries → KV store patterns with useKV hook
 2. ✅ Database KV namespace references → KV key patterns
 3. ✅ React Native animations → CSS animations with Tailwind

@@ -11,9 +11,11 @@ So that navigation is predicKV namespace and bug-free.
 ## Acceptance Criteria
 
 ### AC1: Screen Type Definition
+
 **Given** the app uses state-based routing (no react-router)
 **When** Screen type is defined
 **Then** discriminated union covers all screens:
+
 ```typescript
 type Screen =
   | { type: 'home' }
@@ -26,10 +28,11 @@ type Screen =
   | { type: 'profile' }
   | { type: 'bookingHistory' }
   | { type: 'bookingDetail'; bookingId: string }
-  | { type: 'settings'; section: string }
+  | { type: 'settings'; section: string };
 ```
 
 ### AC2: Type-Safe Rendering
+
 **And** App.tsx switches on screen.type to render correct component
 **And** TypeScript ensures exhaustive handling
 **And** invalid screens cause compile-time error
@@ -37,6 +40,7 @@ type Screen =
 ## Tasks / Subtasks
 
 ### Task 1: Define Screen Discriminated Union Type (AC: #1)
+
 - [x] Create Screen type with all possible screen variants
 - [x] Use discriminated union pattern with 'type' property
 - [x] Add necessary parameters for each screen (IDs, steps, etc.)
@@ -44,6 +48,7 @@ type Screen =
 - [x] Document each screen variant with JSDoc comments
 
 ### Task 2: Create Navigation State Management (AC: #1)
+
 - [x] Set up global navigation state (React Context or Zustand)
 - [x] Create navigate function that accepts Screen type
 - [x] Implement navigation history stack
@@ -51,6 +56,7 @@ type Screen =
 - [x] Ensure type safety for all navigation calls
 
 ### Task 3: Implement Screen Renderer with Exhaustive Checking (AC: #2)
+
 - [x] Build switch statement in App.tsx on screen.type
 - [x] Render appropriate component for each screen type
 - [x] Add TypeScript exhaustiveness checking (never type)
@@ -58,6 +64,7 @@ type Screen =
 - [x] Test that all screen variants compile correctly
 
 ### Task 4: Create Type-Safe Navigation Helpers (AC: #2)
+
 - [x] Build navigateTo helper functions for common screens
 - [x] Add type guards for screen type checking
 - [x] Create hooks: useCurrentScreen, useNavigate
@@ -65,6 +72,7 @@ type Screen =
 - [x] Document navigation API for team
 
 ### Task 5: Test Type Safety and Error Handling (AC: #2)
+
 - [x] Verify invalid screen types cause TypeScript errors
 - [x] Test navigation with missing required parameters
 - [x] Ensure exhaustive switch handling catches all cases
@@ -74,7 +82,9 @@ type Screen =
 ## Dev Notes
 
 ### Screen Type Definition
+
 File: `src/types/navigation.ts`
+
 ```typescript
 export type Screen =
   | { type: 'home' }
@@ -93,6 +103,7 @@ export type Screen =
 ```
 
 ### Navigation Context
+
 ```typescript
 import { createContext, useContext, useState, ReactNode } from 'react';
 
@@ -140,6 +151,7 @@ export const useNavigation = () => {
 ```
 
 ### App Renderer with Exhaustive Checking
+
 ```typescript
 import { useNavigation } from './hooks/useNavigation';
 
@@ -191,32 +203,47 @@ function App() {
 ```
 
 ### Navigation Helper Functions
+
 ```typescript
-export const navigateToCategory = (navigate: (screen: Screen) => void, categoryId: string) => {
+export const navigateToCategory = (
+  navigate: (screen: Screen) => void,
+  categoryId: string,
+) => {
   navigate({ type: 'category', categoryId });
 };
 
-export const navigateToExperience = (navigate: (screen: Screen) => void, experienceId: string) => {
+export const navigateToExperience = (
+  navigate: (screen: Screen) => void,
+  experienceId: string,
+) => {
   navigate({ type: 'experience', experienceId });
 };
 
-export const navigateToCheckout = (navigate: (screen: Screen) => void, step: 1 | 2 | 3 | 4 = 1) => {
+export const navigateToCheckout = (
+  navigate: (screen: Screen) => void,
+  step: 1 | 2 | 3 | 4 = 1,
+) => {
   navigate({ type: 'checkout', step });
 };
 
 // Type guard
-export const isDetailScreen = (screen: Screen): screen is Extract<Screen, { type: 'experience' | 'bookingDetail' }> => {
+export const isDetailScreen = (
+  screen: Screen,
+): screen is Extract<Screen, { type: 'experience' | 'bookingDetail' }> => {
   return screen.type === 'experience' || screen.type === 'bookingDetail';
 };
 ```
 
 ### Usage Example
+
 ```tsx
 const CategoryCard = ({ category }: { category: Category }) => {
   const { navigate } = useNavigation();
 
   return (
-    <button onClick={() => navigate({ type: 'category', categoryId: category.id })}>
+    <button
+      onClick={() => navigate({ type: 'category', categoryId: category.id })}
+    >
       {category.name}
     </button>
   );
@@ -224,6 +251,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
 ```
 
 ### Benefits of Discriminated Union Routing
+
 - **Type Safety**: TypeScript enforces valid screen types and parameters
 - **Exhaustive Checking**: Compiler ensures all screens are handled
 - **PredicKV namespace**: No string-based routes that can break silently
@@ -231,6 +259,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
 - **No Dependencies**: No need for react-router or similar library
 
 ### Testing Type Safety
+
 ```typescript
 // ✓ Valid navigation (compiles)
 navigate({ type: 'experience', experienceId: '123' });
@@ -261,5 +290,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

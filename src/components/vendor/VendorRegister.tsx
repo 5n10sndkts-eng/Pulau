@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { Building2, ArrowLeft, CheckCircle } from 'lucide-react'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { Building2, ArrowLeft, CheckCircle } from 'lucide-react';
 
 interface VendorRegisterProps {
-  onNavigateToLogin: () => void
+  onNavigateToLogin: () => void;
 }
 
 export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
@@ -19,40 +19,40 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
     phone: '',
     password: '',
     confirmPassword: '',
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
+      toast.error('Passwords do not match');
+      return;
     }
 
     if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters')
-      return
+      toast.error('Password must be at least 8 characters');
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate registration delay
     setTimeout(() => {
       // Mock vendor registration
-      console.log('New vendor registration:', formData)
-      
-      setIsLoading(false)
-      setIsSubmitted(true)
-      toast.success('Registration received!')
-    }, 1000)
-  }
+      console.log('New vendor registration:', formData);
+
+      setIsLoading(false);
+      setIsSubmitted(true);
+      toast.success('Registration received!');
+    }, 1000);
+  };
 
   if (isSubmitted) {
     return (
@@ -62,9 +62,12 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
             <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
-            <h1 className="text-2xl font-display font-bold mb-2">Registration Received!</h1>
+            <h1 className="text-2xl font-display font-bold mb-2">
+              Registration Received!
+            </h1>
             <p className="text-muted-foreground mb-6">
-              Thank you for registering your business with Pulau. Your account is awaiting approval.
+              Thank you for registering your business with Pulau. Your account
+              is awaiting approval.
             </p>
             <div className="bg-muted p-4 rounded-lg mb-6 text-sm text-left w-full">
               <h3 className="font-semibold mb-2">What happens next?</h3>
@@ -81,7 +84,7 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
           </div>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -99,7 +102,9 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
           <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Building2 className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-display font-bold text-center">Register Your Business</h1>
+          <h1 className="text-3xl font-display font-bold text-center">
+            Register Your Business
+          </h1>
           <p className="text-muted-foreground text-center mt-2">
             Join Pulau and start offering experiences to travelers
           </p>
@@ -108,7 +113,7 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Business Information</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="businessName">Business Name *</Label>
               <Input
@@ -151,7 +156,7 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
 
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Owner Information</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="ownerFirstName">First Name *</Label>
@@ -160,7 +165,9 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
                   type="text"
                   placeholder="First name"
                   value={formData.ownerFirstName}
-                  onChange={(e) => handleChange('ownerFirstName', e.target.value)}
+                  onChange={(e) =>
+                    handleChange('ownerFirstName', e.target.value)
+                  }
                   required
                   disabled={isLoading}
                 />
@@ -173,7 +180,9 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
                   type="text"
                   placeholder="Last name"
                   value={formData.ownerLastName}
-                  onChange={(e) => handleChange('ownerLastName', e.target.value)}
+                  onChange={(e) =>
+                    handleChange('ownerLastName', e.target.value)
+                  }
                   required
                   disabled={isLoading}
                 />
@@ -183,7 +192,7 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
 
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Security</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password *</Label>
               <Input
@@ -205,7 +214,9 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
                 type="password"
                 placeholder="Re-enter password"
                 value={formData.confirmPassword}
-                onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                onChange={(e) =>
+                  handleChange('confirmPassword', e.target.value)
+                }
                 required
                 disabled={isLoading}
                 minLength={8}
@@ -223,5 +234,5 @@ export function VendorRegister({ onNavigateToLogin }: VendorRegisterProps) {
         </form>
       </Card>
     </div>
-  )
+  );
 }

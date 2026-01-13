@@ -31,6 +31,7 @@ So that I can resume where I left off.
 ## Tasks / Subtasks
 
 ### Task 1: Create checkout session data structure (AC: #1, #2)
+
 - [x] Define CheckoutSession interface with all required fields
 - [x] Include currentStep, completedSteps, form data, trip snapshot
 - [x] Add createdAt and expiresAt timestamps
@@ -38,6 +39,7 @@ So that I can resume where I left off.
 - [x] Initialize default session on checkout start
 
 ### Task 2: Implement auto-save on step changes (AC: #1)
+
 - [x] Save session data on every step navigation
 - [x] Save form data on continue button click
 - [x] Update session.currentStep when advancing
@@ -45,6 +47,7 @@ So that I can resume where I left off.
 - [x] Debounce rapid saves (100ms) to avoid excessive writes
 
 ### Task 3: Create session restoration prompt (AC: #1, #2)
+
 - [x] Check for existing session on app load
 - [x] Display "Continue your booking?" modal if session exists
 - [x] Show trip summary and last step completed
@@ -52,6 +55,7 @@ So that I can resume where I left off.
 - [x] On "Continue": restore session and navigate to last step
 
 ### Task 4: Implement session expiry check (AC: #3)
+
 - [x] Check session.expiresAt on app load
 - [x] Compare with current timestamp
 - [x] Clear session if expired (> 24 hours old)
@@ -59,6 +63,7 @@ So that I can resume where I left off.
 - [x] Remove expired session from useKV
 
 ### Task 5: Clear session on booking completion or cancellation (AC: #4)
+
 - [x] Clear session on reaching Step 4 (Confirmation)
 - [x] Clear session if user explicitly cancels checkout
 - [x] Clear session if user edits trip and abandons checkout
@@ -68,6 +73,7 @@ So that I can resume where I left off.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Session storage: Spark's `useKV<CheckoutSession>('checkout_session', null)`
 - Expiry: set expiresAt = createdAt + 24 hours
 - Restoration: check session on component mount with useEffect
@@ -75,6 +81,7 @@ So that I can resume where I left off.
 - Auto-save: debounce with lodash or custom hook
 
 ### Checkout Session Data Structure
+
 ```typescript
 interface CheckoutSession {
   currentStep: 1 | 2 | 3 | 4;
@@ -97,15 +104,19 @@ const createCheckoutSession = (trip: Trip): CheckoutSession => {
     travelerDetails: null,
     paymentMethodId: null,
     createdAt: now.toISOString(),
-    expiresAt: expiresAt.toISOString()
+    expiresAt: expiresAt.toISOString(),
   };
 };
 ```
 
 ### Session Restoration Logic
+
 ```typescript
 const useCheckoutSessionRestoration = () => {
-  const [session, setSession] = useKV<CheckoutSession>('checkout_session', null);
+  const [session, setSession] = useKV<CheckoutSession>(
+    'checkout_session',
+    null,
+  );
   const [showRestorePrompt, setShowRestorePrompt] = useState(false);
 
   useEffect(() => {
@@ -116,7 +127,7 @@ const useCheckoutSessionRestoration = () => {
       if (now > expiresAt) {
         // Session expired
         setSession(null);
-        toast.info("Your checkout session has expired");
+        toast.info('Your checkout session has expired');
       } else {
         // Session valid
         setShowRestorePrompt(true);
@@ -141,6 +152,7 @@ const useCheckoutSessionRestoration = () => {
 ```
 
 ### Auto-Save Implementation
+
 ```typescript
 import { debounce } from 'lodash';
 
@@ -153,7 +165,7 @@ const handleStepChange = (newStep: number) => {
   const updatedSession = {
     ...session,
     currentStep: newStep,
-    completedSteps: [...session.completedSteps, currentStep]
+    completedSteps: [...session.completedSteps, currentStep],
   };
   saveCheckoutSession(updatedSession);
   setCurrentStep(newStep);
@@ -161,6 +173,7 @@ const handleStepChange = (newStep: number) => {
 ```
 
 ### Session Restoration Prompt Component
+
 ```typescript
 <Dialog open={showRestorePrompt} onOpenChange={setShowRestorePrompt}>
   <DialogContent>
@@ -186,6 +199,7 @@ const handleStepChange = (newStep: number) => {
 ```
 
 ### Clear Session Scenarios
+
 - Booking completed: `setSession(null)` on Step 4 mount
 - User cancels: `setSession(null)` when "Cancel Checkout" clicked
 - Trip edited: `setSession(null)` if user modifies trip during checkout
@@ -212,5 +226,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

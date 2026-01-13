@@ -97,10 +97,12 @@ Factories used via `localStorage` mocks in component tests and interaction flows
 ## Mock Requirements
 
 ### Local Storage / Context Mock
+
 - **Requirements:** Must support `pulau_guest_trip` key format matching `Trip` type.
 - **Provider:** `TripProvider` must be wrapped in tests.
 
 ### Third-Party Mocks
+
 - `react-router-dom`: `useNavigate` mock for verifying redirection.
 - `sonner`: Toast notifications (mocked to prevent UI interfering).
 
@@ -172,6 +174,7 @@ npx playwright test tests/e2e/sticky-trip-bar.spec.ts --headed
 ### RED Phase (Complete) ✅
 
 **TEA Agent Responsibilities:**
+
 - ✅ All tests written and failing
 - ✅ Fixtures and factories created
 - ✅ Mock requirements documented
@@ -183,6 +186,7 @@ npx playwright test tests/e2e/sticky-trip-bar.spec.ts --headed
 ### GREEN Phase (Complete) ✅
 
 **DEV Agent Responsibilities:**
+
 - ✅ Implementation complete
 - ✅ All tests passing
 
@@ -191,6 +195,7 @@ npx playwright test tests/e2e/sticky-trip-bar.spec.ts --headed
 ### REFACTOR Phase (Complete) ✅
 
 **DEV Agent Responsibilities:**
+
 - ✅ Code reviewed for quality
 - ✅ Optimizations applied (re-render checks)
 - ✅ Code duplication extracted

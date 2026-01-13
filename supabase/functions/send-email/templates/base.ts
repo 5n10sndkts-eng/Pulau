@@ -166,7 +166,7 @@ export function wrapInBaseTemplate(content: string, subject: string): string {
   </table>
 </body>
 </html>
-  `.trim()
+  `.trim();
 }
 
 /**
@@ -294,4 +294,4 @@ export const components = {
       </tr>
     </table>
   `,
-}
+};

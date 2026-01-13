@@ -1,16 +1,24 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @layer base {
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
-    background-image: 
-      radial-gradient(circle at 20% 50%, oklch(0.52 0.12 215 / 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, oklch(0.70 0.18 28 / 0.02) 0%, transparent 50%);
+    background-image:
+      radial-gradient(
+        circle at 20% 50%,
+        oklch(0.52 0.12 215 / 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        oklch(0.7 0.18 28 / 0.02) 0%,
+        transparent 50%
+      );
     background-attachment: fixed;
   }
 }
@@ -27,7 +35,7 @@
     white-space: nowrap;
     border-width: 0;
   }
-  
+
   .not-sr-only {
     position: static;
     width: auto;
@@ -41,7 +49,12 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, oklch(0.52 0.12 215), oklch(0.70 0.18 28), oklch(0.52 0.12 215));
+  background: linear-gradient(
+    135deg,
+    oklch(0.52 0.12 215),
+    oklch(0.7 0.18 28),
+    oklch(0.52 0.12 215)
+  );
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -50,7 +63,8 @@
 }
 
 @keyframes gradient-shift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -68,24 +82,24 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.25 0.01 210);
 
-  --primary: oklch(0.50 0.11 215);
+  --primary: oklch(0.5 0.11 215);
   --primary-foreground: oklch(0.99 0 0);
 
   --secondary: oklch(0.96 0.02 215);
-  --secondary-foreground: oklch(0.50 0.11 215);
+  --secondary-foreground: oklch(0.5 0.11 215);
 
   --muted: oklch(0.96 0.01 215);
   --muted-foreground: oklch(0.55 0.02 215);
 
-  --accent: oklch(0.70 0.18 28);
+  --accent: oklch(0.7 0.18 28);
   --accent-foreground: oklch(0.99 0 0);
 
-  --destructive: oklch(0.60 0.22 28);
+  --destructive: oklch(0.6 0.22 28);
   --destructive-foreground: oklch(0.99 0 0);
 
   --border: oklch(0.92 0.01 215);
-  --input: oklch(0.90 0.01 215);
-  --ring: oklch(0.50 0.11 215);
+  --input: oklch(0.9 0.01 215);
+  --ring: oklch(0.5 0.11 215);
 
   --success: oklch(0.67 0.15 158);
   --warning: oklch(0.77 0.16 75);

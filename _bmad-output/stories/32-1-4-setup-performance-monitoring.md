@@ -16,18 +16,18 @@ So that I can identify and fix slow operations.
 1. **Given** Sentry performance monitoring enabled
    **When** users interact with the app
    **Then** it tracks:
-     - Page load times
-     - API request duration
-     - Database query times
-     - User interaction latency
+   - Page load times
+   - API request duration
+   - Database query times
+   - User interaction latency
 
 2. **Given** custom transactions defined
    **When** critical flows execute
    **Then** performance data captured for:
-     - Checkout flow
-     - Search/filter operations
-     - Booking creation
-     - Dashboard loading
+   - Checkout flow
+   - Search/filter operations
+   - Booking creation
+   - Dashboard loading
 
 ## Tasks / Subtasks
 
@@ -40,6 +40,7 @@ So that I can identify and fix slow operations.
 ## Dev Notes
 
 **Performance Configuration:**
+
 ```typescript
 Sentry.init({
   integrations: [
@@ -48,24 +49,25 @@ Sentry.init({
     }),
   ],
   tracesSampleRate: 0.1, // 10% of traffic
-})
+});
 ```
 
 **Custom Transactions:**
+
 ```typescript
 const transaction = Sentry.startTransaction({
   name: 'Checkout Flow',
   op: 'user-interaction',
-})
+});
 
 const span = transaction.startChild({
   op: 'stripe-payment',
   description: 'Process Stripe checkout',
-})
+});
 
-await processPayment()
-span.finish()
-transaction.finish()
+await processPayment();
+span.finish();
+transaction.finish();
 ```
 
 ## Success Metrics

@@ -11,30 +11,35 @@ So that I can have authentic local experiences.
 ## Acceptance Criteria
 
 ### AC 1: Section Display
+
 **Given** I am on the Explore screen
 **When** "Hidden Gems" section loads
 **Then** I see horizontal carousel of experiences
 **And** the section is positioned after trending section
 
 ### AC 2: Hidden Gem Identification
+
 **Given** experiences are being classified as hidden gems
 **When** the selection algorithm runs
 **Then** hidden gems identified by: rating >= 4.5 AND booking_count < 50 AND review_count >= 5
 **And** only experiences meeting all criteria are shown
 
 ### AC 3: Card Content Display
+
 **Given** hidden gem cards are displayed
 **When** I view a card
 **Then** cards display: image, title, "💎 Local Secret" badge, rating, price
 **And** the gem badge uses Golden Sand color (#F4D03F)
 
 ### AC 4: Badge Styling
+
 **Given** a hidden gem card has the Local Secret badge
 **When** the badge is rendered
 **Then** badge uses Golden Sand color (#F4D03F)
 **And** the diamond emoji or icon is prominently displayed
 
 ### AC 5: See All Navigation
+
 **Given** I am viewing the Hidden Gems section
 **When** I tap "See All"
 **Then** I navigate to filtered bobjectse showing all hidden gems
@@ -43,6 +48,7 @@ So that I can have authentic local experiences.
 ## Tasks / Subtasks
 
 ### Task 1: Create Hidden Gems Query and Hook (AC: #2)
+
 - [x] Create useHiddenGems hook
 - [x] Query experiences WHERE rating >= 4.5 AND booking_count < 50 AND review_count >= 5
 - [x] Sort by rating descending, then review_count descending
@@ -51,6 +57,7 @@ So that I can have authentic local experiences.
 - [x] Handle empty state gracefully
 
 ### Task 2: Build HiddenGemCard Component (AC: #3, #4)
+
 - [x] Create HiddenGemCard component
 - [x] Display experience image with subtle overlay
 - [x] Show title with max 2 lines
@@ -60,6 +67,7 @@ So that I can have authentic local experiences.
 - [x] Use card size similar to trending (220x280px)
 
 ### Task 3: Implement Badge Component (AC: #4)
+
 - [x] Create LocalSecretBadge component
 - [x] Use diamond emoji 💎 or custom diamond icon
 - [x] Apply Golden Sand color (#F4D03F) background
@@ -68,6 +76,7 @@ So that I can have authentic local experiences.
 - [x] Add subtle shadow for contrast
 
 ### Task 4: Build Horizontal Carousel (AC: #1)
+
 - [x] Implement FlatList with horizontal scroll
 - [x] Configure smooth snapping behavior
 - [x] Add spacing between cards (12-16px)
@@ -76,6 +85,7 @@ So that I can have authentic local experiences.
 - [x] Set proper padding for edge cards
 
 ### Task 5: Implement Card Navigation (AC: #5)
+
 - [x] Add Pressable wrapper to card
 - [x] Navigate to experience detail on tap
 - [x] Add press feedback animation
@@ -83,6 +93,7 @@ So that I can have authentic local experiences.
 - [x] Pass experience data to detail screen
 
 ### Task 6: Build "See All" Page (AC: #5)
+
 - [x] Create HiddenGemsListScreen for "See All" view
 - [x] Apply same filtering criteria as carousel
 - [x] Show all hidden gems in vertical list/grid
@@ -91,6 +102,7 @@ So that I can have authentic local experiences.
 - [x] Display count: "X Hidden Gems in Bali"
 
 ### Task 7: Add Empty and Loading States
+
 - [x] Create skeleton loader for hidden gem cards
 - [x] Show skeleton during initial load
 - [x] Handle empty state: "No hidden gems found"
@@ -100,6 +112,7 @@ So that I can have authentic local experiences.
 ## Dev Notes
 
 ### Hidden Gems Query
+
 ```typescript
 const useHiddenGems = () => {
   return useQuery({
@@ -124,6 +137,7 @@ const useHiddenGems = () => {
 ```
 
 ### Badge Styling
+
 ```typescript
 const LocalSecretBadge = () => (
   <View style={{
@@ -144,6 +158,7 @@ const LocalSecretBadge = () => (
 ```
 
 ### Card Layout
+
 - Card dimensions: 220w x 280h
 - Image height: 160px
 - Badge position: absolute, top: 12, left: 12
@@ -151,12 +166,14 @@ const LocalSecretBadge = () => (
 - Price at bottom with currency symbol
 
 ### Performance Considerations
+
 - Cache query results to reduce Spark KV store load
 - Use React.memo for HiddenGemCard
 - Optimize images with proper compression and blurhash
 - Implement lazy loading for "See All" page
 
 ### Testing Considerations
+
 - Test with 0, 5, and 12+ hidden gems
 - Verify filtering criteria works correctly
 - Test badge rendering on various backgrounds
@@ -165,6 +182,7 @@ const LocalSecretBadge = () => (
 - Test with slow network connections
 
 ### Analytics Events
+
 - Track "hidden_gems_section_viewed"
 - Track "hidden_gem_tapped" with experience_id
 - Track "hidden_gems_see_all_tapped"
@@ -190,5 +208,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

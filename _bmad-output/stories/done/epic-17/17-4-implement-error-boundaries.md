@@ -11,20 +11,24 @@ So that one bug doesn't crash everything.
 ## Acceptance Criteria
 
 ### AC1: Error Boundary Catching
+
 **Given** an unhandled JavaScript error occurs
 **When** the error boundary catches it
 **Then** friendly error UI displays instead of white screen:
-  - Illustration of confused character
-  - "Something went wrong"
-  - "Try refreshing the page" suggestion
-  - "Report Problem" link
-  - "Go Home" button
+
+- Illustration of confused character
+- "Something went wrong"
+- "Try refreshing the page" suggestion
+- "Report Problem" link
+- "Go Home" button
 
 ### AC2: Error Logging
+
 **And** error details logged to console (dev mode)
 **And** error reported to monitoring service (production)
 
 ### AC3: Error Recovery
+
 **When** user taps "Go Home"
 **Then** navigation resets to home screen
 **And** error state clears
@@ -32,6 +36,7 @@ So that one bug doesn't crash everything.
 ## Tasks / Subtasks
 
 ### Task 1: Create Error Boundary Component (AC: #1)
+
 - [x] Build React ErrorBoundary class component
 - [x] Implement componentDidCatch lifecycle method
 - [x] Store error and errorInfo in component state
@@ -39,6 +44,7 @@ So that one bug doesn't crash everything.
 - [x] Reset error state on navigation or manual reset
 
 ### Task 2: Design Error Fallback UI (AC: #1)
+
 - [x] Add confused/error illustration SVG
 - [x] Display "Something went wrong" heading
 - [x] Show user-friendly error message (not technical stack trace)
@@ -46,6 +52,7 @@ So that one bug doesn't crash everything.
 - [x] Include "Go Home" button and "Report Problem" link
 
 ### Task 3: Implement Error Logging (AC: #2)
+
 - [x] Log error to console in development mode
 - [x] Send error to monitoring service (e.g., Sentry) in production
 - [x] Include error message, stack trace, component stack
@@ -53,6 +60,7 @@ So that one bug doesn't crash everything.
 - [x] Implement rate limiting to prevent log spam
 
 ### Task 4: Add Error Recovery Actions (AC: #3)
+
 - [x] "Go Home" button resets navigation to home screen
 - [x] Clear error boundary state on action
 - [x] Optionally provide "Try Again" button to retry component
@@ -60,6 +68,7 @@ So that one bug doesn't crash everything.
 - [x] Preserve user data where possible (trip, wishlist)
 
 ### Task 5: Wrap App with Error Boundaries (AC: #1, #2, #3)
+
 - [x] Wrap entire app with root-level error boundary
 - [x] Add error boundaries around major features (Trip Builder, Checkout)
 - [x] Ensure nested boundaries prevent full app crash
@@ -69,7 +78,9 @@ So that one bug doesn't crash everything.
 ## Dev Notes
 
 ### Error Boundary Component
+
 File: `src/components/ErrorBoundary.tsx`
+
 ```tsx
 import React, { Component, ReactNode } from 'react';
 
@@ -111,11 +122,10 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || (
-        <ErrorFallback
-          error={this.state.error}
-          onReset={this.handleReset}
-        />
+      return (
+        this.props.fallback || (
+          <ErrorFallback error={this.state.error} onReset={this.handleReset} />
+        )
       );
     }
 
@@ -127,6 +137,7 @@ export default ErrorBoundary;
 ```
 
 ### Error Fallback UI
+
 ```tsx
 const ErrorFallback = ({ error, onReset }) => {
   const navigate = useNavigate();
@@ -161,7 +172,8 @@ const ErrorFallback = ({ error, onReset }) => {
         </h1>
 
         <p className="font-body text-base text-gray-600 mb-8">
-          We're sorry for the inconvenience. Try refreshing the page or returning home.
+          We're sorry for the inconvenience. Try refreshing the page or
+          returning home.
         </p>
 
         {process.env.NODE_ENV === 'development' && (
@@ -181,7 +193,10 @@ const ErrorFallback = ({ error, onReset }) => {
           <button onClick={handleGoHome} className="btn-primary">
             Go Home
           </button>
-          <button onClick={() => window.location.reload()} className="btn-secondary">
+          <button
+            onClick={() => window.location.reload()}
+            className="btn-secondary"
+          >
             Refresh Page
           </button>
         </div>
@@ -199,6 +214,7 @@ const ErrorFallback = ({ error, onReset }) => {
 ```
 
 ### Error Boundary Usage
+
 ```tsx
 // Root level
 function App() {
@@ -222,6 +238,7 @@ function TripBuilder() {
 ```
 
 ### Error Monitoring Integration (Sentry Example)
+
 ```typescript
 import * as Sentry from "@sentry/react";
 
@@ -243,6 +260,7 @@ import { ErrorBoundary } from '@sentry/react';
 ```
 
 ### Testing Error Boundaries
+
 ```tsx
 // Test component that thobjects error
 const ErrorTest = () => {
@@ -266,12 +284,14 @@ const ErrorTest = () => {
 ```
 
 ### Error Boundary Placement Strategy
+
 1. **Root level**: Catches all unhandled errors (whole app)
 2. **Route level**: Per-page boundaries prevent full app crash
 3. **Feature level**: Complex features (Checkout, Trip Builder) get own boundaries
 4. **Component level**: Reusable components with error-prone logic
 
 ### Best Practices
+
 - Don't catch errors in event handlers (use try/catch instead)
 - Error boundaries only catch errors in child components
 - Use separate boundaries for critical vs. non-critical features
@@ -279,6 +299,7 @@ const ErrorTest = () => {
 - Log errors but show user-friendly messages
 
 ### Accessibility
+
 - Error message is announced to screen readers (role="alert")
 - Buttons have clear labels and keyboard accessibility
 - Focus management: Auto-focus on primary action button
@@ -303,5 +324,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

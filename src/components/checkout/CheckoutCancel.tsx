@@ -7,19 +7,25 @@
  * Provides options to retry or return to trip planning.
  */
 
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { XCircle, ArrowLeft, RefreshCw, HelpCircle, ShoppingCart } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  XCircle,
+  ArrowLeft,
+  RefreshCw,
+  HelpCircle,
+  ShoppingCart,
+} from 'lucide-react';
 
 // ================================================
 // TYPES
 // ================================================
 
 interface CheckoutCancelProps {
-  onRetryCheckout: () => void
-  onReturnToTrip: () => void
-  onNavigateHome: () => void
+  onRetryCheckout: () => void;
+  onReturnToTrip: () => void;
+  onNavigateHome: () => void;
 }
 
 // ================================================
@@ -37,9 +43,12 @@ export function CheckoutCancel({
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
           <XCircle className="h-10 w-10 text-muted-foreground" />
         </div>
-        <h1 className="font-display text-2xl font-bold mb-2">Payment Cancelled</h1>
+        <h1 className="font-display text-2xl font-bold mb-2">
+          Payment Cancelled
+        </h1>
         <p className="text-muted-foreground mb-6">
-          Your payment was not completed. Don't worry - no charges were made and your cart is still saved.
+          Your payment was not completed. Don't worry - no charges were made and
+          your cart is still saved.
         </p>
 
         <Alert className="mb-6 text-left">
@@ -73,11 +82,14 @@ export function CheckoutCancel({
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
           Having trouble? Contact us at{' '}
-          <a href="mailto:support@pulau.travel" className="text-primary underline">
+          <a
+            href="mailto:support@pulau.travel"
+            className="text-primary underline"
+          >
             support@pulau.travel
           </a>
         </p>
       </div>
     </div>
-  )
+  );
 }

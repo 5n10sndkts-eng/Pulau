@@ -1,66 +1,70 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { toast } from 'sonner'
-import type { Conflict } from '@/lib/conflictDetection'
-import type { TripItem, Experience } from '@/lib/types'
-import { parseTimeToMinutes, minutesToTime, parseDuration } from '@/lib/conflictDetection'
+} from '@/components/ui/sheet';
+import { toast } from 'sonner';
+import type { Conflict } from '@/lib/conflictDetection';
+import type { TripItem, Experience } from '@/lib/types';
+import {
+  parseTimeToMinutes,
+  minutesToTime,
+  parseDuration,
+} from '@/lib/conflictDetection';
 
 interface ConflictResolutionSheetProps {
-  isOpen: boolean
-  onClose: () => void
-  conflict: Conflict | null
-  items: TripItem[]
-  getExperience: (id: string) => Experience | undefined
-  onResolve: (itemId: string, newTime: string) => void
-  onRemove: (itemId: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  conflict: Conflict | null;
+  items: TripItem[];
+  getExperience: (id: string) => Experience | undefined;
+  onResolve: (itemId: string, newTime: string) => void;
+  onRemove: (itemId: string) => void;
 }
 
 const findNextAvailableSlot = (
   dayItems: TripItem[],
   getExperience: (id: string) => Experience | undefined,
   requiredDuration: number,
-  excludeItemId: string
+  excludeItemId: string,
 ): string | null => {
-  const slots: { start: number; end: number }[] = []
-  
-  dayItems.forEach(item => {
-    if (item.experienceId === excludeItemId || !item.time) return
-    const exp = getExperience(item.experienceId)
-    if (!exp) return
-    
-    const duration = parseDuration(exp.duration)
-    const start = parseTimeToMinutes(item.time)
-    const end = start + Math.round(duration * 60)
-    slots.push({ start, end })
-  })
-  
-  slots.sort((a, b) => a.start - b.start)
-  
-  const dayStart = 6 * 60
-  const dayEnd = 23 * 60
-  
-  let currentTime = dayStart
-  
+  const slots: { start: number; end: number }[] = [];
+
+  dayItems.forEach((item) => {
+    if (item.experienceId === excludeItemId || !item.time) return;
+    const exp = getExperience(item.experienceId);
+    if (!exp) return;
+
+    const duration = parseDuration(exp.duration);
+    const start = parseTimeToMinutes(item.time);
+    const end = start + Math.round(duration * 60);
+    slots.push({ start, end });
+  });
+
+  slots.sort((a, b) => a.start - b.start);
+
+  const dayStart = 6 * 60;
+  const dayEnd = 23 * 60;
+
+  let currentTime = dayStart;
+
   for (const slot of slots) {
-    const gap = slot.start - currentTime
+    const gap = slot.start - currentTime;
     if (gap >= Math.round(requiredDuration * 60)) {
-      return minutesToTime(currentTime)
+      return minutesToTime(currentTime);
     }
-    currentTime = Math.max(currentTime, slot.end)
+    currentTime = Math.max(currentTime, slot.end);
   }
-  
+
   if (dayEnd - currentTime >= Math.round(requiredDuration * 60)) {
-    return minutesToTime(currentTime)
+    return minutesToTime(currentTime);
   }
-  
-  return null
-}
+
+  return null;
+};
 
 export function ConflictResolutionSheet({
   isOpen,
@@ -71,39 +75,49 @@ export function ConflictResolutionSheet({
   onResolve,
   onRemove,
 }: ConflictResolutionSheetProps) {
-  if (!conflict) return null
+  if (!conflict) return null;
 
-  const itemAId = conflict.itemId1
-  const itemBId = conflict.itemId2
-  const itemA = items.find(i => i.experienceId === itemAId)
-  const itemB = items.find(i => i.experienceId === itemBId)
-  const expA = getExperience(itemAId)
-  const expB = getExperience(itemBId)
+  const itemAId = conflict.itemId1;
+  const itemBId = conflict.itemId2;
+  const itemA = items.find((i) => i.experienceId === itemAId);
+  const itemB = items.find((i) => i.experienceId === itemBId);
+  const expA = getExperience(itemAId);
+  const expB = getExperience(itemBId);
 
-  if (!itemA || !itemB || !expA || !expB) return null
+  if (!itemA || !itemB || !expA || !expB) return null;
 
-  const dayItems = items.filter(i => i.date === conflict.date)
-  const durationA = parseDuration(expA.duration)
-  const durationB = parseDuration(expB.duration)
+  const dayItems = items.filter((i) => i.date === conflict.date);
+  const durationA = parseDuration(expA.duration);
+  const durationB = parseDuration(expB.duration);
 
-  const nextSlotA = findNextAvailableSlot(dayItems, getExperience, durationA, itemAId)
-  const nextSlotB = findNextAvailableSlot(dayItems, getExperience, durationB, itemBId)
+  const nextSlotA = findNextAvailableSlot(
+    dayItems,
+    getExperience,
+    durationA,
+    itemAId,
+  );
+  const nextSlotB = findNextAvailableSlot(
+    dayItems,
+    getExperience,
+    durationB,
+    itemBId,
+  );
 
   const handleResolve = (itemId: string, newTime: string | null) => {
     if (newTime) {
-      onResolve(itemId, newTime)
-      toast.success('Conflict resolved')
+      onResolve(itemId, newTime);
+      toast.success('Conflict resolved');
     } else {
-      toast.error('No available time slot found')
+      toast.error('No available time slot found');
     }
-    onClose()
-  }
+    onClose();
+  };
 
   const handleRemove = (itemId: string) => {
-    onRemove(itemId)
-    toast.success('Item removed from trip')
-    onClose()
-  }
+    onRemove(itemId);
+    toast.success('Item removed from trip');
+    onClose();
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -111,7 +125,8 @@ export function ConflictResolutionSheet({
         <SheetHeader>
           <SheetTitle>Resolve Schedule Conflict</SheetTitle>
           <SheetDescription>
-            These activities overlap by {conflict.overlapMinutes} minute{conflict.overlapMinutes !== 1 ? 's' : ''}
+            These activities overlap by {conflict.overlapMinutes} minute
+            {conflict.overlapMinutes !== 1 ? 's' : ''}
           </SheetDescription>
         </SheetHeader>
 
@@ -132,7 +147,7 @@ export function ConflictResolutionSheet({
 
           <div className="space-y-2 pt-4">
             <p className="text-sm font-medium">Resolution options:</p>
-            
+
             {nextSlotA && (
               <Button
                 variant="outline"
@@ -176,5 +191,5 @@ export function ConflictResolutionSheet({
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Calendar, Users, DollarSign, Package } from 'lucide-react'
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Calendar, Users, DollarSign, Package } from 'lucide-react';
 
 interface VendorBookingsProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
 export function VendorBookings({ onBack }: VendorBookingsProps) {
@@ -46,20 +46,20 @@ export function VendorBookings({ onBack }: VendorBookingsProps) {
       status: 'completed' as const,
       bookedAt: '2025-12-28',
     },
-  ]
+  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-green-100 text-green-800'
+        return 'bg-green-100 text-green-800';
       case 'completed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-blue-100 text-blue-800';
       case 'cancelled':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -90,7 +90,9 @@ export function VendorBookings({ onBack }: VendorBookingsProps) {
               <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
                 <Package className="h-10 w-10 text-primary" />
               </div>
-              <h2 className="font-display text-2xl font-bold">No bookings yet</h2>
+              <h2 className="font-display text-2xl font-bold">
+                No bookings yet
+              </h2>
               <p className="text-muted-foreground">
                 Bookings from travelers will appear here
               </p>
@@ -99,7 +101,10 @@ export function VendorBookings({ onBack }: VendorBookingsProps) {
         ) : (
           <div className="space-y-4">
             {mockBookings.map((booking) => (
-              <Card key={booking.id} className="p-6 hover:shadow-lg transition-shadow">
+              <Card
+                key={booking.id}
+                className="p-6 hover:shadow-lg transition-shadow"
+              >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex-1 space-y-3">
                     <div className="flex items-start justify-between">
@@ -126,20 +131,27 @@ export function VendorBookings({ onBack }: VendorBookingsProps) {
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <p className="font-medium">
-                            {new Date(booking.date).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
+                            {new Date(booking.date).toLocaleDateString(
+                              'en-US',
+                              {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              },
+                            )}
                           </p>
-                          <p className="text-xs text-muted-foreground">Experience date</p>
+                          <p className="text-xs text-muted-foreground">
+                            Experience date
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <p className="font-medium">{booking.guests} guests</p>
-                          <p className="text-xs text-muted-foreground">Party size</p>
+                          <p className="text-xs text-muted-foreground">
+                            Party size
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -153,22 +165,35 @@ export function VendorBookings({ onBack }: VendorBookingsProps) {
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <p className="font-medium">
-                            {new Date(booking.bookedAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                            })}
+                            {new Date(booking.bookedAt).toLocaleDateString(
+                              'en-US',
+                              {
+                                month: 'short',
+                                day: 'numeric',
+                              },
+                            )}
                           </p>
-                          <p className="text-xs text-muted-foreground">Booked</p>
+                          <p className="text-xs text-muted-foreground">
+                            Booked
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex md:flex-col gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 md:flex-none">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 md:flex-none"
+                    >
                       View Details
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1 md:flex-none">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 md:flex-none"
+                    >
                       Contact Guest
                     </Button>
                   </div>
@@ -179,5 +204,5 @@ export function VendorBookings({ onBack }: VendorBookingsProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

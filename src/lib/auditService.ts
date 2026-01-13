@@ -1,15 +1,16 @@
 /**
  * Audit Service Module
  * Story: 28.5 - Create Audit Service Module
- * 
+ *
  * Centralized audit logging for compliance and tracking
  */
 
-import { supabase } from './supabase'
-import type { Database } from './database.types'
+import { supabase } from './supabase';
+import type { Database } from './database.types';
 
-export type AuditLog = Database['public']['Tables']['audit_logs']['Row']
-export type AuditLogInsert = Database['public']['Tables']['audit_logs']['Insert']
+export type AuditLog = Database['public']['Tables']['audit_logs']['Row'];
+export type AuditLogInsert =
+  Database['public']['Tables']['audit_logs']['Insert'];
 
 export type AuditEventType =
   | 'booking.created'
@@ -23,18 +24,18 @@ export type AuditEventType =
   | 'payment.succeeded'
   | 'payment.failed'
   | 'vendor.onboarded'
-  | 'user.created'
+  | 'user.created';
 
-export type ActorType = 'user' | 'vendor' | 'system' | 'stripe'
+export type ActorType = 'user' | 'vendor' | 'system' | 'stripe';
 
 export interface CreateAuditEntryInput {
-  eventType: AuditEventType
-  entityType: string
-  entityId: string
-  actorId?: string
-  actorType?: ActorType
-  metadata?: Record<string, any>
-  stripeEventId?: string
+  eventType: AuditEventType;
+  entityType: string;
+  entityId: string;
+  actorId?: string;
+  actorType?: ActorType;
+  metadata?: Record<string, any>;
+  stripeEventId?: string;
 }
 
 /**
@@ -56,65 +57,78 @@ const SENSITIVE_KEYS = [
   'social_security',
   'bank_account',
   'routing_number',
-]
+];
 
 /**
  * Redact sensitive data from metadata before storing in audit logs
  */
-function redactSensitiveData(metadata: Record<string, any>): Record<string, any> {
-  const redacted = { ...metadata }
+function redactSensitiveData(
+  metadata: Record<string, any>,
+): Record<string, any> {
+  const redacted = { ...metadata };
 
   for (const key of Object.keys(redacted)) {
-    const lowerKey = key.toLowerCase()
+    const lowerKey = key.toLowerCase();
     // Check if key matches any sensitive pattern
-    if (SENSITIVE_KEYS.some(sensitive => lowerKey.includes(sensitive.toLowerCase()))) {
-      redacted[key] = '[REDACTED]'
+    if (
+      SENSITIVE_KEYS.some((sensitive) =>
+        lowerKey.includes(sensitive.toLowerCase()),
+      )
+    ) {
+      redacted[key] = '[REDACTED]';
     }
     // Recursively redact nested objects
-    if (typeof redacted[key] === 'object' && redacted[key] !== null && !Array.isArray(redacted[key])) {
-      redacted[key] = redactSensitiveData(redacted[key])
+    if (
+      typeof redacted[key] === 'object' &&
+      redacted[key] !== null &&
+      !Array.isArray(redacted[key])
+    ) {
+      redacted[key] = redactSensitiveData(redacted[key]);
     }
   }
 
-  return redacted
+  return redacted;
 }
 
 /**
  * Create audit log entry
  */
-export async function createAuditEntry(input: CreateAuditEntryInput): Promise<{ success: boolean; error?: string }> {
+export async function createAuditEntry(
+  input: CreateAuditEntryInput,
+): Promise<{ success: boolean; error?: string }> {
   try {
-    const { data: session } = await supabase.auth.getSession()
+    const { data: session } = await supabase.auth.getSession();
 
     // Resolve actor details so actor_type is always present for the audit record
-    const sessionActorId = session?.session?.user?.id ?? null
-    const actorId = input.actorId ?? sessionActorId
-    const actorType: ActorType = input.actorType ?? (actorId ? 'user' : 'system')
+    const sessionActorId = session?.session?.user?.id ?? null;
+    const actorId = input.actorId ?? sessionActorId;
+    const actorType: ActorType =
+      input.actorType ?? (actorId ? 'user' : 'system');
 
     // Redact sensitive data from metadata before storing
-    const safeMetadata = input.metadata ? redactSensitiveData(input.metadata) : {}
+    const safeMetadata = input.metadata
+      ? redactSensitiveData(input.metadata)
+      : {};
 
-    const { error } = await supabase
-      .from('audit_logs')
-      .insert({
-        event_type: input.eventType,
-        entity_type: input.entityType,
-        entity_id: input.entityId,
-        actor_id: actorId,
-        actor_type: actorType,
-        metadata: safeMetadata,
-        stripe_event_id: input.stripeEventId || null
-      })
+    const { error } = await supabase.from('audit_logs').insert({
+      event_type: input.eventType,
+      entity_type: input.entityType,
+      entity_id: input.entityId,
+      actor_id: actorId,
+      actor_type: actorType,
+      metadata: safeMetadata,
+      stripe_event_id: input.stripeEventId || null,
+    });
 
     if (error) {
-      console.error('Audit log error:', error)
-      return { success: false, error: error.message }
+      console.error('Audit log error:', error);
+      return { success: false, error: error.message };
     }
 
-    return { success: true }
+    return { success: true };
   } catch (err) {
-    console.error('Audit log exception:', err)
-    return { success: false, error: 'Failed to create audit log' }
+    console.error('Audit log exception:', err);
+    return { success: false, error: 'Failed to create audit log' };
   }
 }
 
@@ -124,15 +138,17 @@ export async function createAuditEntry(input: CreateAuditEntryInput): Promise<{ 
 export async function getAuditLogs(entityType: string, entityId: string) {
   const { data, error } = await supabase
     .from('audit_logs')
-    .select(`
+    .select(
+      `
       *,
       actor:profiles!actor_id(id, full_name, email)
-    `)
+    `,
+    )
     .eq('entity_type', entityType)
     .eq('entity_id', entityId)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
-  return { data, error: error?.message }
+  return { data, error: error?.message };
 }
 
 /**
@@ -148,10 +164,10 @@ export async function getAuditLogsByDateRange(
   endDate: string,
   entityType?: string,
   page: number = 0,
-  pageSize: number = 100
+  pageSize: number = 100,
 ) {
-  const from = page * pageSize
-  const to = from + pageSize - 1
+  const from = page * pageSize;
+  const to = from + pageSize - 1;
 
   let query = supabase
     .from('audit_logs')
@@ -159,13 +175,13 @@ export async function getAuditLogsByDateRange(
     .gte('created_at', startDate)
     .lte('created_at', endDate)
     .order('created_at', { ascending: false })
-    .range(from, to)
+    .range(from, to);
 
   if (entityType) {
-    query = query.eq('entity_type', entityType)
+    query = query.eq('entity_type', entityType);
   }
 
-  const { data, error, count } = await query
+  const { data, error, count } = await query;
 
   return {
     data,
@@ -175,7 +191,7 @@ export async function getAuditLogsByDateRange(
       pageSize,
       totalCount: count || 0,
       totalPages: count ? Math.ceil(count / pageSize) : 0,
-      hasMore: count ? from + pageSize < count : false
-    }
-  }
+      hasMore: count ? from + pageSize < count : false,
+    },
+  };
 }

@@ -11,15 +11,18 @@ So that the app feels responsive and premium.
 ## Acceptance Criteria
 
 ### AC1: Animation Configuration
+
 **Given** Framer Motion is configured
 **When** animations trigger
 **Then** animations use spring physics (not linear timing):
-  - Quick Add fly-to-trip: 150ms ease-out
-  - Heart pop: 200ms bounce
-  - Page transitions: 300ms ease-in-out (slide)
-  - Success confetti: 500ms
+
+- Quick Add fly-to-trip: 150ms ease-out
+- Heart pop: 200ms bounce
+- Page transitions: 300ms ease-in-out (slide)
+- Success confetti: 500ms
 
 ### AC2: Performance and Accessibility
+
 **And** all animations run at 60fps
 **And** AnimatePresence wraps conditional elements for exit animations
 **When** user has reduced-motion preference
@@ -28,6 +31,7 @@ So that the app feels responsive and premium.
 ## Tasks / Subtasks
 
 ### Task 1: Install and Configure Framer Motion (AC: #1)
+
 - [x] Install framer-motion package (npm install framer-motion)
 - [x] Create animation configuration file with spring presets
 - [x] Define easing curves for different animation types
@@ -35,6 +39,7 @@ So that the app feels responsive and premium.
 - [x] Document animation patterns for team reference
 
 ### Task 2: Implement Quick Add Fly-to-Trip Animation (AC: #1)
+
 - [x] Create motion component for experience card
 - [x] Implement fly-to-cart animation on "Add to Trip" tap
 - [x] Animate card from current position to trip builder icon
@@ -42,6 +47,7 @@ So that the app feels responsive and premium.
 - [x] Shrink and fade card during flight
 
 ### Task 3: Implement Heart Pop Animation (AC: #1)
+
 - [x] Create animated heart icon component
 - [x] On tap, trigger scale and bounce animation
 - [x] Use spring physics with bounce effect (200ms)
@@ -49,6 +55,7 @@ So that the app feels responsive and premium.
 - [x] Ensure animation feels snappy and responsive
 
 ### Task 4: Implement Page Transitions (AC: #1)
+
 - [x] Wrap page components with AnimatePresence
 - [x] Add slide-in/slide-out animations for page changes
 - [x] Use 300ms ease-in-out timing
@@ -56,6 +63,7 @@ So that the app feels responsive and premium.
 - [x] Ensure previous page exits before new page enters
 
 ### Task 5: Implement Success Confetti Animation (AC: #1)
+
 - [x] Create confetti particle system using Framer Motion
 - [x] Trigger on successful booking completion
 - [x] Animate particles with stagger and randomness
@@ -63,6 +71,7 @@ So that the app feels responsive and premium.
 - [x] Ensure confetti doesn't block UI
 
 ### Task 6: Optimize Performance (AC: #2)
+
 - [x] Use `will-change` CSS property for animated elements
 - [x] Ensure animations use GPU-accelerated properties (transform, opacity)
 - [x] Monitor frame rate during animations (target 60fps)
@@ -70,6 +79,7 @@ So that the app feels responsive and premium.
 - [x] Test on low-end devices to ensure smooth performance
 
 ### Task 7: Implement Reduced Motion Support (AC: #2)
+
 - [x] Detect prefers-reduced-motion media query
 - [x] Create hook: useReducedMotion()
 - [x] Conditionally disable animations when preference detected
@@ -79,12 +89,15 @@ So that the app feels responsive and premium.
 ## Dev Notes
 
 ### Framer Motion Installation
+
 ```bash
 npm install framer-motion
 ```
 
 ### Animation Configuration
+
 File: `src/lib/animations.ts`
+
 ```typescript
 export const springConfig = {
   quickAdd: {
@@ -113,6 +126,7 @@ export const springConfig = {
 ```
 
 ### Quick Add Animation
+
 ```tsx
 import { motion } from 'framer-motion';
 
@@ -121,18 +135,24 @@ const ExperienceCard = ({ onAddToTrip }) => {
 
   return (
     <motion.div
-      animate={isFlying ? {
-        x: targetPosition.x,
-        y: targetPosition.y,
-        scale: 0.2,
-        opacity: 0,
-      } : {}}
+      animate={
+        isFlying
+          ? {
+              x: targetPosition.x,
+              y: targetPosition.y,
+              scale: 0.2,
+              opacity: 0,
+            }
+          : {}
+      }
       transition={{ duration: 0.15, ease: 'easeOut' }}
     >
-      <button onClick={() => {
-        setIsFlying(true);
-        setTimeout(() => onAddToTrip(), 150);
-      }}>
+      <button
+        onClick={() => {
+          setIsFlying(true);
+          setTimeout(() => onAddToTrip(), 150);
+        }}
+      >
         Add to Trip
       </button>
     </motion.div>
@@ -141,6 +161,7 @@ const ExperienceCard = ({ onAddToTrip }) => {
 ```
 
 ### Heart Pop Animation
+
 ```tsx
 const HeartButton = ({ isLiked, onToggle }) => {
   return (
@@ -163,6 +184,7 @@ const HeartButton = ({ isLiked, onToggle }) => {
 ```
 
 ### Page Transitions
+
 ```tsx
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -191,6 +213,7 @@ const App = () => {
 ```
 
 ### Confetti Animation
+
 ```tsx
 const Confetti = () => {
   const particles = Array.from({ length: 50 });
@@ -226,6 +249,7 @@ const Confetti = () => {
 ```
 
 ### Reduced Motion Hook
+
 ```typescript
 import { useEffect, useState } from 'react';
 
@@ -259,12 +283,14 @@ const Component = () => {
 ```
 
 ### Performance Optimization
+
 - Animate only `transform` and `opacity` (GPU-accelerated)
 - Avoid: `width`, `height`, `top`, `left`, `margin` (cause reflow)
 - Use `layoutId` for shared element transitions
 - Add `will-change: transform` CSS for frequently animated elements
 
 ### Accessibility
+
 - Respect `prefers-reduced-motion` system preference
 - Provide instant transitions when animations disabled
 - Ensure critical actions work without animations
@@ -290,5 +316,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

@@ -16,27 +16,27 @@ So that I can respond quickly to production issues.
 1. **Given** alert rules configured in Sentry
    **When** errors exceed thresholds
    **Then** notifications sent via:
-     - Email
-     - Slack
-     - SMS (for critical P0 alerts)
+   - Email
+   - Slack
+   - SMS (for critical P0 alerts)
 
 2. **Given** different severity levels
    **When** setting up alerts
    **Then** rules cover:
-     - Error spike (> 10/min)
-     - New error types
-     - Payment failures
-     - Database connection errors
-     - High error rate (> 1%)
+   - Error spike (> 10/min)
+   - New error types
+   - Payment failures
+   - Database connection errors
+   - High error rate (> 1%)
 
 3. **Given** alert is triggered
    **When** notification received
    **Then** it includes:
-     - Error description
-     - Frequency/count
-     - Link to Sentry issue
-     - Affected users count
-     - Suggested fix (if known)
+   - Error description
+   - Frequency/count
+   - Link to Sentry issue
+   - Affected users count
+   - Suggested fix (if known)
 
 ## Tasks / Subtasks
 
@@ -77,12 +77,14 @@ So that I can respond quickly to production issues.
    - Severity: High
 
 **Slack Integration:**
+
 1. Go to Sentry → Settings → Integrations
 2. Add Slack workspace
 3. Configure channel: #pulau-alerts
 4. Set notification preferences
 
 **Alert Configuration:**
+
 ```yaml
 # Example alert rule (configured in Sentry UI)
 name: Payment Error Spike

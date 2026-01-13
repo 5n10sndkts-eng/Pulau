@@ -1,107 +1,111 @@
 /**
  * PWA Install Prompt Component
  * Story: 26.5 - PWA Installation and Offline Indicator
- * 
+ *
  * Shows install prompt for PWA with offline indicator
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { X, Download, WifiOff } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useOnlineStatus } from '@/hooks/useOnlineStatus'
+import { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { X, Download, WifiOff } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
 export function PWAInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-  const [showPrompt, setShowPrompt] = useState(false)
-  const [isInstalled, setIsInstalled] = useState(false)
-  const isOnline = useOnlineStatus()
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const isOnline = useOnlineStatus();
 
   const dismissedRecently = useCallback(() => {
-    const dismissed = localStorage.getItem('pwa-prompt-dismissed')
-    if (!dismissed) return false
-    const dismissedTime = parseInt(dismissed, 10)
-    const sevenDays = 7 * 24 * 60 * 60 * 1000
-    return Date.now() - dismissedTime < sevenDays
-  }, [])
+    const dismissed = localStorage.getItem('pwa-prompt-dismissed');
+    if (!dismissed) return false;
+    const dismissedTime = parseInt(dismissed, 10);
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+    return Date.now() - dismissedTime < sevenDays;
+  }, []);
 
   useEffect(() => {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true)
-      return
+      setIsInstalled(true);
+      return;
     }
 
     // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
-      if (dismissedRecently()) return
+      if (dismissedRecently()) return;
 
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-      
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+
       // Show prompt after a delay (don't be too pushy)
       setTimeout(() => {
         if (!dismissedRecently()) {
-          setShowPrompt(true)
+          setShowPrompt(true);
         }
-      }, 5000)
-    }
+      }, 5000);
+    };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     // Check if app was installed
     window.addEventListener('appinstalled', () => {
-      setIsInstalled(true)
-      setShowPrompt(false)
-    })
+      setIsInstalled(true);
+      setShowPrompt(false);
+    });
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    }
-  }, [])
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt,
+      );
+    };
+  }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return
+    if (!deferredPrompt) return;
 
     // Show the install prompt
-    await deferredPrompt.prompt()
+    await deferredPrompt.prompt();
 
     // Wait for the user's response
-    const { outcome } = await deferredPrompt.userChoice
-    
+    const { outcome } = await deferredPrompt.userChoice;
+
     if (outcome === 'accepted') {
-      console.log('PWA install accepted')
+      console.log('PWA install accepted');
     } else {
-      console.log('PWA install dismissed')
+      console.log('PWA install dismissed');
     }
 
     // Clear the prompt
-    setDeferredPrompt(null)
-    setShowPrompt(false)
-  }
+    setDeferredPrompt(null);
+    setShowPrompt(false);
+  };
 
   const handleDismiss = () => {
-    setShowPrompt(false)
-    
+    setShowPrompt(false);
+
     // Don't show again for 7 days
-    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString())
-  }
+    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+  };
 
   // Check if dismissed recently
   useEffect(() => {
     if (dismissedRecently()) {
-      setShowPrompt(false)
+      setShowPrompt(false);
     }
-  }, [dismissedRecently])
+  }, [dismissedRecently]);
 
   if (isInstalled || !deferredPrompt) {
-    return null
+    return null;
   }
 
   return (
@@ -143,18 +147,14 @@ export function PWAInstallPrompt() {
                     Access your tickets offline and get a faster experience
                   </p>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       onClick={handleInstallClick}
                       className="flex-1"
                     >
                       Install
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={handleDismiss}
-                    >
+                    <Button size="sm" variant="outline" onClick={handleDismiss}>
                       Not Now
                     </Button>
                   </div>
@@ -171,5 +171,5 @@ export function PWAInstallPrompt() {
         )}
       </AnimatePresence>
     </>
-  )
+  );
 }

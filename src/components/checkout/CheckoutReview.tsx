@@ -8,18 +8,18 @@
  * with real-time availability.
  */
 
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Trip, TripItem, Experience } from '@/lib/types'
-import { experienceService } from '@/lib/experienceService'
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
-import { formatPrice, formatDate, calculateTripTotal } from '@/lib/helpers'
-import { slotService, ExperienceSlot } from '@/lib/slotService'
-import { toast } from 'sonner'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Trip, TripItem, Experience } from '@/lib/types';
+import { experienceService } from '@/lib/experienceService';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { formatPrice, formatDate, calculateTripTotal } from '@/lib/helpers';
+import { slotService, ExperienceSlot } from '@/lib/slotService';
+import { toast } from 'sonner';
 import {
   ArrowLeft,
   AlertCircle,
@@ -30,51 +30,51 @@ import {
   Users,
   Loader2,
   AlertTriangle,
-} from 'lucide-react'
+} from 'lucide-react';
 
 // ================================================
 // TYPES
 // ================================================
 
 interface CheckoutReviewProps {
-  tripId: string
-  trip: Trip
-  onBack: () => void
-  onProceedToPayment: (sessionUrl: string) => void
-  onTripUpdate: (updatedTrip: Trip) => void
+  tripId: string;
+  trip: Trip;
+  onBack: () => void;
+  onProceedToPayment: (sessionUrl: string) => void;
+  onTripUpdate: (updatedTrip: Trip) => void;
 }
 
 interface CheckoutItemCardProps {
-  item: TripItem
-  experience: Experience
-  slotAvailability?: ExperienceSlot | null
-  onRemove: () => void
-  onGuestChange: (newCount: number) => void
-  isUpdating: boolean
+  item: TripItem;
+  experience: Experience;
+  slotAvailability?: ExperienceSlot | null;
+  onRemove: () => void;
+  onGuestChange: (newCount: number) => void;
+  isUpdating: boolean;
 }
 
 interface PriceBreakdownProps {
-  subtotal: number
-  serviceFee: number
-  total: number
-  itemCount: number
+  subtotal: number;
+  serviceFee: number;
+  total: number;
+  itemCount: number;
 }
 
 interface CheckoutResponse {
-  success: boolean
-  sessionUrl?: string
-  sessionId?: string
-  error?: string
-  errorCode?: string
+  success: boolean;
+  sessionUrl?: string;
+  sessionId?: string;
+  error?: string;
+  errorCode?: string;
 }
 
 // ================================================
 // CONSTANTS
 // ================================================
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string
-const LOW_AVAILABILITY_THRESHOLD = 5
-const GUEST_CHANGE_DEBOUNCE_MS = 300
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const LOW_AVAILABILITY_THRESHOLD = 5;
+const GUEST_CHANGE_DEBOUNCE_MS = 300;
 
 // ================================================
 // CHECKOUT ITEM CARD COMPONENT
@@ -88,24 +88,31 @@ function CheckoutItemCard({
   onGuestChange,
   isUpdating,
 }: CheckoutItemCardProps) {
-  const isLowAvailability = slotAvailability && slotAvailability.available_count < LOW_AVAILABILITY_THRESHOLD
-  const isUnavailable = slotAvailability?.is_blocked || (slotAvailability && slotAvailability.available_count < item.guests)
-  const maxGuests = slotAvailability?.available_count ?? experience.groupSize.max
+  const isLowAvailability =
+    slotAvailability &&
+    slotAvailability.available_count < LOW_AVAILABILITY_THRESHOLD;
+  const isUnavailable =
+    slotAvailability?.is_blocked ||
+    (slotAvailability && slotAvailability.available_count < item.guests);
+  const maxGuests =
+    slotAvailability?.available_count ?? experience.groupSize.max;
 
   const handleDecrease = () => {
     if (item.guests > 1) {
-      onGuestChange(item.guests - 1)
+      onGuestChange(item.guests - 1);
     }
-  }
+  };
 
   const handleIncrease = () => {
     if (item.guests < maxGuests) {
-      onGuestChange(item.guests + 1)
+      onGuestChange(item.guests + 1);
     }
-  }
+  };
 
   return (
-    <Card className={`p-4 ${isUnavailable ? 'border-destructive bg-destructive/5' : ''}`}>
+    <Card
+      className={`p-4 ${isUnavailable ? 'border-destructive bg-destructive/5' : ''}`}
+    >
       <div className="flex gap-4">
         {/* Experience Image */}
         <img
@@ -207,20 +214,28 @@ function CheckoutItemCard({
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
 // ================================================
 // PRICE BREAKDOWN COMPONENT
 // ================================================
 
-function PriceBreakdown({ subtotal, serviceFee, total, itemCount }: PriceBreakdownProps) {
+function PriceBreakdown({
+  subtotal,
+  serviceFee,
+  total,
+  itemCount,
+}: PriceBreakdownProps) {
   return (
     <Card className="p-5 bg-coral/5 border-coral">
       <h3 className="font-display font-bold text-sm mb-4">Price Breakdown</h3>
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
-          <span>Subtotal ({itemCount} {itemCount === 1 ? 'experience' : 'experiences'})</span>
+          <span>
+            Subtotal ({itemCount}{' '}
+            {itemCount === 1 ? 'experience' : 'experiences'})
+          </span>
           <span>{formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
@@ -234,7 +249,7 @@ function PriceBreakdown({ subtotal, serviceFee, total, itemCount }: PriceBreakdo
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
 // ================================================
@@ -279,7 +294,7 @@ function CheckoutReviewSkeleton() {
       {/* Button Skeleton */}
       <Skeleton className="h-12 w-full" />
     </div>
-  )
+  );
 }
 
 // ================================================
@@ -293,91 +308,106 @@ export function CheckoutReview({
   onProceedToPayment,
   onTripUpdate,
 }: CheckoutReviewProps) {
-  const [experiences, setExperiences] = useState<Map<string, Experience>>(new Map())
-  const [slotAvailability, setSlotAvailability] = useState<Map<string, ExperienceSlot>>(new Map())
-  const [isLoading, setIsLoading] = useState(true)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [isCheckingOut, setIsCheckingOut] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [experiences, setExperiences] = useState<Map<string, Experience>>(
+    new Map(),
+  );
+  const [slotAvailability, setSlotAvailability] = useState<
+    Map<string, ExperienceSlot>
+  >(new Map());
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Refs for debouncing and double-click prevention
-  const guestChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const checkoutInProgressRef = useRef(false)
+  const guestChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const checkoutInProgressRef = useRef(false);
 
   // Load experiences for trip items
   useEffect(() => {
     async function loadExperiences() {
       if (trip.items.length === 0) {
-        setIsLoading(false)
-        return
+        setIsLoading(false);
+        return;
       }
 
       try {
-        const experienceIds = [...new Set(trip.items.map(item => item.experienceId))]
-        const loadedExperiences = await experienceService.getExperiencesByIds(experienceIds)
+        const experienceIds = [
+          ...new Set(trip.items.map((item) => item.experienceId)),
+        ];
+        const loadedExperiences =
+          await experienceService.getExperiencesByIds(experienceIds);
 
-        const expMap = new Map<string, Experience>()
-        loadedExperiences.forEach(exp => expMap.set(exp.id, exp))
-        setExperiences(expMap)
+        const expMap = new Map<string, Experience>();
+        loadedExperiences.forEach((exp) => expMap.set(exp.id, exp));
+        setExperiences(expMap);
       } catch (err) {
-        console.error('Failed to load experiences:', err)
-        setError('Failed to load experience details')
+        console.error('Failed to load experiences:', err);
+        setError('Failed to load experience details');
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
 
-    loadExperiences()
-  }, [trip.items])
+    loadExperiences();
+  }, [trip.items]);
 
   // Load slot availability for items with date/time
   useEffect(() => {
     async function loadSlotAvailability() {
-      if (!isSupabaseConfigured()) return
+      if (!isSupabaseConfigured()) return;
 
-      const itemsWithSlots = trip.items.filter(item => item.date && item.time)
-      if (itemsWithSlots.length === 0) return
+      const itemsWithSlots = trip.items.filter(
+        (item) => item.date && item.time,
+      );
+      if (itemsWithSlots.length === 0) return;
 
-      const availabilityMap = new Map<string, ExperienceSlot>()
+      const availabilityMap = new Map<string, ExperienceSlot>();
 
       for (const item of itemsWithSlots) {
-        if (!item.date || !item.time) continue
+        if (!item.date || !item.time) continue;
 
         try {
-          const { data, error: slotsError } = await slotService.getAvailableSlots(item.experienceId, {
-            startDate: item.date,
-            endDate: item.date,
-          })
+          const { data, error: slotsError } =
+            await slotService.getAvailableSlots(item.experienceId, {
+              startDate: item.date,
+              endDate: item.date,
+            });
 
           if (slotsError || !data) {
-            console.error(`Failed to load slot for ${item.experienceId}:`, slotsError)
-            continue
+            console.error(
+              `Failed to load slot for ${item.experienceId}:`,
+              slotsError,
+            );
+            continue;
           }
 
-          const matchingSlot = data.find(s => s.slot_time === item.time)
+          const matchingSlot = data.find((s) => s.slot_time === item.time);
           if (matchingSlot) {
-            const key = `${item.experienceId}-${item.date}-${item.time}`
-            availabilityMap.set(key, matchingSlot)
+            const key = `${item.experienceId}-${item.date}-${item.time}`;
+            availabilityMap.set(key, matchingSlot);
           }
         } catch (err) {
-          console.error(`Failed to load slot for ${item.experienceId}:`, err)
+          console.error(`Failed to load slot for ${item.experienceId}:`, err);
         }
       }
 
-      setSlotAvailability(availabilityMap)
+      setSlotAvailability(availabilityMap);
     }
 
-    loadSlotAvailability()
-  }, [trip.items])
+    loadSlotAvailability();
+  }, [trip.items]);
 
   // Subscribe to real-time availability updates
   useEffect(() => {
-    if (!isSupabaseConfigured()) return
+    if (!isSupabaseConfigured()) return;
 
-    const itemsWithSlots = trip.items.filter(item => item.date && item.time)
-    if (itemsWithSlots.length === 0) return
+    const itemsWithSlots = trip.items.filter((item) => item.date && item.time);
+    if (itemsWithSlots.length === 0) return;
 
-    const experienceIds = [...new Set(itemsWithSlots.map(item => item.experienceId))]
+    const experienceIds = [
+      ...new Set(itemsWithSlots.map((item) => item.experienceId)),
+    ];
 
     const channel = supabase
       .channel('slot-availability')
@@ -388,198 +418,214 @@ export function CheckoutReview({
           schema: 'public',
           table: 'experience_slots',
           // Quote UUIDs properly for PostgREST filter syntax
-          filter: experienceIds.length === 1
-            ? `experience_id=eq.${experienceIds[0]}`
-            : `experience_id=in.(${experienceIds.map(id => `"${id}"`).join(',')})`,
+          filter:
+            experienceIds.length === 1
+              ? `experience_id=eq.${experienceIds[0]}`
+              : `experience_id=in.(${experienceIds.map((id) => `"${id}"`).join(',')})`,
         },
         (payload) => {
-          const updatedSlot = payload.new as ExperienceSlot
-          const key = `${updatedSlot.experience_id}-${updatedSlot.slot_date}-${updatedSlot.slot_time}`
+          const updatedSlot = payload.new as ExperienceSlot;
+          const key = `${updatedSlot.experience_id}-${updatedSlot.slot_date}-${updatedSlot.slot_time}`;
 
-          setSlotAvailability(prev => {
-            const next = new Map(prev)
-            next.set(key, updatedSlot)
-            return next
-          })
+          setSlotAvailability((prev) => {
+            const next = new Map(prev);
+            next.set(key, updatedSlot);
+            return next;
+          });
 
           // Show toast if availability dropped significantly
-          if (updatedSlot.available_count < LOW_AVAILABILITY_THRESHOLD && updatedSlot.available_count > 0) {
-            toast.warning(`Only ${updatedSlot.available_count} spots left for a slot!`)
-          } else if (updatedSlot.available_count === 0 || updatedSlot.is_blocked) {
-            toast.error('A slot in your cart is no longer available')
+          if (
+            updatedSlot.available_count < LOW_AVAILABILITY_THRESHOLD &&
+            updatedSlot.available_count > 0
+          ) {
+            toast.warning(
+              `Only ${updatedSlot.available_count} spots left for a slot!`,
+            );
+          } else if (
+            updatedSlot.available_count === 0 ||
+            updatedSlot.is_blocked
+          ) {
+            toast.error('A slot in your cart is no longer available');
           }
-        }
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [trip.items])
+      supabase.removeChannel(channel);
+    };
+  }, [trip.items]);
 
   // Cleanup debounce timeout on unmount
   useEffect(() => {
     return () => {
       if (guestChangeTimeoutRef.current) {
-        clearTimeout(guestChangeTimeoutRef.current)
+        clearTimeout(guestChangeTimeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   // Calculate totals using memoization
-  const totals = useMemo(() => calculateTripTotal(trip.items), [trip.items])
+  const totals = useMemo(() => calculateTripTotal(trip.items), [trip.items]);
 
   // Check if any item is unavailable
   const hasUnavailableItems = useMemo(() => {
-    return trip.items.some(item => {
-      if (!item.date || !item.time) return false
-      const key = `${item.experienceId}-${item.date}-${item.time}`
-      const slot = slotAvailability.get(key)
-      return slot?.is_blocked || (slot && slot.available_count < item.guests)
-    })
-  }, [trip.items, slotAvailability])
+    return trip.items.some((item) => {
+      if (!item.date || !item.time) return false;
+      const key = `${item.experienceId}-${item.date}-${item.time}`;
+      const slot = slotAvailability.get(key);
+      return slot?.is_blocked || (slot && slot.available_count < item.guests);
+    });
+  }, [trip.items, slotAvailability]);
 
   // Handle removing an item
   const handleRemoveItem = (experienceId: string) => {
-    setIsUpdating(true)
+    setIsUpdating(true);
 
-    const updatedItems = trip.items.filter(item => item.experienceId !== experienceId)
-    const newTotals = calculateTripTotal(updatedItems)
+    const updatedItems = trip.items.filter(
+      (item) => item.experienceId !== experienceId,
+    );
+    const newTotals = calculateTripTotal(updatedItems);
 
     const updatedTrip: Trip = {
       ...trip,
       items: updatedItems,
       ...newTotals,
-    }
+    };
 
-    onTripUpdate(updatedTrip)
-    toast.success('Item removed from checkout')
-    setIsUpdating(false)
-  }
+    onTripUpdate(updatedTrip);
+    toast.success('Item removed from checkout');
+    setIsUpdating(false);
+  };
 
   // Handle changing guest count with debounce to prevent rapid-fire updates
-  const handleGuestChange = useCallback((experienceId: string, newCount: number) => {
-    // Clear any pending debounced update
-    if (guestChangeTimeoutRef.current) {
-      clearTimeout(guestChangeTimeoutRef.current)
-    }
-
-    setIsUpdating(true)
-
-    const experience = experiences.get(experienceId)
-    if (!experience) {
-      setIsUpdating(false)
-      return
-    }
-
-    // Debounce the actual update
-    guestChangeTimeoutRef.current = setTimeout(() => {
-      const updatedItems = trip.items.map(item => {
-        if (item.experienceId !== experienceId) return item
-
-        return {
-          ...item,
-          guests: newCount,
-          totalPrice: experience.price.amount * newCount,
-        }
-      })
-
-      const newTotals = calculateTripTotal(updatedItems)
-
-      const updatedTrip: Trip = {
-        ...trip,
-        items: updatedItems,
-        ...newTotals,
+  const handleGuestChange = useCallback(
+    (experienceId: string, newCount: number) => {
+      // Clear any pending debounced update
+      if (guestChangeTimeoutRef.current) {
+        clearTimeout(guestChangeTimeoutRef.current);
       }
 
-      onTripUpdate(updatedTrip)
-      setIsUpdating(false)
-    }, GUEST_CHANGE_DEBOUNCE_MS)
-  }, [experiences, trip, onTripUpdate])
+      setIsUpdating(true);
+
+      const experience = experiences.get(experienceId);
+      if (!experience) {
+        setIsUpdating(false);
+        return;
+      }
+
+      // Debounce the actual update
+      guestChangeTimeoutRef.current = setTimeout(() => {
+        const updatedItems = trip.items.map((item) => {
+          if (item.experienceId !== experienceId) return item;
+
+          return {
+            ...item,
+            guests: newCount,
+            totalPrice: experience.price.amount * newCount,
+          };
+        });
+
+        const newTotals = calculateTripTotal(updatedItems);
+
+        const updatedTrip: Trip = {
+          ...trip,
+          items: updatedItems,
+          ...newTotals,
+        };
+
+        onTripUpdate(updatedTrip);
+        setIsUpdating(false);
+      }, GUEST_CHANGE_DEBOUNCE_MS);
+    },
+    [experiences, trip, onTripUpdate],
+  );
 
   // Handle checkout with double-click prevention
   const handleProceedToPayment = async () => {
     // Early exit guard - prevent double-clicks/race conditions
     if (checkoutInProgressRef.current) {
-      return
+      return;
     }
 
     if (hasUnavailableItems) {
-      toast.error('Please remove unavailable items before checkout')
-      return
+      toast.error('Please remove unavailable items before checkout');
+      return;
     }
 
     if (trip.items.length === 0) {
-      toast.error('Your cart is empty')
-      return
+      toast.error('Your cart is empty');
+      return;
     }
 
     // Set both ref (immediate) and state (for UI)
-    checkoutInProgressRef.current = true
-    setIsCheckingOut(true)
-    setError(null)
+    checkoutInProgressRef.current = true;
+    setIsCheckingOut(true);
+    setError(null);
 
     try {
       // Get current auth session
-      const { data: { session } } = await supabase.auth.getSession()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (!session) {
-        toast.error('Please log in to continue')
-        checkoutInProgressRef.current = false
-        setIsCheckingOut(false)
-        return
+        toast.error('Please log in to continue');
+        checkoutInProgressRef.current = false;
+        setIsCheckingOut(false);
+        return;
       }
 
       // Call checkout Edge Function
       const response = await fetch(`${SUPABASE_URL}/functions/v1/checkout`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ tripId }),
-      })
+      });
 
-      const data: CheckoutResponse = await response.json()
+      const data: CheckoutResponse = await response.json();
 
       if (!data.success || !data.sessionUrl) {
         // Handle specific error codes
         switch (data.errorCode) {
           case 'INSUFFICIENT_INVENTORY':
-            toast.error('Some items are no longer available')
-            break
+            toast.error('Some items are no longer available');
+            break;
           case 'VENDOR_NOT_PAYMENT_READY':
-            toast.error('This vendor cannot accept payments yet')
-            break
+            toast.error('This vendor cannot accept payments yet');
+            break;
           case 'CUTOFF_TIME_PASSED':
-            toast.error('Booking cutoff time has passed')
-            break
+            toast.error('Booking cutoff time has passed');
+            break;
           case 'MULTI_VENDOR_NOT_SUPPORTED':
-            toast.error('Please checkout items from one vendor at a time')
-            break
+            toast.error('Please checkout items from one vendor at a time');
+            break;
           default:
-            toast.error(data.error || 'Checkout failed')
+            toast.error(data.error || 'Checkout failed');
         }
-        setError(data.error || 'Checkout failed')
-        checkoutInProgressRef.current = false
-        setIsCheckingOut(false)
-        return
+        setError(data.error || 'Checkout failed');
+        checkoutInProgressRef.current = false;
+        setIsCheckingOut(false);
+        return;
       }
 
       // Success - redirect to Stripe (don't reset ref, we're navigating away)
-      onProceedToPayment(data.sessionUrl)
+      onProceedToPayment(data.sessionUrl);
     } catch (err) {
-      console.error('Checkout error:', err)
-      toast.error('Failed to initiate checkout')
-      setError('Failed to initiate checkout')
-      checkoutInProgressRef.current = false
-      setIsCheckingOut(false)
+      console.error('Checkout error:', err);
+      toast.error('Failed to initiate checkout');
+      setError('Failed to initiate checkout');
+      checkoutInProgressRef.current = false;
+      setIsCheckingOut(false);
     }
-  }
+  };
 
   // Loading state
   if (isLoading) {
-    return <CheckoutReviewSkeleton />
+    return <CheckoutReviewSkeleton />;
   }
 
   // Empty cart state
@@ -587,10 +633,17 @@ export function CheckoutReview({
     return (
       <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            aria-label="Go back"
+          >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold">Checkout</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold">
+            Checkout
+          </h1>
         </div>
 
         <Card className="p-8 text-center">
@@ -598,18 +651,25 @@ export function CheckoutReview({
           <Button onClick={onBack}>Browse Experiences</Button>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6 pb-24 sm:pb-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          aria-label="Go back"
+        >
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold">Review Your Order</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold">
+            Review Your Order
+          </h1>
           <p className="text-muted-foreground text-sm sm:text-base">
             Verify your details before payment
           </p>
@@ -621,7 +681,8 @@ export function CheckoutReview({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Some items in your cart are no longer available. Please remove them to continue.
+            Some items in your cart are no longer available. Please remove them
+            to continue.
           </AlertDescription>
         </Alert>
       )}
@@ -638,11 +699,11 @@ export function CheckoutReview({
       <div className="space-y-4">
         <h2 className="font-display font-bold text-lg">Your Experiences</h2>
         {trip.items.map((item, index) => {
-          const experience = experiences.get(item.experienceId)
-          if (!experience) return null
+          const experience = experiences.get(item.experienceId);
+          if (!experience) return null;
 
-          const slotKey = `${item.experienceId}-${item.date}-${item.time}`
-          const slot = slotAvailability.get(slotKey)
+          const slotKey = `${item.experienceId}-${item.date}-${item.time}`;
+          const slot = slotAvailability.get(slotKey);
 
           return (
             <CheckoutItemCard
@@ -651,10 +712,12 @@ export function CheckoutReview({
               experience={experience}
               slotAvailability={slot}
               onRemove={() => handleRemoveItem(item.experienceId)}
-              onGuestChange={(newCount) => handleGuestChange(item.experienceId, newCount)}
+              onGuestChange={(newCount) =>
+                handleGuestChange(item.experienceId, newCount)
+              }
               isUpdating={isUpdating}
             />
-          )
+          );
         })}
       </div>
 
@@ -685,5 +748,5 @@ export function CheckoutReview({
         </Button>
       </div>
     </div>
-  )
+  );
 }

@@ -1,57 +1,60 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { VendorSession } from '@/lib/types'
-import { toast } from 'sonner'
-import { Building2, LogIn } from 'lucide-react'
-import { authService } from '@/lib/authService'
-import { vendorService } from '@/lib/vendorService'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { VendorSession } from '@/lib/types';
+import { toast } from 'sonner';
+import { Building2, LogIn } from 'lucide-react';
+import { authService } from '@/lib/authService';
+import { vendorService } from '@/lib/vendorService';
 
 interface VendorLoginProps {
-  onLogin: (session: VendorSession) => void
-  onNavigateToRegister: () => void
+  onLogin: (session: VendorSession) => void;
+  onNavigateToRegister: () => void;
 }
 
-export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+export function VendorLogin({
+  onLogin,
+  onNavigateToRegister,
+}: VendorLoginProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       // 1. Authenticate User
-      const user = await authService.login(email, password)
+      const user = await authService.login(email, password);
 
       if (!user) {
-        toast.error('Invalid credentials')
-        setIsLoading(false)
-        return
+        toast.error('Invalid credentials');
+        setIsLoading(false);
+        return;
       }
 
       // 2. Fetch Vendor Profile
-      const vendor = await vendorService.getVendorByUserId(user.id)
+      const vendor = await vendorService.getVendorByUserId(user.id);
 
       if (!vendor) {
-        toast.error('No vendor account found for this user')
-        setIsLoading(false)
-        return
+        toast.error('No vendor account found for this user');
+        setIsLoading(false);
+        return;
       }
 
       if (vendor.status === 'pending_verification') {
-        toast.error('Your account is pending verification')
-        setIsLoading(false)
-        return
+        toast.error('Your account is pending verification');
+        setIsLoading(false);
+        return;
       }
 
       if (vendor.status === 'suspended') {
-        toast.error('Your account has been suspended')
-        setIsLoading(false)
-        return
+        toast.error('Your account has been suspended');
+        setIsLoading(false);
+        return;
       }
 
       // 3. Create Session
@@ -60,17 +63,17 @@ export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps)
         businessName: vendor.businessName,
         verified: vendor.verified,
         role: 'vendor',
-      }
+      };
 
-      toast.success(`Welcome back, ${vendor.businessName}!`)
-      onLogin(session)
+      toast.success(`Welcome back, ${vendor.businessName}!`);
+      onLogin(session);
     } catch (err) {
-      console.error('Login error:', err)
-      toast.error('An error occurred during login')
+      console.error('Login error:', err);
+      toast.error('An error occurred during login');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
@@ -79,7 +82,9 @@ export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps)
           <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Building2 className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-display font-bold text-center">Vendor Portal</h1>
+          <h1 className="text-3xl font-display font-bold text-center">
+            Vendor Portal
+          </h1>
           <p className="text-muted-foreground text-center mt-2">
             Sign in to manage your experiences
           </p>
@@ -138,14 +143,17 @@ export function VendorLogin({ onLogin, onNavigateToRegister }: VendorLoginProps)
           </p>
 
           <div className="pt-4 border-t">
-            <p className="text-xs text-muted-foreground mb-2">Demo Credentials:</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Demo Credentials:
+            </p>
             <p className="text-xs font-mono bg-muted p-2 rounded">
-              Email: demo@vendor.pulau<br />
+              Email: demo@vendor.pulau
+              <br />
               Password: (any password)
             </p>
           </div>
         </div>
       </Card>
     </div>
-  )
+  );
 }

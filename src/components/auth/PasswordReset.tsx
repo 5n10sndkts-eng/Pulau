@@ -1,102 +1,104 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { ArrowLeft, Mail, CheckCircle, Key } from 'lucide-react'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { ArrowLeft, Mail, CheckCircle, Key } from 'lucide-react';
 
 interface PasswordResetProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
 export function PasswordReset({ onBack }: PasswordResetProps) {
-  const [step, setStep] = useState<'email' | 'code' | 'newPassword' | 'success'>('email')
-  const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [step, setStep] = useState<
+    'email' | 'code' | 'newPassword' | 'success'
+  >('email');
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateEmail = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      setErrors({ email: 'Email is required' })
-      return false
+      setErrors({ email: 'Email is required' });
+      return false;
     } else if (!emailRegex.test(email)) {
-      setErrors({ email: 'Please enter a valid email address' })
-      return false
+      setErrors({ email: 'Please enter a valid email address' });
+      return false;
     }
-    setErrors({})
-    return true
-  }
+    setErrors({});
+    return true;
+  };
 
   const handleSendResetEmail = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateEmail()) return
+    e.preventDefault();
+    if (!validateEmail()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate sending reset email
     setTimeout(() => {
-      console.log('Password reset email sent to:', email)
-      setIsLoading(false)
-      setStep('code')
-      toast.success('Reset code sent to your email!')
-    }, 1000)
-  }
+      console.log('Password reset email sent to:', email);
+      setIsLoading(false);
+      setStep('code');
+      toast.success('Reset code sent to your email!');
+    }, 1000);
+  };
 
   const handleVerifyCode = (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!code || code.length !== 6) {
-      setErrors({ code: 'Please enter the 6-digit code' })
-      return
+      setErrors({ code: 'Please enter the 6-digit code' });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate code verification
     setTimeout(() => {
-      console.log('Verifying reset code:', code)
-      setIsLoading(false)
-      setStep('newPassword')
-      toast.success('Code verified!')
-      setErrors({})
-    }, 1000)
-  }
+      console.log('Verifying reset code:', code);
+      setIsLoading(false);
+      setStep('newPassword');
+      toast.success('Code verified!');
+      setErrors({});
+    }, 1000);
+  };
 
   const handleResetPassword = (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    const newErrors: Record<string, string> = {}
+    e.preventDefault();
+
+    const newErrors: Record<string, string> = {};
 
     if (!newPassword) {
-      newErrors.newPassword = 'Password is required'
+      newErrors.newPassword = 'Password is required';
     } else if (newPassword.length < 8) {
-      newErrors.newPassword = 'Password must be at least 8 characters'
+      newErrors.newPassword = 'Password must be at least 8 characters';
     }
 
     if (newPassword !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate password reset
     setTimeout(() => {
-      console.log('Password reset successful')
-      setIsLoading(false)
-      setStep('success')
-      toast.success('Password reset successfully!')
-    }, 1000)
-  }
+      console.log('Password reset successful');
+      setIsLoading(false);
+      setStep('success');
+      toast.success('Password reset successfully!');
+    }, 1000);
+  };
 
   if (step === 'success') {
     return (
@@ -106,9 +108,12 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
             <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
-            <h1 className="text-2xl font-display font-bold mb-2">Password Reset Complete</h1>
+            <h1 className="text-2xl font-display font-bold mb-2">
+              Password Reset Complete
+            </h1>
             <p className="text-muted-foreground mb-6">
-              Your password has been successfully reset. You can now sign in with your new password.
+              Your password has been successfully reset. You can now sign in
+              with your new password.
             </p>
             <Button onClick={onBack} className="w-full">
               Return to Sign In
@@ -116,7 +121,7 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
           </div>
         </Card>
       </div>
-    )
+    );
   }
 
   if (step === 'newPassword') {
@@ -135,7 +140,9 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
             <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
               <Key className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-display font-bold mb-2">Create New Password</h1>
+            <h1 className="text-2xl font-display font-bold mb-2">
+              Create New Password
+            </h1>
             <p className="text-muted-foreground text-center">
               Enter your new password below
             </p>
@@ -150,13 +157,13 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
                 placeholder="Minimum 8 characters"
                 value={newPassword}
                 onChange={(e) => {
-                  setNewPassword(e.target.value)
+                  setNewPassword(e.target.value);
                   if (errors.newPassword) {
-                    setErrors(prev => {
-                      const newErrors = { ...prev }
-                      delete newErrors.newPassword
-                      return newErrors
-                    })
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.newPassword;
+                      return newErrors;
+                    });
                   }
                 }}
                 className={errors.newPassword ? 'border-destructive' : ''}
@@ -174,19 +181,21 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
                 placeholder="Re-enter your password"
                 value={confirmPassword}
                 onChange={(e) => {
-                  setConfirmPassword(e.target.value)
+                  setConfirmPassword(e.target.value);
                   if (errors.confirmPassword) {
-                    setErrors(prev => {
-                      const newErrors = { ...prev }
-                      delete newErrors.confirmPassword
-                      return newErrors
-                    })
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.confirmPassword;
+                      return newErrors;
+                    });
                   }
                 }}
                 className={errors.confirmPassword ? 'border-destructive' : ''}
               />
               {errors.confirmPassword && (
-                <p className="text-xs text-destructive">{errors.confirmPassword}</p>
+                <p className="text-xs text-destructive">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
 
@@ -196,7 +205,7 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
           </form>
         </Card>
       </div>
-    )
+    );
   }
 
   if (step === 'code') {
@@ -215,7 +224,9 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
             <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
               <Mail className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-display font-bold mb-2">Check Your Email</h1>
+            <h1 className="text-2xl font-display font-bold mb-2">
+              Check Your Email
+            </h1>
             <p className="text-muted-foreground text-center">
               We sent a 6-digit code to <strong>{email}</strong>
             </p>
@@ -231,9 +242,9 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
                 maxLength={6}
                 value={code}
                 onChange={(e) => {
-                  setCode(e.target.value.replace(/\D/g, ''))
+                  setCode(e.target.value.replace(/\D/g, ''));
                   if (errors.code) {
-                    setErrors({})
+                    setErrors({});
                   }
                 }}
                 className={`text-center text-2xl tracking-widest ${errors.code ? 'border-destructive' : ''}`}
@@ -251,8 +262,8 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
               <button
                 type="button"
                 onClick={() => {
-                  setStep('email')
-                  setCode('')
+                  setStep('email');
+                  setCode('');
                 }}
                 className="text-sm text-primary hover:underline"
               >
@@ -262,7 +273,7 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
           </form>
         </Card>
       </div>
-    )
+    );
   }
 
   // Default: email step
@@ -281,9 +292,12 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
           <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Key className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-display font-bold mb-2">Reset Password</h1>
+          <h1 className="text-2xl font-display font-bold mb-2">
+            Reset Password
+          </h1>
           <p className="text-muted-foreground text-center">
-            Enter your email address and we'll send you a code to reset your password
+            Enter your email address and we'll send you a code to reset your
+            password
           </p>
         </div>
 
@@ -296,9 +310,9 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
               placeholder="john@example.com"
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value)
+                setEmail(e.target.value);
                 if (errors.email) {
-                  setErrors({})
+                  setErrors({});
                 }
               }}
               className={errors.email ? 'border-destructive' : ''}
@@ -314,5 +328,5 @@ export function PasswordReset({ onBack }: PasswordResetProps) {
         </form>
       </Card>
     </div>
-  )
+  );
 }

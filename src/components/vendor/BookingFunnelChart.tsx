@@ -6,8 +6,8 @@
  * from views through to confirmed bookings.
  */
 
-import { useQuery } from '@tanstack/react-query'
-import { Card } from '@/components/ui/card'
+import { useQuery } from '@tanstack/react-query';
+import { Card } from '@/components/ui/card';
 import {
   FunnelChart,
   Funnel,
@@ -15,7 +15,7 @@ import {
   LabelList,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts'
+} from 'recharts';
 import {
   TrendingUp,
   TrendingDown,
@@ -25,31 +25,38 @@ import {
   CheckCircle,
   RefreshCw,
   BarChart3,
-} from 'lucide-react'
-import { VendorSession } from '@/lib/types'
+} from 'lucide-react';
+import { VendorSession } from '@/lib/types';
 import {
   getBookingFunnel,
   formatConversionRate,
   TimePeriod,
   FunnelData,
   FunnelStage,
-} from '@/lib/vendorAnalyticsService'
-import { cn } from '@/lib/utils'
+} from '@/lib/vendorAnalyticsService';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Custom Label Component for Funnel
 // ============================================================================
 
 interface CustomLabelProps {
-  x?: number
-  y?: number
-  width?: number
-  height?: number
-  value?: number
-  name?: string
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  value?: number;
+  name?: string;
 }
 
-function CustomLabel({ x = 0, y = 0, width = 0, height = 0, value, name }: CustomLabelProps) {
+function CustomLabel({
+  x = 0,
+  y = 0,
+  width = 0,
+  height = 0,
+  value,
+  name,
+}: CustomLabelProps) {
   return (
     <text
       x={x + width / 2}
@@ -60,7 +67,7 @@ function CustomLabel({ x = 0, y = 0, width = 0, height = 0, value, name }: Custo
     >
       {value?.toLocaleString()}
     </text>
-  )
+  );
 }
 
 // ============================================================================
@@ -68,22 +75,29 @@ function CustomLabel({ x = 0, y = 0, width = 0, height = 0, value, name }: Custo
 // ============================================================================
 
 interface ConversionBadgeProps {
-  rate: number
-  label: string
-  isGood?: boolean
+  rate: number;
+  label: string;
+  isGood?: boolean;
 }
 
 function ConversionBadge({ rate, label, isGood }: ConversionBadgeProps) {
-  const colorClass = isGood ? 'text-green-600 bg-green-50' : 'text-yellow-600 bg-yellow-50'
-  const Icon = isGood ? TrendingUp : TrendingDown
+  const colorClass = isGood
+    ? 'text-green-600 bg-green-50'
+    : 'text-yellow-600 bg-yellow-50';
+  const Icon = isGood ? TrendingUp : TrendingDown;
 
   return (
-    <div className={cn('flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium', colorClass)}>
+    <div
+      className={cn(
+        'flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium',
+        colorClass,
+      )}
+    >
       <Icon className="h-3 w-3" />
       <span>{formatConversionRate(rate)}</span>
       <span className="text-muted-foreground hidden sm:inline">{label}</span>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -93,15 +107,15 @@ function ConversionBadge({ rate, label, isGood }: ConversionBadgeProps) {
 function getStageIcon(stageName: string) {
   switch (stageName) {
     case 'Views':
-      return Eye
+      return Eye;
     case 'Add to Trip':
-      return ShoppingCart
+      return ShoppingCart;
     case 'Checkout':
-      return CreditCard
+      return CreditCard;
     case 'Confirmed':
-      return CheckCircle
+      return CheckCircle;
     default:
-      return Eye
+      return Eye;
   }
 }
 
@@ -110,15 +124,15 @@ function getStageIcon(stageName: string) {
 // ============================================================================
 
 interface StageDetailsProps {
-  stages: FunnelStage[]
+  stages: FunnelStage[];
 }
 
 function StageDetails({ stages }: StageDetailsProps) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
       {stages.map((stage, index) => {
-        const Icon = getStageIcon(stage.name)
-        const isFirst = index === 0
+        const Icon = getStageIcon(stage.name);
+        const isFirst = index === 0;
 
         return (
           <div key={stage.name} className="text-center">
@@ -128,7 +142,9 @@ function StageDetails({ stages }: StageDetailsProps) {
             >
               <Icon className="h-5 w-5" style={{ color: stage.fill }} />
             </div>
-            <p className="text-sm font-medium text-muted-foreground">{stage.name}</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              {stage.name}
+            </p>
             <p className="text-lg font-bold">{stage.value.toLocaleString()}</p>
             {!isFirst && stage.conversionFromPrevious !== undefined && (
               <p className="text-xs text-muted-foreground">
@@ -136,10 +152,10 @@ function StageDetails({ stages }: StageDetailsProps) {
               </p>
             )}
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -147,28 +163,40 @@ function StageDetails({ stages }: StageDetailsProps) {
 // ============================================================================
 
 interface TooltipPayload {
-  payload: FunnelStage
+  payload: FunnelStage;
 }
 
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: TooltipPayload[] }) {
-  if (!active || !payload?.length) return null
+function CustomTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: TooltipPayload[];
+}) {
+  if (!active || !payload?.length) return null;
 
-  const stage = payload[0]?.payload
-  if (!stage) return null
+  const stage = payload[0]?.payload;
+  if (!stage) return null;
 
   return (
     <div className="bg-white border rounded-lg shadow-lg p-3 text-sm">
       <p className="font-semibold">{stage.name}</p>
       <p className="text-muted-foreground">
-        Count: <span className="font-medium text-foreground">{stage.value.toLocaleString()}</span>
+        Count:{' '}
+        <span className="font-medium text-foreground">
+          {stage.value.toLocaleString()}
+        </span>
       </p>
       {stage.conversionFromPrevious !== undefined && (
         <p className="text-muted-foreground">
-          Conversion: <span className="font-medium text-foreground">{formatConversionRate(stage.conversionFromPrevious)}</span>
+          Conversion:{' '}
+          <span className="font-medium text-foreground">
+            {formatConversionRate(stage.conversionFromPrevious)}
+          </span>
         </p>
       )}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -196,7 +224,7 @@ function FunnelSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -214,7 +242,7 @@ function EmptyState() {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -222,22 +250,21 @@ function EmptyState() {
 // ============================================================================
 
 interface BookingFunnelChartProps {
-  session: VendorSession
-  selectedPeriod: TimePeriod
+  session: VendorSession;
+  selectedPeriod: TimePeriod;
 }
 
-export function BookingFunnelChart({ session, selectedPeriod }: BookingFunnelChartProps) {
-  const {
-    data,
-    isLoading,
-    isFetching,
-  } = useQuery<FunnelData>({
+export function BookingFunnelChart({
+  session,
+  selectedPeriod,
+}: BookingFunnelChartProps) {
+  const { data, isLoading, isFetching } = useQuery<FunnelData>({
     queryKey: ['booking-funnel', session.vendorId, selectedPeriod],
     queryFn: () => getBookingFunnel(session.vendorId, selectedPeriod),
     staleTime: 5 * 60 * 1000, // 5 minutes
-  })
+  });
 
-  const hasData = data && data.stages.some(s => s.value > 0)
+  const hasData = data && data.stages.some((s) => s.value > 0);
 
   return (
     <Card className="p-6">
@@ -285,11 +312,7 @@ export function BookingFunnelChart({ session, selectedPeriod }: BookingFunnelCha
             <ResponsiveContainer width="100%" height="100%">
               <FunnelChart>
                 <Tooltip content={<CustomTooltip />} />
-                <Funnel
-                  dataKey="value"
-                  data={data!.stages}
-                  isAnimationActive
-                >
+                <Funnel dataKey="value" data={data!.stages} isAnimationActive>
                   {data!.stages.map((stage, index) => (
                     <Cell key={`cell-${index}`} fill={stage.fill} />
                   ))}
@@ -315,11 +338,12 @@ export function BookingFunnelChart({ session, selectedPeriod }: BookingFunnelCha
               {formatConversionRate(data!.conversionRates.overallConversion)}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              From {data!.stages[0]?.value.toLocaleString()} views to {data!.stages[3]?.value.toLocaleString()} confirmed bookings
+              From {data!.stages[0]?.value.toLocaleString()} views to{' '}
+              {data!.stages[3]?.value.toLocaleString()} confirmed bookings
             </p>
           </div>
         </>
       )}
     </Card>
-  )
+  );
 }

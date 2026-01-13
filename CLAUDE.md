@@ -6,15 +6,15 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 19, TypeScript 5.7, Vite 7 |
-| Styling | Tailwind CSS 4, Radix UI primitives, Framer Motion |
-| Backend | Supabase (Auth, PostgreSQL, RLS, Edge Functions, Realtime) |
-| State | React Query (TanStack Query v5), React Context |
-| Forms | React Hook Form + Zod v4 validation |
-| Testing | Vitest (unit), Playwright (e2e), React Testing Library |
-| Icons | Phosphor Icons, Lucide React |
+| Layer    | Technology                                                 |
+| -------- | ---------------------------------------------------------- |
+| Frontend | React 19, TypeScript 5.7, Vite 7                           |
+| Styling  | Tailwind CSS 4, Radix UI primitives, Framer Motion         |
+| Backend  | Supabase (Auth, PostgreSQL, RLS, Edge Functions, Realtime) |
+| State    | React Query (TanStack Query v5), React Context             |
+| Forms    | React Hook Form + Zod v4 validation                        |
+| Testing  | Vitest (unit), Playwright (e2e), React Testing Library     |
+| Icons    | Phosphor Icons, Lucide React                               |
 
 ## Quick Commands
 
@@ -90,27 +90,32 @@ _bmad-output/             # BMAD methodology artifacts
 ## Key Architectural Patterns
 
 ### TypeScript Configuration
+
 - **Strict mode enabled** with `strictNullChecks`, `noImplicitAny`, `noUncheckedIndexedAccess`
 - Path alias: `@/*` maps to `./src/*`
 - Target: ES2020, JSX: react-jsx
 
 ### Database Types
+
 - Generated types in `src/lib/database.types.ts`
 - Use `Database['public']['Tables']['table_name']['Row']` for row types
 - All DB operations should use typed Supabase client
 
 ### State Management
+
 - **React Query** for server state (caching, refetching, mutations)
 - **React Context** for auth state (`AuthContext`)
 - **Supabase Realtime** for live updates (slots, bookings)
 
 ### Component Patterns
+
 - UI components in `components/ui/` follow shadcn/ui patterns
 - Use `class-variance-authority` (CVA) for component variants
 - Animations via Framer Motion with `motion.variants.ts` presets
 - Form validation with Zod schemas + React Hook Form
 
 ### Error Handling
+
 - Use `ErrorBoundary` from `react-error-boundary`
 - Custom `ErrorFallback.tsx` component
 - Toast notifications via `sonner`
@@ -118,22 +123,28 @@ _bmad-output/             # BMAD methodology artifacts
 ## Supabase Integration
 
 ### Client Setup
+
 ```typescript
 import { supabase } from '@/lib/supabase';
 ```
 
 ### RLS (Row Level Security)
+
 All tables have RLS enabled. Policies enforce:
+
 - Users can only read/write their own data
 - Vendors can manage their own experiences
 - Public read for published experiences
 
 ### Edge Functions
+
 Located in `supabase/functions/`. Each has:
+
 - `index.ts` - Main handler (Deno)
 - Invoked via `supabase.functions.invoke('function-name', { body })`
 
 ### Realtime Subscriptions
+
 ```typescript
 import { realtimeService } from '@/lib/realtimeService';
 // Subscribe to slot changes
@@ -143,35 +154,42 @@ realtimeService.subscribeToSlots(experienceId, callback);
 ## Testing
 
 ### Unit Tests (Vitest)
+
 - Test files: `*.test.ts` or in `__tests__/`
 - Config: `vitest.config.ts`
 - Run specific: `npm test -- path/to/file.test.ts`
 
 ### E2E Tests (Playwright)
+
 - Located in `e2e/` directory
 - Config: `playwright.config.ts`
 - Run: `npm run test:e2e`
 
 ### Test Utilities
+
 - Setup file: `src/__tests__/setup.ts`
 - Mock auth: `src/lib/authService.mock.ts`
 
 ## Design System
 
 ### Colors (Bali-inspired)
-| Token | Hex | Usage |
-|-------|-----|-------|
-| Primary | `#0D7377` | Deep teal, ocean waters |
-| Accent | `#FF6B6B` | Warm coral, sunset warmth |
-| Golden | `#F4D03F` | Sand, highlights/ratings |
-| Success | `#27AE60` | Confirmations |
+
+| Token   | Hex       | Usage                     |
+| ------- | --------- | ------------------------- |
+| Primary | `#0D7377` | Deep teal, ocean waters   |
+| Accent  | `#FF6B6B` | Warm coral, sunset warmth |
+| Golden  | `#F4D03F` | Sand, highlights/ratings  |
+| Success | `#27AE60` | Confirmations             |
 
 ### Typography
+
 - Display: Plus Jakarta Sans
 - Body: Inter
 
 ### Component Library
+
 Base components in `src/components/ui/`:
+
 - Dialog, Sheet, Drawer (overlays)
 - Button, Input, Select, Checkbox (forms)
 - Card, Table, Tabs (layout)
@@ -180,6 +198,7 @@ Base components in `src/components/ui/`:
 ## Current Development Focus
 
 The project is implementing **Epics 25-28**:
+
 - **Epic 25**: Real-time slot availability (Supabase Realtime)
 - **Epic 26**: Offline ticket access (PWA, service workers)
 - **Epic 27**: Vendor check-in & operations (QR scanning)
@@ -200,6 +219,7 @@ Sprint tracking: `_bmad-output/sprint-status.yaml`
 ## Environment Variables
 
 Required in `.env`:
+
 ```
 VITE_SUPABASE_URL=your-project-url
 VITE_SUPABASE_ANON_KEY=your-anon-key
@@ -208,16 +228,19 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 ## Common Tasks
 
 ### Adding a new component
+
 1. Create in appropriate `src/components/` subdirectory
 2. Use existing UI primitives from `components/ui/`
 3. Add Zod schema if form-related
 
 ### Adding a Supabase migration
+
 1. Create file in `supabase/migrations/` with timestamp prefix
 2. Use descriptive snake_case name
 3. Include RLS policies for new tables
 
 ### Adding an Edge Function
+
 1. Create directory in `supabase/functions/`
 2. Add `index.ts` with Deno handler
 3. Handle CORS and auth verification

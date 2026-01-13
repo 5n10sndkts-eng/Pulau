@@ -11,6 +11,7 @@ So that I don't lose my data.
 ## Acceptance Criteria
 
 ### AC1: Offline Data Display
+
 **Given** the device loses network connection
 **When** a network request fails
 **Then** cached data (from Spark useKV) continues to display
@@ -18,12 +19,14 @@ So that I don't lose my data.
 **And** "Retry" button appears on failed sections
 
 ### AC2: User Feedback
+
 **And** toast displays "You're offline. Some features unavailable."
 **When** I tap "Retry"
 **Then** request attempts again
 **And** success replaces error state
 
 ### AC3: Auto-Recovery
+
 **When** network returns
 **Then** data syncs automatically in background
 **And** "Back online" toast displays
@@ -31,6 +34,7 @@ So that I don't lose my data.
 ## Tasks / Subtasks
 
 ### Task 1: Implement Network Status Detection (AC: #1, #3)
+
 - [x] Create useOnlineStatus hook using navigator.onLine
 - [x] Listen to online/offline events globally
 - [x] Store network status in global state (Spark or context)
@@ -38,6 +42,7 @@ So that I don't lose my data.
 - [x] Test with bobjectser DevTools network throttling
 
 ### Task 2: Display Cached Data During Offline (AC: #1)
+
 - [x] Configure Spark useKV to serve stale cache when offline
 - [x] Display cached data with visual indicator (grayed out or banner)
 - [x] Show "Last updated [X minutes ago]" timestamp
@@ -45,6 +50,7 @@ So that I don't lose my data.
 - [x] Prevent infinite loading states when offline
 
 ### Task 3: Add Retry Mechanism (AC: #1, #2)
+
 - [x] Display "Retry" button on failed network requests
 - [x] Implement exponential backoff for retry attempts
 - [x] Show loading state during retry
@@ -52,6 +58,7 @@ So that I don't lose my data.
 - [x] Limit retry attempts to prevent infinite loops (max 3)
 
 ### Task 4: Show Offline Toast Notifications (AC: #2, #3)
+
 - [x] Display "You're offline" toast when connection lost
 - [x] Show dismissible banner: "Some features unavailable offline"
 - [x] Display "Back online" toast when connection restored
@@ -59,6 +66,7 @@ So that I don't lose my data.
 - [x] Use warning variant for offline, success for online
 
 ### Task 5: Implement Background Sync on Reconnect (AC: #3)
+
 - [x] Detect when connection restored (online event)
 - [x] Automatically refetch critical data (trip, wishlist, bookings)
 - [x] Invalidate stale cache entries
@@ -68,7 +76,9 @@ So that I don't lose my data.
 ## Dev Notes
 
 ### Network Status Hook
+
 File: `src/hooks/useOnlineStatus.ts`
+
 ```typescript
 import { useEffect, useState } from 'react';
 
@@ -93,6 +103,7 @@ export const useOnlineStatus = () => {
 ```
 
 ### Cached Data Display
+
 ```tsx
 const ExperienceList = () => {
   const isOnline = useOnlineStatus();
@@ -102,7 +113,9 @@ const ExperienceList = () => {
     return (
       <div className="p-6 text-center">
         <p className="text-gray-700 mb-4">Failed to load experiences</p>
-        <button onClick={retry} className="btn-primary">Retry</button>
+        <button onClick={retry} className="btn-primary">
+          Retry
+        </button>
       </div>
     );
   }
@@ -112,7 +125,8 @@ const ExperienceList = () => {
       {!isOnline && (
         <div className="bg-warning-50 border-l-4 border-warning-500 p-4 mb-4">
           <p className="text-sm text-warning-800">
-            You're offline. Showing cached data from {formatRelativeTime(lastUpdated)}
+            You're offline. Showing cached data from{' '}
+            {formatRelativeTime(lastUpdated)}
           </p>
         </div>
       )}
@@ -123,6 +137,7 @@ const ExperienceList = () => {
 ```
 
 ### Retry Logic with Exponential Backoff
+
 ```typescript
 const retryWithBackoff = async (fn: () => Promise<any>, maxRetries = 3) => {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -138,6 +153,7 @@ const retryWithBackoff = async (fn: () => Promise<any>, maxRetries = 3) => {
 ```
 
 ### Offline Toast Component
+
 ```tsx
 const OfflineToast = () => {
   const isOnline = useOnlineStatus();
@@ -162,17 +178,14 @@ const OfflineToast = () => {
           You're offline. Some features unavailable.
         </Toast>
       )}
-      {showOnline && (
-        <Toast variant="success">
-          Back online!
-        </Toast>
-      )}
+      {showOnline && <Toast variant="success">Back online!</Toast>}
     </>
   );
 };
 ```
 
 ### Background Sync on Reconnect
+
 ```typescript
 useEffect(() => {
   if (isOnline) {
@@ -188,18 +201,24 @@ useEffect(() => {
 ```
 
 ### Spark useKV Configuration for Offline
+
 ```typescript
-const { data, error } = useKV('experiences', async () => {
-  const response = await fetch('/api/experiences');
-  return response.json();
-}, {
-  cacheTime: 1000 * 60 * 60, // Cache for 1 hour
-  staleWhileRevalidate: true, // Serve stale cache when offline
-  refetchOnReconnect: true,   // Auto-refetch when online
-});
+const { data, error } = useKV(
+  'experiences',
+  async () => {
+    const response = await fetch('/api/experiences');
+    return response.json();
+  },
+  {
+    cacheTime: 1000 * 60 * 60, // Cache for 1 hour
+    staleWhileRevalidate: true, // Serve stale cache when offline
+    refetchOnReconnect: true, // Auto-refetch when online
+  },
+);
 ```
 
 ### Last Updated Timestamp
+
 ```typescript
 const formatRelativeTime = (timestamp: number) => {
   const diff = Date.now() - timestamp;
@@ -217,12 +236,14 @@ const formatRelativeTime = (timestamp: number) => {
 ```
 
 ### Testing Offline Mode
+
 - **Chrome DevTools**: Network tab → Throttling → Offline
 - **Firefox**: Network conditions → Offline
 - **Safari**: Develop menu → Disable network
 - Test transitions: online → offline → online
 
 ### Accessibility
+
 - Offline banner has `role="alert"` for screen reader announcement
 - Retry button has clear label: "Retry loading experiences"
 - Focus management: Keep focus on retry button after failed attempt
@@ -247,5 +268,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

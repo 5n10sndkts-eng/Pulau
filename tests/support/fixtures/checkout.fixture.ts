@@ -18,10 +18,13 @@ export const test = mergeTests(base, tripFixture).extend<CheckoutFixture>({
         return trip;
       },
       completePayment: async () => {
-        await page.route('**/api/payment/process', route => {
-          route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+        await page.route('**/api/payment/process', (route) => {
+          route.fulfill({
+            status: 200,
+            body: JSON.stringify({ success: true }),
+          });
         });
-      }
+      },
     };
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(checkout);

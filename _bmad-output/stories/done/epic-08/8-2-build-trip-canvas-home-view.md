@@ -31,6 +31,7 @@ So that I can quickly understand my planned activities.
 ## Tasks / Subtasks
 
 ### Task 1: Create TripCanvasHome component structure (AC: #1, #2, #3, #4)
+
 - [x] Build TripCanvasHome component with header, summary, and items sections
 - [x] Add collapsible/expandable container for trip view
 - [x] Position component prominently on home screen (below hero)
@@ -38,6 +39,7 @@ So that I can quickly understand my planned activities.
 - [x] Add loading skeleton while trip data loads
 
 ### Task 2: Implement ediKV namespace trip header (AC: #1)
+
 - [x] Create TripHeader with inline-ediKV namespace trip name
 - [x] Add date range display (format: "Mar 15 - 20, 2026")
 - [x] Show "Dates not set" when start_date/end_date are null
@@ -45,6 +47,7 @@ So that I can quickly understand my planned activities.
 - [x] Save edited name to trip data with auto-save
 
 ### Task 3: Build trip summary bar (AC: #1)
+
 - [x] Create TripSummaryBar component displaying key metrics
 - [x] Show item count: "5 experiences"
 - [x] Calculate and display total days from date range
@@ -52,6 +55,7 @@ So that I can quickly understand my planned activities.
 - [x] Style with pill/badge design for each metric
 
 ### Task 4: Implement day-organized item list (AC: #2)
+
 - [x] Group trip items by scheduled_date
 - [x] Create DaySection component with day number and date header
 - [x] Render TripItemCard for each item in day
@@ -59,6 +63,7 @@ So that I can quickly understand my planned activities.
 - [x] Add "Unscheduled" section for items without dates
 
 ### Task 5: Create "View Full Trip" button and navigation (AC: #3)
+
 - [x] Add "View Full Trip" button at bottom of canvas
 - [x] Style as secondary button with full width
 - [x] Navigate to detailed trip builder screen on click
@@ -66,6 +71,7 @@ So that I can quickly understand my planned activities.
 - [x] Persist scroll position when returning to home
 
 ### Task 6: Build empty state component (AC: #4)
+
 - [x] Create EmptyTripCanvas component with suitcase SVG illustration
 - [x] Add heading: "Your trip canvas is empty"
 - [x] Include subtext: "Start adding experiences to build your itinerary"
@@ -75,6 +81,7 @@ So that I can quickly understand my planned activities.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use `useTripManagement` hook to access trip data
 - Trip name edit: use `contentEdiKV namespace` div or inline input with blur handler
 - Date formatting: use `date-fns` library's `format(date, 'MMM d - d, yyyy')`
@@ -82,6 +89,7 @@ So that I can quickly understand my planned activities.
 - Group items by date: `const itemsByDay = groupBy(trip.items, item => item.scheduled_date)`
 
 ### Component Hierarchy
+
 ```
 TripCanvasHome
 ├── TripHeader (name, dates)
@@ -96,6 +104,7 @@ TripCanvasHome
 ```
 
 ### Layout Specifications
+
 - Canvas section: max-width 800px, centered on desktop
 - Padding: 16px mobile, 24px desktop
 - Day section spacing: 24px vertical gap
@@ -103,6 +112,7 @@ TripCanvasHome
 - Empty state illustration: 200px width
 
 ### Price Display Format
+
 - Individual items: "$45.00"
 - Total in summary: "$225.00" with highlight animation on change
 - Include currency symbol from user preferences
@@ -128,5 +138,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

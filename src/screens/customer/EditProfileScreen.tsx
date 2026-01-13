@@ -1,36 +1,38 @@
-import { useState, useEffect } from 'react'
-import { Camera, User } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { useAuth } from '@/contexts/AuthContext'
-import { User as UserType } from '@/lib/types'
+import { useState, useEffect } from 'react';
+import { Camera, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { User as UserType } from '@/lib/types';
 
 interface EditProfileScreenProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
 export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
-  const { user, updateUser } = useAuth()
+  const { user, updateUser } = useAuth();
 
   // Initialize form state from user props
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   useEffect(() => {
     if (user) {
-      setFirstName(user.firstName || user.name.split(' ')[0] || '')
+      setFirstName(user.firstName || user.name.split(' ')[0] || '');
       // improve last name extraction
-      setLastName(user.lastName || user.name.split(' ').slice(1).join(' ') || '')
-      setEmail(user.email || '')
+      setLastName(
+        user.lastName || user.name.split(' ').slice(1).join(' ') || '',
+      );
+      setEmail(user.email || '');
     }
-  }, [user])
+  }, [user]);
 
   const handleSave = () => {
-    if (!user) return
+    if (!user) return;
 
     const updatedUser: UserType = {
       ...user,
@@ -38,20 +40,22 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
       lastName,
       name: `${firstName} ${lastName}`.trim(),
       email, // Email change usually requires verification, but allowing update here for simplicity
-    }
+    };
 
-    updateUser(updatedUser)
-    toast.success('Profile updated')
-    onBack()
-  }
+    updateUser(updatedUser);
+    toast.success('Profile updated');
+    onBack();
+  };
 
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p>Please log in to edit your profile.</p>
-        <Button onClick={onBack} variant="link">Go Back</Button>
+        <Button onClick={onBack} variant="link">
+          Go Back
+        </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -73,7 +77,11 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
           <div className="relative">
             <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center overflow-hidden">
               {user.avatar ? (
-                <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <User className="h-12 w-12 text-muted-foreground" />
               )}
@@ -117,7 +125,7 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@example.com"
-            // Disable email editing if complex flow needed, but user might want to simple edit here
+              // Disable email editing if complex flow needed, but user might want to simple edit here
             />
             <p className="text-xs text-muted-foreground">
               Contact support to change your email address securely.
@@ -137,5 +145,5 @@ export function EditProfileScreen({ onBack }: EditProfileScreenProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

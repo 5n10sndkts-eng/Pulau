@@ -4,19 +4,22 @@
 // AC #3: Error Boundary Integration
 // ================================================
 
-import { useEffect } from "react";
-import { Alert, AlertTitle, AlertDescription } from "./components/ui/alert";
-import { Button } from "./components/ui/button";
-import { captureError } from "./lib/sentry";
+import { useEffect } from 'react';
+import { Alert, AlertTitle, AlertDescription } from './components/ui/alert';
+import { Button } from './components/ui/button';
+import { captureError } from './lib/sentry';
 
-import { AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
+import { AlertTriangleIcon, RefreshCwIcon } from 'lucide-react';
 
 interface ErrorFallbackProps {
-  error: Error
-  resetErrorBoundary: () => void
+  error: Error;
+  resetErrorBoundary: () => void;
 }
 
-export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
+export const ErrorFallback = ({
+  error,
+  resetErrorBoundary,
+}: ErrorFallbackProps) => {
   // When encountering an error in the development mode, rethrow it and don't display the boundary.
   // The parent UI will take care of showing a more helpful dialog.
   if (import.meta.env.DEV) throw error;
@@ -42,12 +45,15 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps)
           <AlertTriangleIcon />
           <AlertTitle>Something went wrong</AlertTitle>
           <AlertDescription>
-            We've been notified and are looking into the issue. Please try again or contact support if the problem persists.
+            We've been notified and are looking into the issue. Please try again
+            or contact support if the problem persists.
           </AlertDescription>
         </Alert>
 
         <div className="bg-card border rounded-lg p-4 mb-6">
-          <h3 className="font-semibold text-sm text-muted-foreground mb-2">Error Details:</h3>
+          <h3 className="font-semibold text-sm text-muted-foreground mb-2">
+            Error Details:
+          </h3>
           <pre className="text-xs text-destructive bg-muted/50 p-3 rounded border overflow-auto max-h-32">
             {error.message}
           </pre>
@@ -64,4 +70,4 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps)
       </div>
     </div>
   );
-}
+};

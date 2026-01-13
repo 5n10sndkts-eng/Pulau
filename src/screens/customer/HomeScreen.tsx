@@ -1,26 +1,48 @@
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { categories, destinations } from '@/lib/mockData'
-import { formatDateRange, formatPrice, getPreferenceBasedSections, PreferenceSection } from '@/lib/helpers'
-import { Trip, UserPreferences, Experience } from '@/lib/types'
-import { MapPin, Waves, Bike, Sparkles, UtensilsCrossed, Car, Home as HomeIcon, ShoppingBag, Calendar, Star, Clock, Users, Plus, ChevronRight, Search, Compass } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { PreferenceChips } from '@/components/PreferenceChips'
-import { dataService } from '@/lib/dataService'
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { categories, destinations } from '@/lib/mockData';
+import {
+  formatDateRange,
+  formatPrice,
+  getPreferenceBasedSections,
+  PreferenceSection,
+} from '@/lib/helpers';
+import { Trip, UserPreferences, Experience } from '@/lib/types';
+import {
+  MapPin,
+  Waves,
+  Bike,
+  Sparkles,
+  UtensilsCrossed,
+  Car,
+  Home as HomeIcon,
+  ShoppingBag,
+  Calendar,
+  Star,
+  Clock,
+  Users,
+  Plus,
+  ChevronRight,
+  Search,
+  Compass,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { PreferenceChips } from '@/components/PreferenceChips';
+import { dataService } from '@/lib/dataService';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeScreenProps {
-  trip: Trip
-  userPreferences: UserPreferences
-  onCategorySelect: (categoryId: string) => void
-  onViewTrip: () => void
-  onExperienceSelect: (experienceId: string) => void
-  onQuickAdd: (experience: Experience) => void
-  onPreferenceChange: (preferences: UserPreferences) => void
+  trip: Trip;
+  userPreferences: UserPreferences;
+  onCategorySelect: (categoryId: string) => void;
+  onViewTrip: () => void;
+  onExperienceSelect: (experienceId: string) => void;
+  onQuickAdd: (experience: Experience) => void;
+  onPreferenceChange: (preferences: UserPreferences) => void;
 }
 
 const categoryIcons: Record<string, React.ElementType> = {
@@ -30,7 +52,7 @@ const categoryIcons: Record<string, React.ElementType> = {
   food_nightlife: UtensilsCrossed,
   transportation: Car,
   stays: HomeIcon,
-}
+};
 
 export function HomeScreen({
   trip,
@@ -39,47 +61,48 @@ export function HomeScreen({
   onViewTrip,
   onExperienceSelect,
   onQuickAdd,
-  onPreferenceChange
+  onPreferenceChange,
 }: HomeScreenProps) {
-  const navigate = useNavigate()
-  const destination = destinations.find((d) => d.id === trip.destination)
-  const hasItems = trip.items.length > 0
+  const navigate = useNavigate();
+  const destination = destinations.find((d) => d.id === trip.destination);
+  const hasItems = trip.items.length > 0;
 
-  const [experiences, setExperiences] = useState<Experience[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const loadData = async () => { // Fixed duplicate function name
+    const loadData = async () => {
+      // Fixed duplicate function name
       try {
-        const data = await dataService.getExperiences()
-        setExperiences(data)
+        const data = await dataService.getExperiences();
+        setExperiences(data);
       } catch (error) {
-        console.error('Failed to load experiences:', error)
+        console.error('Failed to load experiences:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    loadData()
-  }, [])
+    };
+    loadData();
+  }, []);
 
   // Get preference-based sections
   const preferenceSections = getPreferenceBasedSections(
     userPreferences.travelStyles,
     userPreferences.groupType,
     userPreferences.budget,
-    experiences
-  )
+    experiences,
+  );
 
   // Handle search submission - navigate to explore with search query
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/explore?search=${encodeURIComponent(searchQuery.trim())}`)
+      navigate(`/explore?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
-      navigate('/explore')
+      navigate('/explore');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -97,15 +120,22 @@ export function HomeScreen({
               {destination?.name}, {destination?.country}
             </span>
           </div>
-          <h1 className="font-display text-3xl font-bold mb-2">{destination?.tagline}</h1>
-          <p className="font-body text-sm opacity-90">{formatDateRange(trip.startDate, trip.endDate)}</p>
+          <h1 className="font-display text-3xl font-bold mb-2">
+            {destination?.tagline}
+          </h1>
+          <p className="font-body text-sm opacity-90">
+            {formatDateRange(trip.startDate, trip.endDate)}
+          </p>
         </div>
       </header>
 
       <section className="px-6 py-6 space-y-8">
         {/* Search Bar (AC #4) */}
         <form onSubmit={handleSearch} className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             type="search"
             placeholder="Search experiences..."
@@ -144,10 +174,16 @@ export function HomeScreen({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl" aria-hidden="true">{section.emoji}</span>
+                    <span className="text-2xl" aria-hidden="true">
+                      {section.emoji}
+                    </span>
                     <div>
-                      <h2 className="font-display text-xl font-bold">{section.title}</h2>
-                      <p className="text-sm text-muted-foreground">{section.subtitle}</p>
+                      <h2 className="font-display text-xl font-bold">
+                        {section.title}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {section.subtitle}
+                      </p>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" className="text-primary">
@@ -185,7 +221,7 @@ export function HomeScreen({
               className="text-7xl mb-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
               aria-hidden="true"
             >
               ✨
@@ -194,7 +230,9 @@ export function HomeScreen({
               <h2 className="font-display text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 Your Bali story starts here
               </h2>
-              <p className="text-muted-foreground text-lg">Select your travel style above for personalized picks</p>
+              <p className="text-muted-foreground text-lg">
+                Select your travel style above for personalized picks
+              </p>
             </div>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-4">
               <Calendar className="w-4 h-4" aria-hidden="true" />
@@ -210,7 +248,9 @@ export function HomeScreen({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <h2 className="font-display text-xl font-semibold">Your Trip Preview</h2>
+            <h2 className="font-display text-xl font-semibold">
+              Your Trip Preview
+            </h2>
             <div className="grid grid-cols-2 gap-3" role="list">
               {trip.items.slice(0, 4).map((item, idx) => (
                 <motion.div
@@ -221,8 +261,17 @@ export function HomeScreen({
                   role="listitem"
                 >
                   <Card className="aspect-square bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20 hover:shadow-lg transition-shadow">
-                    <div className="w-full h-full flex items-center justify-center text-5xl" aria-label={`Trip item ${idx + 1}`}>
-                      {idx === 0 ? '🚤' : idx === 1 ? '🏔️' : idx === 2 ? '🍜' : '🏝️'}
+                    <div
+                      className="w-full h-full flex items-center justify-center text-5xl"
+                      aria-label={`Trip item ${idx + 1}`}
+                    >
+                      {idx === 0
+                        ? '🚤'
+                        : idx === 1
+                          ? '🏔️'
+                          : idx === 2
+                            ? '🍜'
+                            : '🏝️'}
                     </div>
                   </Card>
                 </motion.div>
@@ -233,10 +282,16 @@ export function HomeScreen({
 
         {/* Categories Grid */}
         <div className="space-y-4">
-          <h2 id="explore-heading" className="font-display text-2xl font-bold">Explore Experiences</h2>
-          <div className="grid grid-cols-2 gap-4" role="list" aria-labelledby="explore-heading">
+          <h2 id="explore-heading" className="font-display text-2xl font-bold">
+            Explore Experiences
+          </h2>
+          <div
+            className="grid grid-cols-2 gap-4"
+            role="list"
+            aria-labelledby="explore-heading"
+          >
             {categories.map((category, idx) => {
-              const Icon = categoryIcons[category.id] || Sparkles
+              const Icon = categoryIcons[category.id] || Sparkles;
               return (
                 <motion.div
                   key={category.id}
@@ -252,8 +307,8 @@ export function HomeScreen({
                     tabIndex={0}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        onCategorySelect(category.id)
+                        e.preventDefault();
+                        onCategorySelect(category.id);
                       }
                     }}
                     aria-label={`Browse ${category.name}: ${category.tagline}`}
@@ -266,15 +321,22 @@ export function HomeScreen({
                       aria-hidden="true"
                     />
                     <div className="relative p-6 h-44 flex flex-col justify-end text-white">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-full w-12 h-12 flex items-center justify-center mb-3 group-hover:bg-white/30 transition-colors" aria-hidden="true">
+                      <div
+                        className="bg-white/20 backdrop-blur-sm rounded-full w-12 h-12 flex items-center justify-center mb-3 group-hover:bg-white/30 transition-colors"
+                        aria-hidden="true"
+                      >
                         <Icon className="w-6 h-6" />
                       </div>
-                      <h3 className="font-display font-bold text-base leading-tight">{category.name}</h3>
-                      <p className="text-xs opacity-90 mt-1.5">{category.tagline}</p>
+                      <h3 className="font-display font-bold text-base leading-tight">
+                        {category.name}
+                      </h3>
+                      <p className="text-xs opacity-90 mt-1.5">
+                        {category.tagline}
+                      </p>
                     </div>
                   </Card>
                 </motion.div>
-              )
+              );
             })}
           </div>
 
@@ -303,7 +365,7 @@ export function HomeScreen({
           className="fixed bottom-20 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent pointer-events-none"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           aria-label="Trip summary"
         >
           <Card className="p-4 shadow-2xl bg-card border-2 border-primary/20 pointer-events-auto">
@@ -318,8 +380,12 @@ export function HomeScreen({
                   {trip.items.length}
                 </motion.div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Estimated Total</p>
-                  <p className="font-display text-xl font-bold">{formatPrice(trip.total)}</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                    Estimated Total
+                  </p>
+                  <p className="font-display text-xl font-bold">
+                    {formatPrice(trip.total)}
+                  </p>
                 </div>
               </div>
               <Button onClick={onViewTrip} size="lg" className="shadow-lg">
@@ -331,7 +397,7 @@ export function HomeScreen({
         </motion.aside>
       )}
     </div>
-  )
+  );
 }
 
 // Compact Experience Card for horizontal scrolling
@@ -340,9 +406,9 @@ function ExperienceCard({
   onSelect,
   onQuickAdd,
 }: {
-  experience: Experience
-  onSelect: () => void
-  onQuickAdd: () => void
+  experience: Experience;
+  onSelect: () => void;
+  onQuickAdd: () => void;
 }) {
   return (
     <motion.div
@@ -360,16 +426,25 @@ function ExperienceCard({
           {/* Preference badges */}
           <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
             {experience.price.amount < 50 && (
-              <Badge className="bg-emerald-500/90 text-white text-xs">💰 Budget</Badge>
+              <Badge className="bg-emerald-500/90 text-white text-xs">
+                💰 Budget
+              </Badge>
             )}
             {experience.groupSize.min === 1 && (
-              <Badge className="bg-blue-500/90 text-white text-xs">🎒 Solo OK</Badge>
+              <Badge className="bg-blue-500/90 text-white text-xs">
+                🎒 Solo OK
+              </Badge>
             )}
             {experience.tags?.includes('private') && (
-              <Badge className="bg-pink-500/90 text-white text-xs">💕 Private</Badge>
+              <Badge className="bg-pink-500/90 text-white text-xs">
+                💕 Private
+              </Badge>
             )}
-            {(experience.tags?.includes('wellness') || experience.tags?.includes('yoga')) && (
-              <Badge className="bg-emerald-500/90 text-white text-xs">🧘 Wellness</Badge>
+            {(experience.tags?.includes('wellness') ||
+              experience.tags?.includes('yoga')) && (
+              <Badge className="bg-emerald-500/90 text-white text-xs">
+                🧘 Wellness
+              </Badge>
             )}
           </div>
         </div>
@@ -399,8 +474,8 @@ function ExperienceCard({
               variant="outline"
               className="h-8 gap-1"
               onClick={(e) => {
-                e.stopPropagation()
-                onQuickAdd()
+                e.stopPropagation();
+                onQuickAdd();
               }}
             >
               <Plus className="w-3 h-3" /> Add
@@ -409,5 +484,5 @@ function ExperienceCard({
         </div>
       </Card>
     </motion.div>
-  )
+  );
 }

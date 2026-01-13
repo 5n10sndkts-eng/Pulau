@@ -9,7 +9,7 @@
  */
 
 // Re-export RealtimeSlotDisplay as SlotAvailabilityList for story compliance
-export { RealtimeSlotDisplay as SlotAvailabilityList } from './RealtimeSlotDisplay'
+export { RealtimeSlotDisplay as SlotAvailabilityList } from './RealtimeSlotDisplay';
 
 // Also export props type for external use
-export type { RealtimeSlotDisplayProps as SlotAvailabilityListProps } from './RealtimeSlotDisplay'
+export type { RealtimeSlotDisplayProps as SlotAvailabilityListProps } from './RealtimeSlotDisplay';

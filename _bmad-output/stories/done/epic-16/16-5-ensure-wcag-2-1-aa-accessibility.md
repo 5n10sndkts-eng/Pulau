@@ -11,19 +11,23 @@ So that I can use it effectively.
 ## Acceptance Criteria
 
 ### AC1: Color Contrast Compliance
+
 **Given** accessibility standards apply
 **When** components render
 **Then** color contrast ratios meet WCAG 2.1 AA:
-  - Primary on white: 6.2:1 ✓
-  - Coral on white: 4.6:1 ✓
-  - Text on backgrounds: >4.5:1
+
+- Primary on white: 6.2:1 ✓
+- Coral on white: 4.6:1 ✓
+- Text on backgrounds: >4.5:1
 
 ### AC2: Semantic HTML and ARIA
+
 **And** all images have meaningful alt text
 **And** form inputs have associated labels
 **And** focus states are clearly visible (focus ring)
 
 ### AC3: Keyboard Navigation
+
 **And** keyboard navigation works for all interactive elements
 **And** Radix UI primitives provide ARIA attributes automatically
 **And** screen reader testing confirms usability
@@ -31,6 +35,7 @@ So that I can use it effectively.
 ## Tasks / Subtasks
 
 ### Task 1: Audit and Fix Color Contrast (AC: #1)
+
 - [x] Use contrast checker tool on all text/background combinations
 - [x] Ensure body text meets 4.5:1 minimum ratio
 - [x] Ensure large text (18px+) meets 3:1 minimum
@@ -38,6 +43,7 @@ So that I can use it effectively.
 - [x] Document color combinations in design system
 
 ### Task 2: Implement Semantic HTML (AC: #2)
+
 - [x] Use proper heading hierarchy (h1 → h2 → h3, no skipping)
 - [x] Use semantic elements: nav, main, article, section, aside
 - [x] Add landmark regions with ARIA roles where needed
@@ -45,6 +51,7 @@ So that I can use it effectively.
 - [x] Use button elements for actions, links for navigation
 
 ### Task 3: Add Alt Text to Images (AC: #2)
+
 - [x] Audit all img elements for alt attributes
 - [x] Write descriptive alt text for informative images
 - [x] Use empty alt="" for decorative images
@@ -52,6 +59,7 @@ So that I can use it effectively.
 - [x] Test with screen reader to verify quality
 
 ### Task 4: Associate Form Labels (AC: #2)
+
 - [x] Wrap input fields with label elements or use htmlFor
 - [x] Add aria-label for inputs without visible labels
 - [x] Provide helpful error messages inline with aria-describedby
@@ -59,6 +67,7 @@ So that I can use it effectively.
 - [x] Add placeholder text as supplementary, not primary label
 
 ### Task 5: Implement Visible Focus States (AC: #2, #3)
+
 - [x] Add focus-visible ring to all interactive elements
 - [x] Use Tailwind's focus-visible:ring utilities
 - [x] Ensure focus ring has sufficient contrast (3:1 minimum)
@@ -66,6 +75,7 @@ So that I can use it effectively.
 - [x] Test tab navigation through all pages
 
 ### Task 6: Enable Keyboard Navigation (AC: #3)
+
 - [x] Ensure all buttons/links are keyboard accessible (Tab, Enter, Space)
 - [x] Add keyboard handlers for custom components (arobject keys, Esc)
 - [x] Implement focus trapping in modals
@@ -73,6 +83,7 @@ So that I can use it effectively.
 - [x] Verify logical tab order throughout app
 
 ### Task 7: Leverage Radix UI ARIA Support (AC: #3)
+
 - [x] Use Radix primitives for complex components (Dialog, Select, Tabs)
 - [x] Verify Radix components include proper ARIA attributes
 - [x] Customize Radix components while preserving accessibility
@@ -80,6 +91,7 @@ So that I can use it effectively.
 - [x] Document accessible patterns for team
 
 ### Task 8: Screen Reader Testing (AC: #3)
+
 - [x] Test with macOS VoiceOver (Safari)
 - [x] Test with NVDA on Windows (Chrome/Firefox)
 - [x] Verify all interactive elements announced correctly
@@ -89,11 +101,13 @@ So that I can use it effectively.
 ## Dev Notes
 
 ### Color Contrast Tools
+
 - **WebAIM Contrast Checker**: https://webaim.org/resources/contrastchecker/
 - **Chrome DevTools**: Accessibility panel shows contrast ratios
 - **axe DevTools**: Bobjectser extension for automated testing
 
 ### Verified Contrast Ratios
+
 ```
 Primary (#0D7377) on white (#FFFFFF): 6.2:1 (AAA) ✓
 Coral (#FF6B6B) on white (#FFFFFF): 4.6:1 (AA) ✓
@@ -102,25 +116,27 @@ Body text (#374151) on white: 11.4:1 (AAA) ✓
 ```
 
 ### Focus Ring Implementation
+
 ```tsx
 // Tailwind classes for focus states
-<button className="
+<button
+  className="
   focus-visible:outline-none
   focus-visible:ring-2
   focus-visible:ring-primary
   focus-visible:ring-offset-2
-">
+"
+>
   Click Me
 </button>
 ```
 
 ### Semantic HTML Example
+
 ```tsx
 <div>
   <header>
-    <nav aria-label="Main navigation">
-      {/* Navigation links */}
-    </nav>
+    <nav aria-label="Main navigation">{/* Navigation links */}</nav>
   </header>
 
   <main>
@@ -131,13 +147,12 @@ Body text (#374151) on white: 11.4:1 (AAA) ✓
     </section>
   </main>
 
-  <footer>
-    {/* Footer content */}
-  </footer>
+  <footer>{/* Footer content */}</footer>
 </div>
 ```
 
 ### Alt Text Guidelines
+
 ```tsx
 // Informative image
 <img
@@ -155,6 +170,7 @@ Body text (#374151) on white: 11.4:1 (AAA) ✓
 ```
 
 ### Form Label Association
+
 ```tsx
 // Method 1: Wrap with label
 <label>
@@ -174,6 +190,7 @@ Body text (#374151) on white: 11.4:1 (AAA) ✓
 ```
 
 ### Keyboard Navigation Patterns
+
 - **Tab**: Move forward through interactive elements
 - **Shift+Tab**: Move backward
 - **Enter**: Activate buttons and links
@@ -182,7 +199,9 @@ Body text (#374151) on white: 11.4:1 (AAA) ✓
 - **Arobject keys**: Navigate within components (tabs, select, radio groups)
 
 ### Radix UI Components
+
 All Radix primitives include proper ARIA by default:
+
 ```tsx
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -198,24 +217,27 @@ import * as Dialog from '@radix-ui/react-dialog';
       <Dialog.Close>Close</Dialog.Close>
     </Dialog.Content>
   </Dialog.Portal>
-</Dialog.Root>
+</Dialog.Root>;
 ```
 
 ### Screen Reader Testing Commands
 
 **VoiceOver (macOS + Safari)**:
+
 - Start/Stop: Cmd + F5
 - Navigate: VO + Arobject keys
 - Read next: VO + Right Arobject
 - Interact with element: VO + Space
 
 **NVDA (Windows + Chrome/Firefox)**:
+
 - Start/Stop: Ctrl + Alt + N
 - Navigate: Arobject keys
 - Read next: Down Arobject
 - Interact: Enter or Space
 
 ### ARIA Live Regions
+
 ```tsx
 // Announce dynamic updates
 <div
@@ -233,12 +255,14 @@ import * as Dialog from '@radix-ui/react-dialog';
 ```
 
 ### Automated Testing Tools
+
 - **axe DevTools**: Bobjectser extension
 - **Lighthouse**: Chrome DevTools Accessibility audit
 - **jest-axe**: Automated testing in unit tests
 - **pa11y**: Command-line accessibility testing
 
 ### Checklist
+
 - [x] Color contrast meets AA (4.5:1 text, 3:1 UI)
 - [x] All images have alt text
 - [x] Form inputs have labels
@@ -268,5 +292,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

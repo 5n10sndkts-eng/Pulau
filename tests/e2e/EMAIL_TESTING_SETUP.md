@@ -39,6 +39,7 @@ Mailosaur provides unlimited email addresses in the format:
 ```
 
 For example, if your server ID is `abc123`, you can use:
+
 - `test@abc123.mailosaur.net`
 - `john.doe@abc123.mailosaur.net`
 - `test-12345@abc123.mailosaur.net`
@@ -54,24 +55,26 @@ Resend is used for actual email delivery in staging/production.
 1. **Add Domain** in Resend dashboard
    - Go to https://resend.com/domains
    - Add `pulau.app` domain
-   
 2. **DNS Records** - Add these to your DNS provider:
-   
+
    **SPF Record:**
+
    ```
    Type: TXT
    Name: @
    Value: v=spf1 include:sendgrid.net ~all
    ```
-   
+
    **DKIM Record:**
+
    ```
    Type: TXT
    Name: resend._domainkey
    Value: [provided by Resend]
    ```
-   
+
    **DMARC Record:**
+
    ```
    Type: TXT
    Name: _dmarc
@@ -253,12 +256,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 serve(async (req) => {
   const event = await req.json();
-  
+
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   );
-  
+
   // Update email_logs based on event type
   switch (event.type) {
     case 'email.delivered':
@@ -270,7 +273,7 @@ serve(async (req) => {
         })
         .eq('resend_message_id', event.data.message_id);
       break;
-      
+
     case 'email.bounced':
       await supabase
         .from('email_logs')
@@ -280,10 +283,10 @@ serve(async (req) => {
         })
         .eq('resend_message_id', event.data.message_id);
       break;
-      
+
     // Handle other event types...
   }
-  
+
   return new Response(JSON.stringify({ success: true }), {
     headers: { 'Content-Type': 'application/json' },
   });
@@ -363,6 +366,7 @@ EMAIL_ON_ACID_API_KEY=your_email_on_acid_key
 ```
 
 Add these to:
+
 - `.env.local` (local development)
 - Supabase secrets (edge functions)
 - CI/CD pipeline secrets (GitHub Actions)

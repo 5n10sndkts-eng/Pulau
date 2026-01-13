@@ -13,13 +13,14 @@ So that I know what to do next.
 **Given** a list/screen has no data
 **When** empty state renders
 **Then** appropriate illustration and messaging displays:
-  - Empty Trip: suitcase illustration, "Your trip canvas is empty", "Start Exploring" CTA
-  - No Search Results: magnifying glass, "No experiences match '[query]'", "Try different keywords" + "Clear Filters"
-  - Empty Wishlist: heart outline, "Your wishlist is empty", "Browse Experiences" CTA
-  - No Bookings: calendar, "No upcoming trips", "Plan Your Adventure" CTA
-  - No Filter Results: filter icon, "No experiences match these filters", "Clear Filters" button
-**And** CTAs navigate to appropriate screens
-**And** illustrations are lightweight SVGs
+
+- Empty Trip: suitcase illustration, "Your trip canvas is empty", "Start Exploring" CTA
+- No Search Results: magnifying glass, "No experiences match '[query]'", "Try different keywords" + "Clear Filters"
+- Empty Wishlist: heart outline, "Your wishlist is empty", "Browse Experiences" CTA
+- No Bookings: calendar, "No upcoming trips", "Plan Your Adventure" CTA
+- No Filter Results: filter icon, "No experiences match these filters", "Clear Filters" button
+  **And** CTAs navigate to appropriate screens
+  **And** illustrations are lightweight SVGs
 
 ### Story 17.2: Implement Network Interruption Handling
 
@@ -74,16 +75,17 @@ So that one bug doesn't crash everything.
 **Given** an unhandled JavaScript error occurs
 **When** the error boundary catches it
 **Then** friendly error UI displays instead of white screen:
-  - Illustration of confused character
-  - "Something went wrong"
-  - "Try refreshing the page" suggestion
-  - "Report Problem" link
-  - "Go Home" button
-**And** error details logged to console (dev mode)
-**And** error reported to monitoring service (production)
-**When** user taps "Go Home"
-**Then** navigation resets to home screen
-**And** error state clears
+
+- Illustration of confused character
+- "Something went wrong"
+- "Try refreshing the page" suggestion
+- "Report Problem" link
+- "Go Home" button
+  **And** error details logged to console (dev mode)
+  **And** error reported to monitoring service (production)
+  **When** user taps "Go Home"
+  **Then** navigation resets to home screen
+  **And** error state clears
 
 ### Story 17.5: Create Consistent Error Messaging
 
@@ -96,13 +98,14 @@ So that I understand what went wrong.
 **Given** various error conditions
 **When** errors display
 **Then** error messages are user-friendly (not technical):
-  - Network: "Unable to connect. Check your internet connection."
-  - Payment: "Payment couldn't be processed. Please try again."
-  - Validation: "[Field] is required" (inline)
-  - Not Found: "This experience is no longer available."
-  - Server: "Something went wrong on our end. Please try again later."
-**And** error toasts use destructive variant (red/coral)
-**And** inline errors use red border and helper text
-**And** all errors are recoverable (retry button or clear instructions)
+
+- Network: "Unable to connect. Check your internet connection."
+- Payment: "Payment couldn't be processed. Please try again."
+- Validation: "[Field] is required" (inline)
+- Not Found: "This experience is no longer available."
+- Server: "Something went wrong on our end. Please try again later."
+  **And** error toasts use destructive variant (red/coral)
+  **And** inline errors use red border and helper text
+  **And** all errors are recoverable (retry button or clear instructions)
 
 ---

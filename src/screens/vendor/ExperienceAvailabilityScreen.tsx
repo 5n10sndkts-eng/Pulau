@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { DayPicker } from 'react-day-picker'
-import { format, startOfMonth, endOfMonth, addMonths } from 'date-fns'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { DayPicker } from 'react-day-picker';
+import { format, startOfMonth, endOfMonth, addMonths } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   ArrowLeft,
   Calendar as CalendarIcon,
@@ -13,8 +13,8 @@ import {
   Ban,
   CheckCircle,
   AlertTriangle,
-} from 'lucide-react'
-import { toast } from 'sonner'
+} from 'lucide-react';
+import { toast } from 'sonner';
 import {
   slotService,
   blockSlot,
@@ -22,174 +22,181 @@ import {
   deleteSlot,
   updateSlot,
   type ExperienceSlot,
-} from '@/lib/slotService'
-import { SlotDetailModal } from '@/components/vendor/SlotDetailModal'
-import { CreateSlotModal } from '@/components/vendor/CreateSlotModal'
-import 'react-day-picker/dist/style.css'
+} from '@/lib/slotService';
+import { SlotDetailModal } from '@/components/vendor/SlotDetailModal';
+import { CreateSlotModal } from '@/components/vendor/CreateSlotModal';
+import 'react-day-picker/dist/style.css';
 
 interface ExperienceAvailabilityScreenProps {
-  experienceId: string
-  onBack: () => void
+  experienceId: string;
+  onBack: () => void;
 }
 
 export function ExperienceAvailabilityScreen({
   experienceId,
   onBack,
 }: ExperienceAvailabilityScreenProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  const [displayMonth, setDisplayMonth] = useState<Date>(new Date())
-  const [slots, setSlots] = useState<ExperienceSlot[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
+  const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
+  const [slots, setSlots] = useState<ExperienceSlot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Modals
-  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | null>(null)
-  const [isSlotModalOpen, setIsSlotModalOpen] = useState(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | null>(null);
+  const [isSlotModalOpen, setIsSlotModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const loadSlots = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const startDate = format(startOfMonth(displayMonth), 'yyyy-MM-dd')
-      const endDate = format(endOfMonth(addMonths(displayMonth, 1)), 'yyyy-MM-dd')
+      const startDate = format(startOfMonth(displayMonth), 'yyyy-MM-dd');
+      const endDate = format(
+        endOfMonth(addMonths(displayMonth, 1)),
+        'yyyy-MM-dd',
+      );
 
-      const { data, error } = await slotService.getAllSlots(experienceId, { startDate, endDate })
+      const { data, error } = await slotService.getAllSlots(experienceId, {
+        startDate,
+        endDate,
+      });
 
       if (error) {
-        console.error('Failed to load slots:', error)
-        toast.error('Failed to load availability')
-        setSlots([])
+        console.error('Failed to load slots:', error);
+        toast.error('Failed to load availability');
+        setSlots([]);
       } else {
-        setSlots(data || [])
+        setSlots(data || []);
       }
     } catch (error) {
-      console.error('Failed to load slots:', error)
-      toast.error('Failed to load availability')
+      console.error('Failed to load slots:', error);
+      toast.error('Failed to load availability');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [experienceId, displayMonth])
+  }, [experienceId, displayMonth]);
 
   // Load slots for visible date range
   useEffect(() => {
-    loadSlots()
-  }, [loadSlots])
-
-
+    loadSlots();
+  }, [loadSlots]);
 
   // Group slots by date for calendar display
   const slotsByDate = useMemo(() => {
-    const grouped: Record<string, ExperienceSlot[]> = {}
+    const grouped: Record<string, ExperienceSlot[]> = {};
     slots.forEach((slot) => {
-      const dateKey = slot.slot_date
+      const dateKey = slot.slot_date;
       if (!grouped[dateKey]) {
-        grouped[dateKey] = []
+        grouped[dateKey] = [];
       }
-      grouped[dateKey]!.push(slot)
-    })
-    return grouped
-  }, [slots])
+      grouped[dateKey]!.push(slot);
+    });
+    return grouped;
+  }, [slots]);
 
   // Get slots for selected date
   const selectedDateSlots = useMemo(() => {
-    if (!selectedDate) return []
-    const dateStr = format(selectedDate, 'yyyy-MM-dd')
-    return slotsByDate[dateStr] || []
-  }, [selectedDate, slotsByDate])
+    if (!selectedDate) return [];
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    return slotsByDate[dateStr] || [];
+  }, [selectedDate, slotsByDate]);
 
   // Calendar modifiers
   const blockedDates = useMemo(() => {
     return Object.entries(slotsByDate)
       .filter(([, dateSlots]) => dateSlots.every((s) => s.is_blocked))
-      .map(([date]) => new Date(date))
-  }, [slotsByDate])
+      .map(([date]) => new Date(date));
+  }, [slotsByDate]);
 
   const availableDates = useMemo(() => {
     return Object.entries(slotsByDate)
-      .filter(([, dateSlots]) => dateSlots.some((s) => !s.is_blocked && s.available_count > 0))
-      .map(([date]) => new Date(date))
-  }, [slotsByDate])
+      .filter(([, dateSlots]) =>
+        dateSlots.some((s) => !s.is_blocked && s.available_count > 0),
+      )
+      .map(([date]) => new Date(date));
+  }, [slotsByDate]);
 
   const soldOutDates = useMemo(() => {
     return Object.entries(slotsByDate)
       .filter(([, dateSlots]) =>
-        dateSlots.some((s) => !s.is_blocked && s.available_count === 0)
+        dateSlots.some((s) => !s.is_blocked && s.available_count === 0),
       )
-      .map(([date]) => new Date(date))
-  }, [slotsByDate])
+      .map(([date]) => new Date(date));
+  }, [slotsByDate]);
 
   const partialBlockedDates = useMemo(() => {
     return Object.entries(slotsByDate)
       .filter(
         ([, dateSlots]) =>
-          dateSlots.some((s) => s.is_blocked) && dateSlots.some((s) => !s.is_blocked)
+          dateSlots.some((s) => s.is_blocked) &&
+          dateSlots.some((s) => !s.is_blocked),
       )
-      .map(([date]) => new Date(date))
-  }, [slotsByDate])
+      .map(([date]) => new Date(date));
+  }, [slotsByDate]);
 
   // Handlers
   const handleDayClick = (day: Date) => {
-    setSelectedDate(day)
-  }
+    setSelectedDate(day);
+  };
 
   const handleSlotClick = (slot: ExperienceSlot) => {
-    setSelectedSlot(slot)
-    setIsSlotModalOpen(true)
-  }
+    setSelectedSlot(slot);
+    setIsSlotModalOpen(true);
+  };
 
   const handleBlockSlot = async (slotId: string, reason: string) => {
-    const { data, error } = await blockSlot(slotId, reason)
+    const { data, error } = await blockSlot(slotId, reason);
     if (data) {
       setSlots((prev) =>
-        prev.map((s) => (s.id === slotId ? { ...s, is_blocked: true } : s))
-      )
-      toast.success('Slot blocked')
+        prev.map((s) => (s.id === slotId ? { ...s, is_blocked: true } : s)),
+      );
+      toast.success('Slot blocked');
     } else {
-      toast.error(error || 'Failed to block slot')
+      toast.error(error || 'Failed to block slot');
     }
-  }
+  };
 
   const handleUnblockSlot = async (slotId: string) => {
-    const { data, error } = await unblockSlot(slotId)
+    const { data, error } = await unblockSlot(slotId);
     if (data) {
       setSlots((prev) =>
-        prev.map((s) => (s.id === slotId ? { ...s, is_blocked: false } : s))
-      )
-      toast.success('Slot unblocked')
+        prev.map((s) => (s.id === slotId ? { ...s, is_blocked: false } : s)),
+      );
+      toast.success('Slot unblocked');
     } else {
-      toast.error(error || 'Failed to unblock slot')
+      toast.error(error || 'Failed to unblock slot');
     }
-  }
+  };
 
   const handleDeleteSlot = async (slotId: string) => {
-    const { data, error } = await deleteSlot(slotId)
+    const { data, error } = await deleteSlot(slotId);
     if (data) {
-      setSlots((prev) => prev.filter((s) => s.id !== slotId))
-      toast.success('Slot deleted')
+      setSlots((prev) => prev.filter((s) => s.id !== slotId));
+      toast.success('Slot deleted');
     } else {
-      toast.error(error || 'Failed to delete slot')
+      toast.error(error || 'Failed to delete slot');
     }
-  }
+  };
 
   const handleUpdateSlot = async (
     slotId: string,
-    updates: { totalCapacity?: number }
+    updates: { totalCapacity?: number },
   ) => {
-    const { data, error } = await updateSlot(slotId, updates)
+    const { data, error } = await updateSlot(slotId, updates);
     if (data) {
-      setSlots((prev) =>
-        prev.map((s) => (s.id === slotId ? data : s))
-      )
-      toast.success('Slot updated')
+      setSlots((prev) => prev.map((s) => (s.id === slotId ? data : s)));
+      toast.success('Slot updated');
     } else {
-      toast.error(error || 'Failed to update slot')
+      toast.error(error || 'Failed to update slot');
     }
-  }
+  };
 
   const handleSlotCreated = (newSlot: ExperienceSlot) => {
-    setSlots((prev) => [...prev, newSlot])
-    setIsCreateModalOpen(false)
-    toast.success('Slot created')
-  }
+    setSlots((prev) => [...prev, newSlot]);
+    setIsCreateModalOpen(false);
+    toast.success('Slot created');
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -303,7 +310,8 @@ export function ExperienceAvailabilityScreen({
                 <div
                   className="w-4 h-4 rounded border"
                   style={{
-                    background: 'linear-gradient(135deg, #ecfdf5 50%, #f3f4f6 50%)',
+                    background:
+                      'linear-gradient(135deg, #ecfdf5 50%, #f3f4f6 50%)',
                   }}
                 />
                 <span>Partial</span>
@@ -394,8 +402,8 @@ export function ExperienceAvailabilityScreen({
       <SlotDetailModal
         isOpen={isSlotModalOpen}
         onClose={() => {
-          setIsSlotModalOpen(false)
-          setSelectedSlot(null)
+          setIsSlotModalOpen(false);
+          setSelectedSlot(null);
         }}
         slot={selectedSlot}
         onBlock={handleBlockSlot}
@@ -413,5 +421,5 @@ export function ExperienceAvailabilityScreen({
         onSlotCreated={handleSlotCreated}
       />
     </div>
-  )
+  );
 }

@@ -4,20 +4,20 @@
 // AC #1: Branded Email Templates
 // ================================================
 
-import { wrapInBaseTemplate, components } from './base.ts'
-import { escapeHtml, formatAmount, formatDateShort } from './utils.ts'
+import { wrapInBaseTemplate, components } from './base.ts';
+import { escapeHtml, formatAmount, formatDateShort } from './utils.ts';
 
 export interface BookingCancellationData {
-  booking_reference: string
-  experience_name: string
-  experience_date: string
-  guest_count: number
-  total_amount: number
-  currency: string
-  traveler_name: string
-  refund_amount?: number
-  refund_status?: 'pending' | 'processing' | 'completed' | 'none'
-  cancellation_reason?: string
+  booking_reference: string;
+  experience_name: string;
+  experience_date: string;
+  guest_count: number;
+  total_amount: number;
+  currency: string;
+  traveler_name: string;
+  refund_amount?: number;
+  refund_status?: 'pending' | 'processing' | 'completed' | 'none';
+  cancellation_reason?: string;
 }
 
 /**
@@ -25,20 +25,22 @@ export interface BookingCancellationData {
  * Informs traveler that their booking has been cancelled
  * and provides refund information if applicable
  */
-export function generateBookingCancellationEmail(data: BookingCancellationData): string {
-  const subject = `Booking Cancelled: ${data.experience_name}`
+export function generateBookingCancellationEmail(
+  data: BookingCancellationData,
+): string {
+  const subject = `Booking Cancelled: ${data.experience_name}`;
 
   // Build refund section based on status
-  let refundSection = ''
+  let refundSection = '';
 
   if (data.refund_status && data.refund_status !== 'none') {
-    const refundAmount = data.refund_amount ?? data.total_amount
+    const refundAmount = data.refund_amount ?? data.total_amount;
 
     const refundStatusText = {
       pending: 'Your refund is being processed.',
       processing: 'Your refund is on its way.',
       completed: 'Your refund has been processed.',
-    }[data.refund_status]
+    }[data.refund_status];
 
     refundSection = `
       ${components.card(`
@@ -53,7 +55,7 @@ export function generateBookingCancellationEmail(data: BookingCancellationData):
           Refunds typically appear in your account within 5-10 business days, depending on your payment provider.
         </p>
       `)}
-    `
+    `;
   }
 
   // Cancellation reason if provided
@@ -63,7 +65,7 @@ export function generateBookingCancellationEmail(data: BookingCancellationData):
         <strong>Reason:</strong> ${escapeHtml(data.cancellation_reason)}
       </p>
     `
-    : ''
+    : '';
 
   const content = `
     <!-- Header -->
@@ -105,7 +107,7 @@ export function generateBookingCancellationEmail(data: BookingCancellationData):
       Have questions about your cancellation?<br>
       Contact us at <a href="mailto:support@pulau.app" style="color: #0D7377;">support@pulau.app</a>
     </p>
-  `
+  `;
 
-  return wrapInBaseTemplate(content, subject)
+  return wrapInBaseTemplate(content, subject);
 }

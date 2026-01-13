@@ -11,10 +11,11 @@ So that vendor capabilities are correctly gated at each stage.
 **Then** state transitions are enforced in order
 **And** each transition creates an audit log entry
 **And** capabilities are gated by state:
-  - REGISTERED: Can create draft experiences
-  - KYC_SUBMITTED: Awaiting verification
-  - KYC_VERIFIED: Can publish "Request to Book" experiences
-  - BANK_LINKED: Can enable "Instant Book"
-  - ACTIVE: Full platform access
+
+- REGISTERED: Can create draft experiences
+- KYC_SUBMITTED: Awaiting verification
+- KYC_VERIFIED: Can publish "Request to Book" experiences
+- BANK_LINKED: Can enable "Instant Book"
+- ACTIVE: Full platform access
 
 ---

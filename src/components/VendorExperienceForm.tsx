@@ -1,68 +1,71 @@
-import { useState } from 'react'
-import { Upload, X, Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { useState } from 'react';
+import { Upload, X, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { toast } from 'sonner'
+} from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 interface VendorExperienceFormProps {
-  onBack: () => void
-  onSave: (data: ExperienceData) => void
+  onBack: () => void;
+  onSave: (data: ExperienceData) => void;
 }
 
 interface ExperienceData {
-  title: string
-  category: string
-  description: string
-  price: number
-  duration: string
-  groupSize: { min: number; max: number }
-  images: string[]
-  included: string[]
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  duration: string;
+  groupSize: { min: number; max: number };
+  images: string[];
+  included: string[];
 }
 
-export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormProps) {
-  const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('')
-  const [description, setDescription] = useState('')
-  const [price, setPrice] = useState('')
-  const [duration, setDuration] = useState('')
-  const [groupSize, setGroupSize] = useState({ min: 1, max: 10 })
-  const [images, setImages] = useState<string[]>([])
-  const [included, setIncluded] = useState<string[]>([])
-  const [newIncludedItem, setNewIncludedItem] = useState('')
+export function VendorExperienceForm({
+  onBack,
+  onSave,
+}: VendorExperienceFormProps) {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [duration, setDuration] = useState('');
+  const [groupSize, setGroupSize] = useState({ min: 1, max: 10 });
+  const [images, setImages] = useState<string[]>([]);
+  const [included, setIncluded] = useState<string[]>([]);
+  const [newIncludedItem, setNewIncludedItem] = useState('');
 
   const handleAddIncluded = () => {
     if (newIncludedItem.trim()) {
-      setIncluded([...included, newIncludedItem.trim()])
-      setNewIncludedItem('')
+      setIncluded([...included, newIncludedItem.trim()]);
+      setNewIncludedItem('');
     }
-  }
+  };
 
   const handleRemoveIncluded = (index: number) => {
-    setIncluded(included.filter((_, i) => i !== index))
-  }
+    setIncluded(included.filter((_, i) => i !== index));
+  };
 
   const handleImageUpload = () => {
-    const mockUrl = `https://images.unsplash.com/photo-${Date.now()}?w=800`
-    setImages([...images, mockUrl])
-    toast.success('Image uploaded')
-  }
+    const mockUrl = `https://images.unsplash.com/photo-${Date.now()}?w=800`;
+    setImages([...images, mockUrl]);
+    toast.success('Image uploaded');
+  };
 
   const handleSave = () => {
     if (!title || !category || !description || !price || !duration) {
-      toast.error('Please fill in all required fields')
-      return
+      toast.error('Please fill in all required fields');
+      return;
     }
 
     const experienceData = {
@@ -74,12 +77,12 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
       groupSize,
       images,
       included,
-    }
+    };
 
-    onSave(experienceData)
-    toast.success('Experience created successfully')
-    onBack()
-  }
+    onSave(experienceData);
+    toast.success('Experience created successfully');
+    onBack();
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,7 +91,9 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
           <Button variant="ghost" size="sm" onClick={onBack}>
             Cancel
           </Button>
-          <h1 className="font-display text-xl font-semibold">Create Experience</h1>
+          <h1 className="font-display text-xl font-semibold">
+            Create Experience
+          </h1>
           <Button size="sm" onClick={handleSave}>
             Save
           </Button>
@@ -115,9 +120,15 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="water_adventures">Water Adventures</SelectItem>
-                  <SelectItem value="land_excursions">Land Excursions</SelectItem>
-                  <SelectItem value="cultural_experiences">Cultural Experiences</SelectItem>
+                  <SelectItem value="water_adventures">
+                    Water Adventures
+                  </SelectItem>
+                  <SelectItem value="land_excursions">
+                    Land Excursions
+                  </SelectItem>
+                  <SelectItem value="cultural_experiences">
+                    Cultural Experiences
+                  </SelectItem>
                   <SelectItem value="food_tours">Food & Culinary</SelectItem>
                   <SelectItem value="transportation">Transportation</SelectItem>
                 </SelectContent>
@@ -165,7 +176,12 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
                   id="minGroup"
                   type="number"
                   value={groupSize.min}
-                  onChange={(e) => setGroupSize({ ...groupSize, min: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setGroupSize({
+                      ...groupSize,
+                      min: parseInt(e.target.value),
+                    })
+                  }
                 />
               </div>
 
@@ -175,7 +191,12 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
                   id="maxGroup"
                   type="number"
                   value={groupSize.max}
-                  onChange={(e) => setGroupSize({ ...groupSize, max: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setGroupSize({
+                      ...groupSize,
+                      max: parseInt(e.target.value),
+                    })
+                  }
                 />
               </div>
             </div>
@@ -189,12 +210,18 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
               <div className="mt-2 grid grid-cols-3 gap-4">
                 {images.map((url, index) => (
                   <div key={index} className="relative aspect-square">
-                    <img src={url} alt="" className="h-full w-full rounded-lg object-cover" />
+                    <img
+                      src={url}
+                      alt=""
+                      className="h-full w-full rounded-lg object-cover"
+                    />
                     <Button
                       size="sm"
                       variant="destructive"
                       className="absolute right-1 top-1 h-6 w-6 p-0"
-                      onClick={() => setImages(images.filter((_, i) => i !== index))}
+                      onClick={() =>
+                        setImages(images.filter((_, i) => i !== index))
+                      }
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -241,5 +268,5 @@ export function VendorExperienceForm({ onBack, onSave }: VendorExperienceFormPro
         </Card>
       </div>
     </div>
-  )
+  );
 }

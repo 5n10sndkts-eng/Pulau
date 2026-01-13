@@ -34,6 +34,7 @@ Configure Stripe production account with Connect platform capabilities, verify b
 ### 2. Complete Business Verification
 
 **Required Information:**
+
 - Business legal name: [Your Business Name]
 - Business type: LLC / Corporation / Sole Proprietor
 - Tax ID (EIN): [Your EIN]
@@ -43,12 +44,14 @@ Configure Stripe production account with Connect platform capabilities, verify b
 - MCC Code: 7999 (Recreation Services)
 
 **Bank Account:**
+
 - Account holder name
 - Routing number
 - Account number
 - Account type: Checking
 
 **Identity Verification:**
+
 - Upload government ID
 - Provide SSN/EIN
 - Verify phone number
@@ -78,6 +81,7 @@ Secret key: sk_live_...
 ```
 
 **Store keys securely:**
+
 ```bash
 # Add to password manager
 # Add to Supabase secrets (see Task 2.3)
@@ -102,9 +106,10 @@ vercel env add VITE_STRIPE_PUBLISHABLE_KEY production
      - `charge.refunded`
 
 3. Copy webhook signing secret:
+
    ```bash
    whsec_...
-   
+
    # Store securely
    supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
    ```
@@ -112,20 +117,24 @@ vercel env add VITE_STRIPE_PUBLISHABLE_KEY production
 ### 6. Configure Payment Settings
 
 **Payment Methods:**
+
 - Enable: Cards (Visa, Mastercard, Amex)
 - Consider: Apple Pay, Google Pay
 - Disable: ACH, Wire (for MVP)
 
 **Currency:**
+
 - Default: USD
 - Additional: EUR, GBP, CAD (if international)
 
 **Checkout Settings:**
+
 - Enable automatic tax calculation
 - Configure receipt emails
 - Set up payment confirmation emails
 
 **Radar (Fraud Prevention):**
+
 - Enable default fraud rules
 - Set risk threshold: Medium
 - Review blocked payments daily
@@ -133,10 +142,12 @@ vercel env add VITE_STRIPE_PUBLISHABLE_KEY production
 ### 7. Set Payout Schedule
 
 **Platform Payouts:**
+
 - Frequency: Daily (rolling)
 - Speed: Standard (2 business days)
 
 **Connected Account Payouts:**
+
 - Frequency: Daily
 - Delay: 2 days after successful charge
 - Minimum payout: $1
@@ -174,7 +185,7 @@ const accountLink = await stripe.accountLinks.create({
   refresh_url: 'https://pulau.app/vendor/onboard/refresh',
   return_url: 'https://pulau.app/vendor/onboard/complete',
   type: 'account_onboarding',
-})
+});
 ```
 
 ### Test Payment Flow
@@ -198,11 +209,13 @@ const accountLink = await stripe.accountLinks.create({
 ## Compliance Requirements
 
 **PCI Compliance:**
+
 - Use Stripe Elements/Checkout (no card data on server) ✅
 - Serve site over HTTPS ✅
 - Use latest Stripe API version ✅
 
 **Data Protection:**
+
 - Never log full card numbers
 - Encrypt sensitive data at rest
 - Follow GDPR/CCPA guidelines
@@ -237,13 +250,13 @@ const accountLink = await stripe.accountLinks.create({
 
 ## Common Issues
 
-| Issue | Solution |
-|-------|----------|
+| Issue                        | Solution                                                  |
+| ---------------------------- | --------------------------------------------------------- |
 | Account verification pending | Can take 1-3 business days, follow up with Stripe support |
-| Webhook signature fails | Verify webhook secret matches Stripe dashboard |
-| Payment declined | Check Radar rules, may need to adjust thresholds |
-| Connected account issues | Verify redirect URLs match exactly |
-| Platform fee not applied | Check application_fee_amount in payment intent |
+| Webhook signature fails      | Verify webhook secret matches Stripe dashboard            |
+| Payment declined             | Check Radar rules, may need to adjust thresholds          |
+| Connected account issues     | Verify redirect URLs match exactly                        |
+| Platform fee not applied     | Check application_fee_amount in payment intent            |
 
 ## Post-Setup
 

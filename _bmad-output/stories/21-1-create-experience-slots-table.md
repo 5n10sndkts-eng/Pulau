@@ -9,17 +9,18 @@ So that vendors can manage time-based availability for their experiences.
 **Given** the Supabase database is accessible
 **When** the migration is applied
 **Then** an `experience_slots` table exists with columns:
-  - `id` (UUID, primary key)
-  - `experience_id` (UUID, foreign key to experiences)
-  - `slot_date` (DATE)
-  - `slot_time` (TIME)
-  - `total_capacity` (INTEGER)
-  - `available_count` (INTEGER)
-  - `price_override_amount` (INTEGER, nullable)
-  - `is_blocked` (BOOLEAN, default false)
-  - `created_at` (TIMESTAMPTZ)
-  - `updated_at` (TIMESTAMPTZ)
-**And** a unique constraint exists on (experience_id, slot_date, slot_time)
-**And** an index exists on (experience_id, slot_date) for query performance
+
+- `id` (UUID, primary key)
+- `experience_id` (UUID, foreign key to experiences)
+- `slot_date` (DATE)
+- `slot_time` (TIME)
+- `total_capacity` (INTEGER)
+- `available_count` (INTEGER)
+- `price_override_amount` (INTEGER, nullable)
+- `is_blocked` (BOOLEAN, default false)
+- `created_at` (TIMESTAMPTZ)
+- `updated_at` (TIMESTAMPTZ)
+  **And** a unique constraint exists on (experience_id, slot_date, slot_time)
+  **And** an index exists on (experience_id, slot_date) for query performance
 
 ---

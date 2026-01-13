@@ -1,23 +1,29 @@
-import { useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
-import { DollarSign, Globe } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { useEffect } from 'react';
+import { useKV } from '@github/spark/hooks';
+import { DollarSign, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { toast } from 'sonner'
-import { isRtl } from '@/lib/i18n'
-import type { User } from '@/lib/types'
+} from '@/components/ui/select';
+import { toast } from 'sonner';
+import { isRtl } from '@/lib/i18n';
+import type { User } from '@/lib/types';
 
 interface CurrencyLanguageSettingsScreenProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
 const currencies = [
@@ -30,7 +36,7 @@ const currencies = [
   { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
   { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
   { code: 'SAR', name: 'Saudi Riyal', symbol: 'ر.س' },
-]
+];
 
 const languages = [
   { code: 'en', name: 'English', nativeName: 'English' },
@@ -41,10 +47,12 @@ const languages = [
   { code: 'ja', name: 'Japanese', nativeName: '日本語' },
   { code: 'ko', name: 'Korean', nativeName: '한국어' },
   { code: 'es', name: 'Spanish', nativeName: 'Español' },
-]
+];
 
-export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSettingsScreenProps) {
-  const { t, i18n } = useTranslation()
+export function CurrencyLanguageSettingsScreen({
+  onBack,
+}: CurrencyLanguageSettingsScreenProps) {
+  const { t, i18n } = useTranslation();
 
   const defaultUser: User = {
     id: '',
@@ -54,45 +62,45 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
     saved: [],
     currency: 'USD',
     language: 'en',
-  }
+  };
 
-  const [user, setUser] = useKV<User>('user', defaultUser)
+  const [user, setUser] = useKV<User>('user', defaultUser);
 
-  const safeUser = user || defaultUser
+  const safeUser = user || defaultUser;
 
   // Sync i18n language with user preference on mount
   useEffect(() => {
     if (safeUser.language && safeUser.language !== i18n.language) {
-      i18n.changeLanguage(safeUser.language)
+      i18n.changeLanguage(safeUser.language);
     }
-  }, [safeUser.language, i18n])
+  }, [safeUser.language, i18n]);
 
   // Update document direction for RTL languages
   useEffect(() => {
-    const dir = isRtl(i18n.language) ? 'rtl' : 'ltr'
-    document.documentElement.dir = dir
-    document.documentElement.lang = i18n.language
-  }, [i18n.language])
+    const dir = isRtl(i18n.language) ? 'rtl' : 'ltr';
+    document.documentElement.dir = dir;
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   const handleCurrencyChange = (currency: string) => {
     setUser((current) => {
-      const base = current || defaultUser
-      return { ...base, currency }
-    })
-    toast.success(t('settings.currencyUpdated'))
-  }
+      const base = current || defaultUser;
+      return { ...base, currency };
+    });
+    toast.success(t('settings.currencyUpdated'));
+  };
 
   const handleLanguageChange = (language: string) => {
     setUser((current) => {
-      const base = current || defaultUser
-      return { ...base, language }
-    })
+      const base = current || defaultUser;
+      return { ...base, language };
+    });
     // Change i18n language immediately
-    i18n.changeLanguage(language)
+    i18n.changeLanguage(language);
     // Store in localStorage for persistence
-    localStorage.setItem('pulau-language', language)
-    toast.success(t('settings.languageUpdated'))
-  }
+    localStorage.setItem('pulau-language', language);
+    toast.success(t('settings.languageUpdated'));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,7 +109,9 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
           <Button variant="ghost" size="sm" onClick={onBack}>
             ← {t('common.back')}
           </Button>
-          <h1 className="font-display text-2xl font-semibold">{t('profile.currencyLanguage')}</h1>
+          <h1 className="font-display text-2xl font-semibold">
+            {t('profile.currencyLanguage')}
+          </h1>
         </div>
       </div>
 
@@ -112,14 +122,21 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
               <DollarSign className="h-6 w-6 text-primary" />
               <div>
                 <CardTitle>{t('settings.currency')}</CardTitle>
-                <CardDescription>{t('settings.currencyDescription')}</CardDescription>
+                <CardDescription>
+                  {t('settings.currencyDescription')}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="currency">{t('settings.preferredCurrency')}</Label>
-              <Select value={safeUser.currency} onValueChange={handleCurrencyChange}>
+              <Label htmlFor="currency">
+                {t('settings.preferredCurrency')}
+              </Label>
+              <Select
+                value={safeUser.currency}
+                onValueChange={handleCurrencyChange}
+              >
                 <SelectTrigger id="currency">
                   <SelectValue placeholder={t('settings.preferredCurrency')} />
                 </SelectTrigger>
@@ -144,14 +161,21 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
               <Globe className="h-6 w-6 text-primary" />
               <div>
                 <CardTitle>{t('settings.language')}</CardTitle>
-                <CardDescription>{t('settings.languageDescription')}</CardDescription>
+                <CardDescription>
+                  {t('settings.languageDescription')}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="language">{t('settings.preferredLanguage')}</Label>
-              <Select value={safeUser.language} onValueChange={handleLanguageChange}>
+              <Label htmlFor="language">
+                {t('settings.preferredLanguage')}
+              </Label>
+              <Select
+                value={safeUser.language}
+                onValueChange={handleLanguageChange}
+              >
                 <SelectTrigger id="language">
                   <SelectValue placeholder={t('settings.preferredLanguage')} />
                 </SelectTrigger>
@@ -171,5 +195,5 @@ export function CurrencyLanguageSettingsScreen({ onBack }: CurrencyLanguageSetti
         </Card>
       </div>
     </div>
-  )
+  );
 }

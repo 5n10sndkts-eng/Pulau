@@ -2,38 +2,40 @@
 
 ## 📊 Coverage Summary
 
-| Metric | Status | Value |
-|--------|--------|-------|
-| Total Acceptance Criteria | 📝 | 7 |
-| Covered by Tests | ✅ | 1 |
-| Coverage Gaps | ❌ | 6 |
-| Build Status | 🏗️ | FAILED |
-| Test Pass Rate | 🧪 | 89% (104/117) |
-| **Quality Gate Decision** | 🚩 | **FAIL** |
+| Metric                    | Status | Value         |
+| ------------------------- | ------ | ------------- |
+| Total Acceptance Criteria | 📝     | 7             |
+| Covered by Tests          | ✅     | 1             |
+| Coverage Gaps             | ❌     | 6             |
+| Build Status              | 🏗️     | FAILED        |
+| Test Pass Rate            | 🧪     | 89% (104/117) |
+| **Quality Gate Decision** | 🚩     | **FAIL**      |
 
 ---
 
 ## 🔍 Detailed Mapping
 
-| ID | Acceptance Criterion | Test Level | Test Case / evidence | Status |
-|----|----------------------|------------|----------------------|--------|
-| AC1 | dataService uses `isSupabaseConfigured()` to auto-detect mock vs real mode | Unit/Integration | None found. Implementation verified in `src/lib/dataService.ts` | ❌ GAP |
-| AC2 | Experience queries include joins for vendors, images, inclusions, reviews | Unit/Integration | None found. SQL confirmed in `EXPERIENCE_SELECT` | ❌ GAP |
-| AC3 | `toExperience()` mapper handles all joined data correctly | Unit/Integration | None found. Mapper confirmed in `src/lib/dataService.ts` | ❌ GAP |
-| AC4 | vendorService maps all expanded vendor columns (phone, bio, rating, etc.) | Unit/Integration | None found. Mapper confirmed in `src/lib/vendorService.ts` | ❌ GAP |
-| AC5 | vendorService experiences query matches dataService join pattern | Unit/Integration | None found. Integration confirmed via shared `EXPERIENCE_SELECT` | ❌ GAP |
-| AC6 | VITE_USE_MOCK_DATA documented in .env.example | Manual | Verified in `.env.example`:L13 | ✅ PASS |
-| AC7 | Build succeeds with no type errors | Static | `npm run type-check` failed with 1 error in `src/lib/slotService.ts:388` | ❌ FAIL |
+| ID  | Acceptance Criterion                                                       | Test Level       | Test Case / evidence                                                     | Status  |
+| --- | -------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------ | ------- |
+| AC1 | dataService uses `isSupabaseConfigured()` to auto-detect mock vs real mode | Unit/Integration | None found. Implementation verified in `src/lib/dataService.ts`          | ❌ GAP  |
+| AC2 | Experience queries include joins for vendors, images, inclusions, reviews  | Unit/Integration | None found. SQL confirmed in `EXPERIENCE_SELECT`                         | ❌ GAP  |
+| AC3 | `toExperience()` mapper handles all joined data correctly                  | Unit/Integration | None found. Mapper confirmed in `src/lib/dataService.ts`                 | ❌ GAP  |
+| AC4 | vendorService maps all expanded vendor columns (phone, bio, rating, etc.)  | Unit/Integration | None found. Mapper confirmed in `src/lib/vendorService.ts`               | ❌ GAP  |
+| AC5 | vendorService experiences query matches dataService join pattern           | Unit/Integration | None found. Integration confirmed via shared `EXPERIENCE_SELECT`         | ❌ GAP  |
+| AC6 | VITE_USE_MOCK_DATA documented in .env.example                              | Manual           | Verified in `.env.example`:L13                                           | ✅ PASS |
+| AC7 | Build succeeds with no type errors                                         | Static           | `npm run type-check` failed with 1 error in `src/lib/slotService.ts:388` | ❌ FAIL |
 
 ---
 
 ## 🚩 Gap Analysis & Risks
 
 ### Critical Gaps
+
 1. **Zero Functional Coverage for Data Services:** There are no tests verifying that `dataService` and `vendorService` correctly interact with Supabase or map the complex joined data. Given the complexity of `toExperience` (AC3) and SQL joins (AC2, AC5), this is a high-risk gap.
 2. **Build Failure:** The project does not currently pass TypeScript type checking, which violates AC7 and indicates potential runtime issues.
 
 ### Priority Coverage Requirements
+
 - **P0:** Functional unit tests for `dataService.ts` and `vendorService.ts` mapping logic.
 - **P1:** Integration tests for mock/real mode auto-detection.
 
@@ -51,17 +53,19 @@
 ### **Decision: FAIL**
 
 ### Rationale
+
 1. **Critical Criteria Failures:** AC7 (Build succeeds) is explicitly failed.
 2. **Missing Coverage:** 5 out of 7 criteria have no corresponding tests.
 3. **Regression:** 13 unit tests failed during the verification run.
 
 ### Recommendations & Corrective Actions
+
 1. **Immediate Fix:** Resolve the type error in `src/lib/slotService.ts`.
-2. **Test Automation:** Run `*automate` to generate functional unit tests for `dataService.ts` and `vendorService.ts`. 
+2. **Test Automation:** Run `*automate` to generate functional unit tests for `dataService.ts` and `vendorService.ts`.
    - Specifically: Mock `supabase-js` and verify that `toExperience` correctly handles various database response payloads.
 3. **Regression Cleanup:** Investigate and fix the 13 failing unit tests in `src/__tests__/`.
 4. **Verification:** Re-run `npm run type-check` and `npm run test:run` after fixes.
 
 ---
 
-*Generated by Pulau Traceability Workflow*
+_Generated by Pulau Traceability Workflow_

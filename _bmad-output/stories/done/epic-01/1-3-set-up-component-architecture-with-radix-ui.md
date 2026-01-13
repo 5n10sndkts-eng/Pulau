@@ -67,9 +67,11 @@ so that we can build accessible, reusable components quickly.
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude 3.7 Sonnet (2026-01-05)
 
 ### Debug Log References
+
 - Verified all Radix UI components already installed (30+ primitives)
 - Confirmed shadcn/ui configuration in components.json
 - Validated Button and Card components with Radix UI theming integration
@@ -78,6 +80,7 @@ Claude 3.7 Sonnet (2026-01-05)
 - Bali custom colors available for app-specific components via bg-coral, bg-sand, bg-primary
 
 ### Completion Notes List
+
 1. ✅ shadcn/ui configured with components path at `src/components/ui`
 2. ✅ class-variance-authority installed (v0.7.1)
 3. ✅ cn() utility function exists in `src/lib/utils.ts`
@@ -92,11 +95,12 @@ Claude 3.7 Sonnet (2026-01-05)
 12. ✅ Build succeeds
 
 ### File List
+
 - src/components/ui/button.tsx (verified: polymorphic button with Radix Slot)
 - src/components/ui/button.variants.ts (verified: CVA variants for 6 button styles)
 - src/components/ui/card.tsx (verified: card with 7 subcomponents)
 - src/lib/utils.ts (verified: cn() utility with clsx + tailwind-merge)
-- src/__tests__/components.test.ts (verified: 14 component architecture tests)
+- src/**tests**/components.test.ts (verified: 14 component architecture tests)
 - components.json (verified: shadcn/ui configuration)
 - 30+ additional Radix UI components in src/components/ui/ (verified existing)
 
@@ -115,4 +119,3 @@ Claude 3.7 Sonnet (2026-01-05)
   - Fixed broken PRD reference path
   - Added complete file list including button.variants.ts and utils.ts
   - Removed incorrect "hover elevated" Card description (uses static shadow)
-

@@ -6,14 +6,14 @@
  * dropdown showing recent notifications, and settings controls.
  */
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { Switch } from '@/components/ui/switch'
+} from '@/components/ui/popover';
+import { Switch } from '@/components/ui/switch';
 import {
   Bell,
   BellOff,
@@ -24,31 +24,31 @@ import {
   Trash2,
   X,
   Zap,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type {
   VendorNotification,
   NotificationPermissionStatus,
   NotificationPreferences,
-} from '@/lib/vendorNotificationService'
+} from '@/lib/vendorNotificationService';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 interface VendorNotificationBellProps {
-  notifications: VendorNotification[]
-  unreadCount: number
-  permissionStatus: NotificationPermissionStatus
-  preferences: NotificationPreferences
-  onRequestPermission: () => Promise<NotificationPermissionStatus>
-  onUpdatePreferences: (prefs: Partial<NotificationPreferences>) => void
-  onMarkAsRead: (id: string) => void
-  onMarkAllAsRead: () => void
-  onClearAll: () => void
-  onNavigateToNotification?: (notification: VendorNotification) => void
-  onSimulateBooking?: () => void // For demo
-  className?: string
+  notifications: VendorNotification[];
+  unreadCount: number;
+  permissionStatus: NotificationPermissionStatus;
+  preferences: NotificationPreferences;
+  onRequestPermission: () => Promise<NotificationPermissionStatus>;
+  onUpdatePreferences: (prefs: Partial<NotificationPreferences>) => void;
+  onMarkAsRead: (id: string) => void;
+  onMarkAllAsRead: () => void;
+  onClearAll: () => void;
+  onNavigateToNotification?: (notification: VendorNotification) => void;
+  onSimulateBooking?: () => void; // For demo
+  className?: string;
 }
 
 // ============================================================================
@@ -58,32 +58,32 @@ interface VendorNotificationBellProps {
 function NotificationIcon({ type }: { type: VendorNotification['type'] }) {
   switch (type) {
     case 'booking_confirmed':
-      return <DollarSign className="h-4 w-4 text-green-600" />
+      return <DollarSign className="h-4 w-4 text-green-600" />;
     case 'booking_cancelled':
-      return <X className="h-4 w-4 text-red-600" />
+      return <X className="h-4 w-4 text-red-600" />;
     case 'payout_sent':
-      return <Check className="h-4 w-4 text-blue-600" />
+      return <Check className="h-4 w-4 text-blue-600" />;
     case 'review_received':
-      return <Zap className="h-4 w-4 text-yellow-600" />
+      return <Zap className="h-4 w-4 text-yellow-600" />;
     default:
-      return <Bell className="h-4 w-4" />
+      return <Bell className="h-4 w-4" />;
   }
 }
 
 function formatRelativeTime(date: Date): string {
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffSeconds = Math.floor(diffMs / 1000)
-  const diffMinutes = Math.floor(diffSeconds / 60)
-  const diffHours = Math.floor(diffMinutes / 60)
-  const diffDays = Math.floor(diffHours / 24)
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
 
-  if (diffSeconds < 60) return 'Just now'
-  if (diffMinutes < 60) return `${diffMinutes}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays}d ago`
-  return date.toLocaleDateString()
+  if (diffSeconds < 60) return 'Just now';
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
 }
 
 // ============================================================================
@@ -91,16 +91,20 @@ function formatRelativeTime(date: Date): string {
 // ============================================================================
 
 interface NotificationItemProps {
-  notification: VendorNotification
-  onMarkAsRead: (id: string) => void
-  onNavigate?: (notification: VendorNotification) => void
+  notification: VendorNotification;
+  onMarkAsRead: (id: string) => void;
+  onNavigate?: (notification: VendorNotification) => void;
 }
 
-function NotificationItem({ notification, onMarkAsRead, onNavigate }: NotificationItemProps) {
+function NotificationItem({
+  notification,
+  onMarkAsRead,
+  onNavigate,
+}: NotificationItemProps) {
   const handleClick = () => {
-    onMarkAsRead(notification.id)
-    onNavigate?.(notification)
-  }
+    onMarkAsRead(notification.id);
+    onNavigate?.(notification);
+  };
 
   return (
     <button
@@ -109,7 +113,7 @@ function NotificationItem({ notification, onMarkAsRead, onNavigate }: Notificati
       className={cn(
         'w-full flex items-start gap-3 p-3 text-left rounded-lg transition-colors',
         'hover:bg-muted/50',
-        !notification.read && 'bg-primary/5'
+        !notification.read && 'bg-primary/5',
       )}
     >
       <div
@@ -118,7 +122,7 @@ function NotificationItem({ notification, onMarkAsRead, onNavigate }: Notificati
           notification.type === 'booking_confirmed' && 'bg-green-100',
           notification.type === 'booking_cancelled' && 'bg-red-100',
           notification.type === 'payout_sent' && 'bg-blue-100',
-          notification.type === 'review_received' && 'bg-yellow-100'
+          notification.type === 'review_received' && 'bg-yellow-100',
         )}
       >
         <NotificationIcon type={notification.type} />
@@ -140,7 +144,7 @@ function NotificationItem({ notification, onMarkAsRead, onNavigate }: Notificati
         </p>
       </div>
     </button>
-  )
+  );
 }
 
 // ============================================================================
@@ -156,7 +160,7 @@ function EmptyState() {
         You'll see booking updates here
       </p>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -164,11 +168,11 @@ function EmptyState() {
 // ============================================================================
 
 interface SettingsPanelProps {
-  permissionStatus: NotificationPermissionStatus
-  preferences: NotificationPreferences
-  onRequestPermission: () => Promise<NotificationPermissionStatus>
-  onUpdatePreferences: (prefs: Partial<NotificationPreferences>) => void
-  onClose: () => void
+  permissionStatus: NotificationPermissionStatus;
+  preferences: NotificationPreferences;
+  onRequestPermission: () => Promise<NotificationPermissionStatus>;
+  onUpdatePreferences: (prefs: Partial<NotificationPreferences>) => void;
+  onClose: () => void;
 }
 
 function SettingsPanel({
@@ -178,13 +182,13 @@ function SettingsPanel({
   onUpdatePreferences,
   onClose,
 }: SettingsPanelProps) {
-  const [isRequesting, setIsRequesting] = useState(false)
+  const [isRequesting, setIsRequesting] = useState(false);
 
   const handleRequestPermission = async () => {
-    setIsRequesting(true)
-    await onRequestPermission()
-    setIsRequesting(false)
-  }
+    setIsRequesting(true);
+    await onRequestPermission();
+    setIsRequesting(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -219,10 +223,10 @@ function SettingsPanel({
             {permissionStatus === 'granted'
               ? 'Receive desktop alerts'
               : permissionStatus === 'denied'
-              ? 'Blocked by browser'
-              : permissionStatus === 'unsupported'
-              ? 'Not supported'
-              : 'Enable desktop alerts'}
+                ? 'Blocked by browser'
+                : permissionStatus === 'unsupported'
+                  ? 'Not supported'
+                  : 'Enable desktop alerts'}
           </p>
         </div>
         {permissionStatus === 'granted' ? (
@@ -246,7 +250,7 @@ function SettingsPanel({
         )}
       </div>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -266,10 +270,10 @@ export function VendorNotificationBell({
   onSimulateBooking,
   className,
 }: VendorNotificationBellProps) {
-  const [showSettings, setShowSettings] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const [showSettings, setShowSettings] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const hasNotifications = notifications.length > 0
+  const hasNotifications = notifications.length > 0;
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -289,11 +293,7 @@ export function VendorNotificationBell({
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent
-        align="end"
-        className="w-80 p-0"
-        sideOffset={8}
-      >
+      <PopoverContent align="end" className="w-80 p-0" sideOffset={8}>
         {showSettings ? (
           <div className="p-4">
             <SettingsPanel
@@ -384,5 +384,5 @@ export function VendorNotificationBell({
         )}
       </PopoverContent>
     </Popover>
-  )
+  );
 }

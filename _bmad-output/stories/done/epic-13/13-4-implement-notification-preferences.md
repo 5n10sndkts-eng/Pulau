@@ -11,14 +11,17 @@ So that I only get relevant alerts.
 ## Acceptance Criteria
 
 ### AC 1: Notification Settings Screen
+
 **Given** I tap "Notifications" from profile
 **When** the notifications settings screen loads
 **Then** I see toggle switches for notification types
 
 ### AC 2: Toggle Options Display
+
 **Given** notification toggles are displayed
 **When** I view the list
 **Then** I see toggles for:
+
 - Booking Confirmations (default: on)
 - Trip Reminders (default: on)
 - Price Drops on Saved (default: on)
@@ -26,11 +29,13 @@ So that I only get relevant alerts.
 - Marketing & Promotions (default: off)
 
 ### AC 3: Immediate Save
+
 **Given** I toggle a setting
 **When** the toggle changes
 **Then** toggles save immediately on change to KV store with key `user:notifications:preferences:{userId}`
 
 ### AC 4: Toggle Styling
+
 **Given** toggles are rendered
 **When** a toggle is on
 **Then** toggle uses primary teal color when on
@@ -38,6 +43,7 @@ So that I only get relevant alerts.
 ## Tasks / Subtasks
 
 ### Task 1: Create Notification Settings Component (AC: #1, #2)
+
 - [x] Create component in `src/pages/NotificationSettings.tsx`
 - [x] Query KV store with key `user:notifications:preferences:{userId}` for current user preferences
 - [x] Display toggle list with labels and descriptions using Tailwind styling
@@ -45,6 +51,7 @@ So that I only get relevant alerts.
 - [x] Set up React Router route for `/profile/notifications`
 
 ### Task 2: Build Toggle Components (AC: #2, #4)
+
 - [x] Use Radix UI Switch component (`@radix-ui/react-switch`)
 - [x] Style with teal color (Tailwind `bg-teal-600`) when active
 - [x] Add labels and helper text for each option using semantic HTML
@@ -52,6 +59,7 @@ So that I only get relevant alerts.
 - [x] Add smooth toggle animations using Tailwind transitions
 
 ### Task 3: Implement Save on Toggle (AC: #3)
+
 - [x] Update KV store on each toggle change
 - [x] No "Save" button required (immediate save)
 - [x] Show subtle loading indicator during update
@@ -59,6 +67,7 @@ So that I only get relevant alerts.
 - [x] Use optimistic updates for instant UI feedback
 
 ### Task 4: Set Up Notification Preferences Data Model
+
 - [x] Define TypeScript interface for `NotificationPreferences`
 - [x] Set default values when no preferences exist in KV store
 - [x] Initialize preferences on first user profile creation
@@ -67,6 +76,7 @@ So that I only get relevant alerts.
 ## Dev Notes
 
 ### TypeScript Interface
+
 ```typescript
 interface NotificationPreferences {
   userId: string;
@@ -90,6 +100,7 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
 ```
 
 ### Notification Settings Component
+
 ```typescript
 import { useState } from 'react';
 import { useKV } from '@/hooks/useKV';
@@ -221,6 +232,7 @@ const NotificationSettings = () => {
 ```
 
 ### Notification Toggle Component
+
 ```typescript
 import * as Switch from '@radix-ui/react-switch';
 
@@ -232,19 +244,19 @@ interface NotificationToggleProps {
   onCheckedChange: (checked: boolean) => void;
 }
 
-const NotificationToggle = ({ 
-  icon, 
-  label, 
-  description, 
-  checked, 
-  onCheckedChange 
+const NotificationToggle = ({
+  icon,
+  label,
+  description,
+  checked,
+  onCheckedChange
 }: NotificationToggleProps) => {
   return (
     <div className="flex items-start gap-4 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
       <div className="mt-1">{icon}</div>
-      
+
       <div className="flex-1">
-        <label 
+        <label
           htmlFor={label}
           className="block font-medium text-gray-900 dark:text-white mb-1 cursor-pointer"
         >
@@ -270,17 +282,21 @@ const NotificationToggle = ({
 ```
 
 ### KV Store Key Pattern
+
 ```typescript
 // Key pattern for notification preferences
-const NOTIFICATION_PREFS_KEY = (userId: string) => 
+const NOTIFICATION_PREFS_KEY = (userId: string) =>
   `user:notifications:preferences:${userId}`;
 
 // Example usage
 await kv.set(NOTIFICATION_PREFS_KEY(userId), preferences);
-const prefs = await kv.get<NotificationPreferences>(NOTIFICATION_PREFS_KEY(userId));
+const prefs = await kv.get<NotificationPreferences>(
+  NOTIFICATION_PREFS_KEY(userId),
+);
 ```
 
 ### Testing Considerations
+
 - Test toggling each preference type
 - Verify optimistic updates work correctly
 - Test error handling with network failures
@@ -304,6 +320,7 @@ const prefs = await kv.get<NotificationPreferences>(NOTIFICATION_PREFS_KEY(userI
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ File paths: `app/profile/notifications.tsx` → `src/pages/NotificationSettings.tsx`
 2. ✅ Components: React Native Switch → Radix UI Switch component
 3. ✅ Data layer: Supabase KV namespace (`user_notification_preferences`) → KV store with key pattern
@@ -334,5 +351,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

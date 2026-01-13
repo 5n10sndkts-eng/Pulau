@@ -17,31 +17,31 @@ So that customers receive booking confirmations and important notifications.
 1. **Given** a valid email request with template and data
    **When** the `send-email` Edge Function is called
    **Then** it validates:
-     - Request is authenticated (service role key or valid JWT)
-     - Required fields present (to, template, data)
-     - Template exists
+   - Request is authenticated (service role key or valid JWT)
+   - Required fields present (to, template, data)
+   - Template exists
 
 2. **Given** validation passes
    **When** sending the email via Resend API
    **Then** it:
-     - Renders the template with provided data
-     - Sends email with correct from address
-     - Includes reply-to if specified
-     - Handles attachments (PDF tickets)
+   - Renders the template with provided data
+   - Sends email with correct from address
+   - Includes reply-to if specified
+   - Handles attachments (PDF tickets)
 
 3. **Given** the email is sent successfully
    **When** the function returns
    **Then** it returns:
-     - Success status
-     - Resend message ID
-     - Creates audit log entry
+   - Success status
+   - Resend message ID
+   - Creates audit log entry
 
 4. **Given** any validation or send fails
    **When** an error occurs
    **Then** it:
-     - Returns meaningful error response
-     - Logs error details
-     - Does not expose sensitive data
+   - Returns meaningful error response
+   - Logs error details
+   - Does not expose sensitive data
 
 ## Tasks / Subtasks
 
@@ -80,42 +80,47 @@ So that customers receive booking confirmations and important notifications.
 ### Architecture Patterns & Constraints
 
 **Edge Function Pattern:**
-```typescript
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { Resend } from 'https://esm.sh/resend@2?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY')!)
+```typescript
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { Resend } from 'https://esm.sh/resend@2?target=deno';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY')!);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+};
 ```
 
 **Required Environment Variables:**
+
 - `RESEND_API_KEY` - Resend API key
 - `RESEND_FROM_EMAIL` - Verified sender email (e.g., bookings@pulau.app)
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` - Service role key
 
 **Request Schema:**
+
 ```typescript
 interface SendEmailRequest {
-  to: string | string[]
-  subject?: string // If not using template
-  template: string // Template name
-  data: Record<string, any> // Template variables
-  replyTo?: string
+  to: string | string[];
+  subject?: string; // If not using template
+  template: string; // Template name
+  data: Record<string, any>; // Template variables
+  replyTo?: string;
   attachments?: Array<{
-    filename: string
-    content: string // base64
-    contentType: string
-  }>
+    filename: string;
+    content: string; // base64
+    contentType: string;
+  }>;
 }
 ```
 
 **Database Schema (email_logs table):**
+
 ```sql
 CREATE TABLE email_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -134,6 +139,7 @@ CREATE TABLE email_logs (
 Will be stored in `supabase/functions/send-email/templates/` as HTML files.
 
 **Example Usage:**
+
 ```typescript
 // From checkout-success flow
 const response = await supabaseClient.functions.invoke('send-email', {
@@ -146,16 +152,19 @@ const response = await supabaseClient.functions.invoke('send-email', {
       bookingDate: booking.booking_date,
       ticketUrl: booking.qr_code_url,
     },
-    attachments: [{
-      filename: 'ticket.pdf',
-      content: pdfBase64,
-      contentType: 'application/pdf',
-    }],
+    attachments: [
+      {
+        filename: 'ticket.pdf',
+        content: pdfBase64,
+        contentType: 'application/pdf',
+      },
+    ],
   },
-})
+});
 ```
 
 **Error Handling:**
+
 - 400: Invalid request (missing fields, invalid email)
 - 401: Unauthorized (invalid auth)
 - 500: Resend API error or internal error
@@ -164,16 +173,19 @@ const response = await supabaseClient.functions.invoke('send-email', {
 ## Testing Strategy
 
 ### Unit Tests
+
 - Request validation logic
 - Template rendering
 - Error handling paths
 
 ### Integration Tests
+
 - Send test email via Resend sandbox
 - Verify audit log creation
 - Test attachment handling
 
 ### Manual QA
+
 - Send to Gmail, Outlook, Apple Mail
 - Verify rendering on mobile and desktop
 - Check spam folder placement

@@ -6,29 +6,37 @@
  * Uses the Web Notifications API to show desktop notifications.
  */
 
-import { formatCurrency } from './vendorAnalyticsService'
+import { formatCurrency } from './vendorAnalyticsService';
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type NotificationType = 'booking_confirmed' | 'booking_cancelled' | 'payout_sent' | 'review_received'
+export type NotificationType =
+  | 'booking_confirmed'
+  | 'booking_cancelled'
+  | 'payout_sent'
+  | 'review_received';
 
 export interface VendorNotification {
-  id: string
-  type: NotificationType
-  title: string
-  message: string
-  amount?: number
-  bookingId?: string
-  experienceId?: string
-  experienceTitle?: string
-  guestCount?: number
-  createdAt: Date
-  read: boolean
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  amount?: number;
+  bookingId?: string;
+  experienceId?: string;
+  experienceTitle?: string;
+  guestCount?: number;
+  createdAt: Date;
+  read: boolean;
 }
 
-export type NotificationPermissionStatus = 'default' | 'granted' | 'denied' | 'unsupported'
+export type NotificationPermissionStatus =
+  | 'default'
+  | 'granted'
+  | 'denied'
+  | 'unsupported';
 
 // ============================================================================
 // PERMISSION MANAGEMENT
@@ -38,7 +46,7 @@ export type NotificationPermissionStatus = 'default' | 'granted' | 'denied' | 'u
  * Check if browser notifications are supported
  */
 export function isNotificationSupported(): boolean {
-  return 'Notification' in window
+  return 'Notification' in window;
 }
 
 /**
@@ -46,9 +54,9 @@ export function isNotificationSupported(): boolean {
  */
 export function getNotificationPermission(): NotificationPermissionStatus {
   if (!isNotificationSupported()) {
-    return 'unsupported'
+    return 'unsupported';
   }
-  return Notification.permission as NotificationPermissionStatus
+  return Notification.permission as NotificationPermissionStatus;
 }
 
 /**
@@ -57,20 +65,20 @@ export function getNotificationPermission(): NotificationPermissionStatus {
  */
 export async function requestNotificationPermission(): Promise<NotificationPermissionStatus> {
   if (!isNotificationSupported()) {
-    return 'unsupported'
+    return 'unsupported';
   }
 
   // Already granted or denied
   if (Notification.permission !== 'default') {
-    return Notification.permission as NotificationPermissionStatus
+    return Notification.permission as NotificationPermissionStatus;
   }
 
   try {
-    const permission = await Notification.requestPermission()
-    return permission as NotificationPermissionStatus
+    const permission = await Notification.requestPermission();
+    return permission as NotificationPermissionStatus;
   } catch (error) {
-    console.error('Failed to request notification permission:', error)
-    return 'denied'
+    console.error('Failed to request notification permission:', error);
+    return 'denied';
   }
 }
 
@@ -83,15 +91,17 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
  * @param notification - The notification data to display
  * @returns The Notification instance or null if not permitted
  */
-export function showBrowserNotification(notification: VendorNotification): Notification | null {
+export function showBrowserNotification(
+  notification: VendorNotification,
+): Notification | null {
   if (!isNotificationSupported()) {
-    console.warn('Browser notifications not supported')
-    return null
+    console.warn('Browser notifications not supported');
+    return null;
   }
 
   if (Notification.permission !== 'granted') {
-    console.warn('Browser notification permission not granted')
-    return null
+    console.warn('Browser notification permission not granted');
+    return null;
   }
 
   try {
@@ -102,17 +112,17 @@ export function showBrowserNotification(notification: VendorNotification): Notif
       tag: `booking-${notification.id}`,
       requireInteraction: false,
       silent: false,
-    })
+    });
 
     // Auto-close after 5 seconds
     setTimeout(() => {
-      browserNotification.close()
-    }, 5000)
+      browserNotification.close();
+    }, 5000);
 
-    return browserNotification
+    return browserNotification;
   } catch (error) {
-    console.error('Failed to show browser notification:', error)
-    return null
+    console.error('Failed to show browser notification:', error);
+    return null;
   }
 }
 
@@ -128,9 +138,9 @@ export function createBookingNotification(
   experienceTitle: string,
   guestCount: number,
   totalAmount: number, // in cents
-  experienceId?: string
+  experienceId?: string,
 ): VendorNotification {
-  const formattedAmount = formatCurrency(totalAmount)
+  const formattedAmount = formatCurrency(totalAmount);
 
   return {
     id: `notif-${bookingId}-${Date.now()}`,
@@ -144,7 +154,7 @@ export function createBookingNotification(
     guestCount,
     createdAt: new Date(),
     read: false,
-  }
+  };
 }
 
 /**
@@ -153,9 +163,9 @@ export function createBookingNotification(
 export function createCancellationNotification(
   bookingId: string,
   experienceTitle: string,
-  refundAmount: number // in cents
+  refundAmount: number, // in cents
 ): VendorNotification {
-  const formattedAmount = formatCurrency(refundAmount)
+  const formattedAmount = formatCurrency(refundAmount);
 
   return {
     id: `notif-cancel-${bookingId}-${Date.now()}`,
@@ -167,7 +177,7 @@ export function createCancellationNotification(
     experienceTitle,
     createdAt: new Date(),
     read: false,
-  }
+  };
 }
 
 /**
@@ -175,9 +185,9 @@ export function createCancellationNotification(
  */
 export function createPayoutNotification(
   payoutId: string,
-  amount: number // in cents
+  amount: number, // in cents
 ): VendorNotification {
-  const formattedAmount = formatCurrency(amount)
+  const formattedAmount = formatCurrency(amount);
 
   return {
     id: `notif-payout-${payoutId}-${Date.now()}`,
@@ -187,52 +197,54 @@ export function createPayoutNotification(
     amount,
     createdAt: new Date(),
     read: false,
-  }
+  };
 }
 
 // ============================================================================
 // LOCAL STORAGE FOR NOTIFICATION PREFERENCES
 // ============================================================================
 
-const NOTIFICATION_PREFS_KEY = 'vendor_notification_prefs'
+const NOTIFICATION_PREFS_KEY = 'vendor_notification_prefs';
 
 export interface NotificationPreferences {
-  browserNotificationsEnabled: boolean
-  toastNotificationsEnabled: boolean
-  soundEnabled: boolean
+  browserNotificationsEnabled: boolean;
+  toastNotificationsEnabled: boolean;
+  soundEnabled: boolean;
 }
 
 const DEFAULT_PREFS: NotificationPreferences = {
   browserNotificationsEnabled: true,
   toastNotificationsEnabled: true,
   soundEnabled: false,
-}
+};
 
 /**
  * Get notification preferences from local storage
  */
 export function getNotificationPreferences(): NotificationPreferences {
   try {
-    const stored = localStorage.getItem(NOTIFICATION_PREFS_KEY)
+    const stored = localStorage.getItem(NOTIFICATION_PREFS_KEY);
     if (stored) {
-      return { ...DEFAULT_PREFS, ...JSON.parse(stored) }
+      return { ...DEFAULT_PREFS, ...JSON.parse(stored) };
     }
   } catch (error) {
-    console.error('Failed to read notification preferences:', error)
+    console.error('Failed to read notification preferences:', error);
   }
-  return DEFAULT_PREFS
+  return DEFAULT_PREFS;
 }
 
 /**
  * Save notification preferences to local storage
  */
-export function saveNotificationPreferences(prefs: Partial<NotificationPreferences>): void {
+export function saveNotificationPreferences(
+  prefs: Partial<NotificationPreferences>,
+): void {
   try {
-    const current = getNotificationPreferences()
-    const updated = { ...current, ...prefs }
-    localStorage.setItem(NOTIFICATION_PREFS_KEY, JSON.stringify(updated))
+    const current = getNotificationPreferences();
+    const updated = { ...current, ...prefs };
+    localStorage.setItem(NOTIFICATION_PREFS_KEY, JSON.stringify(updated));
   } catch (error) {
-    console.error('Failed to save notification preferences:', error)
+    console.error('Failed to save notification preferences:', error);
   }
 }
 
@@ -240,49 +252,54 @@ export function saveNotificationPreferences(prefs: Partial<NotificationPreferenc
 // NOTIFICATION HISTORY (IN-MEMORY FOR SESSION)
 // ============================================================================
 
-const MAX_NOTIFICATIONS = 50
-let notificationHistory: VendorNotification[] = []
+const MAX_NOTIFICATIONS = 50;
+let notificationHistory: VendorNotification[] = [];
 
 /**
  * Add a notification to history
  */
-export function addToNotificationHistory(notification: VendorNotification): void {
-  notificationHistory = [notification, ...notificationHistory].slice(0, MAX_NOTIFICATIONS)
+export function addToNotificationHistory(
+  notification: VendorNotification,
+): void {
+  notificationHistory = [notification, ...notificationHistory].slice(
+    0,
+    MAX_NOTIFICATIONS,
+  );
 }
 
 /**
  * Get notification history
  */
 export function getNotificationHistory(): VendorNotification[] {
-  return [...notificationHistory]
+  return [...notificationHistory];
 }
 
 /**
  * Get unread notification count
  */
 export function getUnreadCount(): number {
-  return notificationHistory.filter(n => !n.read).length
+  return notificationHistory.filter((n) => !n.read).length;
 }
 
 /**
  * Mark a notification as read
  */
 export function markNotificationAsRead(notificationId: string): void {
-  notificationHistory = notificationHistory.map(n =>
-    n.id === notificationId ? { ...n, read: true } : n
-  )
+  notificationHistory = notificationHistory.map((n) =>
+    n.id === notificationId ? { ...n, read: true } : n,
+  );
 }
 
 /**
  * Mark all notifications as read
  */
 export function markAllNotificationsAsRead(): void {
-  notificationHistory = notificationHistory.map(n => ({ ...n, read: true }))
+  notificationHistory = notificationHistory.map((n) => ({ ...n, read: true }));
 }
 
 /**
  * Clear notification history
  */
 export function clearNotificationHistory(): void {
-  notificationHistory = []
+  notificationHistory = [];
 }

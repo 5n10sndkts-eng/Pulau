@@ -16,20 +16,20 @@ So that we can verify Sentry captures all error types correctly.
 1. **Given** various error scenarios
    **When** triggered in production
    **Then** Sentry captures:
-     - Unhandled exceptions
-     - Promise rejections
-     - Network errors
-     - Component errors
-     - Console errors
+   - Unhandled exceptions
+   - Promise rejections
+   - Network errors
+   - Component errors
+   - Console errors
 
 2. **Given** error is captured
    **When** viewed in Sentry
    **Then** it includes:
-     - Full stack trace
-     - User context
-     - Breadcrumbs (user actions)
-     - Device/browser info
-     - Release version
+   - Full stack trace
+   - User context
+   - Breadcrumbs (user actions)
+   - Device/browser info
+   - Release version
 
 ## Tasks / Subtasks
 
@@ -43,28 +43,30 @@ So that we can verify Sentry captures all error types correctly.
 ## Dev Notes
 
 **Test Scenarios:**
+
 ```typescript
 // 1. Unhandled exception
-throw new Error('Test unhandled error')
+throw new Error('Test unhandled error');
 
 // 2. Promise rejection
-Promise.reject('Test rejection')
+Promise.reject('Test rejection');
 
 // 3. Network error
-fetch('https://nonexistent.api')
+fetch('https://nonexistent.api');
 
 // 4. Component error
 const BrokenComponent = () => {
-  throw new Error('Component crashed')
-}
+  throw new Error('Component crashed');
+};
 
 // 5. Async error
 async function test() {
-  throw new Error('Async error')
+  throw new Error('Async error');
 }
 ```
 
 **Verification Checklist:**
+
 - [ ] Error appears in Sentry within 10 seconds
 - [ ] Source maps resolve correctly
 - [ ] User ID attached

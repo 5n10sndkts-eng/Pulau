@@ -6,10 +6,10 @@
  * status badges, amounts, dates, and export functionality.
  */
 
-import { useState, useCallback } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   Download,
   ExternalLink,
@@ -20,8 +20,8 @@ import {
   Truck,
   XCircle,
   Ban,
-} from 'lucide-react'
-import { VendorSession } from '@/lib/types'
+} from 'lucide-react';
+import { VendorSession } from '@/lib/types';
 import {
   getPayoutHistory,
   exportPayoutsToCSV,
@@ -30,19 +30,19 @@ import {
   PayoutRecord,
   PayoutStatus as PayoutStatusType,
   PayoutHistoryResponse,
-} from '@/lib/vendorAnalyticsService'
-import { cn } from '@/lib/utils'
+} from '@/lib/vendorAnalyticsService';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Status Badge Component
 // ============================================================================
 
 interface StatusBadgeProps {
-  status: PayoutStatusType
+  status: PayoutStatusType;
 }
 
 function StatusBadge({ status }: StatusBadgeProps) {
-  const { label, color } = formatPayoutStatus(status)
+  const { label, color } = formatPayoutStatus(status);
 
   const colorClasses: Record<string, string> = {
     green: 'bg-green-100 text-green-800 border-green-200',
@@ -50,7 +50,7 @@ function StatusBadge({ status }: StatusBadgeProps) {
     yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     red: 'bg-red-100 text-red-800 border-red-200',
     gray: 'bg-gray-100 text-gray-800 border-gray-200',
-  }
+  };
 
   const iconMap: Record<PayoutStatusType, typeof CheckCircle> = {
     paid: CheckCircle,
@@ -58,21 +58,21 @@ function StatusBadge({ status }: StatusBadgeProps) {
     pending: Clock,
     failed: XCircle,
     canceled: Ban,
-  }
+  };
 
-  const Icon = iconMap[status] || Clock
+  const Icon = iconMap[status] || Clock;
 
   return (
     <span
       className={cn(
         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border',
-        colorClasses[color] || colorClasses.gray
+        colorClasses[color] || colorClasses.gray,
       )}
     >
       <Icon className="h-3 w-3" />
       {label}
     </span>
-  )
+  );
 }
 
 // ============================================================================
@@ -80,38 +80,43 @@ function StatusBadge({ status }: StatusBadgeProps) {
 // ============================================================================
 
 interface PayoutRowProps {
-  payout: PayoutRecord
+  payout: PayoutRecord;
 }
 
 function PayoutRow({ payout }: PayoutRowProps) {
   // Format date relative to now
   const formatRelativeDate = (date: Date): string => {
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Today'
-    if (diffDays === 1) return 'Yesterday'
-    if (diffDays < 7) return `${diffDays} days ago`
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  }
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
 
   // For future dates (pending/in_transit)
   const formatFutureDate = (date: Date): string => {
-    const now = new Date()
-    const diffMs = date.getTime() - now.getTime()
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+    const now = new Date();
+    const diffMs = date.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays <= 0) return 'Today'
-    if (diffDays === 1) return 'Tomorrow'
-    if (diffDays < 7) return `In ${diffDays} days`
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  }
+    if (diffDays <= 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays < 7) return `In ${diffDays} days`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
 
-  const dateDisplay = payout.status === 'paid'
-    ? formatRelativeDate(payout.arrivalDate)
-    : formatFutureDate(payout.arrivalDate)
+  const dateDisplay =
+    payout.status === 'paid'
+      ? formatRelativeDate(payout.arrivalDate)
+      : formatFutureDate(payout.arrivalDate);
 
   return (
     <tr className="border-b hover:bg-muted/50 transition-colors">
@@ -136,7 +141,9 @@ function PayoutRow({ payout }: PayoutRowProps) {
 
       {/* Gross Amount */}
       <td className="py-4 px-4 text-right">
-        <span className="font-medium">{formatCurrency(payout.amount, payout.currency)}</span>
+        <span className="font-medium">
+          {formatCurrency(payout.amount, payout.currency)}
+        </span>
       </td>
 
       {/* Fee */}
@@ -156,7 +163,7 @@ function PayoutRow({ payout }: PayoutRowProps) {
         {payout.stripePayoutId.slice(0, 12)}...
       </td>
     </tr>
-  )
+  );
 }
 
 // ============================================================================
@@ -192,7 +199,7 @@ function TableSkeleton() {
         </tr>
       ))}
     </>
-  )
+  );
 }
 
 // ============================================================================
@@ -210,7 +217,7 @@ function EmptyState() {
         </p>
       </td>
     </tr>
-  )
+  );
 }
 
 // ============================================================================
@@ -218,8 +225,8 @@ function EmptyState() {
 // ============================================================================
 
 interface SummaryProps {
-  summary: PayoutHistoryResponse['summary']
-  isLoading: boolean
+  summary: PayoutHistoryResponse['summary'];
+  isLoading: boolean;
 }
 
 function PayoutSummary({ summary, isLoading }: SummaryProps) {
@@ -233,7 +240,7 @@ function PayoutSummary({ summary, isLoading }: SummaryProps) {
           </div>
         ))}
       </div>
-    )
+    );
   }
 
   return (
@@ -257,7 +264,7 @@ function PayoutSummary({ summary, isLoading }: SummaryProps) {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -265,52 +272,50 @@ function PayoutSummary({ summary, isLoading }: SummaryProps) {
 // ============================================================================
 
 interface PayoutHistoryTableProps {
-  session: VendorSession
+  session: VendorSession;
 }
 
 export function PayoutHistoryTable({ session }: PayoutHistoryTableProps) {
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(10);
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useQuery<PayoutHistoryResponse>({
-    queryKey: ['payout-history', session.vendorId, limit],
-    queryFn: () => getPayoutHistory(session.vendorId, limit),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  })
+  const { data, isLoading, isFetching, refetch } =
+    useQuery<PayoutHistoryResponse>({
+      queryKey: ['payout-history', session.vendorId, limit],
+      queryFn: () => getPayoutHistory(session.vendorId, limit),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 
   const handleLoadMore = useCallback(() => {
-    setLimit(prev => prev + 10)
-  }, [])
+    setLimit((prev) => prev + 10);
+  }, []);
 
   const handleExport = useCallback(() => {
-    if (!data?.payouts.length) return
+    if (!data?.payouts.length) return;
 
-    const csv = exportPayoutsToCSV(data.payouts)
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `payouts-${new Date().toISOString().split('T')[0]}.csv`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }, [data])
+    const csv = exportPayoutsToCSV(data.payouts);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `payouts-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [data]);
 
   const handleOpenStripeDashboard = useCallback(() => {
-    window.open('https://connect.stripe.com/express_login', '_blank')
-  }, [])
+    window.open('https://connect.stripe.com/express_login', '_blank');
+  }, []);
 
   return (
     <Card className="overflow-hidden">
       <div className="px-6 py-4 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-lg font-display font-semibold">Payout History</h3>
+            <h3 className="text-lg font-display font-semibold">
+              Payout History
+            </h3>
             {isFetching && !isLoading && (
               <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
             )}
@@ -339,7 +344,13 @@ export function PayoutHistoryTable({ session }: PayoutHistoryTableProps) {
 
       <div className="p-6">
         <PayoutSummary
-          summary={data?.summary || { totalPaid: 0, totalPending: 0, totalInTransit: 0 }}
+          summary={
+            data?.summary || {
+              totalPaid: 0,
+              totalPending: 0,
+              totalInTransit: 0,
+            }
+          }
           isLoading={isLoading}
         />
 
@@ -395,7 +406,9 @@ export function PayoutHistoryTable({ session }: PayoutHistoryTableProps) {
                   Loading...
                 </>
               ) : (
-                <>Load More ({data.totalCount - data.payouts.length} remaining)</>
+                <>
+                  Load More ({data.totalCount - data.payouts.length} remaining)
+                </>
               )}
             </Button>
           </div>
@@ -409,5 +422,5 @@ export function PayoutHistoryTable({ session }: PayoutHistoryTableProps) {
         ) : null}
       </div>
     </Card>
-  )
+  );
 }

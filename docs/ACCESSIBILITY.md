@@ -12,13 +12,13 @@ Pulau is designed to be accessible to all users, including those using assistive
 
 All color combinations in the application meet or exceed WCAG 2.1 AA contrast requirements:
 
-| Element | Foreground | Background | Ratio | Standard |
-|---------|-----------|------------|-------|----------|
-| Primary text | `oklch(0.25 0.01 210)` | `oklch(0.98 0.005 210)` | 13.1:1 | AAA ✓ |
-| Body text | `oklch(0.25 0 0)` | `oklch(1 0 0)` | 14.8:1 | AAA ✓ |
-| Primary button | `oklch(1 0 0)` | `oklch(0.48 0.09 210)` | 6.2:1 | AAA ✓ |
-| Accent button | `oklch(1 0 0)` | `oklch(0.68 0.17 25)` | 4.6:1 | AA ✓ |
-| Muted text | `oklch(0.55 0.02 215)` | `oklch(0.98 0.005 210)` | 4.5:1 | AA ✓ |
+| Element        | Foreground             | Background              | Ratio  | Standard |
+| -------------- | ---------------------- | ----------------------- | ------ | -------- |
+| Primary text   | `oklch(0.25 0.01 210)` | `oklch(0.98 0.005 210)` | 13.1:1 | AAA ✓    |
+| Body text      | `oklch(0.25 0 0)`      | `oklch(1 0 0)`          | 14.8:1 | AAA ✓    |
+| Primary button | `oklch(1 0 0)`         | `oklch(0.48 0.09 210)`  | 6.2:1  | AAA ✓    |
+| Accent button  | `oklch(1 0 0)`         | `oklch(0.68 0.17 25)`   | 4.6:1  | AA ✓     |
+| Muted text     | `oklch(0.55 0.02 215)` | `oklch(0.98 0.005 210)` | 4.5:1  | AA ✓     |
 
 ### 2. Semantic HTML Structure
 
@@ -36,6 +36,7 @@ The application uses proper HTML5 semantic elements throughout:
 All interactive elements are fully keyboard accessible:
 
 #### Navigation Keys
+
 - **Tab**: Move forward through interactive elements
 - **Shift + Tab**: Move backward through interactive elements
 - **Enter**: Activate buttons and links
@@ -44,6 +45,7 @@ All interactive elements are fully keyboard accessible:
 - **Arrow keys**: Navigate within components (image carousels, select menus)
 
 #### Skip to Main Content
+
 A skip link is provided at the top of every page (visible on keyboard focus) to allow users to bypass navigation and jump directly to the main content:
 
 ```html
@@ -64,6 +66,7 @@ focus-visible:ring-offset-2
 ```
 
 This ensures:
+
 - Focus rings are visible for keyboard navigation
 - Focus rings are hidden for mouse/touch interactions
 - Minimum 3:1 contrast ratio for focus indicators (WCAG 2.1 AA requirement)
@@ -71,6 +74,7 @@ This ensures:
 ### 5. ARIA Labels and Attributes
 
 #### Navigation
+
 ```tsx
 <nav aria-label="Main navigation">
   <button aria-label="Trip planner" aria-current="page">
@@ -81,6 +85,7 @@ This ensures:
 ```
 
 #### Interactive Elements
+
 ```tsx
 // Image carousel
 <button aria-label="Previous image">
@@ -88,7 +93,7 @@ This ensures:
 </button>
 
 // Save toggle
-<button 
+<button
   aria-label={isSaved ? 'Remove from saved' : 'Save experience'}
   aria-pressed={isSaved}
 >
@@ -97,7 +102,7 @@ This ensures:
 
 // Image indicators
 <div role="group" aria-label="Image indicators">
-  <button 
+  <button
     aria-label="Go to image 1"
     aria-current="true"
   />
@@ -105,6 +110,7 @@ This ensures:
 ```
 
 #### Live Regions
+
 Dynamic content updates are announced to screen readers:
 
 ```tsx
@@ -124,6 +130,7 @@ Dynamic content updates are announced to screen readers:
 All forms follow best practices for accessibility:
 
 #### Label Association
+
 ```tsx
 // Method 1: Using htmlFor
 <Label htmlFor="email">Email Address</Label>
@@ -137,28 +144,27 @@ All forms follow best practices for accessibility:
 ```
 
 #### Error Handling
+
 ```tsx
 <Input
   id="email"
   type="email"
   aria-invalid={!!errors.email}
-  aria-describedby={errors.email ? "email-error" : undefined}
-/>
-{errors.email && (
-  <p id="email-error" role="alert" className="text-destructive">
-    {errors.email}
-  </p>
-)}
+  aria-describedby={errors.email ? 'email-error' : undefined}
+/>;
+{
+  errors.email && (
+    <p id="email-error" role="alert" className="text-destructive">
+      {errors.email}
+    </p>
+  );
+}
 ```
 
 #### Required Fields
+
 ```tsx
-<Input
-  id="password"
-  type="password"
-  required
-  aria-required="true"
-/>
+<Input id="password" type="password" required aria-required="true" />
 ```
 
 ### 7. Image Alternative Text
@@ -166,31 +172,32 @@ All forms follow best practices for accessibility:
 All images have appropriate alt text:
 
 #### Informative Images
+
 ```tsx
-<img 
-  src={experience.images[0]} 
+<img
+  src={experience.images[0]}
   alt={`${experience.title} - Image 1 of ${experience.images.length}`}
 />
 ```
 
 #### Provider Photos
+
 ```tsx
-<img 
-  src={provider.photo} 
+<img
+  src={provider.photo}
   alt={provider.name}
   className="w-16 h-16 rounded-full"
 />
 ```
 
 #### Decorative Images
+
 ```tsx
-<div 
-  style={{ backgroundImage: `url(${image})` }}
-  aria-hidden="true"
-/>
+<div style={{ backgroundImage: `url(${image})` }} aria-hidden="true" />
 ```
 
 #### Icon Images
+
 ```tsx
 <Heart className="w-6 h-6" aria-hidden="true" />
 ```
@@ -200,6 +207,7 @@ All images have appropriate alt text:
 The application leverages Radix UI primitives which provide built-in accessibility:
 
 #### Dialog
+
 ```tsx
 <Dialog.Root>
   <Dialog.Trigger>Open</Dialog.Trigger>
@@ -216,12 +224,14 @@ The application leverages Radix UI primitives which provide built-in accessibili
 ```
 
 Features:
+
 - Focus trap within dialog
 - Escape key to close
 - Focus returns to trigger on close
 - Proper ARIA roles and attributes
 
 #### Select
+
 ```tsx
 <Select.Root>
   <Select.Trigger aria-label="Select option">
@@ -234,6 +244,7 @@ Features:
 ```
 
 Features:
+
 - Keyboard navigation (Arrow keys, Enter, Space)
 - Type-ahead search
 - Proper ARIA attributes
@@ -243,12 +254,14 @@ Features:
 The application has been tested with:
 
 #### macOS VoiceOver (Safari)
+
 - All navigation elements properly announced
 - Form inputs and labels correctly associated
 - Dynamic content changes announced via live regions
 - Image alt text read correctly
 
 #### NVDA (Windows/Chrome)
+
 - Proper heading hierarchy maintained
 - Landmark regions identified
 - Interactive elements announced with roles
@@ -263,8 +276,11 @@ All touch targets meet the minimum size requirement:
 - Extra padding added to small interactive elements
 
 Example:
+
 ```tsx
-<button className="w-12 h-12 p-3"> // 48×48px total
+<button className="w-12 h-12 p-3">
+  {' '}
+  // 48×48px total
   <Icon className="w-6 h-6" />
 </button>
 ```
@@ -274,17 +290,20 @@ Example:
 When making changes to the application, verify the following:
 
 ### Visual Checks
+
 - [ ] All text has sufficient contrast (use Chrome DevTools Accessibility panel)
 - [ ] Focus states are visible for all interactive elements
 - [ ] No reliance on color alone to convey information
 
 ### Keyboard Navigation
+
 - [ ] All functionality available via keyboard
 - [ ] Tab order is logical and follows visual layout
 - [ ] No keyboard traps (can navigate in and out of all elements)
 - [ ] Skip link works and is visible on focus
 
 ### Screen Reader
+
 - [ ] All images have appropriate alt text
 - [ ] Form labels are properly associated
 - [ ] Headings form a logical hierarchy
@@ -292,6 +311,7 @@ When making changes to the application, verify the following:
 - [ ] Custom components have appropriate ARIA labels
 
 ### Semantic HTML
+
 - [ ] Proper use of heading levels (h1, h2, h3)
 - [ ] Landmark regions defined (header, nav, main, aside)
 - [ ] Lists use proper list markup (ul, ol, li)
@@ -300,11 +320,13 @@ When making changes to the application, verify the following:
 ## Tools & Resources
 
 ### Automated Testing
+
 - **Chrome DevTools**: Lighthouse Accessibility audit
 - **axe DevTools**: Browser extension for automated testing
 - **WAVE**: Web accessibility evaluation tool
 
 ### Manual Testing
+
 - **Screen Readers**:
   - macOS: VoiceOver (Cmd + F5)
   - Windows: NVDA (free, open source)
@@ -312,11 +334,13 @@ When making changes to the application, verify the following:
 - **Keyboard Navigation**: Tab, Shift+Tab, Enter, Space, Arrow keys
 
 ### Color Contrast
+
 - **WebAIM Contrast Checker**: https://webaim.org/resources/contrastchecker/
 - **Chrome DevTools**: Color picker shows contrast ratio
 - **Contrast Ratio Tool**: https://contrast-ratio.com/
 
 ### Guidelines
+
 - **WCAG 2.1 Quick Reference**: https://www.w3.org/WAI/WCAG21/quickref/
 - **Radix UI Accessibility**: https://www.radix-ui.com/primitives/docs/overview/accessibility
 - **MDN Accessibility**: https://developer.mozilla.org/en-US/docs/Web/Accessibility
@@ -324,9 +348,11 @@ When making changes to the application, verify the following:
 ## Known Issues & Future Improvements
 
 ### Current Limitations
+
 - None identified
 
 ### Future Enhancements
+
 - [ ] Add high contrast mode support
 - [ ] Implement reduced motion preferences (prefers-reduced-motion)
 - [ ] Add dark mode with verified contrast ratios
@@ -335,6 +361,7 @@ When making changes to the application, verify the following:
 ## Conclusion
 
 The Pulau application meets WCAG 2.1 AA standards through:
+
 - Compliant color contrast ratios
 - Semantic HTML structure
 - Comprehensive keyboard navigation

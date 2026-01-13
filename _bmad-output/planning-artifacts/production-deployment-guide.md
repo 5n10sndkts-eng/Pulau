@@ -19,6 +19,7 @@ This guide walks through deploying Pulau to production with all integrations con
 ## Pre-Deployment Checklist
 
 **Code Readiness:**
+
 - [x] All Phase 1 (MVP) stories complete
 - [x] All Phase 2a (Core Transactional) stories complete
 - [x] All Phase 2b (Enhanced Operations) stories complete
@@ -28,6 +29,7 @@ This guide walks through deploying Pulau to production with all integrations con
 - [x] All critical E2E tests passing
 
 **Service Accounts Required:**
+
 - [ ] Supabase Pro account ($25/month)
 - [ ] Stripe production account (free, % fees on transactions)
 - [ ] Resend account (free tier: 3k emails/month)
@@ -85,6 +87,7 @@ curl https://wzuvzcydenvuzxmoryzt.supabase.co/rest/v1/ \
 **Database:** Currently has 17 migrations (as of Jan 12, 2026)
 
 ### Migration Files
+
 ```
 20260108000000_initial_schema.sql          - profiles, vendors, experiences
 20260108000001_trips_schema.sql            - trips, trip_items
@@ -186,6 +189,7 @@ supabase secrets list
 Will be set in Task 5 during Vercel configuration.
 
 **Variables needed:**
+
 ```bash
 VITE_SUPABASE_URL=https://wzuvzcydenvuzxmoryzt.supabase.co
 VITE_SUPABASE_ANON_KEY=sb_publishable_cyloXhz-gp54zuAINLEh9g_3w-fKcLC
@@ -212,18 +216,19 @@ VITE_APP_VERSION=1.0.0
 
 2. **Get Production API Keys**
    - Go to: Developers → API keys
-   - Copy Publishable key (pk_live_...)
-   - Reveal and copy Secret key (sk_live_...)
+   - Copy Publishable key (pk*live*...)
+   - Reveal and copy Secret key (sk*live*...)
    - Store in password manager
 
 3. **Create Products & Prices**
-   
+
    **Option A: Manual in Dashboard**
    - Products → Add product
    - For each experience type, create product
    - Set pricing
 
    **Option B: Via Stripe CLI**
+
    ```bash
    # Create sample experience product
    stripe products create \
@@ -252,10 +257,11 @@ VITE_APP_VERSION=1.0.0
      - `customer.subscription.created` (if using subscriptions)
 
 2. **Get Webhook Secret**
-   - After creating webhook, copy "Signing secret" (whsec_...)
+   - After creating webhook, copy "Signing secret" (whsec\_...)
    - Store in password manager
 
 3. **Update Environment Variables**
+
    ```bash
    # Add to .env.production
    VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...
@@ -409,7 +415,7 @@ Create `vercel.json` in project root:
    - Click "Add"
 
 2. **Configure DNS**
-   
+
    **Option A: Use Vercel Nameservers (Recommended)**
    - Vercel will provide nameservers
    - Go to your domain registrar
@@ -417,6 +423,7 @@ Create `vercel.json` in project root:
    - Wait for propagation (5 min - 48 hours)
 
    **Option B: Use CNAME Record**
+
    ```
    Type: CNAME
    Name: @  (or www)
@@ -569,6 +576,7 @@ supabase functions logs send-email --project-ref wzuvzcydenvuzxmoryzt
 ### B. Integration Checklist
 
 **Supabase Database:**
+
 ```sql
 -- Verify booking created
 SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5;
@@ -581,12 +589,14 @@ SELECT * FROM email_logs ORDER BY created_at DESC LIMIT 5;
 ```
 
 **Stripe:**
+
 - [ ] Dashboard shows payment
 - [ ] Webhook events received
 - [ ] Customer created
 - [ ] Payment intent succeeded
 
 **Resend (Email):**
+
 - [ ] Email delivered to inbox
 - [ ] Email not in spam
 - [ ] PDF attachment present
@@ -594,6 +604,7 @@ SELECT * FROM email_logs ORDER BY created_at DESC LIMIT 5;
 - [ ] Unsubscribe link works
 
 **Sentry:**
+
 - [ ] No errors in Sentry dashboard
 - [ ] Performance metrics appearing
 - [ ] Source maps working (stack traces readable)
@@ -697,12 +708,14 @@ supabase db reset --linked
 ## Production Deployment Checklist Summary
 
 **Pre-Deployment:**
+
 - [x] All code complete and tested
 - [x] Sentry monitoring configured
 - [ ] All service accounts created
 - [ ] Domain registered (pulau.app)
 
 **Infrastructure:**
+
 - [ ] Task 1: Supabase production project ✅ (credentials exist)
 - [ ] Task 2: Run production migrations
 - [ ] Task 3: Configure environment variables
@@ -713,6 +726,7 @@ supabase db reset --linked
 - [ ] Task 8: Verify all integrations
 
 **Post-Deployment:**
+
 - [ ] Monitor first hour (critical)
 - [ ] Review first 24 hours
 - [ ] Full assessment at 48 hours
@@ -724,13 +738,13 @@ supabase db reset --linked
 
 ## Estimated Timeline
 
-| Day | Tasks | Duration |
-|-----|-------|----------|
-| Day 1 | Tasks 1-3 (Infrastructure) | 2 hours |
-| Day 2 | Tasks 4-5 (Stripe, Vercel) | 2 hours |
-| Day 3 | Task 6 (Domain, DNS wait) | 30 min + propagation |
-| Day 4 | Tasks 7-8 (Deploy, verify) | 2 hours |
-| Day 5 | Monitoring, fixes | Ongoing |
+| Day   | Tasks                      | Duration             |
+| ----- | -------------------------- | -------------------- |
+| Day 1 | Tasks 1-3 (Infrastructure) | 2 hours              |
+| Day 2 | Tasks 4-5 (Stripe, Vercel) | 2 hours              |
+| Day 3 | Task 6 (Domain, DNS wait)  | 30 min + propagation |
+| Day 4 | Tasks 7-8 (Deploy, verify) | 2 hours              |
+| Day 5 | Monitoring, fixes          | Ongoing              |
 
 **Total Active Time:** 6-7 hours  
 **Total Calendar Time:** 3-5 days (DNS propagation)

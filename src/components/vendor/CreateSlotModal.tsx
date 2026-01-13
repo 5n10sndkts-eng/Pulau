@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,20 +6,24 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Loader2, Plus } from 'lucide-react'
-import { format } from 'date-fns'
-import { createSlot, type ExperienceSlot, type SlotCreateInput } from '@/lib/slotService'
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Loader2, Plus } from 'lucide-react';
+import { format } from 'date-fns';
+import {
+  createSlot,
+  type ExperienceSlot,
+  type SlotCreateInput,
+} from '@/lib/slotService';
 
 interface CreateSlotModalProps {
-  isOpen: boolean
-  onClose: () => void
-  experienceId: string
-  defaultDate?: Date
-  onSlotCreated: (slot: ExperienceSlot) => void
+  isOpen: boolean;
+  onClose: () => void;
+  experienceId: string;
+  defaultDate?: Date;
+  onSlotCreated: (slot: ExperienceSlot) => void;
 }
 
 export function CreateSlotModal({
@@ -29,34 +33,38 @@ export function CreateSlotModal({
   defaultDate,
   onSlotCreated,
 }: CreateSlotModalProps) {
-  const [date, setDate] = useState('')
-  const [time, setTime] = useState('09:00')
-  const [capacity, setCapacity] = useState(10)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('09:00');
+  const [capacity, setCapacity] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setDate(defaultDate ? format(defaultDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
-      setTime('09:00')
-      setCapacity(10)
-      setError(null)
+      setDate(
+        defaultDate
+          ? format(defaultDate, 'yyyy-MM-dd')
+          : format(new Date(), 'yyyy-MM-dd'),
+      );
+      setTime('09:00');
+      setCapacity(10);
+      setError(null);
     }
-  }, [isOpen, defaultDate])
+  }, [isOpen, defaultDate]);
 
   const handleSubmit = async () => {
     if (!date || !time) {
-      setError('Please select a date and time')
-      return
+      setError('Please select a date and time');
+      return;
     }
 
     if (capacity < 1) {
-      setError('Capacity must be at least 1')
-      return
+      setError('Capacity must be at least 1');
+      return;
     }
 
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
 
     try {
       const input: SlotCreateInput = {
@@ -64,22 +72,22 @@ export function CreateSlotModal({
         slotDate: date,
         slotTime: time,
         totalCapacity: capacity,
-      }
+      };
 
-      const result = await createSlot(input)
+      const result = await createSlot(input);
 
       if (result.data) {
-        onSlotCreated(result.data)
-        onClose()
+        onSlotCreated(result.data);
+        onClose();
       } else {
-        setError(result.error || 'Failed to create slot')
+        setError(result.error || 'Failed to create slot');
       }
     } catch (e) {
-      setError('An unexpected error occurred')
+      setError('An unexpected error occurred');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -159,5 +167,5 @@ export function CreateSlotModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

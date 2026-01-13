@@ -8,39 +8,40 @@
 // Returns aggregated status for uptime monitoring tools.
 // ================================================
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { createLogger, jsonResponse } from '../_shared/logger.ts'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createLogger, jsonResponse } from '../_shared/logger.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+};
 
 // ================================================
 // Types (AC #4: Response Format)
 // ================================================
 
-type ServiceStatus = 'healthy' | 'unhealthy'
-type OverallStatus = 'healthy' | 'degraded' | 'unhealthy'
+type ServiceStatus = 'healthy' | 'unhealthy';
+type OverallStatus = 'healthy' | 'degraded' | 'unhealthy';
 
 interface ServiceCheck {
-  status: ServiceStatus
-  latency_ms?: number
-  error?: string
+  status: ServiceStatus;
+  latency_ms?: number;
+  error?: string;
 }
 
 interface HealthCheckResult {
-  status: OverallStatus
-  timestamp: string
-  version: string
-  duration_ms: number
-  environment: string
+  status: OverallStatus;
+  timestamp: string;
+  version: string;
+  duration_ms: number;
+  environment: string;
   checks: {
-    database: ServiceCheck
-    stripe: ServiceCheck
-    edge_functions: ServiceCheck
-  }
+    database: ServiceCheck;
+    stripe: ServiceCheck;
+    edge_functions: ServiceCheck;
+  };
 }
 
 // ================================================
@@ -52,43 +53,40 @@ interface HealthCheckResult {
  * Performs a simple query to verify Supabase is reachable
  */
 async function checkDatabase(): Promise<ServiceCheck> {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
       return {
         status: 'unhealthy',
         error: 'Database configuration missing',
-      }
+      };
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Simple query to verify connectivity - select from a small table
-    const { error } = await supabase
-      .from('profiles')
-      .select('id')
-      .limit(1)
+    const { error } = await supabase.from('profiles').select('id').limit(1);
 
     if (error) {
-      throw new Error(error.message)
+      throw new Error(error.message);
     }
 
     return {
       status: 'healthy',
       latency_ms: Date.now() - startTime,
-    }
+    };
   } catch (err) {
-    console.error('Database health check failed:', err)
+    console.error('Database health check failed:', err);
     return {
       status: 'unhealthy',
       latency_ms: Date.now() - startTime,
       // Sanitize error - don't expose connection details (AC #2)
       error: 'Database connection failed',
-    }
+    };
   }
 }
 
@@ -97,26 +95,26 @@ async function checkDatabase(): Promise<ServiceCheck> {
  * Verifies Stripe API is reachable by retrieving account balance
  */
 async function checkStripe(): Promise<ServiceCheck> {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
 
     if (!stripeKey) {
       return {
         status: 'unhealthy',
         error: 'Stripe configuration missing',
-      }
+      };
     }
 
     // Use fetch instead of Stripe SDK to avoid import issues
     const response = await fetch('https://api.stripe.com/v1/balance', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${stripeKey}`,
+        Authorization: `Bearer ${stripeKey}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-    })
+    });
 
     if (!response.ok) {
       // Handle rate limiting gracefully (AC #3)
@@ -124,22 +122,22 @@ async function checkStripe(): Promise<ServiceCheck> {
         return {
           status: 'healthy', // Rate limited but API is reachable
           latency_ms: Date.now() - startTime,
-        }
+        };
       }
-      throw new Error(`Stripe API returned ${response.status}`)
+      throw new Error(`Stripe API returned ${response.status}`);
     }
 
     return {
       status: 'healthy',
       latency_ms: Date.now() - startTime,
-    }
+    };
   } catch (err) {
-    console.error('Stripe health check failed:', err)
+    console.error('Stripe health check failed:', err);
     return {
       status: 'unhealthy',
       latency_ms: Date.now() - startTime,
       error: 'Stripe API unavailable',
-    }
+    };
   }
 }
 
@@ -151,29 +149,29 @@ function checkEdgeFunctions(): ServiceCheck {
   return {
     status: 'healthy',
     latency_ms: 0,
-  }
+  };
 }
 
 /**
  * Determine overall status based on individual checks (AC #4)
  */
 function determineOverallStatus(
-  checks: HealthCheckResult['checks']
+  checks: HealthCheckResult['checks'],
 ): OverallStatus {
-  const statuses = Object.values(checks).map(c => c.status)
+  const statuses = Object.values(checks).map((c) => c.status);
 
   // All healthy = healthy
-  if (statuses.every(s => s === 'healthy')) {
-    return 'healthy'
+  if (statuses.every((s) => s === 'healthy')) {
+    return 'healthy';
   }
 
   // Database unhealthy = unhealthy (critical service)
   if (checks.database.status === 'unhealthy') {
-    return 'unhealthy'
+    return 'unhealthy';
   }
 
   // Other services down = degraded
-  return 'degraded'
+  return 'degraded';
 }
 
 // ================================================
@@ -181,41 +179,41 @@ function determineOverallStatus(
 // ================================================
 
 serve(async (req: Request): Promise<Response> => {
-  const logger = createLogger('health-check', req)
-  logger.requestStart(req.method, '/health-check')
+  const logger = createLogger('health-check', req);
+  logger.requestStart(req.method, '/health-check');
 
   // Handle CORS preflight (AC #5 - allow unauthenticated)
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   // Only allow GET requests
   if (req.method !== 'GET') {
-    logger.warn('Method not allowed', { method: req.method })
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    logger.warn('Method not allowed', { method: req.method });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    logger.info('Running health checks')
+    logger.info('Running health checks');
 
     // Run all health checks in parallel for speed
     const [database, stripe] = await Promise.all([
       checkDatabase(),
       checkStripe(),
-    ])
+    ]);
 
     const checks: HealthCheckResult['checks'] = {
       database,
       stripe,
       edge_functions: checkEdgeFunctions(),
-    }
+    };
 
-    const overallStatus = determineOverallStatus(checks)
+    const overallStatus = determineOverallStatus(checks);
 
     const result: HealthCheckResult = {
       status: overallStatus,
@@ -224,10 +222,10 @@ serve(async (req: Request): Promise<Response> => {
       duration_ms: Date.now() - startTime,
       environment: Deno.env.get('ENVIRONMENT') || 'production',
       checks,
-    }
+    };
 
     // Return 200 for healthy, 503 for degraded/unhealthy (AC #4)
-    const httpStatus = overallStatus === 'healthy' ? 200 : 503
+    const httpStatus = overallStatus === 'healthy' ? 200 : 503;
 
     logger.requestEnd(httpStatus, {
       status: overallStatus,
@@ -236,7 +234,7 @@ serve(async (req: Request): Promise<Response> => {
         stripe: stripe.status,
         edge_functions: 'healthy',
       },
-    })
+    });
 
     return new Response(JSON.stringify(result, null, 2), {
       status: httpStatus,
@@ -247,9 +245,9 @@ serve(async (req: Request): Promise<Response> => {
         'X-Health-Status': overallStatus,
         'X-Request-ID': logger.getRequestId(),
       },
-    })
+    });
   } catch (err) {
-    logger.error('Health check failed', err)
+    logger.error('Health check failed', err);
 
     // Return unhealthy if the check itself fails
     const errorResult: HealthCheckResult = {
@@ -263,9 +261,9 @@ serve(async (req: Request): Promise<Response> => {
         stripe: { status: 'unhealthy', error: 'Check failed' },
         edge_functions: { status: 'unhealthy', error: 'Internal error' },
       },
-    }
+    };
 
-    logger.requestEnd(503)
+    logger.requestEnd(503);
 
     return new Response(JSON.stringify(errorResult, null, 2), {
       status: 503,
@@ -276,6 +274,6 @@ serve(async (req: Request): Promise<Response> => {
         'X-Health-Status': 'unhealthy',
         'X-Request-ID': logger.getRequestId(),
       },
-    })
+    });
   }
-})
+});

@@ -7,16 +7,22 @@
  * Shows available slots, price difference, and handles request submission.
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Calendar } from '@/components/ui/calendar'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -25,9 +31,9 @@ import {
   Loader2,
   ArrowRight,
   DollarSign,
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { format, addDays, isSameDay, parseISO } from 'date-fns'
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format, addDays, isSameDay, parseISO } from 'date-fns';
 import {
   checkModificationAllowed,
   calculateModificationPrice,
@@ -35,31 +41,31 @@ import {
   formatPriceDifference,
   ModificationAllowedResult,
   ModificationPriceResult,
-} from '@/lib/modificationService'
-import { slotService, ExperienceSlot, DateRange } from '@/lib/slotService'
+} from '@/lib/modificationService';
+import { slotService, ExperienceSlot, DateRange } from '@/lib/slotService';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 interface BookingItem {
-  tripItemId: string
-  bookingId: string
-  experienceId: string
-  experienceTitle: string
-  vendorId: string
-  vendorName: string
-  currentDate: string
-  currentTime: string
-  currentGuests: number
-  currentPrice: number // cents
+  tripItemId: string;
+  bookingId: string;
+  experienceId: string;
+  experienceTitle: string;
+  vendorId: string;
+  vendorName: string;
+  currentDate: string;
+  currentTime: string;
+  currentGuests: number;
+  currentPrice: number; // cents
 }
 
 interface RescheduleRequestModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  booking: BookingItem
-  onSuccess?: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: BookingItem;
+  onSuccess?: () => void;
 }
 
 // ============================================================================
@@ -73,84 +79,92 @@ export function RescheduleRequestModal({
   onSuccess,
 }: RescheduleRequestModalProps) {
   // State
-  const [step, setStep] = useState<'check' | 'select' | 'confirm' | 'success' | 'error'>('check')
-  const [eligibility, setEligibility] = useState<ModificationAllowedResult | null>(null)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | null>(null)
-  const [availableSlots, setAvailableSlots] = useState<ExperienceSlot[]>([])
-  const [priceCalc, setPriceCalc] = useState<ModificationPriceResult | null>(null)
-  const [customerNotes, setCustomerNotes] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [step, setStep] = useState<
+    'check' | 'select' | 'confirm' | 'success' | 'error'
+  >('check');
+  const [eligibility, setEligibility] =
+    useState<ModificationAllowedResult | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | null>(null);
+  const [availableSlots, setAvailableSlots] = useState<ExperienceSlot[]>([]);
+  const [priceCalc, setPriceCalc] = useState<ModificationPriceResult | null>(
+    null,
+  );
+  const [customerNotes, setCustomerNotes] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // ============================================================================
   // HANDLERS
   // ============================================================================
 
   const checkEligibility = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      const result = await checkModificationAllowed(booking.tripItemId, 'reschedule')
-      setEligibility(result)
+      const result = await checkModificationAllowed(
+        booking.tripItemId,
+        'reschedule',
+      );
+      setEligibility(result);
 
       if (result.allowed) {
-        setStep('select')
+        setStep('select');
       } else {
-        setStep('error')
-        setError(result.reason || 'Rescheduling is not available for this booking')
+        setStep('error');
+        setError(
+          result.reason || 'Rescheduling is not available for this booking',
+        );
       }
     } catch (err) {
-      setStep('error')
-      setError('Failed to check reschedule eligibility')
+      setStep('error');
+      setError('Failed to check reschedule eligibility');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [booking.tripItemId])
+  }, [booking.tripItemId]);
 
   // Check eligibility on mount
   useEffect(() => {
     if (open) {
-      checkEligibility()
+      checkEligibility();
     } else {
       // Reset state when modal closes
-      setStep('check')
-      setEligibility(null)
-      setSelectedDate(undefined)
-      setSelectedSlot(null)
-      setAvailableSlots([])
-      setPriceCalc(null)
-      setCustomerNotes('')
-      setError(null)
+      setStep('check');
+      setEligibility(null);
+      setSelectedDate(undefined);
+      setSelectedSlot(null);
+      setAvailableSlots([]);
+      setPriceCalc(null);
+      setCustomerNotes('');
+      setError(null);
     }
-  }, [open, checkEligibility])
+  }, [open, checkEligibility]);
 
   async function handleDateSelect(date: Date | undefined) {
-    setSelectedDate(date)
-    setSelectedSlot(null)
-    setPriceCalc(null)
+    setSelectedDate(date);
+    setSelectedSlot(null);
+    setPriceCalc(null);
 
-    if (!date) return
+    if (!date) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       // Fetch available slots for this date
-      const dateStr = format(date, 'yyyy-MM-dd')
+      const dateStr = format(date, 'yyyy-MM-dd');
       const dateRange: DateRange = {
         startDate: dateStr,
         endDate: dateStr,
-      }
-      const { data: slots, error: slotsError } = await slotService.getAvailableSlots(
-        booking.experienceId,
-        dateRange
-      )
+      };
+      const { data: slots, error: slotsError } =
+        await slotService.getAvailableSlots(booking.experienceId, dateRange);
 
       if (slotsError || !slots) {
-        console.error('Error fetching slots:', slotsError)
-        setAvailableSlots([])
-        return
+        console.error('Error fetching slots:', slotsError);
+        setAvailableSlots([]);
+        return;
       }
 
       // Filter out the current slot if it's on the same date
@@ -159,21 +173,21 @@ export function RescheduleRequestModal({
           !(
             s.slot_date === booking.currentDate &&
             s.slot_time === booking.currentTime
-          )
-      )
+          ),
+      );
 
-      setAvailableSlots(filteredSlots)
+      setAvailableSlots(filteredSlots);
     } catch (err) {
-      console.error('Error fetching slots:', err)
-      setAvailableSlots([])
+      console.error('Error fetching slots:', err);
+      setAvailableSlots([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function handleSlotSelect(slot: ExperienceSlot) {
-    setSelectedSlot(slot)
-    setLoading(true)
+    setSelectedSlot(slot);
+    setLoading(true);
 
     try {
       // Calculate price difference
@@ -181,32 +195,32 @@ export function RescheduleRequestModal({
         booking.tripItemId,
         slot.slot_date,
         slot.slot_time,
-        booking.currentGuests
-      )
+        booking.currentGuests,
+      );
 
-      setPriceCalc(price)
+      setPriceCalc(price);
 
       if (price.error) {
-        setError(price.error)
+        setError(price.error);
       }
     } catch (err) {
-      setError('Failed to calculate price')
+      setError('Failed to calculate price');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   function handleProceedToConfirm() {
     if (selectedSlot && priceCalc && !priceCalc.error) {
-      setStep('confirm')
+      setStep('confirm');
     }
   }
 
   async function handleSubmitRequest() {
-    if (!selectedSlot || !priceCalc) return
+    if (!selectedSlot || !priceCalc) return;
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const result = await createModificationRequest({
@@ -221,19 +235,19 @@ export function RescheduleRequestModal({
         requestedDate: selectedSlot.slot_date,
         requestedTime: selectedSlot.slot_time,
         customerNotes: customerNotes || undefined,
-      })
+      });
 
       if (result.error) {
-        setError(result.error)
-        return
+        setError(result.error);
+        return;
       }
 
-      setStep('success')
-      onSuccess?.()
+      setStep('success');
+      onSuccess?.();
     } catch (err) {
-      setError('Failed to submit reschedule request')
+      setError('Failed to submit reschedule request');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -266,7 +280,9 @@ export function RescheduleRequestModal({
                 className="py-12 text-center"
               >
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-                <p className="text-muted-foreground">Checking reschedule eligibility...</p>
+                <p className="text-muted-foreground">
+                  Checking reschedule eligibility...
+                </p>
               </motion.div>
             )}
 
@@ -306,11 +322,15 @@ export function RescheduleRequestModal({
                     Current Booking
                   </p>
                   <p className="font-semibold">
-                    {format(parseISO(booking.currentDate), 'EEEE, MMMM d, yyyy')} at{' '}
-                    {booking.currentTime}
+                    {format(
+                      parseISO(booking.currentDate),
+                      'EEEE, MMMM d, yyyy',
+                    )}{' '}
+                    at {booking.currentTime}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {booking.currentGuests} {booking.currentGuests === 1 ? 'guest' : 'guests'}
+                    {booking.currentGuests}{' '}
+                    {booking.currentGuests === 1 ? 'guest' : 'guests'}
                   </p>
                 </Card>
 
@@ -318,7 +338,8 @@ export function RescheduleRequestModal({
                 {eligibility && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Badge variant="outline">
-                      {eligibility.modification_count || 0} / {eligibility.max_modifications || 2} reschedules used
+                      {eligibility.modification_count || 0} /{' '}
+                      {eligibility.max_modifications || 2} reschedules used
                     </Badge>
                   </div>
                 )}
@@ -352,7 +373,8 @@ export function RescheduleRequestModal({
                       <Alert>
                         <AlertTriangle className="h-4 w-4" />
                         <AlertDescription>
-                          No available slots on this date. Please try another date.
+                          No available slots on this date. Please try another
+                          date.
                         </AlertDescription>
                       </Alert>
                     ) : (
@@ -360,7 +382,11 @@ export function RescheduleRequestModal({
                         {availableSlots.map((slot) => (
                           <Button
                             key={slot.id}
-                            variant={selectedSlot?.id === slot.id ? 'default' : 'outline'}
+                            variant={
+                              selectedSlot?.id === slot.id
+                                ? 'default'
+                                : 'outline'
+                            }
                             size="sm"
                             onClick={() => handleSlotSelect(slot)}
                             className="flex flex-col h-auto py-2"
@@ -381,19 +407,24 @@ export function RescheduleRequestModal({
 
                 {/* Price Difference */}
                 {priceCalc && !priceCalc.error && (
-                  <Card className={`p-4 ${priceCalc.price_difference !== 0 ? 'border-primary/30' : ''}`}>
+                  <Card
+                    className={`p-4 ${priceCalc.price_difference !== 0 ? 'border-primary/30' : ''}`}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">Price Change</span>
+                        <span className="text-sm font-medium">
+                          Price Change
+                        </span>
                       </div>
                       <span
-                        className={`font-semibold ${priceCalc.price_difference > 0
+                        className={`font-semibold ${
+                          priceCalc.price_difference > 0
                             ? 'text-destructive'
                             : priceCalc.price_difference < 0
                               ? 'text-success'
                               : ''
-                          }`}
+                        }`}
                       >
                         {formatPriceDifference(priceCalc.price_difference)}
                       </span>
@@ -426,28 +457,44 @@ export function RescheduleRequestModal({
                 <Card className="p-4 space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">FROM</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-1">
+                        FROM
+                      </p>
                       <p className="font-medium">
                         {format(parseISO(booking.currentDate), 'MMM d, yyyy')}
                       </p>
-                      <p className="text-sm text-muted-foreground">{booking.currentTime}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {booking.currentTime}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-1">TO</p>
-                      <p className="font-medium">
-                        {format(parseISO(selectedSlot.slot_date), 'MMM d, yyyy')}
+                      <p className="text-xs font-medium text-muted-foreground mb-1">
+                        TO
                       </p>
-                      <p className="text-sm text-muted-foreground">{selectedSlot.slot_time}</p>
+                      <p className="font-medium">
+                        {format(
+                          parseISO(selectedSlot.slot_date),
+                          'MMM d, yyyy',
+                        )}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedSlot.slot_time}
+                      </p>
                     </div>
                   </div>
 
                   {priceCalc.price_difference !== 0 && (
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Price adjustment</span>
+                        <span className="text-sm text-muted-foreground">
+                          Price adjustment
+                        </span>
                         <span
-                          className={`font-semibold ${priceCalc.price_difference > 0 ? 'text-destructive' : 'text-success'
-                            }`}
+                          className={`font-semibold ${
+                            priceCalc.price_difference > 0
+                              ? 'text-destructive'
+                              : 'text-success'
+                          }`}
                         >
                           {formatPriceDifference(priceCalc.price_difference)}
                         </span>
@@ -473,8 +520,9 @@ export function RescheduleRequestModal({
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    Your reschedule request will be sent to {booking.vendorName} for approval.
-                    They have 48 hours to respond. You&apos;ll receive a notification once they reply.
+                    Your reschedule request will be sent to {booking.vendorName}{' '}
+                    for approval. They have 48 hours to respond. You&apos;ll
+                    receive a notification once they reply.
                   </AlertDescription>
                 </Alert>
 
@@ -525,7 +573,9 @@ export function RescheduleRequestModal({
                 <div className="bg-success/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-success" />
                 </div>
-                <h3 className="font-display text-xl font-bold mb-2">Request Submitted!</h3>
+                <h3 className="font-display text-xl font-bold mb-2">
+                  Request Submitted!
+                </h3>
                 <p className="text-muted-foreground mb-6">
                   Your reschedule request has been sent to {booking.vendorName}.
                   You&apos;ll be notified when they respond.
@@ -537,7 +587,7 @@ export function RescheduleRequestModal({
         </ScrollArea>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default RescheduleRequestModal
+export default RescheduleRequestModal;

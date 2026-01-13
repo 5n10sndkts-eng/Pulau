@@ -2,11 +2,12 @@
 
 **Generated**: January 12, 2026  
 **Status**: 4 Stories Require Test Coverage  
-**Priority**: HIGH - Phase 2 Supabase Migration Stories  
+**Priority**: HIGH - Phase 2 Supabase Migration Stories
 
 ## 🎯 EXECUTIVE SUMMARY
 
 **Coverage Analysis Results**:
+
 - ✅ **205 stories PASSING** (98.1% coverage)
 - ⚠️ **1 story FAILING** (has tests but missing AC coverage)
 - ❌ **3 stories NO TESTS** (0% coverage, critical gap)
@@ -24,15 +25,17 @@
 **Coverage**: 0% (0/7 ACs)
 
 **Missing Critical Coverage**:
+
 1. ❌ All application entities have corresponding database tables
 2. ❌ Table columns match TypeScript type definitions
-3. ❌ Foreign key relationships are properly defined  
+3. ❌ Foreign key relationships are properly defined
 4. ❌ Row Level Security (RLS) is enabled on all tables
 5. ❌ Performance indexes are created for common queries
 6. ❌ TypeScript database.types.ts matches the schema
 7. ❌ Build succeeds with updated types
 
 **Remediation Strategy**:
+
 ```typescript
 // File: src/lib/__tests__/supabase-schema.test.ts
 describe('Supabase Database Schema Validation', () => {
@@ -41,15 +44,23 @@ describe('Supabase Database Schema Validation', () => {
       .from('information_schema.tables')
       .select('table_name')
       .eq('table_schema', 'public');
-    
+
     const requiredTables = [
-      'users', 'vendors', 'destinations', 'experiences',
-      'trips', 'trip_items', 'bookings', 'payments',
-      'reviews', 'experience_images', 'payment_methods'
+      'users',
+      'vendors',
+      'destinations',
+      'experiences',
+      'trips',
+      'trip_items',
+      'bookings',
+      'payments',
+      'reviews',
+      'experience_images',
+      'payment_methods',
     ];
-    
-    requiredTables.forEach(table => {
-      expect(tables.map(t => t.table_name)).toContain(table);
+
+    requiredTables.forEach((table) => {
+      expect(tables.map((t) => t.table_name)).toContain(table);
     });
   });
 
@@ -66,28 +77,32 @@ describe('Supabase Database Schema Validation', () => {
     expect(constraints).toContainEqual({
       table: 'experiences',
       column: 'vendor_id',
-      references: 'vendors.id'
+      references: 'vendors.id',
     });
     // ... validate all FK relationships
   });
 
   test('AC4: RLS enabled on all tables', async () => {
     const { data: tables } = await supabase.rpc('check_rls_status');
-    tables.forEach(table => {
+    tables.forEach((table) => {
       expect(table.rls_enabled).toBe(true);
     });
   });
 
   test('AC5: Performance indexes exist', async () => {
     const { data: indexes } = await supabase.rpc('list_indexes');
-    expect(indexes).toContainEqual(expect.objectContaining({
-      table: 'experiences',
-      column: 'vendor_id'
-    }));
-    expect(indexes).toContainEqual(expect.objectContaining({
-      table: 'experiences', 
-      column: 'category'
-    }));
+    expect(indexes).toContainEqual(
+      expect.objectContaining({
+        table: 'experiences',
+        column: 'vendor_id',
+      }),
+    );
+    expect(indexes).toContainEqual(
+      expect.objectContaining({
+        table: 'experiences',
+        column: 'category',
+      }),
+    );
     // ... validate all critical indexes
   });
 
@@ -97,7 +112,7 @@ describe('Supabase Database Schema Validation', () => {
     const user: Database['public']['Tables']['users']['Row'] = {
       id: 'uuid',
       email: 'test@example.com',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
     expect(user).toBeDefined();
   });
@@ -115,6 +130,7 @@ describe('Supabase Database Schema Validation', () => {
 **Coverage**: 0% (0/6 ACs)
 
 **Missing Critical Coverage**:
+
 1. ❌ Login component uses authService with Supabase Auth
 2. ❌ Register component uses authService with Supabase Auth
 3. ❌ Password reset functionality available
@@ -123,6 +139,7 @@ describe('Supabase Database Schema Validation', () => {
 6. ❌ Build succeeds with all changes
 
 **Remediation Strategy**:
+
 ```typescript
 // File: src/lib/__tests__/auth-migration.test.ts
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -137,10 +154,10 @@ describe('Supabase Auth Migration', () => {
 
   test('AC1: Login component uses authService with Supabase Auth', async () => {
     const loginSpy = vi.spyOn(authService, 'login');
-    
+
     render(<Login />);
-    fireEvent.change(screen.getByLabelText(/email/i), { 
-      target: { value: 'test@example.com' } 
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' }
     });
     fireEvent.change(screen.getByLabelText(/password/i), {
       target: { value: 'password123' }
@@ -154,7 +171,7 @@ describe('Supabase Auth Migration', () => {
 
   test('AC2: Register component uses authService with Supabase Auth', async () => {
     const registerSpy = vi.spyOn(authService, 'register');
-    
+
     render(<Register />);
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'new@example.com' }
@@ -171,7 +188,7 @@ describe('Supabase Auth Migration', () => {
 
   test('AC3: Password reset functionality available', async () => {
     const resetSpy = vi.spyOn(authService, 'resetPassword');
-    
+
     render(<ForgotPassword />);
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'forgot@example.com' }
@@ -185,14 +202,14 @@ describe('Supabase Auth Migration', () => {
 
   test('AC4: Auth state changes are handled properly', async () => {
     const { rerender } = render(<App />);
-    
+
     // Initial unauthenticated state
     expect(screen.queryByText(/dashboard/i)).not.toBeInTheDocument();
-    
+
     // Simulate login
     await authService.login('test@example.com', 'password123');
     rerender(<App />);
-    
+
     // Verify authenticated state
     await waitFor(() => {
       expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
@@ -201,9 +218,9 @@ describe('Supabase Auth Migration', () => {
 
   test('AC5: Mock mode still works for development', () => {
     process.env.VITE_USE_MOCK_AUTH = 'true';
-    
+
     const result = authService.login('mock@test.com', 'anything');
-    
+
     expect(result).resolves.toEqual(expect.objectContaining({
       user: { email: 'mock@test.com' }
     }));
@@ -228,6 +245,7 @@ describe('Supabase Auth Migration', () => {
 **Coverage**: 0% (0/6 ACs)
 
 **Missing Critical Coverage**:
+
 1. ❌ All tables have RLS enabled
 2. ❌ Public data is readable by everyone
 3. ❌ Private data requires authentication
@@ -236,6 +254,7 @@ describe('Supabase Auth Migration', () => {
 6. ❌ Cascading access for child tables
 
 **Remediation Strategy**:
+
 ```typescript
 // File: src/lib/__tests__/rls-policies.test.ts
 import { createClient } from '@supabase/supabase-js';
@@ -243,21 +262,28 @@ import { createClient } from '@supabase/supabase-js';
 describe('Row Level Security (RLS) Policies', () => {
   const anonClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const authenticatedClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
+
   beforeAll(async () => {
     // Authenticate one client
     await authenticatedClient.auth.signInWithPassword({
       email: 'test@example.com',
-      password: 'testpass123'
+      password: 'testpass123',
     });
   });
 
   test('AC1: All tables have RLS enabled', async () => {
-    const tables = ['users', 'vendors', 'experiences', 'trips', 'bookings', 'payments'];
-    
+    const tables = [
+      'users',
+      'vendors',
+      'experiences',
+      'trips',
+      'bookings',
+      'payments',
+    ];
+
     for (const table of tables) {
       const { error } = await anonClient.from(table).select('*').limit(1);
-      
+
       // If RLS is enabled, anon access should be restricted
       expect(error).toBeDefined();
       expect(error?.message).toMatch(/policy/i);
@@ -269,7 +295,7 @@ describe('Row Level Security (RLS) Policies', () => {
     const { data: destinations, error: destError } = await anonClient
       .from('destinations')
       .select('*');
-    
+
     expect(destError).toBeNull();
     expect(destinations).toBeDefined();
 
@@ -277,7 +303,7 @@ describe('Row Level Security (RLS) Policies', () => {
       .from('experiences')
       .select('*')
       .eq('status', 'active');
-    
+
     expect(expError).toBeNull();
     expect(experiences).toBeDefined();
   });
@@ -294,8 +320,10 @@ describe('Row Level Security (RLS) Policies', () => {
   });
 
   test('AC4: Owner-only data enforces user_id matching', async () => {
-    const { data: { user } } = await authenticatedClient.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await authenticatedClient.auth.getUser();
+
     // Create a trip
     const { data: trip } = await authenticatedClient
       .from('trips')
@@ -309,7 +337,7 @@ describe('Row Level Security (RLS) Policies', () => {
       .select('*')
       .eq('id', trip.id)
       .single();
-    
+
     expect(ownTrip).toBeDefined();
 
     // Cannot read other user's trips (enforced by RLS)
@@ -317,20 +345,22 @@ describe('Row Level Security (RLS) Policies', () => {
       .from('trips')
       .select('*')
       .neq('user_id', user.id);
-    
+
     expect(otherTrips).toHaveLength(0);
   });
 
   test('AC5: Vendor data is accessible only to vendor owners', async () => {
-    const { data: { user } } = await authenticatedClient.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await authenticatedClient.auth.getUser();
+
     // Vendor can access own data
     const { data: vendor, error } = await authenticatedClient
       .from('vendors')
       .select('*')
       .eq('user_id', user.id)
       .single();
-    
+
     if (vendor) {
       expect(error).toBeNull();
       expect(vendor.user_id).toBe(user.id);
@@ -341,13 +371,15 @@ describe('Row Level Security (RLS) Policies', () => {
       .from('vendors')
       .select('*')
       .neq('user_id', user.id);
-    
+
     expect(otherVendors).toHaveLength(0);
   });
 
   test('AC6: Cascading access for child tables', async () => {
-    const { data: { user } } = await authenticatedClient.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await authenticatedClient.auth.getUser();
+
     // Create trip and trip_items
     const { data: trip } = await authenticatedClient
       .from('trips')
@@ -366,7 +398,7 @@ describe('Row Level Security (RLS) Policies', () => {
       .from('trip_items')
       .select('*')
       .eq('trip_id', trip.id);
-    
+
     expect(error).toBeNull();
     expect(items).toContainEqual(expect.objectContaining({ id: item.id }));
   });
@@ -384,6 +416,7 @@ describe('Row Level Security (RLS) Policies', () => {
 **Coverage**: 0% (0/7 ACs)
 
 **Missing Critical Coverage**:
+
 1. ❌ dataService uses `isSupabaseConfigured()` to auto-detect mock vs real mode
 2. ❌ Experience queries include joins for vendors, images, inclusions, reviews
 3. ❌ `toExperience()` mapper handles all joined data correctly
@@ -393,6 +426,7 @@ describe('Row Level Security (RLS) Policies', () => {
 7. ❌ Build succeeds with no type errors
 
 **Remediation Strategy**:
+
 ```typescript
 // File: src/lib/__tests__/data-layer-refactor.test.ts
 import { dataService } from '@/lib/dataService';
@@ -404,7 +438,7 @@ describe('Data Layer Refactor - Supabase Integration', () => {
     // Mock mode
     process.env.VITE_USE_MOCK_DATA = 'true';
     expect(dataService.isSupabaseConfigured()).toBe(false);
-    
+
     // Real mode
     process.env.VITE_USE_MOCK_DATA = 'false';
     process.env.VITE_SUPABASE_URL = 'https://example.supabase.co';
@@ -414,12 +448,14 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 
   test('AC2: Experience queries include all joins', async () => {
     const querySpy = vi.spyOn(dataService.supabase, 'from');
-    
+
     await dataService.getExperiences();
-    
+
     expect(querySpy).toHaveBeenCalledWith('experiences');
     expect(querySpy.mock.results[0].value.select).toHaveBeenCalledWith(
-      expect.stringContaining('vendors(*), experience_images(*), experience_inclusions(*), reviews(*)')
+      expect.stringContaining(
+        'vendors(*), experience_images(*), experience_inclusions(*), reviews(*)',
+      ),
     );
   });
 
@@ -431,7 +467,7 @@ describe('Data Layer Refactor - Supabase Integration', () => {
       vendors: { id: 'v1', business_name: 'Surf Co' },
       experience_images: [{ url: 'img1.jpg' }, { url: 'img2.jpg' }],
       experience_inclusions: [{ item_text: 'Board rental', is_included: true }],
-      reviews: [{ rating: 5, comment: 'Great!' }]
+      reviews: [{ rating: 5, comment: 'Great!' }],
     };
 
     const experience = toExperience(dbRow);
@@ -445,7 +481,7 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 
   test('AC4: vendorService maps expanded vendor columns', async () => {
     const vendor = await vendorService.getVendor('v1');
-    
+
     expect(vendor).toHaveProperty('phone');
     expect(vendor).toHaveProperty('bio');
     expect(vendor).toHaveProperty('rating');
@@ -456,20 +492,20 @@ describe('Data Layer Refactor - Supabase Integration', () => {
   test('AC5: vendorService experiences query matches dataService', async () => {
     const dataServiceSpy = vi.spyOn(dataService, 'getExperiences');
     const vendorServiceSpy = vi.spyOn(vendorService, 'getVendorExperiences');
-    
+
     await dataService.getExperiences();
     await vendorService.getVendorExperiences('v1');
-    
+
     const dataJoin = dataServiceSpy.mock.calls[0];
     const vendorJoin = vendorServiceSpy.mock.calls[0];
-    
+
     expect(dataJoin).toEqual(expect.arrayContaining(vendorJoin));
   });
 
   test('AC6: VITE_USE_MOCK_DATA documented', () => {
     const fs = require('fs');
     const envExample = fs.readFileSync('.env.example', 'utf-8');
-    
+
     expect(envExample).toContain('VITE_USE_MOCK_DATA');
     expect(envExample).toMatch(/Mock.*mode.*development/i);
   });
@@ -480,7 +516,7 @@ describe('Data Layer Refactor - Supabase Integration', () => {
     const exp: Experience = {
       id: 'test',
       title: 'Test',
-      vendor: { id: 'v1', business_name: 'Test Vendor' }
+      vendor: { id: 'v1', business_name: 'Test Vendor' },
     };
     expect(exp).toBeDefined();
   });
@@ -495,6 +531,7 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 ## 📊 REMEDIATION SUMMARY
 
 ### Total Effort Estimate
+
 - **Story 20-2**: 4-6 hours (schema validation)
 - **Story 20-3**: 3-4 hours (auth migration)
 - **Story 20-4**: 4-5 hours (RLS policies)
@@ -503,12 +540,14 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 **Total**: **14-19 hours** of focused test development
 
 ### Priority Queue
+
 1. **CRITICAL**: Story 20-4 (RLS Policies) - Security must be validated
 2. **HIGH**: Story 20-3 (Auth Migration) - Critical authentication flow
 3. **HIGH**: Story 20-2 (Schema DDL) - Foundation for all data operations
 4. **HIGH**: Story 20-5 (Data Layer) - Core service layer functionality
 
 ### Success Metrics
+
 - ✅ All 4 stories move from FAIL/NO_TESTS to PASS status
 - ✅ Coverage increases from 0% to 100% on all ACs
 - ✅ Total traceability moves from 98.1% to 100%
@@ -522,12 +561,14 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 **Key Insight**: These 4 failing stories are all from **Epic 20 (Backend Integration - Supabase)**, which we just identified as a structural violation and archived.
 
 **Recommended Approach**:
+
 1. ✅ **Keep the remediation** - These tests are valuable regardless of epic structure
 2. ✅ **Distribute test coverage** - Move tests to the enhanced stories (Epic 2.1, 5.1, 10.1)
 3. ✅ **Security first** - Prioritize RLS policy validation (critical for production)
 4. ✅ **Incremental delivery** - Build tests story-by-story, validate with each PR
 
 **Long-term Quality Impact**:
+
 - Establishes **security-first testing culture**
 - Provides **schema validation automation** for future migrations
 - Creates **reusable test patterns** for Supabase integration
@@ -538,17 +579,20 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 ## 🚀 NEXT STEPS
 
 ### Immediate Actions (Next 2 Days)
+
 1. Create test files for Story 20-4 (RLS Policies) - CRITICAL
 2. Create test files for Story 20-3 (Auth Migration) - HIGH
 3. Run tests and validate coverage increases
 
 ### Short-term (Next Week)
+
 4. Create test files for Story 20-2 (Schema DDL)
 5. Create test files for Story 20-5 (Data Layer)
 6. Update CI/CD to include new test suites
 7. Re-run traceability report to confirm 100% coverage
 
 ### Long-term Quality Improvements
+
 - Add automated schema drift detection
 - Implement continuous RLS policy validation
 - Create test harness for database migrations
@@ -558,7 +602,6 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 
 **Status**: ✅ **REMEDIATION PLAN COMPLETE**  
 **Confidence**: **HIGH** - Clear path from 98.1% to 100% coverage  
-**Risk**: **LOW** - All gaps identified with concrete test implementations  
+**Risk**: **LOW** - All gaps identified with concrete test implementations
 
 **BMad Master Assessment**: Execute security tests first (20-4), then auth (20-3), then infrastructure (20-2, 20-5). This sequence ensures critical production safeguards are validated before data layer concerns.
-

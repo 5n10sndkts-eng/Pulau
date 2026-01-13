@@ -7,9 +7,9 @@
  * Provides functions for checkout, payment queries, and fee calculations.
  */
 
-import { supabase } from '@/lib/supabase'
-import { createAuditEntry } from '@/lib/auditService'
-import type { Payment, CheckoutResponse, ApiResponse } from '@/lib/types'
+import { supabase } from '@/lib/supabase';
+import { createAuditEntry } from '@/lib/auditService';
+import type { Payment, CheckoutResponse, ApiResponse } from '@/lib/types';
 
 // ================================================
 // Constants
@@ -19,7 +19,7 @@ import type { Payment, CheckoutResponse, ApiResponse } from '@/lib/types'
  * Platform fee percentage (15%)
  * This matches the server-side calculation in checkout Edge Function
  */
-export const PLATFORM_FEE_PERCENTAGE = 0.15
+export const PLATFORM_FEE_PERCENTAGE = 0.15;
 
 // ================================================
 // Fee Calculation Utilities (AC #1)
@@ -31,7 +31,7 @@ export const PLATFORM_FEE_PERCENTAGE = 0.15
  * @returns Platform fee in cents (15% of total, rounded)
  */
 export function calculatePlatformFee(amountCents: number): number {
-  return Math.round(amountCents * PLATFORM_FEE_PERCENTAGE)
+  return Math.round(amountCents * PLATFORM_FEE_PERCENTAGE);
 }
 
 /**
@@ -40,7 +40,7 @@ export function calculatePlatformFee(amountCents: number): number {
  * @returns Vendor payout in cents (amount minus platform fee)
  */
 export function calculateVendorPayout(amountCents: number): number {
-  return amountCents - calculatePlatformFee(amountCents)
+  return amountCents - calculatePlatformFee(amountCents);
 }
 
 /**
@@ -53,7 +53,7 @@ export function formatAmountFromCents(cents: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-  }).format(cents / 100)
+  }).format(cents / 100);
 }
 
 // ================================================
@@ -68,42 +68,41 @@ export function formatAmountFromCents(cents: number, currency = 'USD'): string {
  * @returns CheckoutResponse with sessionUrl on success
  */
 export async function initiateCheckout(
-  tripId: string
+  tripId: string,
 ): Promise<ApiResponse<CheckoutResponse>> {
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session?.access_token) {
-    return { data: null, error: 'Not authenticated' }
+    return { data: null, error: 'Not authenticated' };
   }
 
   try {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     if (!supabaseUrl) {
-      return { data: null, error: 'Supabase URL not configured' }
+      return { data: null, error: 'Supabase URL not configured' };
     }
 
-    const response = await fetch(
-      `${supabaseUrl}/functions/v1/checkout`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tripId }),
-      }
-    )
+    const response = await fetch(`${supabaseUrl}/functions/v1/checkout`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tripId }),
+    });
 
-    const result: CheckoutResponse = await response.json()
+    const result: CheckoutResponse = await response.json();
 
     if (!response.ok || !result.success) {
-      return { data: null, error: result.error || 'Checkout failed' }
+      return { data: null, error: result.error || 'Checkout failed' };
     }
 
-    return { data: result, error: null }
+    return { data: result, error: null };
   } catch (err) {
-    console.error('Checkout error:', err)
-    return { data: null, error: 'Network error during checkout' }
+    console.error('Checkout error:', err);
+    return { data: null, error: 'Network error during checkout' };
   }
 }
 
@@ -129,7 +128,7 @@ function transformPayment(record: Record<string, unknown>): Payment {
     refundReason: record.refund_reason as string | null,
     createdAt: record.created_at as string,
     updatedAt: record.updated_at as string,
-  }
+  };
 }
 
 /**
@@ -138,23 +137,23 @@ function transformPayment(record: Record<string, unknown>): Payment {
  * @returns Payment record or null if not found
  */
 export async function getPaymentByBookingId(
-  bookingId: string
+  bookingId: string,
 ): Promise<ApiResponse<Payment>> {
   const { data, error } = await supabase
     .from('payments')
     .select('*')
     .eq('booking_id', bookingId)
-    .single()
+    .single();
 
   if (error) {
     if (error.code === 'PGRST116') {
       // No rows returned
-      return { data: null, error: 'Payment not found' }
+      return { data: null, error: 'Payment not found' };
     }
-    return { data: null, error: error.message }
+    return { data: null, error: error.message };
   }
 
-  return { data: transformPayment(data), error: null }
+  return { data: transformPayment(data), error: null };
 }
 
 /**
@@ -164,21 +163,24 @@ export async function getPaymentByBookingId(
  * @returns Array of Payment records
  */
 export async function getPaymentsByUserId(
-  userId?: string
+  userId?: string,
 ): Promise<ApiResponse<Payment[]>> {
   // If no userId provided, get current user
   if (!userId) {
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      return { data: null, error: 'Not authenticated' }
+      return { data: null, error: 'Not authenticated' };
     }
-    userId = user.id
+    userId = user.id;
   }
 
   // Query payments through the booking -> trip -> user relationship
   const { data, error } = await supabase
     .from('payments')
-    .select(`
+    .select(
+      `
       *,
       bookings!inner (
         id,
@@ -187,16 +189,17 @@ export async function getPaymentsByUserId(
           user_id
         )
       )
-    `)
+    `,
+    )
     .eq('bookings.trips.user_id', userId)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   if (error) {
-    return { data: null, error: error.message }
+    return { data: null, error: error.message };
   }
 
-  const payments = data.map(record => transformPayment(record))
-  return { data: payments, error: null }
+  const payments = data.map((record) => transformPayment(record));
+  return { data: payments, error: null };
 }
 
 /**
@@ -206,22 +209,22 @@ export async function getPaymentsByUserId(
  * @returns Payment record or null
  */
 export async function getPaymentBySessionId(
-  sessionId: string
+  sessionId: string,
 ): Promise<ApiResponse<Payment>> {
   const { data, error } = await supabase
     .from('payments')
     .select('*')
     .eq('stripe_checkout_session_id', sessionId)
-    .single()
+    .single();
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return { data: null, error: 'Payment not found' }
+      return { data: null, error: 'Payment not found' };
     }
-    return { data: null, error: error.message }
+    return { data: null, error: error.message };
   }
 
-  return { data: transformPayment(data), error: null }
+  return { data: transformPayment(data), error: null };
 }
 
 // ================================================
@@ -235,10 +238,10 @@ export async function getPaymentBySessionId(
 export async function recordRefund(
   bookingId: string,
   refundAmount: number,
-  reason?: string
+  reason?: string,
 ): Promise<ApiResponse<Payment>> {
   if (refundAmount < 0) {
-    return { data: null, error: 'Refund amount cannot be negative' }
+    return { data: null, error: 'Refund amount cannot be negative' };
   }
 
   // Fetch payment to determine refund status
@@ -246,18 +249,19 @@ export async function recordRefund(
     .from('payments')
     .select('*')
     .eq('booking_id', bookingId)
-    .single()
+    .single();
 
   if (fetchError || !paymentRow) {
-    return { data: null, error: fetchError?.message || 'Payment not found' }
+    return { data: null, error: fetchError?.message || 'Payment not found' };
   }
 
-  const originalAmount = Number(paymentRow.amount) || 0
-  const newStatus: Payment['status'] = refundAmount >= originalAmount
-    ? 'refunded'
-    : refundAmount > 0
-      ? 'partially_refunded'
-      : paymentRow.status as Payment['status']
+  const originalAmount = Number(paymentRow.amount) || 0;
+  const newStatus: Payment['status'] =
+    refundAmount >= originalAmount
+      ? 'refunded'
+      : refundAmount > 0
+        ? 'partially_refunded'
+        : (paymentRow.status as Payment['status']);
 
   const { data: updated, error: updateError } = await supabase
     .from('payments')
@@ -268,10 +272,13 @@ export async function recordRefund(
     })
     .eq('id', paymentRow.id)
     .select()
-    .single()
+    .single();
 
   if (updateError || !updated) {
-    return { data: null, error: updateError?.message || 'Failed to record refund' }
+    return {
+      data: null,
+      error: updateError?.message || 'Failed to record refund',
+    };
   }
 
   // Fire-and-forget audit entry; failures should not block refund persistence
@@ -288,10 +295,10 @@ export async function recordRefund(
       status: newStatus,
     },
   }).catch((err) => {
-    console.warn('[paymentService] Failed to write refund audit log', err)
-  })
+    console.warn('[paymentService] Failed to write refund audit log', err);
+  });
 
-  return { data: transformPayment(updated), error: null }
+  return { data: transformPayment(updated), error: null };
 }
 
 // ================================================
@@ -302,14 +309,14 @@ export async function recordRefund(
  * Check if a payment is in a successful state
  */
 export function isPaymentSuccessful(status: Payment['status']): boolean {
-  return status === 'succeeded'
+  return status === 'succeeded';
 }
 
 /**
  * Check if a payment has been refunded (fully or partially)
  */
 export function isPaymentRefunded(status: Payment['status']): boolean {
-  return status === 'refunded' || status === 'partially_refunded'
+  return status === 'refunded' || status === 'partially_refunded';
 }
 
 /**
@@ -322,8 +329,8 @@ export function getPaymentStatusLabel(status: Payment['status']): string {
     failed: 'Failed',
     refunded: 'Refunded',
     partially_refunded: 'Partially Refunded',
-  }
-  return labels[status] || status
+  };
+  return labels[status] || status;
 }
 
 /**
@@ -337,6 +344,6 @@ export function getPaymentStatusColor(status: Payment['status']): string {
     failed: 'bg-red-100 text-red-800',
     refunded: 'bg-gray-100 text-gray-800',
     partially_refunded: 'bg-orange-100 text-orange-800',
-  }
-  return colors[status] || 'bg-gray-100 text-gray-800'
+  };
+  return colors[status] || 'bg-gray-100 text-gray-800';
 }

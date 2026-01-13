@@ -30,13 +30,14 @@ So that Supabase Realtime subscriptions are managed consistently.
 **Given** the realtimeService module exists
 **When** used throughout the application
 **Then** it provides functions for:
-  - `subscribeToSlotAvailability(experienceId, callback)` - Watch slot changes
-  - `subscribeToBookingStatus(bookingId, callback)` - Watch booking updates
-  - `unsubscribe(subscriptionId)` - Clean up subscription
-  - `unsubscribeAll()` - Clean up all subscriptions
-**And** subscriptions use Supabase Realtime channels
-**And** reconnection is handled automatically
-**And** TypeScript types for callback payloads are provided
+
+- `subscribeToSlotAvailability(experienceId, callback)` - Watch slot changes
+- `subscribeToBookingStatus(bookingId, callback)` - Watch booking updates
+- `unsubscribe(subscriptionId)` - Clean up subscription
+- `unsubscribeAll()` - Clean up all subscriptions
+  **And** subscriptions use Supabase Realtime channels
+  **And** reconnection is handled automatically
+  **And** TypeScript types for callback payloads are provided
 
 ---
 
@@ -84,11 +85,12 @@ So that I can make informed booking decisions.
 **Given** I am on an experience detail page
 **When** I view available time slots
 **Then** each slot shows:
-  - Time (e.g., "10:00 AM")
-  - Available count (e.g., "5 spots left")
-  - Price (or "From $X")
-  - Visual indicator for low availability (< 3 spots)
-**And** sold out slots are shown but disabled
-**And** availability updates in real-time via subscription
+
+- Time (e.g., "10:00 AM")
+- Available count (e.g., "5 spots left")
+- Price (or "From $X")
+- Visual indicator for low availability (< 3 spots)
+  **And** sold out slots are shown but disabled
+  **And** availability updates in real-time via subscription
 
 ---

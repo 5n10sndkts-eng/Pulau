@@ -1,33 +1,44 @@
-import { useKV } from '@github/spark/hooks'
-import { Bell, Mail, MessageSquare, Calendar } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { toast } from 'sonner'
+import { useKV } from '@github/spark/hooks';
+import { Bell, Mail, MessageSquare, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 
 interface NotificationPreferencesScreenProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
 interface NotificationSettings {
-  bookingConfirmations: boolean
-  tripReminders: boolean
-  promotions: boolean
-  messageNotifications: boolean
-  emailNotifications: boolean
-  pushNotifications: boolean
+  bookingConfirmations: boolean;
+  tripReminders: boolean;
+  promotions: boolean;
+  messageNotifications: boolean;
+  emailNotifications: boolean;
+  pushNotifications: boolean;
 }
 
-export function NotificationPreferencesScreen({ onBack }: NotificationPreferencesScreenProps) {
-  const [settings, setSettings] = useKV<NotificationSettings>('notificationSettings', {
-    bookingConfirmations: true,
-    tripReminders: true,
-    promotions: false,
-    messageNotifications: true,
-    emailNotifications: true,
-    pushNotifications: true,
-  })
+export function NotificationPreferencesScreen({
+  onBack,
+}: NotificationPreferencesScreenProps) {
+  const [settings, setSettings] = useKV<NotificationSettings>(
+    'notificationSettings',
+    {
+      bookingConfirmations: true,
+      tripReminders: true,
+      promotions: false,
+      messageNotifications: true,
+      emailNotifications: true,
+      pushNotifications: true,
+    },
+  );
 
   const safeSettings = settings || {
     bookingConfirmations: true,
@@ -36,7 +47,7 @@ export function NotificationPreferencesScreen({ onBack }: NotificationPreference
     messageNotifications: true,
     emailNotifications: true,
     pushNotifications: true,
-  }
+  };
 
   const handleToggle = (key: keyof NotificationSettings) => {
     setSettings((current) => {
@@ -47,14 +58,14 @@ export function NotificationPreferencesScreen({ onBack }: NotificationPreference
         messageNotifications: true,
         emailNotifications: true,
         pushNotifications: true,
-      }
+      };
       return {
         ...base,
         [key]: !base[key],
-      }
-    })
-    toast.success('Notification settings updated')
-  }
+      };
+    });
+    toast.success('Notification settings updated');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,14 +82,18 @@ export function NotificationPreferencesScreen({ onBack }: NotificationPreference
         <Card>
           <CardHeader>
             <CardTitle>Trip Notifications</CardTitle>
-            <CardDescription>Get notified about your bookings and trips</CardDescription>
+            <CardDescription>
+              Get notified about your bookings and trips
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <Label htmlFor="bookingConfirmations">Booking Confirmations</Label>
+                  <Label htmlFor="bookingConfirmations">
+                    Booking Confirmations
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     Receive confirmation when bookings are completed
                   </p>
@@ -120,7 +135,9 @@ export function NotificationPreferencesScreen({ onBack }: NotificationPreference
               <div className="flex items-center gap-3">
                 <MessageSquare className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <Label htmlFor="messageNotifications">Message Notifications</Label>
+                  <Label htmlFor="messageNotifications">
+                    Message Notifications
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     Get notified of new messages from vendors
                   </p>
@@ -137,7 +154,9 @@ export function NotificationPreferencesScreen({ onBack }: NotificationPreference
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <Label htmlFor="emailNotifications">Email Notifications</Label>
+                  <Label htmlFor="emailNotifications">
+                    Email Notifications
+                  </Label>
                   <p className="text-sm text-muted-foreground">
                     Receive notifications via email
                   </p>
@@ -192,5 +211,5 @@ export function NotificationPreferencesScreen({ onBack }: NotificationPreference
         </Card>
       </div>
     </div>
-  )
+  );
 }

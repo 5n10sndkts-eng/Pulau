@@ -9,10 +9,11 @@ So that I have the latest booking information.
 **Given** I was offline and network is restored
 **When** the app detects connectivity
 **Then** within 10 seconds it:
-  - Syncs any pending state changes
-  - Refreshes cached ticket data
-  - Updates booking status if changed
-  - Shows brief "Syncing..." indicator
-**And** if booking was cancelled while offline, I see a clear notification
+
+- Syncs any pending state changes
+- Refreshes cached ticket data
+- Updates booking status if changed
+- Shows brief "Syncing..." indicator
+  **And** if booking was cancelled while offline, I see a clear notification
 
 ---

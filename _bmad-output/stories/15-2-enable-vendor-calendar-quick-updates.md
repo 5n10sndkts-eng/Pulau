@@ -9,12 +9,13 @@ So that I can manage cancellations on the go.
 **Given** I am a vendor viewing my experience availability
 **When** I tap a date on the calendar
 **Then** quick edit modal opens with:
-  - Date displayed
-  - Slots Available (number input)
-  - Status toggle: Available / Blocked
-  - "Save" and "Cancel" buttons
-**When** I save changes
-**Then** experience_availability record updates immediately
-**And** change reflects on customer-facing pages within 1 second
-**And** toast confirms "Availability updated"
-**And** if I block a date with existing bookings, warning shows with affected bookings
+
+- Date displayed
+- Slots Available (number input)
+- Status toggle: Available / Blocked
+- "Save" and "Cancel" buttons
+  **When** I save changes
+  **Then** experience_availability record updates immediately
+  **And** change reflects on customer-facing pages within 1 second
+  **And** toast confirms "Availability updated"
+  **And** if I block a date with existing bookings, warning shows with affected bookings

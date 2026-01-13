@@ -12,12 +12,13 @@ So that my booking is confirmed.
 **And** all form inputs are disabled during processing
 **And** payment token is generated via payment gateway (Stripe/PayPal)
 **And** booking record created in bookings table:
-  - id, user_id, trip_id, status: 'pending', total_amount, payment_token, created_at
-**When** payment succeeds
-**Then** booking status updates to 'confirmed'
-**And** booking_reference generated (format: PL-XXXXXX)
-**And** user advances to Step 4 (Confirmation)
-**When** payment fails
-**Then** error message displays: "Payment failed: [reason]"
-**And** "Try Again" button allows retry
-**And** booking status remains 'pending' or 'failed'
+
+- id, user_id, trip_id, status: 'pending', total_amount, payment_token, created_at
+  **When** payment succeeds
+  **Then** booking status updates to 'confirmed'
+  **And** booking_reference generated (format: PL-XXXXXX)
+  **And** user advances to Step 4 (Confirmation)
+  **When** payment fails
+  **Then** error message displays: "Payment failed: [reason]"
+  **And** "Try Again" button allows retry
+  **And** booking status remains 'pending' or 'failed'

@@ -1,63 +1,74 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
-import { Trip } from '@/lib/types'
-import { BookingData } from './CheckoutFlow'
-import { formatPrice } from '@/lib/helpers'
-import { ArrowLeft, CreditCard, Lock, Info, ChevronDown, ChevronUp, Shield, Calendar } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Trip } from '@/lib/types';
+import { BookingData } from './CheckoutFlow';
+import { formatPrice } from '@/lib/helpers';
+import {
+  ArrowLeft,
+  CreditCard,
+  Lock,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Shield,
+  Calendar,
+} from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface PaymentStepProps {
-  trip: Trip
-  bookingData: BookingData
-  onBack: () => void
+  trip: Trip;
+  bookingData: BookingData;
+  onBack: () => void;
   onContinue: (data: {
-    promoCode?: string
-    paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay'
-    cardDetails?: BookingData['cardDetails']
-    termsAccepted: boolean
-  }) => void
+    promoCode?: string;
+    paymentMethod: 'card' | 'paypal' | 'applepay' | 'googlepay';
+    cardDetails?: BookingData['cardDetails'];
+    termsAccepted: boolean;
+  }) => void;
 }
 
 export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal' | 'applepay' | 'googlepay'>('card')
-  const [promoCode, setPromoCode] = useState('')
-  const [promoApplied, setPromoApplied] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<
+    'card' | 'paypal' | 'applepay' | 'googlepay'
+  >('card');
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(false);
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
     cvv: '',
     name: '',
-  })
-  const [termsAccepted, setTermsAccepted] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [showSummary, setShowSummary] = useState(false)
+  });
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
-  const discount = promoApplied ? trip.subtotal * 0.1 : 0
-  const finalTotal = trip.total - discount
+  const discount = promoApplied ? trip.subtotal * 0.1 : 0;
+  const finalTotal = trip.total - discount;
 
   const handleApplyPromo = () => {
     if (promoCode.toUpperCase() === 'BALI10') {
-      setPromoApplied(true)
+      setPromoApplied(true);
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!termsAccepted) return
+    e.preventDefault();
+    if (!termsAccepted) return;
 
-    setIsProcessing(true)
+    setIsProcessing(true);
     onContinue({
       promoCode: promoApplied ? promoCode : undefined,
       paymentMethod,
       cardDetails: paymentMethod === 'card' ? cardDetails : undefined,
       termsAccepted,
-    })
-  }
+    });
+  };
 
   const isValid =
     termsAccepted &&
@@ -65,17 +76,25 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
       (cardDetails.number.length >= 15 &&
         cardDetails.expiry.length >= 5 &&
         cardDetails.cvv.length >= 3 &&
-        cardDetails.name.length > 0))
+        cardDetails.name.length > 0));
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 space-y-6">
       <div className="flex items-center gap-4">
-        <Button type="button" variant="ghost" size="icon" onClick={onBack} aria-label="Go back">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          aria-label="Go back"
+        >
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
           <h1 className="font-display text-3xl font-bold">Payment</h1>
-          <p className="text-muted-foreground">Secure checkout powered by industry-leading encryption</p>
+          <p className="text-muted-foreground">
+            Secure checkout powered by industry-leading encryption
+          </p>
         </div>
       </div>
 
@@ -86,7 +105,11 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           onClick={() => setShowSummary(!showSummary)}
         >
           <h2 className="font-display text-xl font-bold">Order Summary</h2>
-          {showSummary ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          {showSummary ? (
+            <ChevronUp className="w-5 h-5" />
+          ) : (
+            <ChevronDown className="w-5 h-5" />
+          )}
         </button>
 
         {showSummary && (
@@ -128,7 +151,10 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
         </div>
 
         <div className="mt-4 pt-4 border-t">
-          <Label htmlFor="promoCode" className="text-sm font-semibold mb-2 block">
+          <Label
+            htmlFor="promoCode"
+            className="text-sm font-semibold mb-2 block"
+          >
             Promo Code
           </Label>
           <div className="flex gap-2">
@@ -160,18 +186,21 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
 
         {/* Express Checkout - Prominent Apple Pay (AC #4) */}
         <div className="mb-6">
-          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Express Checkout</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">
+            Express Checkout
+          </p>
           <button
             type="button"
             onClick={() => setPaymentMethod('applepay')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'applepay'
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+              paymentMethod === 'applepay'
                 ? 'border-primary bg-primary/5'
                 : 'border-black bg-black text-white hover:bg-black/90'
-              }`}
+            }`}
           >
             <div className="flex items-center justify-center gap-2">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
               </svg>
               <span className="font-semibold">Pay with Apple Pay</span>
             </div>
@@ -180,7 +209,9 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
 
         <div className="flex items-center gap-4 mb-4">
           <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-muted-foreground">or pay with card</span>
+          <span className="text-xs text-muted-foreground">
+            or pay with card
+          </span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
@@ -188,8 +219,11 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           <button
             type="button"
             onClick={() => setPaymentMethod('card')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-              }`}
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+              paymentMethod === 'card'
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:border-primary/50'
+            }`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -214,8 +248,11 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           <button
             type="button"
             onClick={() => setPaymentMethod('paypal')}
-            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMethod === 'paypal' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-              }`}
+            className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+              paymentMethod === 'paypal'
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:border-primary/50'
+            }`}
           >
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
@@ -234,9 +271,9 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
                 id="cardNumber"
                 value={cardDetails.number}
                 onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 16)
-                  const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ')
-                  setCardDetails({ ...cardDetails, number: formatted })
+                  const value = e.target.value.replace(/\D/g, '').slice(0, 16);
+                  const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                  setCardDetails({ ...cardDetails, number: formatted });
                 }}
                 placeholder="1234 5678 9012 3456"
                 maxLength={19}
@@ -251,11 +288,11 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
                   id="expiry"
                   value={cardDetails.expiry}
                   onChange={(e) => {
-                    let value = e.target.value.replace(/\D/g, '')
+                    let value = e.target.value.replace(/\D/g, '');
                     if (value.length >= 2) {
-                      value = value.slice(0, 2) + '/' + value.slice(2, 4)
+                      value = value.slice(0, 2) + '/' + value.slice(2, 4);
                     }
-                    setCardDetails({ ...cardDetails, expiry: value })
+                    setCardDetails({ ...cardDetails, expiry: value });
                   }}
                   placeholder="MM/YY"
                   maxLength={5}
@@ -270,8 +307,8 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
                   type="password"
                   value={cardDetails.cvv}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '').slice(0, 4)
-                    setCardDetails({ ...cardDetails, cvv: value })
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    setCardDetails({ ...cardDetails, cvv: value });
                   }}
                   placeholder="123"
                   maxLength={4}
@@ -285,7 +322,9 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
               <Input
                 id="cardName"
                 value={cardDetails.name}
-                onChange={(e) => setCardDetails({ ...cardDetails, name: e.target.value })}
+                onChange={(e) =>
+                  setCardDetails({ ...cardDetails, name: e.target.value })
+                }
                 placeholder="JOHN DOE"
                 required
               />
@@ -298,10 +337,15 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
         <Lock className="h-4 w-4" />
         <AlertDescription>
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="outline" className="bg-success/10 text-success border-success">
+            <Badge
+              variant="outline"
+              className="bg-success/10 text-success border-success"
+            >
               Secure Payment
             </Badge>
-            <span className="text-sm">256-bit encryption • PCI DSS compliant</span>
+            <span className="text-sm">
+              256-bit encryption • PCI DSS compliant
+            </span>
           </div>
         </AlertDescription>
       </Alert>
@@ -323,7 +367,8 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
               <button type="button" className="text-primary underline">
                 Cancellation Policy
               </button>
-              . I understand that local operators will contact me to confirm pickup details and answer any questions.
+              . I understand that local operators will contact me to confirm
+              pickup details and answer any questions.
             </Label>
           </div>
         </div>
@@ -333,12 +378,21 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
       <div className="flex items-center justify-center gap-2 p-3 bg-success/10 rounded-lg border border-success/20">
         <Calendar className="w-4 h-4 text-success" />
         <span className="text-sm font-medium text-success">
-          Free cancellation until {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          Free cancellation until{' '}
+          {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(
+            'en-US',
+            { month: 'short', day: 'numeric' },
+          )}
         </span>
       </div>
 
       {/* Primary Payment Button */}
-      <Button type="submit" size="lg" className="w-full h-14 text-lg" disabled={!isValid || isProcessing}>
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full h-14 text-lg"
+        disabled={!isValid || isProcessing}
+      >
         {isProcessing ? (
           <span className="flex items-center gap-2">
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -355,13 +409,15 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
       {/* Price Breakdown Summary (AC #5) */}
       <div className="text-center space-y-1">
         <p className="text-xs text-muted-foreground">
-          {formatPrice(trip.subtotal)} subtotal + {formatPrice(trip.serviceFee)} service fee
+          {formatPrice(trip.subtotal)} subtotal + {formatPrice(trip.serviceFee)}{' '}
+          service fee
           {promoApplied && ` - ${formatPrice(discount)} discount`}
         </p>
         <p className="text-xs text-muted-foreground">
-          Your payment information is encrypted and secure. We never store your full card details.
+          Your payment information is encrypted and secure. We never store your
+          full card details.
         </p>
       </div>
     </form>
-  )
+  );
 }

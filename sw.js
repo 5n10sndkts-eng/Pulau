@@ -1,5 +1,7 @@
 // Import Workbox from a CDN
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
+importScripts(
+  'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js',
+);
 
 if (workbox) {
   console.log(`Workbox is loaded`);
@@ -20,7 +22,7 @@ if (workbox) {
           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days, as per AC-26.1-1
         }),
       ],
-    })
+    }),
   );
 
   // Cache strategy for static assets (CacheFirst)
@@ -42,7 +44,7 @@ if (workbox) {
           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
         }),
       ],
-    })
+    }),
   );
 
   // Fallback for offline navigation if needed
@@ -53,7 +55,6 @@ if (workbox) {
     }
     return Response.error();
   });
-
 } else {
   console.log(`Workbox didn't load`);
 }

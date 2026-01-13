@@ -8,15 +8,19 @@
 ## 📋 Document Inventory
 
 ### PRD Documents
+
 - **Whole:** `_bmad-output/planning-artifacts/prd/pulau-prd.md` (18859 bytes)
 
 ### Architecture Documents
+
 - **Whole:** `_bmad-output/planning-artifacts/architecture/architecture.md` (4787 bytes)
 
 ### Epics & Stories
+
 - **Whole:** `_bmad-output/planning-artifacts/epics.md` (110128 bytes)
 
 ### UX Design Documents
+
 - ⚠️ **Missing:** No UX design documents found in `_bmad-output/planning-artifacts`.
 
 ---
@@ -76,6 +80,7 @@ Total NFRs: 7
 ### PRD Completeness Assessment
 
 The PRD is exceptionally detailed regarding UI/UX behavior, edge case handling, and design aesthetics. It successfully reconciles earlier React Native/Supabase planning with the actual React Web/Spark KV implementation.
+
 - **Strength:** Clear "Trigger -> Progression -> Success" metrics for each feature.
 - **Risk:** No explicit mention of backend security/auth architecture (e.g., PBKDF2 hashing) which is critical for a login flow mentioned in the dashboard.
 
@@ -89,22 +94,22 @@ The PRD is exceptionally detailed regarding UI/UX behavior, edge case handling, 
 
 ### Coverage Matrix
 
-| FR ID | PRD Requirement | Epic Coverage | Status |
-| :--- | :--- | :--- | :--- |
-| **FR1** | Trip Canvas Building (Itinerary + Calendar) | Epic 8 (Trip Canvas Building) | ✓ Covered |
-| **FR2** | Real-time Pricing Updates | Epic 8 (Price Calculation) | ✓ Covered |
-| **FR3** | Discovery & Filtering (Search + Browse) | Epic 6 (Experience Discovery / Search / Filtering) | ✓ Covered |
-| **FR4** | Detailed Experience Pages (Multimedia + Bio) | Epic 6 (Experience Detail / Reviews / Profiles) | ✓ Covered |
-| **FR5** | Multi-Step Checkout Flow (Guided Wizard) | Epic 10 (Multi-Step Checkout) | ✓ Covered |
-| **FR6** | Onboarding Preferences (Personalization) | Epic 4 (Onboarding & Personalization) | ✓ Covered |
-| **FR7** | Booking Management Dashboard (History) | Epic 11 (Booking Management) | ✓ Covered |
-| **FR8** | Conflict Detection (Overlaps) | Epic 9 (Conflict Detection) | ✓ Covered |
-| **FR9** | Edge Case: Empty States / No Results | Epic 17 (Empty State Components) | ✓ Covered |
-| **FR10** | Edge Case: Network Interruption | Epic 17 (Network Interruption Handling) | ✓ Covered |
-| **FR11** | Edge Case: Date Not Set Flow | Epic 8 (Date Management) | ✓ Covered |
-| **FR12** | Edge Case: Incomplete Booking Recovery | Epic 10 (Form Validation) | ✓ Covered |
-| **FR13** | Edge Case: Sold Out / Alternatives | Epic 17 (Sold Out Handling) | ✓ Covered |
-| **FR14** | Primary Data Persistence (Spark KV) | Epic 1 (Foundation) & Epic 2 (State Sync) | ✓ Covered |
+| FR ID    | PRD Requirement                              | Epic Coverage                                      | Status    |
+| :------- | :------------------------------------------- | :------------------------------------------------- | :-------- |
+| **FR1**  | Trip Canvas Building (Itinerary + Calendar)  | Epic 8 (Trip Canvas Building)                      | ✓ Covered |
+| **FR2**  | Real-time Pricing Updates                    | Epic 8 (Price Calculation)                         | ✓ Covered |
+| **FR3**  | Discovery & Filtering (Search + Browse)      | Epic 6 (Experience Discovery / Search / Filtering) | ✓ Covered |
+| **FR4**  | Detailed Experience Pages (Multimedia + Bio) | Epic 6 (Experience Detail / Reviews / Profiles)    | ✓ Covered |
+| **FR5**  | Multi-Step Checkout Flow (Guided Wizard)     | Epic 10 (Multi-Step Checkout)                      | ✓ Covered |
+| **FR6**  | Onboarding Preferences (Personalization)     | Epic 4 (Onboarding & Personalization)              | ✓ Covered |
+| **FR7**  | Booking Management Dashboard (History)       | Epic 11 (Booking Management)                       | ✓ Covered |
+| **FR8**  | Conflict Detection (Overlaps)                | Epic 9 (Conflict Detection)                        | ✓ Covered |
+| **FR9**  | Edge Case: Empty States / No Results         | Epic 17 (Empty State Components)                   | ✓ Covered |
+| **FR10** | Edge Case: Network Interruption              | Epic 17 (Network Interruption Handling)            | ✓ Covered |
+| **FR11** | Edge Case: Date Not Set Flow                 | Epic 8 (Date Management)                           | ✓ Covered |
+| **FR12** | Edge Case: Incomplete Booking Recovery       | Epic 10 (Form Validation)                          | ✓ Covered |
+| **FR13** | Edge Case: Sold Out / Alternatives           | Epic 17 (Sold Out Handling)                        | ✓ Covered |
+| **FR14** | Primary Data Persistence (Spark KV)          | Epic 1 (Foundation) & Epic 2 (State Sync)          | ✓ Covered |
 
 ### Missing Requirements
 
@@ -133,6 +138,7 @@ The PRD is exceptionally detailed regarding UI/UX behavior, edge case handling, 
 ### UX Implied Assessment
 
 Although a dedicated UX document is missing, the **User Interface is heavily implied and described** across the other artifacts:
+
 - **PRD:** Explicitly details 11 screen types, mobile-first design patterns, 44x44px touch targets, and specific animation durations (150ms-500ms).
 - **Architecture:** Provides a "Styling Solution" (Tailwind sm/md/lg) and "Animation Consistency" (Framer Motion) that directly supports the implied UI needs.
 - **Component Selection:** PRD specifies the use of `shadcn/ui` and `Radix UI` primitives for accessibility.
@@ -163,7 +169,7 @@ Although a dedicated UX document is missing, the **User Interface is heavily imp
    - **Conflict:** The **Architecture Decision Document** (Step 2/3) and the **PRD** (Tech Architecture section) explicitly mandate the use of **GitHub Spark KV Store** and forbid Supabase/PostgreSQL.
    - **Risk:** High. Dev agents will likely hallucinate SQL queries or attempt to install incompatible database drivers.
 2. **Technical Milestone Story (1.5):**
-   - **Issue:** Story 1.5 ("Establish TypeScript Type Safety Patterns") delivers zero user value. 
+   - **Issue:** Story 1.5 ("Establish TypeScript Type Safety Patterns") delivers zero user value.
    - **Violation:** This is a coding standard/technical constraint, not a user story. It should be moved to the `project-context.md` or as an NFR in Epic 1.
 
 #### 🟠 Major Issues
@@ -172,7 +178,7 @@ Although a dedicated UX document is missing, the **User Interface is heavily imp
    - **Issue:** Story 2.5 (PCI Compliance) and Story 15.1 (Messaging System) contain ACs that are non-measurable in a unit/integration test context (e.g., "PCI compliance is maintained").
    - **Conflict:** ACs must be testable using the existing test infrastructure (Vitest/Testing Library).
 2. **Mock Logic Ambiguity:**
-   - **Issue:** Verification emails (Story 2.1 and 3.1) are described as "sent" with UUID tokens. 
+   - **Issue:** Verification emails (Story 2.1 and 3.1) are described as "sent" with UUID tokens.
    - **Constraint:** Since Spark is client-side only, this requires a mock implementation (console logs/Toast) which is not explicitly defined in the story ACs, leading to implementation frustration.
 
 #### 🟡 Minor Concerns
@@ -201,7 +207,7 @@ While the **Functional Coverage** is excellent (100%), the **Technical Implement
 
 > [!IMPORTANT]
 > **Status:** 🟠 **NEEDS WORK**
-> 
+>
 > While the scope is well-defined and coverage is 100%, the implementation instructions (Stories) are fundamentally misaligned with the current Technical Architecture (SQL vs. KV Store).
 
 ### Critical Issues Requiring Immediate Action

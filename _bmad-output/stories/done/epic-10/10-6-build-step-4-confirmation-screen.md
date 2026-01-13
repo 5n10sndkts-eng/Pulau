@@ -17,15 +17,17 @@ So that I know my reservation is secured.
 
 **AC #2: Show confirmation details**
 **And** confirmation displays:
-  - "Booking Confirmed!" heading
-  - Booking reference: PL-XXXXXX (tappable to copy)
-  - "Confirmation sent to [email]" message
-  - Trip summary: dates, item count, total paid
+
+- "Booking Confirmed!" heading
+- Booking reference: PL-XXXXXX (tappable to copy)
+- "Confirmation sent to [email]" message
+- Trip summary: dates, item count, total paid
 
 **AC #3: Provide next action buttons**
 **And** action buttons:
-  - "View My Trips" (primary) - navigates to booking history
-  - "Back to Home" (secondary)
+
+- "View My Trips" (primary) - navigates to booking history
+- "Back to Home" (secondary)
 
 **AC #4: Trigger confirmation email**
 **And** confirmation email is triggered (queued for sending)
@@ -34,6 +36,7 @@ So that I know my reservation is secured.
 ## Tasks / Subtasks
 
 ### Task 1: Create ConfirmationStep component (AC: #1, #2, #3)
+
 - [x] Build ConfirmationStep layout component
 - [x] Add animated success checkmark icon
 - [x] Display "Booking Confirmed!" heading
@@ -42,6 +45,7 @@ So that I know my reservation is secured.
 - [x] Include trip summary section
 
 ### Task 2: Implement confetti success animation (AC: #1)
+
 - [x] Install canvas-confetti library or use custom animation
 - [x] Trigger confetti burst on component mount
 - [x] Configure: 500ms duration, colorful particles
@@ -49,6 +53,7 @@ So that I know my reservation is secured.
 - [x] Ensure animation doesn't block UI
 
 ### Task 3: Display booking reference with copy (AC: #2)
+
 - [x] Show booking reference prominently (large font, centered)
 - [x] Format as "PL-XXXXXX" with monospace font
 - [x] Add copy icon button next to reference
@@ -56,6 +61,7 @@ So that I know my reservation is secured.
 - [x] Show "Copied!" toast on successful copy
 
 ### Task 4: Add trip summary section (AC: #2)
+
 - [x] Display trip dates (or "Dates TBD" if not set)
 - [x] Show item count: "5 experiences booked"
 - [x] Display total amount paid: "$XXX.XX"
@@ -63,6 +69,7 @@ So that I know my reservation is secured.
 - [x] Add booking date/time
 
 ### Task 5: Implement navigation buttons and cleanup (AC: #3, #4)
+
 - [x] Add "View My Trips" button (primary, teal)
 - [x] Add "Back to Home" button (secondary, outline)
 - [x] "View My Trips": navigate to /bookings
@@ -73,6 +80,7 @@ So that I know my reservation is secured.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Confetti library: `canvas-confetti` or `react-rewards`
 - Booking reference: fetch from booking record created in Story 10.5
 - Email trigger: queue email job, don't wait for send
@@ -80,6 +88,7 @@ So that I know my reservation is secured.
 - Trip status: update trip.status = 'booked'
 
 ### Confetti Animation
+
 ```typescript
 import confetti from 'canvas-confetti';
 
@@ -88,12 +97,13 @@ useEffect(() => {
     particleCount: 100,
     spread: 70,
     origin: { y: 0.6 },
-    colors: ['#0D7377', '#FF6B6B', '#F4D03F', '#27AE60']
+    colors: ['#0D7377', '#FF6B6B', '#F4D03F', '#27AE60'],
   });
 }, []);
 ```
 
 ### Booking Reference Copy
+
 ```typescript
 const handleCopyReference = async () => {
   try {
@@ -106,18 +116,20 @@ const handleCopyReference = async () => {
 ```
 
 ### Email Trigger
+
 ```typescript
 // Backend API call to queue confirmation email
 const triggerConfirmationEmail = async (bookingId: string) => {
   await fetch('/api/bookings/send-confirmation', {
     method: 'POST',
-    body: JSON.stringify({ bookingId })
+    body: JSON.stringify({ bookingId }),
   });
   // Don't wait for response, email is queued
 };
 ```
 
 ### Component Structure
+
 ```typescript
 <ConfirmationStep>
   <SuccessAnimation>
@@ -149,6 +161,7 @@ const triggerConfirmationEmail = async (bookingId: string) => {
 ```
 
 ### Visual Specifications
+
 - Success checkmark: 80px diameter, green circle, white check
 - Booking reference: 24px font, monospace, teal color
 - Copy button: small icon button, gray, hover teal
@@ -176,5 +189,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

@@ -4,20 +4,22 @@
  * Pre-configured animation variants following Pulau design system
  */
 
-import { motion, type HTMLMotionProps, MotionConfig } from 'framer-motion'
-import { useReducedMotion } from '@/hooks/use-reduced-motion'
-import { springPhysics } from './motion.variants'
+import { motion, type HTMLMotionProps, MotionConfig } from 'framer-motion';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import { springPhysics } from './motion.variants';
 
 // Motion button with scale effect
 interface MotionButtonProps extends HTMLMotionProps<'button'> {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function MotionButton({ children, ...props }: MotionButtonProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) {
-    return <button {...(props as React.ComponentProps<'button'>)}>{children}</button>
+    return (
+      <button {...(props as React.ComponentProps<'button'>)}>{children}</button>
+    );
   }
 
   return (
@@ -29,22 +31,22 @@ export function MotionButton({ children, ...props }: MotionButtonProps) {
     >
       {children}
     </motion.button>
-  )
+  );
 }
 
 // Motion wrapper with reduced motion support
 interface MotionWrapperProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function MotionWrapper({ children }: MotionWrapperProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <MotionConfig reducedMotion={prefersReducedMotion ? 'always' : 'never'}>
       {children}
     </MotionConfig>
-  )
+  );
 }
 
 // Viewport-aware container for scroll animations
@@ -53,12 +55,12 @@ export function MotionViewport({ children, ...props }: HTMLMotionProps<'div'>) {
     <motion.div
       initial="initial"
       whileInView="animate"
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true, margin: '-50px' }}
       {...props}
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
-export { motion, type HTMLMotionProps }
+export { motion, type HTMLMotionProps };

@@ -5,25 +5,25 @@
  * Tests search, filtering, and export functionality
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AdminBookingSearch } from './AdminBookingSearch'
-import { supabase } from '@/lib/supabase'
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AdminBookingSearch } from './AdminBookingSearch';
+import { supabase } from '@/lib/supabase';
 
 // Mock Supabase
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    from: vi.fn()
-  }
-}))
+    from: vi.fn(),
+  },
+}));
 
 // Mock URL APIs for CSV export
-const mockCreateObjectURL = vi.fn(() => 'blob:mock-url')
-const mockRevokeObjectURL = vi.fn()
-global.URL.createObjectURL = mockCreateObjectURL
-global.URL.revokeObjectURL = mockRevokeObjectURL
+const mockCreateObjectURL = vi.fn(() => 'blob:mock-url');
+const mockRevokeObjectURL = vi.fn();
+global.URL.createObjectURL = mockCreateObjectURL;
+global.URL.revokeObjectURL = mockRevokeObjectURL;
 
 const mockBookings = [
   {
@@ -38,8 +38,8 @@ const mockBookings = [
       user_id: 'user-1',
       travelers: 2,
       start_date: '2026-02-15',
-      destination_id: 'dest-bali'
-    }
+      destination_id: 'dest-bali',
+    },
   },
   {
     id: 'booking-2',
@@ -53,8 +53,8 @@ const mockBookings = [
       user_id: 'user-2',
       travelers: 4,
       start_date: '2026-02-20',
-      destination_id: 'dest-ubud'
-    }
+      destination_id: 'dest-ubud',
+    },
   },
   {
     id: 'booking-3',
@@ -62,24 +62,26 @@ const mockBookings = [
     status: 'cancelled',
     booked_at: '2026-01-08T09:00:00Z',
     trip_id: 'trip-3',
-    trips: null
-  }
-]
+    trips: null,
+  },
+];
 
 // Helper to create a chainable Supabase mock
 function createChainableMock(resolveData: { data: any; error: any }) {
-  const chainable: any = {}
-  const methods = ['eq', 'gte', 'lte', 'or', 'order', 'limit', 'select']
+  const chainable: any = {};
+  const methods = ['eq', 'gte', 'lte', 'or', 'order', 'limit', 'select'];
 
-  methods.forEach(method => {
-    chainable[method] = vi.fn().mockImplementation(() => chainable)
-  })
+  methods.forEach((method) => {
+    chainable[method] = vi.fn().mockImplementation(() => chainable);
+  });
 
   // Make it thenable (Promise-like)
-  chainable.then = (onFulfilled: any) => Promise.resolve(resolveData).then(onFulfilled)
-  chainable.catch = (onRejected: any) => Promise.resolve(resolveData).catch(onRejected)
+  chainable.then = (onFulfilled: any) =>
+    Promise.resolve(resolveData).then(onFulfilled);
+  chainable.catch = (onRejected: any) =>
+    Promise.resolve(resolveData).catch(onRejected);
 
-  return chainable
+  return chainable;
 }
 
 function createWrapper() {
@@ -88,148 +90,157 @@ function createWrapper() {
       queries: {
         retry: false,
         gcTime: 0,
-        staleTime: 0
-      }
-    }
-  })
+        staleTime: 0,
+      },
+    },
+  });
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
+  );
 }
 
 describe('AdminBookingSearch', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.clearAllMocks();
 
     // Default chainable mock with bookings data
-    const mockChainable = createChainableMock({ data: mockBookings, error: null })
+    const mockChainable = createChainableMock({
+      data: mockBookings,
+      error: null,
+    });
 
     vi.mocked(supabase.from).mockReturnValue({
-      select: vi.fn().mockReturnValue(mockChainable)
-    } as any)
-  })
+      select: vi.fn().mockReturnValue(mockChainable),
+    } as any);
+  });
 
   describe('[P1] Search functionality', () => {
     it('should render search interface with all controls', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       // Header
-      expect(screen.getByText('Booking Management')).toBeInTheDocument()
+      expect(screen.getByText('Booking Management')).toBeInTheDocument();
 
       // Search input
-      expect(screen.getByPlaceholderText('Search by booking reference...')).toBeInTheDocument()
+      expect(
+        screen.getByPlaceholderText('Search by booking reference...'),
+      ).toBeInTheDocument();
 
       // Filters should be present
-      expect(screen.getByText('All Statuses')).toBeInTheDocument()
-      expect(screen.getByText('Last 30 Days')).toBeInTheDocument()
+      expect(screen.getByText('All Statuses')).toBeInTheDocument();
+      expect(screen.getByText('Last 30 Days')).toBeInTheDocument();
 
       // Export button
-      expect(screen.getByText('Export CSV')).toBeInTheDocument()
-    })
+      expect(screen.getByText('Export CSV')).toBeInTheDocument();
+    });
 
     it('should display bookings in table format', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText('PL-ABC123')).toBeInTheDocument()
-        expect(screen.getByText('PL-DEF456')).toBeInTheDocument()
-        expect(screen.getByText('PL-GHI789')).toBeInTheDocument()
-      })
+        expect(screen.getByText('PL-ABC123')).toBeInTheDocument();
+        expect(screen.getByText('PL-DEF456')).toBeInTheDocument();
+        expect(screen.getByText('PL-GHI789')).toBeInTheDocument();
+      });
 
       // Check status badges
-      expect(screen.getByText('confirmed')).toBeInTheDocument()
-      expect(screen.getByText('pending')).toBeInTheDocument()
-      expect(screen.getByText('cancelled')).toBeInTheDocument()
-    })
+      expect(screen.getByText('confirmed')).toBeInTheDocument();
+      expect(screen.getByText('pending')).toBeInTheDocument();
+      expect(screen.getByText('cancelled')).toBeInTheDocument();
+    });
 
     it('should show loading state while fetching', async () => {
       // Create a delayed chainable mock
-      const delayedChainable = createChainableMock({ data: [], error: null })
+      const delayedChainable = createChainableMock({ data: [], error: null });
       // Override then to add delay
       delayedChainable.then = (onFulfilled: any) =>
-        new Promise(r => setTimeout(() => r({ data: [], error: null }), 100)).then(onFulfilled)
+        new Promise((r) =>
+          setTimeout(() => r({ data: [], error: null }), 100),
+        ).then(onFulfilled);
 
-      vi.mocked(supabase.from).mockReturnValue({ select: vi.fn().mockReturnValue(delayedChainable) } as any)
+      vi.mocked(supabase.from).mockReturnValue({
+        select: vi.fn().mockReturnValue(delayedChainable),
+      } as any);
 
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
-      expect(screen.getByText('Loading bookings...')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Loading bookings...')).toBeInTheDocument();
+    });
+  });
 
   describe('[P1] Filter functionality', () => {
     it('should render filter controls', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       // Status filter
-      expect(screen.getByText('All Statuses')).toBeInTheDocument()
+      expect(screen.getByText('All Statuses')).toBeInTheDocument();
 
       // Date range filter
-      expect(screen.getByText('Last 30 Days')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Last 30 Days')).toBeInTheDocument();
+    });
+  });
 
   describe('[P1] Export functionality', () => {
     it('should render export button', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
-      const exportButton = screen.getByText('Export CSV')
-      expect(exportButton).toBeInTheDocument()
-    })
+      const exportButton = screen.getByText('Export CSV');
+      expect(exportButton).toBeInTheDocument();
+    });
 
     it('should call export when clicked with bookings', async () => {
-      const user = userEvent.setup()
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      const user = userEvent.setup();
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText('PL-ABC123')).toBeInTheDocument()
-      })
+        expect(screen.getByText('PL-ABC123')).toBeInTheDocument();
+      });
 
-      const exportButton = screen.getByText('Export CSV')
-      await user.click(exportButton)
+      const exportButton = screen.getByText('Export CSV');
+      await user.click(exportButton);
 
       // Verify blob was created for download
-      expect(mockCreateObjectURL).toHaveBeenCalled()
-      expect(mockRevokeObjectURL).toHaveBeenCalled()
-    })
-  })
+      expect(mockCreateObjectURL).toHaveBeenCalled();
+      expect(mockRevokeObjectURL).toHaveBeenCalled();
+    });
+  });
 
   describe('[P1] Refresh functionality', () => {
     it('should render refresh button', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
-      expect(screen.getByText('Refresh')).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Refresh')).toBeInTheDocument();
+    });
+  });
 
   describe('[P2] Results display', () => {
     it('should show booking count in footer', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText(/Showing 3 bookings/)).toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText(/Showing 3 bookings/)).toBeInTheDocument();
+      });
+    });
 
     it('should display traveler count from trip data', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       await waitFor(() => {
         // First booking has 2 travelers
-        expect(screen.getByText('2')).toBeInTheDocument()
+        expect(screen.getByText('2')).toBeInTheDocument();
         // Second booking has 4 travelers
-        expect(screen.getByText('4')).toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText('4')).toBeInTheDocument();
+      });
+    });
 
     it('should handle bookings without trip data gracefully', async () => {
-      render(<AdminBookingSearch />, { wrapper: createWrapper() })
+      render(<AdminBookingSearch />, { wrapper: createWrapper() });
 
       await waitFor(() => {
         // Third booking has no trip, should show dash
-        const dashes = screen.getAllByText('-')
-        expect(dashes.length).toBeGreaterThan(0)
-      })
-    })
-  })
-})
+        const dashes = screen.getAllByText('-');
+        expect(dashes.length).toBeGreaterThan(0);
+      });
+    });
+  });
+});

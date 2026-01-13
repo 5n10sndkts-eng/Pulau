@@ -17,9 +17,9 @@ So that I can prepare for my guests.
    - Traveler name
    - Guest count
    - Check-in status (Pending / Checked In / No Show)
-   **And** I can filter by experience (if I have multiple)
-   **And** I can mark no-shows after the experience time passes
-   **And** total guest count is summarized at top
+     **And** I can filter by experience (if I have multiple)
+     **And** I can mark no-shows after the experience time passes
+     **And** total guest count is summarized at top
 
 ## Tasks / Subtasks
 
@@ -55,6 +55,7 @@ So that I can prepare for my guests.
 ### Architecture Patterns
 
 **Dashboard Data Flow:**
+
 1. Fetch today's bookings for vendor on page load
 2. Filter bookings by:
    - vendor_id = current vendor
@@ -64,6 +65,7 @@ So that I can prepare for my guests.
 4. Auto-refresh every 5 minutes using TanStack Query
 
 **Query Logic:**
+
 ```sql
 SELECT b.*, e.name as experience_name, s.slot_time, u.name as traveler_name
 FROM bookings b
@@ -77,6 +79,7 @@ ORDER BY s.slot_time ASC
 ```
 
 **No-Show Logic:**
+
 - Allow marking no-show only after slot_time has passed
 - Update check_in_status to 'no_show'
 - Create audit log entry
@@ -85,17 +88,20 @@ ORDER BY s.slot_time ASC
 ### Code Quality Requirements
 
 **TypeScript Patterns:**
+
 - Define TodayBooking interface (extended Booking with experience_name, slot_time)
 - Use TanStack Query for data fetching and auto-refresh
 - Import types from `src/lib/types.ts`
 
 **React Patterns:**
+
 - Use useQuery with 5-minute stale time for auto-refresh
 - Use useState for experience filter
 - Use useEffect to refresh on check-in completion
 - Optimistic update when marking no-show
 
 **Styling:**
+
 - Dashboard: Card layout with summary at top
 - Bookings: List of cards with left border color by status
 - Status badges:
@@ -107,51 +113,61 @@ ORDER BY s.slot_time ASC
 ### File Structure
 
 **Files to Modify:**
+
 - `src/components/vendor/VendorOperationsPage.tsx` - Add bookings dashboard
 - `src/lib/bookingService.ts` - Add getTodayBookings function
 
 **Files to Create:**
+
 - `src/components/vendor/TodayBookingsList.tsx` - Bookings list component
 - `src/components/vendor/BookingCard.tsx` - Individual booking card
 
 **Files to Reference:**
+
 - `src/lib/types.ts` - Booking, Experience types
 - `src/hooks/useVendorAuth.ts` - Get current vendor ID
 
 **Service Function:**
+
 ```typescript
 export async function getTodayBookings(
   vendorId: string,
-  experienceId?: string
+  experienceId?: string,
 ): Promise<ApiResponse<TodayBooking[]>> {
   let query = supabase
     .from('bookings')
-    .select(`
+    .select(
+      `
       *,
       experience:experiences(name),
       slot:experience_slots(slot_time),
       user:users(name)
-    `)
+    `,
+    )
     .eq('experiences.vendor_id', vendorId)
     .eq('status', 'confirmed')
     .gte('experience_slots.slot_time', new Date().toISOString().split('T')[0])
-    .lt('experience_slots.slot_time', new Date(Date.now() + 86400000).toISOString().split('T')[0])
-    .order('experience_slots.slot_time', { ascending: true })
+    .lt(
+      'experience_slots.slot_time',
+      new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    )
+    .order('experience_slots.slot_time', { ascending: true });
 
   if (experienceId) {
-    query = query.eq('experience_id', experienceId)
+    query = query.eq('experience_id', experienceId);
   }
 
-  const { data, error } = await query
+  const { data, error } = await query;
 
-  if (error) return { data: null, error: error.message }
-  return { data, error: null }
+  if (error) return { data: null, error: error.message };
+  return { data, error: null };
 }
 ```
 
 ### Testing Requirements
 
 **Manual Testing:**
+
 - Create test bookings for today (various times)
 - View vendor operations page
 - Verify all today's bookings appear
@@ -164,6 +180,7 @@ export async function getTodayBookings(
 - Verify status updates to "No Show"
 
 **Edge Cases:**
+
 - No bookings for today (show empty state)
 - All bookings checked in (show success message)
 - Multiple experiences (filter works correctly)
@@ -172,12 +189,14 @@ export async function getTodayBookings(
 ### Project Structure Notes
 
 **Alignment with Architecture:**
+
 - Part of Epic 27: Vendor Check-In & Operations
 - Implements FR-OPS-02: Today's bookings dashboard
 - Works with Story 27.3 (check-in) for status updates
 - Uses bookings data from Epic 24 (checkout)
 
 **Integration Points:**
+
 - Displays bookings created in Epic 24
 - Shows check-in status from Story 27.3
 - Triggers QR scan from Story 27.1
@@ -204,6 +223,7 @@ N/A - TanStack Query implementation.
 ### Completion Notes List
 
 **Implementation Summary:**
+
 1. Replaced mock data with real Supabase queries
 2. TanStack Query with 30-second auto-refresh
 3. Filters for today's bookings by vendor
@@ -213,4 +233,5 @@ N/A - TanStack Query implementation.
 ### File List
 
 **Modified Files:**
+
 - src/components/vendor/VendorOperationsPage.tsx

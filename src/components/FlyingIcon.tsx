@@ -6,31 +6,31 @@
  * Uses a portal to render above all other content.
  */
 
-import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { motion } from 'framer-motion'
-import { ShoppingBag } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { motion } from 'framer-motion';
+import { ShoppingBag } from 'lucide-react';
 
 interface FlyingIconProps {
   /** Starting position (from the clicked button) */
-  startX: number
-  startY: number
+  startX: number;
+  startY: number;
   /** Callback when animation completes */
-  onComplete: () => void
+  onComplete: () => void;
 }
 
 export function FlyingIcon({ startX, startY, onComplete }: FlyingIconProps) {
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   // Target position: center-bottom of viewport (where StickyTripBar is)
-  const targetX = window.innerWidth / 2
-  const targetY = window.innerHeight - 60 // Above the safe area
+  const targetX = window.innerWidth / 2;
+  const targetY = window.innerHeight - 60; // Above the safe area
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   return createPortal(
     <motion.div
@@ -62,8 +62,8 @@ export function FlyingIcon({ startX, startY, onComplete }: FlyingIconProps) {
         <ShoppingBag className="w-5 h-5" />
       </div>
     </motion.div>,
-    document.body
-  )
+    document.body,
+  );
 }
 
 /**
@@ -71,20 +71,22 @@ export function FlyingIcon({ startX, startY, onComplete }: FlyingIconProps) {
  * Returns a trigger function and the component to render
  */
 export function useFlyingIcon() {
-  const [flyingItems, setFlyingItems] = useState<{ id: string; x: number; y: number }[]>([])
+  const [flyingItems, setFlyingItems] = useState<
+    { id: string; x: number; y: number }[]
+  >([]);
 
   const triggerFly = (x: number, y: number) => {
-    const id = `fly-${Date.now()}-${Math.random()}`
-    setFlyingItems(prev => [...prev, { id, x, y }])
-  }
+    const id = `fly-${Date.now()}-${Math.random()}`;
+    setFlyingItems((prev) => [...prev, { id, x, y }]);
+  };
 
   const handleComplete = (id: string) => {
-    setFlyingItems(prev => prev.filter(item => item.id !== id))
-  }
+    setFlyingItems((prev) => prev.filter((item) => item.id !== id));
+  };
 
   const FlyingIcons = () => (
     <>
-      {flyingItems.map(item => (
+      {flyingItems.map((item) => (
         <FlyingIcon
           key={item.id}
           startX={item.x}
@@ -93,7 +95,7 @@ export function useFlyingIcon() {
         />
       ))}
     </>
-  )
+  );
 
-  return { triggerFly, FlyingIcons }
+  return { triggerFly, FlyingIcons };
 }

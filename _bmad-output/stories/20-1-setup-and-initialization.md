@@ -49,6 +49,7 @@ so that **the app can authenticate users and persist data to a real backend**.
 ### Critical Context
 
 **This story builds on existing foundation:**
+
 - `@supabase/supabase-js@^2.90.0` is ALREADY installed in package.json
 - `src/lib/supabase.ts` ALREADY EXISTS with basic client setup
 - `src/lib/database.types.ts` ALREADY EXISTS with table definitions
@@ -58,32 +59,37 @@ so that **the app can authenticate users and persist data to a real backend**.
 
 ### Architecture Compliance
 
-| Requirement | Implementation |
-|-------------|----------------|
-| TypeScript strict mode | All code must handle null/undefined |
-| Path aliases | Use `@/lib/supabase` not relative imports |
-| Named exports | `export const supabase`, `export function isSupabaseConfigured()` |
-| No React import | Not a component file - N/A |
+| Requirement            | Implementation                                                    |
+| ---------------------- | ----------------------------------------------------------------- |
+| TypeScript strict mode | All code must handle null/undefined                               |
+| Path aliases           | Use `@/lib/supabase` not relative imports                         |
+| Named exports          | `export const supabase`, `export function isSupabaseConfigured()` |
+| No React import        | Not a component file - N/A                                        |
 
 ### Library/Framework Requirements
 
 **Supabase JS v2.90.0:**
+
 ```typescript
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from './database.types'
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from './database.types';
 
 // Correct pattern - typed client
-export const supabase = createClient<Database>(url, key)
+export const supabase = createClient<Database>(url, key);
 
 // Session check pattern
-const { data: { session }, error } = await supabase.auth.getSession()
+const {
+  data: { session },
+  error,
+} = await supabase.auth.getSession();
 ```
 
 **Environment Variables (Vite):**
+
 ```typescript
 // Access via import.meta.env (NOT process.env)
-const url = import.meta.env.VITE_SUPABASE_URL
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY
+const url = import.meta.env.VITE_SUPABASE_URL;
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 ```
 
 ### File Structure Requirements
@@ -100,6 +106,7 @@ src/lib/
 ### Existing Code to Preserve
 
 **Current `src/lib/supabase.ts` structure:**
+
 ```typescript
 // KEEP: Placeholder URL logic for graceful fallback
 const isValidUrl = (url: string) => { ... }
@@ -114,6 +121,7 @@ if (!isValidUrl(supabaseUrl)) {
 ### Testing Requirements
 
 **Manual verification:**
+
 1. Start dev server: `npm run dev`
 2. Open browser console
 3. Confirm "Supabase connected successfully" OR appropriate warning
@@ -160,24 +168,27 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Change Summary
 
-| File | Change Type | Description |
-|------|-------------|-------------|
-| `.env.example` | Modified | Added Supabase config variables with documentation |
-| `src/lib/supabase.ts` | Modified | Added `isSupabaseConfigured()`, `testSupabaseConnection()`, improved types |
-| `src/main.tsx` | Modified | Added connection test call on mount |
+| File                  | Change Type | Description                                                                |
+| --------------------- | ----------- | -------------------------------------------------------------------------- |
+| `.env.example`        | Modified    | Added Supabase config variables with documentation                         |
+| `src/lib/supabase.ts` | Modified    | Added `isSupabaseConfigured()`, `testSupabaseConnection()`, improved types |
+| `src/main.tsx`        | Modified    | Added connection test call on mount                                        |
 
 ### File List
 
 **Files modified:**
+
 - `.env.example` - Added Supabase configuration variables
 - `src/lib/supabase.ts` - Enhanced with connection verification and helpers
 - `src/main.tsx` - Added dev-mode connection test
 
 **Files unchanged:**
+
 - `src/lib/database.types.ts` (already correct)
 - `package.json` (@supabase/supabase-js@^2.90.0 already installed)
 
 **User action required:**
+
 - Create `.env.local` with actual Supabase credentials (copy from `.env.example`)
 
 ## Senior Developer Review (AI)
@@ -188,14 +199,14 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Issues Found & Fixed
 
-| # | Severity | Issue | Resolution |
-|---|----------|-------|------------|
-| 1 | CRITICAL | All task checkboxes marked `[ ]` but story status "done" | Fixed: Updated all tasks to `[x]` |
-| 2 | MEDIUM | Missing `<StrictMode>` in main.tsx | Fixed: Added React StrictMode wrapper |
-| 3 | MEDIUM | Promise rejection not handled in testSupabaseConnection | Fixed: Added `.catch()` handler |
-| 4 | MEDIUM | Non-null assertion on getElementById | Fixed: Added null check with error throw |
-| 5 | LOW | Placeholder check missing 'your-anon-key-here' | Fixed: Added to isSupabaseConfigured() |
-| 6 | LOW | VITE_USE_MOCK_AUTH not in .env.example | Fixed: Added to .env.example |
+| #   | Severity | Issue                                                    | Resolution                               |
+| --- | -------- | -------------------------------------------------------- | ---------------------------------------- |
+| 1   | CRITICAL | All task checkboxes marked `[ ]` but story status "done" | Fixed: Updated all tasks to `[x]`        |
+| 2   | MEDIUM   | Missing `<StrictMode>` in main.tsx                       | Fixed: Added React StrictMode wrapper    |
+| 3   | MEDIUM   | Promise rejection not handled in testSupabaseConnection  | Fixed: Added `.catch()` handler          |
+| 4   | MEDIUM   | Non-null assertion on getElementById                     | Fixed: Added null check with error throw |
+| 5   | LOW      | Placeholder check missing 'your-anon-key-here'           | Fixed: Added to isSupabaseConfigured()   |
+| 6   | LOW      | VITE_USE_MOCK_AUTH not in .env.example                   | Fixed: Added to .env.example             |
 
 ### Files Modified by Review
 

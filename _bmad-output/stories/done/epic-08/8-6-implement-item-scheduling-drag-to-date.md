@@ -30,6 +30,7 @@ So that my itinerary has a logical flow.
 ## Tasks / Subtasks
 
 ### Task 1: Implement drag-and-drop functionality (AC: #1)
+
 - [x] Add long-press detection to TripItemCard (300ms threshold)
 - [x] Make item draggable using @dnd-kit or native drag API
 - [x] Add visual feedback: elevation shadow, reduced opacity (0.7)
@@ -37,6 +38,7 @@ So that my itinerary has a logical flow.
 - [x] Highlight drop zone on drag-over with border/background change
 
 ### Task 2: Handle drop and update scheduled date (AC: #1)
+
 - [x] Implement onDrop handler for day sections
 - [x] Update trip_items.scheduled_date to target day's date
 - [x] Move item from unscheduled to target day's items array
@@ -44,6 +46,7 @@ So that my itinerary has a logical flow.
 - [x] Add smooth animation for item repositioning
 
 ### Task 3: Create "Assign to Day" button and date picker (AC: #2)
+
 - [x] Add "Assign to Day" button to unscheduled TripItemCard
 - [x] Create DatePickerModal component
 - [x] Filter available dates to trip.start_date and trip.end_date range
@@ -51,6 +54,7 @@ So that my itinerary has a logical flow.
 - [x] Handle date selection and close modal
 
 ### Task 4: Update item positioning and sorting (AC: #1, #2)
+
 - [x] Sort items within day by scheduled_time (if set)
 - [x] Add items without time to end of day list
 - [x] Re-render affected day sections on item move
@@ -58,6 +62,7 @@ So that my itinerary has a logical flow.
 - [x] Maintain scroll position during re-render
 
 ### Task 5: Add mobile and desktop interaction patterns (AC: #1)
+
 - [x] Mobile: long-press (300ms) to initiate drag
 - [x] Desktop: click-and-drag or hover menu with "Move to..." option
 - [x] Add touch feedback vibration on long-press start (mobile)
@@ -67,6 +72,7 @@ So that my itinerary has a logical flow.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use `@dnd-kit/core` for drag-and-drop (better mobile support than HTML5 drag)
 - Long-press detection: use `react-use` hook `useLongPress` or custom implementation
 - Drop zones: use `useDroppable` hook from @dnd-kit
@@ -74,27 +80,35 @@ So that my itinerary has a logical flow.
 - Update function: `updateTripItem(itemId, { scheduled_date: targetDate })`
 
 ### Drag-and-Drop Setup
+
 ```typescript
-import { DndContext, DragEndEvent, useDraggable, useDroppable } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragEndEvent,
+  useDraggable,
+  useDroppable,
+} from '@dnd-kit/core';
 
 const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
   id: item.id,
-  data: { item }
+  data: { item },
 });
 
 const { setNodeRef: setDropRef, isOver } = useDroppable({
   id: `day-${dayDate}`,
-  data: { date: dayDate }
+  data: { date: dayDate },
 });
 ```
 
 ### Visual Feedback
+
 - Dragging item: `opacity: 0.7, scale: 1.05, shadow-lg`
 - Drop zone active: `border: 2px dashed teal, background: teal/10`
 - Ghost element: semi-transparent copy of item card
 - Drop animation: 200ms ease-out slide into position
 
 ### Mobile Considerations
+
 - Long-press threshold: 300ms (not too sensitive)
 - Haptic feedback on drag start (if available)
 - Larger drop zones on mobile (min 60px height)
@@ -120,5 +134,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

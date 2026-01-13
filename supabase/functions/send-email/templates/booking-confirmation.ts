@@ -4,7 +4,7 @@
 // AC #2: Booking Confirmation Template
 // ================================================
 
-import { wrapInBaseTemplate, components } from './base.ts'
+import { wrapInBaseTemplate, components } from './base.ts';
 import {
   escapeHtml,
   formatAmount,
@@ -13,25 +13,25 @@ import {
   getImageUrl,
   formatDuration,
   toHtmlList,
-} from './utils.ts'
+} from './utils.ts';
 
 export interface BookingConfirmationData {
-  booking_reference: string
-  experience_name: string
-  experience_description?: string
-  experience_image?: string
-  experience_date: string
-  experience_time: string
-  duration_minutes?: number
-  guest_count: number
-  total_amount: number
-  currency: string
-  traveler_name: string
-  meeting_point?: string
-  what_to_bring?: string[]
-  inclusions?: string[]
-  cancellation_policy?: string
-  ticket_url?: string
+  booking_reference: string;
+  experience_name: string;
+  experience_description?: string;
+  experience_image?: string;
+  experience_date: string;
+  experience_time: string;
+  duration_minutes?: number;
+  guest_count: number;
+  total_amount: number;
+  currency: string;
+  traveler_name: string;
+  meeting_point?: string;
+  what_to_bring?: string[];
+  inclusions?: string[];
+  cancellation_policy?: string;
+  ticket_url?: string;
 }
 
 /**
@@ -47,8 +47,10 @@ export interface BookingConfirmationData {
  * - Cancellation policy summary
  * - Support contact
  */
-export function generateBookingConfirmationEmail(data: BookingConfirmationData): string {
-  const subject = `Booking Confirmed: ${data.experience_name}`
+export function generateBookingConfirmationEmail(
+  data: BookingConfirmationData,
+): string {
+  const subject = `Booking Confirmed: ${data.experience_name}`;
 
   // Build the meeting point section
   const meetingPointSection = data.meeting_point
@@ -63,7 +65,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
         ${components.secondaryButton(generateMapsLink(data.meeting_point), 'Open in Maps')}
       `)}
     `
-    : ''
+    : '';
 
   // Build the what to bring section
   const whatToBringSection =
@@ -78,7 +80,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
         </ul>
       `)}
     `
-      : ''
+      : '';
 
   // Build the inclusions section
   const inclusionsSection =
@@ -93,7 +95,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
         </ul>
       `)}
     `
-      : ''
+      : '';
 
   // Build the cancellation policy section
   const cancellationSection = data.cancellation_policy
@@ -103,15 +105,17 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
         ${escapeHtml(data.cancellation_policy)}
       </p>
     `
-    : ''
+    : '';
 
   // Build the CTA button
   const ctaButton = data.ticket_url
     ? components.button(data.ticket_url, 'View My Ticket')
-    : ''
+    : '';
 
   // Format duration if provided
-  const durationText = data.duration_minutes ? formatDuration(data.duration_minutes) : null
+  const durationText = data.duration_minutes
+    ? formatDuration(data.duration_minutes)
+    : null;
 
   // Build details rows
   const detailRows = `
@@ -122,9 +126,9 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
     ${components.detailRow(
       'Total Paid',
       `<strong style="font-size: 18px; color: #0D7377;">${escapeHtml(data.currency)} ${formatAmount(data.total_amount)}</strong>`,
-      true
+      true,
     )}
-  `
+  `;
 
   const content = `
     <!-- Greeting -->
@@ -183,7 +187,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
       Need to make changes? Contact us at
       <a href="mailto:support@pulau.app" style="color: #0D7377;">support@pulau.app</a>
     </p>
-  `
+  `;
 
-  return wrapInBaseTemplate(content, subject)
+  return wrapInBaseTemplate(content, subject);
 }

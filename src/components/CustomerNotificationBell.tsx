@@ -8,28 +8,21 @@
  * Based on VendorNotificationBell pattern (Story 29.5).
  */
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Bell,
-  Calendar,
-  Check,
-  CheckCheck,
-  Clock,
-  X,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useCustomerNotifications } from '@/hooks/useCustomerNotifications'
+} from '@/components/ui/popover';
+import { Bell, Calendar, Check, CheckCheck, Clock, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useCustomerNotifications } from '@/hooks/useCustomerNotifications';
 import {
   type CustomerNotification,
   type CustomerNotificationType,
   formatRelativeTime,
-} from '@/lib/customerNotificationService'
+} from '@/lib/customerNotificationService';
 
 // ============================================================================
 // HELPER COMPONENTS
@@ -38,30 +31,30 @@ import {
 function NotificationIcon({ type }: { type: CustomerNotificationType }) {
   switch (type) {
     case 'booking_confirmed':
-      return <Check className="h-4 w-4 text-green-600" />
+      return <Check className="h-4 w-4 text-green-600" />;
     case 'booking_cancelled':
-      return <X className="h-4 w-4 text-red-600" />
+      return <X className="h-4 w-4 text-red-600" />;
     case 'reminder_24h':
-      return <Calendar className="h-4 w-4 text-blue-600" />
+      return <Calendar className="h-4 w-4 text-blue-600" />;
     case 'reminder_2h':
-      return <Clock className="h-4 w-4 text-orange-600" />
+      return <Clock className="h-4 w-4 text-orange-600" />;
     default:
-      return <Bell className="h-4 w-4" />
+      return <Bell className="h-4 w-4" />;
   }
 }
 
 function getIconBackground(type: CustomerNotificationType): string {
   switch (type) {
     case 'booking_confirmed':
-      return 'bg-green-100'
+      return 'bg-green-100';
     case 'booking_cancelled':
-      return 'bg-red-100'
+      return 'bg-red-100';
     case 'reminder_24h':
-      return 'bg-blue-100'
+      return 'bg-blue-100';
     case 'reminder_2h':
-      return 'bg-orange-100'
+      return 'bg-orange-100';
     default:
-      return 'bg-gray-100'
+      return 'bg-gray-100';
   }
 }
 
@@ -70,16 +63,19 @@ function getIconBackground(type: CustomerNotificationType): string {
 // ============================================================================
 
 interface NotificationItemProps {
-  notification: CustomerNotification
-  onMarkAsRead: (id: string) => void
+  notification: CustomerNotification;
+  onMarkAsRead: (id: string) => void;
 }
 
-function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
+function NotificationItem({
+  notification,
+  onMarkAsRead,
+}: NotificationItemProps) {
   const handleClick = () => {
     if (!notification.read) {
-      onMarkAsRead(notification.id)
+      onMarkAsRead(notification.id);
     }
-  }
+  };
 
   return (
     <button
@@ -88,16 +84,18 @@ function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps)
       className={cn(
         'w-full flex items-start gap-3 p-3 text-left rounded-lg transition-colors',
         'hover:bg-muted/50',
-        !notification.read && 'bg-primary/5'
+        !notification.read && 'bg-primary/5',
       )}
     >
       <div
         className={cn(
           'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center',
-          getIconBackground(notification.type as CustomerNotificationType)
+          getIconBackground(notification.type as CustomerNotificationType),
         )}
       >
-        <NotificationIcon type={notification.type as CustomerNotificationType} />
+        <NotificationIcon
+          type={notification.type as CustomerNotificationType}
+        />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
@@ -116,7 +114,7 @@ function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps)
         </p>
       </div>
     </button>
-  )
+  );
 }
 
 // ============================================================================
@@ -132,7 +130,7 @@ function EmptyState() {
         You'll see booking updates here
       </p>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -145,7 +143,7 @@ function LoadingState() {
       <div className="h-8 w-8 mx-auto mb-2 rounded-full border-2 border-primary border-t-transparent animate-spin" />
       <p className="text-sm text-muted-foreground">Loading notifications...</p>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -153,40 +151,37 @@ function LoadingState() {
 // ============================================================================
 
 interface CustomerNotificationBellProps {
-  className?: string
+  className?: string;
 }
 
-export function CustomerNotificationBell({ className }: CustomerNotificationBellProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function CustomerNotificationBell({
+  className,
+}: CustomerNotificationBellProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
-  const {
-    notifications,
-    unreadCount,
-    isLoading,
-    markAsRead,
-    markAllAsRead,
-  } = useCustomerNotifications({
-    enabled: true,
-    showToasts: true,
-  })
+  const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } =
+    useCustomerNotifications({
+      enabled: true,
+      showToasts: true,
+    });
 
-  const hasNotifications = notifications.length > 0
+  const hasNotifications = notifications.length > 0;
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      await markAsRead(id)
+      await markAsRead(id);
     } catch (err) {
-      console.error('Failed to mark notification as read:', err)
+      console.error('Failed to mark notification as read:', err);
     }
-  }
+  };
 
   const handleMarkAllAsRead = async () => {
     try {
-      await markAllAsRead()
+      await markAllAsRead();
     } catch (err) {
-      console.error('Failed to mark all notifications as read:', err)
+      console.error('Failed to mark all notifications as read:', err);
     }
-  }
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -206,11 +201,7 @@ export function CustomerNotificationBell({ className }: CustomerNotificationBell
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent
-        align="end"
-        className="w-80 p-0"
-        sideOffset={8}
-      >
+      <PopoverContent align="end" className="w-80 p-0" sideOffset={8}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold">Notifications</h3>
@@ -258,5 +249,5 @@ export function CustomerNotificationBell({ className }: CustomerNotificationBell
         )}
       </PopoverContent>
     </Popover>
-  )
+  );
 }

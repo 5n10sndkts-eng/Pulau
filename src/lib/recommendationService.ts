@@ -2,7 +2,7 @@
  * Recommendation Service
  * Epic 4: Onboarding & Personalization
  * Story 4.4: Personalized Recommendations Engine
- * 
+ *
  * Scores experiences based on user preferences and logs for ML improvements
  */
 
@@ -12,7 +12,8 @@ import { preferenceService } from './preferenceService';
 
 type Experience = Database['public']['Tables']['experiences']['Row'];
 type UserPreferences = Database['public']['Tables']['user_preferences']['Row'];
-type RecommendationLog = Database['public']['Tables']['recommendations_log']['Insert'];
+type RecommendationLog =
+  Database['public']['Tables']['recommendations_log']['Insert'];
 
 export interface ScoredExperience {
   experience: Experience;
@@ -29,7 +30,7 @@ export interface ScoredExperience {
 /**
  * Scoring algorithm per Story 4.4 acceptance criteria:
  * - +10 points if difficulty matches travel_style
- * - +15 points if tags overlap with travel_style  
+ * - +15 points if tags overlap with travel_style
  * - +5 points if price fits budget_level
  * - +5 points if group_size >= typical group size
  */
@@ -39,7 +40,7 @@ class RecommendationService {
    */
   private scoreExperience(
     experience: Experience,
-    preferences: UserPreferences
+    preferences: UserPreferences,
   ): ScoredExperience['breakdown'] {
     const breakdown = {
       difficulty: 0,
@@ -75,15 +76,17 @@ class RecommendationService {
 
     // Score tag overlap with travel style
     if (preferences.travel_style && experience.tags) {
-      const styleTags = preferences.travel_style.map(s => s.toLowerCase());
-      const experienceTags = (experience.tags as string[]).map(t => t.toLowerCase());
-      
-      const hasOverlap = styleTags.some(styleTag => 
-        experienceTags.some(expTag => 
-          expTag.includes(styleTag) || styleTag.includes(expTag)
-        )
+      const styleTags = preferences.travel_style.map((s) => s.toLowerCase());
+      const experienceTags = (experience.tags as string[]).map((t) =>
+        t.toLowerCase(),
       );
-      
+
+      const hasOverlap = styleTags.some((styleTag) =>
+        experienceTags.some(
+          (expTag) => expTag.includes(styleTag) || styleTag.includes(expTag),
+        ),
+      );
+
       if (hasOverlap) {
         breakdown.tags = 15;
       }
@@ -109,10 +112,10 @@ class RecommendationService {
       const groupType = preferences.group_type;
 
       const typicalSizes: Record<string, number> = {
-        'Solo': 1,
-        'Couple': 2,
-        'Friends': 4,
-        'Family': 5,
+        Solo: 1,
+        Couple: 2,
+        Friends: 4,
+        Family: 5,
       };
 
       const requiredSize = typicalSizes[groupType] || 1;
@@ -130,21 +133,25 @@ class RecommendationService {
   async getRecommendations(
     userId: string,
     experiences: Experience[],
-    limit = 3
+    limit = 3,
   ): Promise<ScoredExperience[]> {
     try {
       // Get user preferences
       const preferences = await preferenceService.getPreferences(userId);
-      
+
       // If no preferences, return empty (user hasn't completed onboarding)
       if (!preferences) {
         return [];
       }
 
       // Score all experiences
-      const scoredExperiences: ScoredExperience[] = experiences.map(exp => {
+      const scoredExperiences: ScoredExperience[] = experiences.map((exp) => {
         const breakdown = this.scoreExperience(exp, preferences);
-        const score = breakdown.difficulty + breakdown.tags + breakdown.price + breakdown.groupSize;
+        const score =
+          breakdown.difficulty +
+          breakdown.tags +
+          breakdown.price +
+          breakdown.groupSize;
 
         return {
           experience: exp,
@@ -159,7 +166,7 @@ class RecommendationService {
 
       // Mark top N as "Perfect for you"
       const topRecommendations = scoredExperiences.slice(0, limit);
-      topRecommendations.forEach(rec => {
+      topRecommendations.forEach((rec) => {
         rec.isPerfectForYou = true;
       });
 
@@ -179,10 +186,10 @@ class RecommendationService {
   private async logRecommendations(
     userId: string,
     scoredExperiences: ScoredExperience[],
-    preferences: UserPreferences
+    preferences: UserPreferences,
   ): Promise<void> {
     try {
-      const logs: RecommendationLog[] = scoredExperiences.map(scored => ({
+      const logs: RecommendationLog[] = scoredExperiences.map((scored) => ({
         user_id: userId,
         experience_id: scored.experience.id,
         score_total: scored.score,
@@ -202,9 +209,7 @@ class RecommendationService {
       }));
 
       // Batch insert logs (Supabase handles this efficiently)
-      const { error } = await supabase
-        .from('recommendations_log')
-        .insert(logs);
+      const { error } = await supabase.from('recommendations_log').insert(logs);
 
       if (error) {
         console.error('Error logging recommendations:', error);

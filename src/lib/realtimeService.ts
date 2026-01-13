@@ -7,37 +7,41 @@
  * Handles connection lifecycle, reconnection, and cleanup automatically.
  */
 
-import { supabase, isSupabaseConfigured } from './supabase'
-import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js'
-import type { Database } from './database.types'
+import { supabase, isSupabaseConfigured } from './supabase';
+import type {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from '@supabase/supabase-js';
+import type { Database } from './database.types';
 
 // ================================================
 // TYPE DEFINITIONS
 // ================================================
 
-export type ExperienceSlot = Database['public']['Tables']['experience_slots']['Row']
-export type Booking = Database['public']['Tables']['bookings']['Row']
+export type ExperienceSlot =
+  Database['public']['Tables']['experience_slots']['Row'];
+export type Booking = Database['public']['Tables']['bookings']['Row'];
 
-export type SlotChangePayload = RealtimePostgresChangesPayload<ExperienceSlot>
-export type BookingChangePayload = RealtimePostgresChangesPayload<Booking>
+export type SlotChangePayload = RealtimePostgresChangesPayload<ExperienceSlot>;
+export type BookingChangePayload = RealtimePostgresChangesPayload<Booking>;
 
 /**
  * Callback function for slot availability changes
  */
-export type SlotAvailabilityCallback = (payload: SlotChangePayload) => void
+export type SlotAvailabilityCallback = (payload: SlotChangePayload) => void;
 
 /**
  * Callback function for booking status changes
  */
-export type BookingStatusCallback = (payload: BookingChangePayload) => void
+export type BookingStatusCallback = (payload: BookingChangePayload) => void;
 
 /**
  * Subscription metadata for tracking
  */
 interface SubscriptionMetadata {
-  channel: RealtimeChannel
-  type: 'slot' | 'booking' | 'notification'
-  id: string
+  channel: RealtimeChannel;
+  type: 'slot' | 'booking' | 'notification';
+  id: string;
 }
 
 // ================================================
@@ -48,7 +52,8 @@ interface SubscriptionMetadata {
  * UUID v4 validation regex pattern
  * Prevents injection attacks by ensuring IDs match expected format
  */
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /**
  * Validate that a string is a valid UUID
@@ -56,7 +61,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
  */
 function validateUUID(id: string, paramName: string): void {
   if (!UUID_PATTERN.test(id)) {
-    throw new Error(`Invalid ${paramName}: must be a valid UUID format`)
+    throw new Error(`Invalid ${paramName}: must be a valid UUID format`);
   }
 }
 
@@ -68,14 +73,16 @@ function validateUUID(id: string, paramName: string): void {
  * Active subscriptions registry
  * Maps subscription IDs to their channels
  */
-const activeSubscriptions = new Map<string, SubscriptionMetadata>()
+const activeSubscriptions = new Map<string, SubscriptionMetadata>();
 
 function realtimeEnabled(): boolean {
   if (!isSupabaseConfigured()) {
-    console.warn('[realtimeService] Supabase not configured; skipping subscription')
-    return false
+    console.warn(
+      '[realtimeService] Supabase not configured; skipping subscription',
+    );
+    return false;
   }
-  return true
+  return true;
 }
 
 // ================================================
@@ -84,11 +91,11 @@ function realtimeEnabled(): boolean {
 
 /**
  * Subscribe to slot availability changes for a specific experience
- * 
+ *
  * @param experienceId - The experience to monitor
  * @param callback - Function called when slots change
  * @returns Subscription ID for cleanup
- * 
+ *
  * @example
  * ```typescript
  * const subId = subscribeToSlotAvailability('exp-123', (payload) => {
@@ -101,22 +108,22 @@ function realtimeEnabled(): boolean {
  */
 export function subscribeToSlotAvailability(
   experienceId: string,
-  callback: SlotAvailabilityCallback
+  callback: SlotAvailabilityCallback,
 ): string {
-  if (!realtimeEnabled()) return 'realtime-disabled'
+  if (!realtimeEnabled()) return 'realtime-disabled';
   // Validate UUID to prevent filter injection attacks
-  validateUUID(experienceId, 'experienceId')
+  validateUUID(experienceId, 'experienceId');
 
   // Generate unique subscription ID
-  const subscriptionId = `slot-${experienceId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const subscriptionId = `slot-${experienceId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
   // Use unique channel name to allow multiple independent listeners for same resource
   // The filter param controls what data we receive, channel name is just a handle
-  const channelName = `experience-slots-${experienceId}-${subscriptionId}`
+  const channelName = `experience-slots-${experienceId}-${subscriptionId}`;
 
   // Keep reference to the channel object (not the subscribe() return) so we
   // can reliably clean it up later in unsubscribe/removeChannel calls.
-  const channel = supabase.channel(channelName)
+  const channel = supabase.channel(channelName);
 
   channel
     .on(
@@ -125,29 +132,29 @@ export function subscribeToSlotAvailability(
         event: '*',
         schema: 'public',
         table: 'experience_slots',
-        filter: `experience_id=eq.${experienceId}`
+        filter: `experience_id=eq.${experienceId}`,
       },
-      callback
+      callback,
     )
-    .subscribe()
+    .subscribe();
 
   // Track subscription
   activeSubscriptions.set(subscriptionId, {
     channel,
     type: 'slot',
-    id: experienceId
-  })
+    id: experienceId,
+  });
 
-  return subscriptionId
+  return subscriptionId;
 }
 
 /**
  * Subscribe to booking status changes for a specific booking
- * 
+ *
  * @param bookingId - The booking to monitor
  * @param callback - Function called when booking changes
  * @returns Subscription ID for cleanup
- * 
+ *
  * @example
  * ```typescript
  * const subId = subscribeToBookingStatus('booking-456', (payload) => {
@@ -159,16 +166,16 @@ export function subscribeToSlotAvailability(
  */
 export function subscribeToBookingStatus(
   bookingId: string,
-  callback: BookingStatusCallback
+  callback: BookingStatusCallback,
 ): string {
-  if (!realtimeEnabled()) return 'realtime-disabled'
+  if (!realtimeEnabled()) return 'realtime-disabled';
   // Validate UUID to prevent filter injection attacks
-  validateUUID(bookingId, 'bookingId')
+  validateUUID(bookingId, 'bookingId');
 
-  const subscriptionId = `booking-${bookingId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
-  const channelName = `booking-${bookingId}-${subscriptionId}`
+  const subscriptionId = `booking-${bookingId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const channelName = `booking-${bookingId}-${subscriptionId}`;
 
-  const channel = supabase.channel(channelName)
+  const channel = supabase.channel(channelName);
 
   channel
     .on(
@@ -177,47 +184,47 @@ export function subscribeToBookingStatus(
         event: '*',
         schema: 'public',
         table: 'bookings',
-        filter: `id=eq.${bookingId}`
+        filter: `id=eq.${bookingId}`,
       },
-      callback
+      callback,
     )
-    .subscribe()
+    .subscribe();
 
   activeSubscriptions.set(subscriptionId, {
     channel,
     type: 'booking',
-    id: bookingId
-  })
+    id: bookingId,
+  });
 
-  return subscriptionId
+  return subscriptionId;
 }
 
 /**
  * Unsubscribe from a specific subscription
- * 
+ *
  * @param subscriptionId - ID returned from subscribe function
- * 
+ *
  * @example
  * ```typescript
  * unsubscribe(subId)
  * ```
  */
 export async function unsubscribe(subscriptionId: string): Promise<void> {
-  const subscription = activeSubscriptions.get(subscriptionId)
+  const subscription = activeSubscriptions.get(subscriptionId);
 
   if (!subscription) {
-    console.warn(`Subscription ${subscriptionId} not found`)
-    return
+    console.warn(`Subscription ${subscriptionId} not found`);
+    return;
   }
 
-  await supabase.removeChannel(subscription.channel)
-  activeSubscriptions.delete(subscriptionId)
+  await supabase.removeChannel(subscription.channel);
+  activeSubscriptions.delete(subscriptionId);
 }
 
 /**
  * Unsubscribe from all active subscriptions
  * Call this on app unmount or cleanup
- * 
+ *
  * @example
  * ```typescript
  * useEffect(() => {
@@ -228,27 +235,27 @@ export async function unsubscribe(subscriptionId: string): Promise<void> {
  * ```
  */
 export async function unsubscribeAll(): Promise<void> {
-  if (activeSubscriptions.size === 0) return
-  const promises = Array.from(activeSubscriptions.values()).map(sub =>
-    supabase.removeChannel(sub.channel)
-  )
+  if (activeSubscriptions.size === 0) return;
+  const promises = Array.from(activeSubscriptions.values()).map((sub) =>
+    supabase.removeChannel(sub.channel),
+  );
 
-  await Promise.all(promises)
-  activeSubscriptions.clear()
+  await Promise.all(promises);
+  activeSubscriptions.clear();
 }
 
 /**
  * Get count of active subscriptions (useful for debugging)
  */
 export function getActiveSubscriptionCount(): number {
-  return activeSubscriptions.size
+  return activeSubscriptions.size;
 }
 
 /**
  * Get list of active subscription IDs (useful for debugging)
  */
 export function getActiveSubscriptionIds(): string[] {
-  return Array.from(activeSubscriptions.keys())
+  return Array.from(activeSubscriptions.keys());
 }
 
 // ================================================
@@ -258,7 +265,7 @@ export function getActiveSubscriptionIds(): string[] {
 /**
  * Callback function for vendor booking notifications
  */
-export type VendorBookingCallback = (payload: BookingChangePayload) => void
+export type VendorBookingCallback = (payload: BookingChangePayload) => void;
 
 /**
  * Subscribe to new bookings for a specific vendor
@@ -283,16 +290,16 @@ export type VendorBookingCallback = (payload: BookingChangePayload) => void
  */
 export function subscribeToVendorBookings(
   vendorId: string,
-  callback: VendorBookingCallback
+  callback: VendorBookingCallback,
 ): string {
-  if (!realtimeEnabled()) return 'realtime-disabled'
+  if (!realtimeEnabled()) return 'realtime-disabled';
   // Validate UUID to prevent filter injection attacks
-  validateUUID(vendorId, 'vendorId')
+  validateUUID(vendorId, 'vendorId');
 
-  const subscriptionId = `vendor-bookings-${vendorId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
-  const channelName = `vendor-bookings-${vendorId}-${subscriptionId}`
+  const subscriptionId = `vendor-bookings-${vendorId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const channelName = `vendor-bookings-${vendorId}-${subscriptionId}`;
 
-  const channel = supabase.channel(channelName)
+  const channel = supabase.channel(channelName);
 
   channel
     .on(
@@ -301,9 +308,9 @@ export function subscribeToVendorBookings(
         event: 'INSERT',
         schema: 'public',
         table: 'bookings',
-        filter: `vendor_id=eq.${vendorId}`
+        filter: `vendor_id=eq.${vendorId}`,
       },
-      callback
+      callback,
     )
     .on(
       'postgres_changes',
@@ -311,19 +318,19 @@ export function subscribeToVendorBookings(
         event: 'UPDATE',
         schema: 'public',
         table: 'bookings',
-        filter: `vendor_id=eq.${vendorId}`
+        filter: `vendor_id=eq.${vendorId}`,
       },
-      callback
+      callback,
     )
-    .subscribe()
+    .subscribe();
 
   activeSubscriptions.set(subscriptionId, {
     channel,
     type: 'booking',
-    id: vendorId
-  })
+    id: vendorId,
+  });
 
-  return subscriptionId
+  return subscriptionId;
 }
 
 // ================================================
@@ -336,25 +343,28 @@ export function subscribeToVendorBookings(
  * Matches the customer_notifications table schema
  */
 export interface CustomerNotificationRow {
-  id: string
-  user_id: string
-  type: string
-  title: string
-  message: string
-  booking_id: string | null
-  read: boolean
-  created_at: string
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  booking_id: string | null;
+  read: boolean;
+  created_at: string;
 }
 
 /**
  * Payload for customer notification changes
  */
-export type CustomerNotificationChangePayload = RealtimePostgresChangesPayload<CustomerNotificationRow>
+export type CustomerNotificationChangePayload =
+  RealtimePostgresChangesPayload<CustomerNotificationRow>;
 
 /**
  * Callback function for customer notification updates
  */
-export type CustomerNotificationCallback = (payload: CustomerNotificationChangePayload) => void
+export type CustomerNotificationCallback = (
+  payload: CustomerNotificationChangePayload,
+) => void;
 
 /**
  * Subscribe to new notifications for a specific user
@@ -379,16 +389,16 @@ export type CustomerNotificationCallback = (payload: CustomerNotificationChangeP
  */
 export function subscribeToCustomerNotifications(
   userId: string,
-  callback: CustomerNotificationCallback
+  callback: CustomerNotificationCallback,
 ): string {
-  if (!realtimeEnabled()) return 'realtime-disabled'
+  if (!realtimeEnabled()) return 'realtime-disabled';
   // Validate UUID to prevent filter injection attacks
-  validateUUID(userId, 'userId')
+  validateUUID(userId, 'userId');
 
-  const subscriptionId = `customer-notifications-${userId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
-  const channelName = `customer-notifications-${userId}-${subscriptionId}`
+  const subscriptionId = `customer-notifications-${userId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const channelName = `customer-notifications-${userId}-${subscriptionId}`;
 
-  const channel = supabase.channel(channelName)
+  const channel = supabase.channel(channelName);
 
   channel
     .on(
@@ -397,17 +407,17 @@ export function subscribeToCustomerNotifications(
         event: 'INSERT',
         schema: 'public',
         table: 'customer_notifications',
-        filter: `user_id=eq.${userId}`
+        filter: `user_id=eq.${userId}`,
       },
-      callback
+      callback,
     )
-    .subscribe()
+    .subscribe();
 
   activeSubscriptions.set(subscriptionId, {
     channel,
     type: 'notification',
-    id: userId
-  })
+    id: userId,
+  });
 
-  return subscriptionId
+  return subscriptionId;
 }

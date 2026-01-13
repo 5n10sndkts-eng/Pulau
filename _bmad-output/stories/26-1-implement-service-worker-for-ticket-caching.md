@@ -9,10 +9,11 @@ So that I can show my ticket even without internet.
 **Given** I have a confirmed booking
 **When** I view my ticket page while online
 **Then** the Service Worker caches:
-  - Ticket page HTML/JS/CSS
-  - QR code image
-  - Booking metadata (experience name, time, meeting point)
-**And** cached data persists for 30 days
-**And** cache is updated when I view the ticket online
+
+- Ticket page HTML/JS/CSS
+- QR code image
+- Booking metadata (experience name, time, meeting point)
+  **And** cached data persists for 30 days
+  **And** cache is updated when I view the ticket online
 
 ---

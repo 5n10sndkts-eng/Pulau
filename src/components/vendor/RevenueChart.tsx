@@ -16,38 +16,38 @@ import {
   BarChart,
   Bar,
   TooltipProps,
-} from 'recharts'
-import { format, parseISO } from 'date-fns'
-import { RefreshCw, BarChart3 } from 'lucide-react'
+} from 'recharts';
+import { format, parseISO } from 'date-fns';
+import { RefreshCw, BarChart3 } from 'lucide-react';
 import {
   formatCurrency,
   RevenueDataPoint,
   TimePeriod,
-} from '@/lib/vendorAnalyticsService'
+} from '@/lib/vendorAnalyticsService';
 
 interface RevenueChartProps {
-  data: RevenueDataPoint[] | undefined
-  isLoading: boolean
-  chartType: 'line' | 'bar'
-  selectedPeriod: TimePeriod
+  data: RevenueDataPoint[] | undefined;
+  isLoading: boolean;
+  chartType: 'line' | 'bar';
+  selectedPeriod: TimePeriod;
 }
 
 // Properly typed tooltip props
 interface ChartTooltipProps extends TooltipProps<number, string> {
-  active?: boolean
+  active?: boolean;
   payload?: Array<{
-    payload: RevenueDataPoint
-    value: number
-  }>
+    payload: RevenueDataPoint;
+    value: number;
+  }>;
 }
 
 function ChartTooltip({ active, payload }: ChartTooltipProps) {
-  if (!active || !payload || !payload.length) return null
+  if (!active || !payload || !payload.length) return null;
 
-  const firstPayload = payload[0]
-  if (!firstPayload) return null
+  const firstPayload = payload[0];
+  if (!firstPayload) return null;
 
-  const data = firstPayload.payload
+  const data = firstPayload.payload;
 
   return (
     <div className="bg-background border rounded-lg shadow-lg p-3">
@@ -61,23 +61,23 @@ function ChartTooltip({ active, payload }: ChartTooltipProps) {
         {data.bookingCount} booking{data.bookingCount !== 1 ? 's' : ''}
       </p>
     </div>
-  )
+  );
 }
 
 // Format date for X-axis based on period
 function formatXAxisDate(dateStr: string, period: TimePeriod): string {
-  const date = parseISO(dateStr)
+  const date = parseISO(dateStr);
   switch (period) {
     case '7d':
-      return format(date, 'EEE')
+      return format(date, 'EEE');
     case '30d':
-      return format(date, 'MMM d')
+      return format(date, 'MMM d');
     case '90d':
-      return format(date, 'MMM d')
+      return format(date, 'MMM d');
     case '12m':
-      return format(date, 'MMM yyyy')
+      return format(date, 'MMM yyyy');
     default:
-      return format(date, 'MMM d')
+      return format(date, 'MMM d');
   }
 }
 
@@ -95,7 +95,7 @@ export function RevenueChart({
           <p className="text-sm text-muted-foreground">Loading chart data...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!data || data.length === 0) {
@@ -103,10 +103,12 @@ export function RevenueChart({
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-          <p className="text-muted-foreground">No revenue data for this period</p>
+          <p className="text-muted-foreground">
+            No revenue data for this period
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -164,5 +166,5 @@ export function RevenueChart({
         </BarChart>
       )}
     </ResponsiveContainer>
-  )
+  );
 }

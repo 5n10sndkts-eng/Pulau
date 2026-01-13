@@ -9,12 +9,13 @@ So that booking status reflects payment outcomes.
 **Given** the `webhook-stripe` Edge Function is deployed
 **When** Stripe sends `checkout.session.completed` event
 **Then** the system:
-  - Validates webhook signature
-  - Finds the payment record by session ID
-  - Updates payment status to 'succeeded'
-  - Calls `create-booking` Edge Function to confirm bookings
-  - Decrements slot availability atomically
-  - Creates audit log entries
+
+- Validates webhook signature
+- Finds the payment record by session ID
+- Updates payment status to 'succeeded'
+- Calls `create-booking` Edge Function to confirm bookings
+- Decrements slot availability atomically
+- Creates audit log entries
 
 **Given** Stripe sends `payment_intent.payment_failed` event
 **When** webhook is processed

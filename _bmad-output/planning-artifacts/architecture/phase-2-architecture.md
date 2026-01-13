@@ -29,11 +29,11 @@ Phase 2 transforms Pulau from a "Travel Canvas" MVP with mock data into a **full
 
 ### Strategic Sub-Phases
 
-| Sub-Phase | Focus | Scope |
-|-----------|-------|-------|
-| **2a (Core)** | Transactional | Stripe Connect, Supabase Realtime, Vendor Web Portal |
-| **2b (Trust)** | Native | Mobile Wrapper, Offline DB, Push Notifications |
-| **2c (Growth)** | Social | Video Reviews, Social Features |
+| Sub-Phase       | Focus         | Scope                                                |
+| --------------- | ------------- | ---------------------------------------------------- |
+| **2a (Core)**   | Transactional | Stripe Connect, Supabase Realtime, Vendor Web Portal |
+| **2b (Trust)**  | Native        | Mobile Wrapper, Offline DB, Push Notifications       |
+| **2c (Growth)** | Social        | Video Reviews, Social Features                       |
 
 **This document covers Phase 2a (Core) architecture decisions.**
 
@@ -42,26 +42,27 @@ Phase 2 transforms Pulau from a "Travel Canvas" MVP with mock data into a **full
 ## Phase 1 Architecture Inheritance
 
 ### Preserved Decisions
+
 The following Phase 1 decisions remain unchanged:
 
-| Decision | Phase 1 Choice | Status |
-|----------|----------------|--------|
-| Database | Supabase (PostgreSQL) | ✅ Preserved |
-| Auth Provider | Supabase Auth | ✅ Preserved |
-| Frontend Framework | React 19 + TypeScript | ✅ Preserved |
-| Styling | Tailwind CSS 4.x | ✅ Preserved |
-| State Management | TanStack Query + Spark useKV | ✅ Preserved |
-| Build Tool | Vite 7.x | ✅ Preserved |
-| Component Library | Radix UI / shadcn patterns | ✅ Preserved |
+| Decision           | Phase 1 Choice               | Status       |
+| ------------------ | ---------------------------- | ------------ |
+| Database           | Supabase (PostgreSQL)        | ✅ Preserved |
+| Auth Provider      | Supabase Auth                | ✅ Preserved |
+| Frontend Framework | React 19 + TypeScript        | ✅ Preserved |
+| Styling            | Tailwind CSS 4.x             | ✅ Preserved |
+| State Management   | TanStack Query + Spark useKV | ✅ Preserved |
+| Build Tool         | Vite 7.x                     | ✅ Preserved |
+| Component Library  | Radix UI / shadcn patterns   | ✅ Preserved |
 
 ### Extended/Modified Decisions
 
-| Decision | Phase 1 | Phase 2 Change |
-|----------|---------|----------------|
-| API Pattern | SDK only | SDK + Edge Functions for payments |
-| Data Access | Service Layer | + Realtime subscriptions |
-| Auth Roles | User only (mock vendor) | Full Vendor auth + KYC |
-| Offline | Spark useKV (basic) | + PWA Cache (2a), WatermelonDB (2b) |
+| Decision    | Phase 1                 | Phase 2 Change                      |
+| ----------- | ----------------------- | ----------------------------------- |
+| API Pattern | SDK only                | SDK + Edge Functions for payments   |
+| Data Access | Service Layer           | + Realtime subscriptions            |
+| Auth Roles  | User only (mock vendor) | Full Vendor auth + KYC              |
+| Offline     | Spark useKV (basic)     | + PWA Cache (2a), WatermelonDB (2b) |
 
 ---
 
@@ -69,17 +70,18 @@ The following Phase 1 decisions remain unchanged:
 
 ### Payment Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Payment Provider | **Stripe Connect (Express)** | Industry standard, handles KYC, multi-currency |
-| Charge Model | **Destination Charges** | Platform collects, transfers to vendors |
-| Card Handling | **Stripe Elements** | SAQ-A PCI compliance, no card data in app |
-| Payment Methods | Credit/Debit, Apple Pay, Google Pay | Stripe Payment Element handles all |
-| 3D Secure | **Required** | Liability shift for chargebacks |
-| Escrow | **Application Fee** | T+7 hold via Stripe payout schedule |
-| Refunds | **Automated via API** | Edge Function processes based on policy |
+| Decision         | Choice                              | Rationale                                      |
+| ---------------- | ----------------------------------- | ---------------------------------------------- |
+| Payment Provider | **Stripe Connect (Express)**        | Industry standard, handles KYC, multi-currency |
+| Charge Model     | **Destination Charges**             | Platform collects, transfers to vendors        |
+| Card Handling    | **Stripe Elements**                 | SAQ-A PCI compliance, no card data in app      |
+| Payment Methods  | Credit/Debit, Apple Pay, Google Pay | Stripe Payment Element handles all             |
+| 3D Secure        | **Required**                        | Liability shift for chargebacks                |
+| Escrow           | **Application Fee**                 | T+7 hold via Stripe payout schedule            |
+| Refunds          | **Automated via API**               | Edge Function processes based on policy        |
 
 **Stripe Connect Flow:**
+
 ```
 User Payment → Stripe Checkout → Destination Charge → Platform Fee Deducted
                                        ↓
@@ -88,15 +90,16 @@ User Payment → Stripe Checkout → Destination Charge → Platform Fee Deducte
 
 ### Real-Time Inventory Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Real-Time Engine | **Supabase Realtime** | Already integrated, WebSocket-based |
-| Subscription Scope | Per-experience availability | Minimize connection overhead |
-| Concurrency Control | **Row-Level Locking (SERIALIZABLE)** | Prevent double-booking |
-| Inventory Decrement | **Database Trigger** | Atomic, server-side only |
-| Stale Detection | **Activity Timestamp Check** | Auto-disable Instant Book if stale |
+| Decision            | Choice                               | Rationale                           |
+| ------------------- | ------------------------------------ | ----------------------------------- |
+| Real-Time Engine    | **Supabase Realtime**                | Already integrated, WebSocket-based |
+| Subscription Scope  | Per-experience availability          | Minimize connection overhead        |
+| Concurrency Control | **Row-Level Locking (SERIALIZABLE)** | Prevent double-booking              |
+| Inventory Decrement | **Database Trigger**                 | Atomic, server-side only            |
+| Stale Detection     | **Activity Timestamp Check**         | Auto-disable Instant Book if stale  |
 
 **Inventory Concurrency Pattern:**
+
 ```sql
 -- Atomic inventory decrement with check
 UPDATE experience_slots
@@ -110,14 +113,15 @@ RETURNING id;
 
 ### Vendor KYC & Onboarding Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Identity Verification | **Stripe Connect Express** | Handles all KYC requirements |
-| Bank Verification | **Stripe Connect** | Automated bank account validation |
-| Verification State | **State Machine in DB** | Track vendor readiness |
-| Instant Book Eligibility | **Verified + Bank Linked + Active** | All three required |
+| Decision                 | Choice                              | Rationale                         |
+| ------------------------ | ----------------------------------- | --------------------------------- |
+| Identity Verification    | **Stripe Connect Express**          | Handles all KYC requirements      |
+| Bank Verification        | **Stripe Connect**                  | Automated bank account validation |
+| Verification State       | **State Machine in DB**             | Track vendor readiness            |
+| Instant Book Eligibility | **Verified + Bank Linked + Active** | All three required                |
 
 **Vendor State Machine:**
+
 ```
 REGISTERED → KYC_SUBMITTED → KYC_VERIFIED → BANK_LINKED → ACTIVE
                    ↓              ↓             ↓
@@ -126,14 +130,15 @@ REGISTERED → KYC_SUBMITTED → KYC_VERIFIED → BANK_LINKED → ACTIVE
 
 ### Audit & Compliance Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Audit Table | `audit_logs` | Immutable event log |
-| Retention | **7 years** | Tax/legal compliance |
-| Event Types | Booking, Payment, Refund, Cancellation | Critical financial events |
-| Webhook Storage | **Stripe Webhook ID** | Reconciliation capability |
+| Decision        | Choice                                 | Rationale                 |
+| --------------- | -------------------------------------- | ------------------------- |
+| Audit Table     | `audit_logs`                           | Immutable event log       |
+| Retention       | **7 years**                            | Tax/legal compliance      |
+| Event Types     | Booking, Payment, Refund, Cancellation | Critical financial events |
+| Webhook Storage | **Stripe Webhook ID**                  | Reconciliation capability |
 
 **Audit Log Schema:**
+
 ```sql
 CREATE TABLE audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -158,58 +163,59 @@ CREATE POLICY audit_insert_only ON audit_logs
 
 ### Required Edge Functions
 
-| Function | Purpose | Auth |
-|----------|---------|------|
-| `checkout` | Create Stripe Checkout Session | User JWT |
-| `webhook-stripe` | Handle Stripe webhooks | Stripe Signature |
-| `create-booking` | Atomic booking + inventory | User JWT |
-| `process-refund` | Initiate refund per policy | User/Admin JWT |
-| `vendor-onboard` | Create Stripe Connect account | Vendor JWT |
-| `vendor-payout-status` | Check payout status | Vendor JWT |
+| Function               | Purpose                        | Auth             |
+| ---------------------- | ------------------------------ | ---------------- |
+| `checkout`             | Create Stripe Checkout Session | User JWT         |
+| `webhook-stripe`       | Handle Stripe webhooks         | Stripe Signature |
+| `create-booking`       | Atomic booking + inventory     | User JWT         |
+| `process-refund`       | Initiate refund per policy     | User/Admin JWT   |
+| `vendor-onboard`       | Create Stripe Connect account  | Vendor JWT       |
+| `vendor-payout-status` | Check payout status            | Vendor JWT       |
 
 ### Edge Function Patterns
 
 **Checkout Function:**
+
 ```typescript
 // supabase/functions/checkout/index.ts
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@14?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import Stripe from 'https://esm.sh/stripe@14?target=deno';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
   apiVersion: '2023-10-16',
-})
+});
 
 serve(async (req) => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  )
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
 
   // Verify JWT and get user
-  const authHeader = req.headers.get('Authorization')!
-  const { data: { user } } = await supabase.auth.getUser(
-    authHeader.replace('Bearer ', '')
-  )
+  const authHeader = req.headers.get('Authorization')!;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
 
-  const { tripId } = await req.json()
+  const { tripId } = await req.json();
 
   // Fetch trip items with experience details
   const { data: trip } = await supabase
     .from('trips')
     .select(`*, trip_items(*, experiences(*))`)
     .eq('id', tripId)
-    .single()
+    .single();
 
   // Create line items for Stripe
-  const lineItems = trip.trip_items.map(item => ({
+  const lineItems = trip.trip_items.map((item) => ({
     price_data: {
       currency: 'usd',
       product_data: { name: item.experiences.title },
       unit_amount: item.experiences.price_amount * 100,
     },
     quantity: item.guest_count,
-  }))
+  }));
 
   // Create Checkout Session with Destination Charge
   const session = await stripe.checkout.sessions.create({
@@ -224,12 +230,12 @@ serve(async (req) => {
     success_url: `${Deno.env.get('APP_URL')}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${Deno.env.get('APP_URL')}/checkout/cancel`,
     metadata: { tripId, userId: user.id },
-  })
+  });
 
   return new Response(JSON.stringify({ sessionUrl: session.url }), {
     headers: { 'Content-Type': 'application/json' },
-  })
-})
+  });
+});
 ```
 
 ---
@@ -358,11 +364,11 @@ CREATE POLICY audit_insert ON audit_logs
 
 ```typescript
 // src/lib/realtimeService.ts
-import { supabase } from './supabase'
+import { supabase } from './supabase';
 
 export function subscribeToSlotAvailability(
   experienceId: string,
-  onUpdate: (slots: ExperienceSlot[]) => void
+  onUpdate: (slots: ExperienceSlot[]) => void,
 ) {
   return supabase
     .channel(`slots:${experienceId}`)
@@ -376,23 +382,25 @@ export function subscribeToSlotAvailability(
       },
       (payload) => {
         // Refetch all slots for this experience
-        fetchSlots(experienceId).then(onUpdate)
-      }
+        fetchSlots(experienceId).then(onUpdate);
+      },
     )
-    .subscribe()
+    .subscribe();
 }
 
 // Hook wrapper
 export function useSlotSubscription(experienceId: string) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const channel = subscribeToSlotAvailability(experienceId, () => {
-      queryClient.invalidateQueries({ queryKey: ['slots', experienceId] })
-    })
+      queryClient.invalidateQueries({ queryKey: ['slots', experienceId] });
+    });
 
-    return () => { supabase.removeChannel(channel) }
-  }, [experienceId])
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [experienceId]);
 }
 ```
 
@@ -401,7 +409,7 @@ export function useSlotSubscription(experienceId: string) {
 ```typescript
 export function subscribeToBookingStatus(
   bookingId: string,
-  onUpdate: (booking: Booking) => void
+  onUpdate: (booking: Booking) => void,
 ) {
   return supabase
     .channel(`booking:${bookingId}`)
@@ -413,9 +421,9 @@ export function subscribeToBookingStatus(
         table: 'bookings',
         filter: `id=eq.${bookingId}`,
       },
-      (payload) => onUpdate(payload.new as Booking)
+      (payload) => onUpdate(payload.new as Booking),
     )
-    .subscribe()
+    .subscribe();
 }
 ```
 
@@ -437,26 +445,28 @@ src/lib/
 
 ```typescript
 // src/lib/paymentService.ts
-import { supabase } from './supabase'
+import { supabase } from './supabase';
 
 interface CheckoutResult {
-  data: { sessionUrl: string } | null
-  error: string | null
+  data: { sessionUrl: string } | null;
+  error: string | null;
 }
 
-export async function createCheckoutSession(tripId: string): Promise<CheckoutResult> {
+export async function createCheckoutSession(
+  tripId: string,
+): Promise<CheckoutResult> {
   try {
     const { data, error } = await supabase.functions.invoke('checkout', {
       body: { tripId },
-    })
+    });
 
     if (error) {
-      return { data: null, error: error.message }
+      return { data: null, error: error.message };
     }
 
-    return { data, error: null }
+    return { data, error: null };
   } catch (e) {
-    return { data: null, error: 'Failed to create checkout session' }
+    return { data: null, error: 'Failed to create checkout session' };
   }
 }
 
@@ -465,10 +475,10 @@ export async function getPaymentStatus(bookingId: string) {
     .from('payments')
     .select('*')
     .eq('booking_id', bookingId)
-    .single()
+    .single();
 
-  if (error) return { data: null, error: error.message }
-  return { data, error: null }
+  if (error) return { data: null, error: error.message };
+  return { data, error: null };
 }
 ```
 
@@ -542,13 +552,14 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
 
 ### Payment Testing
 
-| Test Type | Tool | Coverage |
-|-----------|------|----------|
-| Unit | Vitest + MSW | Service layer mocking |
-| Integration | Stripe Test Mode | Full payment flow |
-| E2E | Playwright + Stripe Test Cards | User journey |
+| Test Type   | Tool                           | Coverage              |
+| ----------- | ------------------------------ | --------------------- |
+| Unit        | Vitest + MSW                   | Service layer mocking |
+| Integration | Stripe Test Mode               | Full payment flow     |
+| E2E         | Playwright + Stripe Test Cards | User journey          |
 
 **Test Card Numbers:**
+
 - Success: `4242424242424242`
 - Decline: `4000000000000002`
 - 3DS Required: `4000002500003155`
@@ -559,22 +570,23 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
 // Example test for realtime subscription
 describe('Slot Availability Subscription', () => {
   it('receives updates when slots change', async () => {
-    const updates: ExperienceSlot[] = []
+    const updates: ExperienceSlot[] = [];
 
     const channel = subscribeToSlotAvailability('exp-123', (slots) => {
-      updates.push(...slots)
-    })
+      updates.push(...slots);
+    });
 
     // Simulate slot update via service role
-    await adminClient.from('experience_slots')
+    await adminClient
+      .from('experience_slots')
       .update({ available_count: 5 })
-      .eq('experience_id', 'exp-123')
+      .eq('experience_id', 'exp-123');
 
-    await waitFor(() => expect(updates.length).toBeGreaterThan(0))
+    await waitFor(() => expect(updates.length).toBeGreaterThan(0));
 
-    supabase.removeChannel(channel)
-  })
-})
+    supabase.removeChannel(channel);
+  });
+});
 ```
 
 ---
@@ -583,21 +595,21 @@ describe('Slot Availability Subscription', () => {
 
 ### PCI DSS Compliance
 
-| Requirement | Implementation |
-|-------------|----------------|
-| No card storage | Stripe Elements handles all card data |
-| HTTPS only | Enforced at infrastructure level |
-| Webhook verification | Stripe signature validation |
-| Access logging | Audit trail for all payment operations |
+| Requirement          | Implementation                         |
+| -------------------- | -------------------------------------- |
+| No card storage      | Stripe Elements handles all card data  |
+| HTTPS only           | Enforced at infrastructure level       |
+| Webhook verification | Stripe signature validation            |
+| Access logging       | Audit trail for all payment operations |
 
 ### Fraud Prevention
 
-| Vector | Mitigation |
-|--------|------------|
-| Card testing | Stripe Radar + rate limiting |
-| Friendly fraud | 3DS required + audit trail |
-| Fake vendors | KYC via Stripe Connect |
-| Double-booking | Database-level row locking |
+| Vector         | Mitigation                   |
+| -------------- | ---------------------------- |
+| Card testing   | Stripe Radar + rate limiting |
+| Friendly fraud | 3DS required + audit trail   |
+| Fake vendors   | KYC via Stripe Connect       |
+| Double-booking | Database-level row locking   |
 
 ---
 
@@ -638,6 +650,7 @@ describe('Slot Availability Subscription', () => {
 **Confidence Level:** HIGH
 
 **Key Phase 2a Capabilities Enabled:**
+
 - Stripe Connect payment processing
 - Real-time inventory with concurrency control
 - Vendor onboarding with KYC
@@ -645,6 +658,7 @@ describe('Slot Availability Subscription', () => {
 - Instant Book eligibility engine
 
 **Next Steps:**
+
 1. Generate Phase 2 Epics & Stories from this architecture
 2. Sprint planning for Phase 2a implementation
 3. Begin with database schema extensions
@@ -655,44 +669,44 @@ describe('Slot Availability Subscription', () => {
 
 ### Functional Requirements Coverage
 
-| PRD Requirement | Architecture Support | Status |
-|-----------------|---------------------|--------|
-| FR-VEN-01: Vendor Stripe Express KYC | `vendor-onboard` Edge Function + Stripe Connect | ✅ |
-| FR-VEN-02: Instant Book vs Request policies | `vendors.instant_book_enabled` + state machine | ✅ |
-| FR-VEN-03: Cut-off Times | `experience_slots` with time constraints | ✅ |
-| FR-BOOK-01: Filter by Instant Confirmation | Query on `instant_book_enabled` | ✅ |
-| FR-BOOK-02: Real-time slot availability | Supabase Realtime subscriptions | ✅ |
-| FR-BOOK-03: Credit Card / Apple Pay / Google Pay | Stripe Payment Element | ✅ |
-| FR-BOOK-04: Immediate PDF Ticket via Email | Post-payment webhook + email service | 🔶 Email service TBD |
-| FR-OFF-01: Offline Active Ticket (PWA) | Service Worker cache for ticket page | ✅ PWA in 2a |
-| FR-OFF-02: Last Updated timestamp | `updated_at` field on cached data | ✅ |
-| FR-OPS-01: Push/SMS on new booking | Webhook → notification service | 🔶 Push in 2b |
-| FR-OPS-02: Vendor QR code check-in | PWA camera + validation | ✅ |
-| FR-OPS-03: Manual slot block/unblock | `slotService.ts` + vendor UI | ✅ |
-| FR-ADM-01: Search bookings | Service layer queries | ✅ |
-| FR-ADM-02: Admin refund initiation | `process-refund` Edge Function | ✅ |
-| FR-ADM-03: Immutable Audit Log | `audit_logs` table with RLS | ✅ |
+| PRD Requirement                                  | Architecture Support                            | Status               |
+| ------------------------------------------------ | ----------------------------------------------- | -------------------- |
+| FR-VEN-01: Vendor Stripe Express KYC             | `vendor-onboard` Edge Function + Stripe Connect | ✅                   |
+| FR-VEN-02: Instant Book vs Request policies      | `vendors.instant_book_enabled` + state machine  | ✅                   |
+| FR-VEN-03: Cut-off Times                         | `experience_slots` with time constraints        | ✅                   |
+| FR-BOOK-01: Filter by Instant Confirmation       | Query on `instant_book_enabled`                 | ✅                   |
+| FR-BOOK-02: Real-time slot availability          | Supabase Realtime subscriptions                 | ✅                   |
+| FR-BOOK-03: Credit Card / Apple Pay / Google Pay | Stripe Payment Element                          | ✅                   |
+| FR-BOOK-04: Immediate PDF Ticket via Email       | Post-payment webhook + email service            | 🔶 Email service TBD |
+| FR-OFF-01: Offline Active Ticket (PWA)           | Service Worker cache for ticket page            | ✅ PWA in 2a         |
+| FR-OFF-02: Last Updated timestamp                | `updated_at` field on cached data               | ✅                   |
+| FR-OPS-01: Push/SMS on new booking               | Webhook → notification service                  | 🔶 Push in 2b        |
+| FR-OPS-02: Vendor QR code check-in               | PWA camera + validation                         | ✅                   |
+| FR-OPS-03: Manual slot block/unblock             | `slotService.ts` + vendor UI                    | ✅                   |
+| FR-ADM-01: Search bookings                       | Service layer queries                           | ✅                   |
+| FR-ADM-02: Admin refund initiation               | `process-refund` Edge Function                  | ✅                   |
+| FR-ADM-03: Immutable Audit Log                   | `audit_logs` table with RLS                     | ✅                   |
 
 ### Non-Functional Requirements Coverage
 
-| NFR | Architecture Support | Status |
-|-----|---------------------|--------|
-| Real-Time Latency < 500ms | Supabase Realtime (WebSocket) | ✅ |
-| PWA TTI < 1.5s | Vite optimization + Service Worker | ✅ |
-| Offline Ticket 30 days | PWA Cache + LocalDB (2b) | ✅ |
-| Sync Recovery < 10s | Realtime reconnect + refetch | ✅ |
-| PCI DSS SAQ-A | Stripe Elements only | ✅ |
-| Audit Retention 7 years | `audit_logs` with no delete policy | ✅ |
-| 10 concurrent bookings | Row-level locking (SERIALIZABLE) | ✅ |
+| NFR                       | Architecture Support               | Status |
+| ------------------------- | ---------------------------------- | ------ |
+| Real-Time Latency < 500ms | Supabase Realtime (WebSocket)      | ✅     |
+| PWA TTI < 1.5s            | Vite optimization + Service Worker | ✅     |
+| Offline Ticket 30 days    | PWA Cache + LocalDB (2b)           | ✅     |
+| Sync Recovery < 10s       | Realtime reconnect + refetch       | ✅     |
+| PCI DSS SAQ-A             | Stripe Elements only               | ✅     |
+| Audit Retention 7 years   | `audit_logs` with no delete policy | ✅     |
+| 10 concurrent bookings    | Row-level locking (SERIALIZABLE)   | ✅     |
 
 ### Innovation Requirements Coverage
 
-| Innovation | Architecture Support |
-|------------|---------------------|
-| "Instant Confidence" Engine | Realtime + Stripe + PWA Cache |
-| Vendor OS "Pocket Office" | PWA + Realtime + slotService |
-| No-Signal Test | PWA Service Worker ticket caching |
-| Double-Book Stress Test | Database-level SERIALIZABLE lock |
+| Innovation                  | Architecture Support              |
+| --------------------------- | --------------------------------- |
+| "Instant Confidence" Engine | Realtime + Stripe + PWA Cache     |
+| Vendor OS "Pocket Office"   | PWA + Realtime + slotService      |
+| No-Signal Test              | PWA Service Worker ticket caching |
+| Double-Book Stress Test     | Database-level SERIALIZABLE lock  |
 
 ---
 

@@ -11,11 +11,11 @@
  * - Block/unblock functionality
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState, useEffect, useCallback } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -23,16 +23,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Switch } from '@/components/ui/switch'
-import { Checkbox } from '@/components/ui/checkbox'
+} from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select';
 import {
   ArrowLeft,
   ChevronLeft,
@@ -45,33 +45,36 @@ import {
   DollarSign,
   Loader2,
   Trash2,
-} from 'lucide-react'
-import { toast } from 'sonner'
+} from 'lucide-react';
+import { toast } from 'sonner';
 import {
   slotService,
   type ExperienceSlot,
   type SlotCreateInput,
   type DateRange,
-} from '@/lib/slotService'
+} from '@/lib/slotService';
 
 interface VendorAvailabilityCalendarProps {
-  experienceId: string
-  experienceBasePrice?: number // In cents
-  onBack: () => void
+  experienceId: string;
+  experienceBasePrice?: number; // In cents
+  onBack: () => void;
 }
 
 // Time options for slot creation (30-min intervals)
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hours = Math.floor(i / 2)
-  const minutes = i % 2 === 0 ? '00' : '30'
-  const time = `${hours.toString().padStart(2, '0')}:${minutes}`
-  const displayTime = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  })
-  return { value: time, label: displayTime }
-})
+  const hours = Math.floor(i / 2);
+  const minutes = i % 2 === 0 ? '00' : '30';
+  const time = `${hours.toString().padStart(2, '0')}:${minutes}`;
+  const displayTime = new Date(`2000-01-01T${time}`).toLocaleTimeString(
+    'en-US',
+    {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    },
+  );
+  return { value: time, label: displayTime };
+});
 
 // Duration options in minutes
 const DURATION_OPTIONS = [
@@ -83,36 +86,36 @@ const DURATION_OPTIONS = [
   { value: 240, label: '4 hours' },
   { value: 360, label: '6 hours' },
   { value: 480, label: '8 hours (Full day)' },
-]
+];
 
 export function VendorAvailabilityCalendar({
   experienceId,
   experienceBasePrice = 0,
   onBack,
 }: VendorAvailabilityCalendarProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [slots, setSlots] = useState<ExperienceSlot[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | null>(null)
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [slots, setSlots] = useState<ExperienceSlot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | null>(null);
 
   // Slot creation state
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [createTime, setCreateTime] = useState('09:00')
-  const [createDuration, setCreateDuration] = useState(120) // Display-only: used to show end time, not stored in DB
-  const [createCapacity, setCreateCapacity] = useState(10)
-  const [createPriceOverride, setCreatePriceOverride] = useState<string>('')
-  const [isCreating, setIsCreating] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createTime, setCreateTime] = useState('09:00');
+  const [createDuration, setCreateDuration] = useState(120); // Display-only: used to show end time, not stored in DB
+  const [createCapacity, setCreateCapacity] = useState(10);
+  const [createPriceOverride, setCreatePriceOverride] = useState<string>('');
+  const [isCreating, setIsCreating] = useState(false);
 
   // Slot detail/edit state
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [editCapacity, setEditCapacity] = useState(10)
-  const [editBlocked, setEditBlocked] = useState(false)
-  const [editBlockReason, setEditBlockReason] = useState('')
-  const [isUpdating, setIsUpdating] = useState(false)
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [editCapacity, setEditCapacity] = useState(10);
+  const [editBlocked, setEditBlocked] = useState(false);
+  const [editBlockReason, setEditBlockReason] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Recurring slot state
-  const [showRecurringModal, setShowRecurringModal] = useState(false)
+  const [showRecurringModal, setShowRecurringModal] = useState(false);
   const [recurringDays, setRecurringDays] = useState<boolean[]>([
     false,
     false,
@@ -121,130 +124,137 @@ export function VendorAvailabilityCalendar({
     false,
     false,
     false,
-  ])
-  const [recurringTime, setRecurringTime] = useState('09:00')
-  const [recurringCapacity, setRecurringCapacity] = useState(10)
-  const [recurringStartDate, setRecurringStartDate] = useState('')
-  const [recurringEndDate, setRecurringEndDate] = useState('')
-  const [isCreatingRecurring, setIsCreatingRecurring] = useState(false)
+  ]);
+  const [recurringTime, setRecurringTime] = useState('09:00');
+  const [recurringCapacity, setRecurringCapacity] = useState(10);
+  const [recurringStartDate, setRecurringStartDate] = useState('');
+  const [recurringEndDate, setRecurringEndDate] = useState('');
+  const [isCreatingRecurring, setIsCreatingRecurring] = useState(false);
 
   // Calculate date range for current month view
   const getDateRange = useCallback((): DateRange => {
-    const year = currentMonth.getFullYear()
-    const month = currentMonth.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
     return {
       startDate: firstDay.toISOString().split('T')[0] ?? '',
       endDate: lastDay.toISOString().split('T')[0] ?? '',
-    }
-  }, [currentMonth])
+    };
+  }, [currentMonth]);
 
   // Load slots for current month
   const loadSlots = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const dateRange = getDateRange()
-      const { data, error } = await slotService.getAllSlots(experienceId, dateRange)
+      const dateRange = getDateRange();
+      const { data, error } = await slotService.getAllSlots(
+        experienceId,
+        dateRange,
+      );
       if (error) {
-        console.error('Failed to load slots:', error)
-        toast.error('Failed to load availability data')
-        setSlots([])
+        console.error('Failed to load slots:', error);
+        toast.error('Failed to load availability data');
+        setSlots([]);
       } else {
-        setSlots(data || [])
+        setSlots(data || []);
       }
     } catch (error) {
-      console.error('Failed to load slots:', error)
-      toast.error('Failed to load availability data')
+      console.error('Failed to load slots:', error);
+      toast.error('Failed to load availability data');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [experienceId, getDateRange])
+  }, [experienceId, getDateRange]);
 
   useEffect(() => {
-    loadSlots()
-  }, [loadSlots])
+    loadSlots();
+  }, [loadSlots]);
 
   // Generate month dates for calendar
   const getMonthDates = () => {
-    const year = currentMonth.getFullYear()
-    const month = currentMonth.getMonth()
-    const lastDay = new Date(year, month + 1, 0)
-    const dates: Date[] = []
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const lastDay = new Date(year, month + 1, 0);
+    const dates: Date[] = [];
     for (let d = 1; d <= lastDay.getDate(); d++) {
-      dates.push(new Date(year, month, d))
+      dates.push(new Date(year, month, d));
     }
-    return dates
-  }
+    return dates;
+  };
 
-  const monthDates = getMonthDates()
+  const monthDates = getMonthDates();
 
   // Get slots for a specific date
   const getSlotsForDate = (date: Date): ExperienceSlot[] => {
-    const dateStr = date.toISOString().split('T')[0]
-    return slots.filter((s) => s.slot_date === dateStr)
-  }
+    const dateStr = date.toISOString().split('T')[0];
+    return slots.filter((s) => s.slot_date === dateStr);
+  };
 
   // Get date status for calendar coloring
-  const getDateStatus = (date: Date): 'empty' | 'available' | 'partial' | 'blocked' | 'past' => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    if (date < today) return 'past'
+  const getDateStatus = (
+    date: Date,
+  ): 'empty' | 'available' | 'partial' | 'blocked' | 'past' => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) return 'past';
 
-    const dateSlots = getSlotsForDate(date)
-    if (dateSlots.length === 0) return 'empty'
+    const dateSlots = getSlotsForDate(date);
+    if (dateSlots.length === 0) return 'empty';
 
-    const allBlocked = dateSlots.every((s) => s.is_blocked)
-    if (allBlocked) return 'blocked'
+    const allBlocked = dateSlots.every((s) => s.is_blocked);
+    if (allBlocked) return 'blocked';
 
-    const hasAvailable = dateSlots.some((s) => !s.is_blocked && s.available_count > 0)
-    return hasAvailable ? 'available' : 'partial'
-  }
+    const hasAvailable = dateSlots.some(
+      (s) => !s.is_blocked && s.available_count > 0,
+    );
+    return hasAvailable ? 'available' : 'partial';
+  };
 
   const getDateColorClass = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-700 hover:bg-green-200'
+        return 'bg-green-100 text-green-700 hover:bg-green-200';
       case 'partial':
-        return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+        return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
       case 'blocked':
-        return 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+        return 'bg-gray-200 text-gray-600 hover:bg-gray-300';
       case 'past':
-        return 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        return 'bg-gray-100 text-gray-400 cursor-not-allowed';
       default:
-        return 'bg-white hover:bg-gray-50 border border-gray-200'
+        return 'bg-white hover:bg-gray-50 border border-gray-200';
     }
-  }
+  };
 
   // Handle date click - show slots for that date
   const handleDateClick = (date: Date) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     if (date < today) {
-      toast.error('Cannot modify past dates')
-      return
+      toast.error('Cannot modify past dates');
+      return;
     }
 
-    const dateStr = date.toISOString().split('T')[0]!
-    setSelectedDate(dateStr)
-    setShowCreateModal(true)
-  }
+    const dateStr = date.toISOString().split('T')[0]!;
+    setSelectedDate(dateStr);
+    setShowCreateModal(true);
+  };
 
   // Handle slot click - show slot detail
   const handleSlotClick = (slot: ExperienceSlot, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setSelectedSlot(slot)
-    setEditCapacity(slot.total_capacity)
-    setEditBlocked(slot.is_blocked ?? false)
-    setEditBlockReason('')
-    setShowDetailModal(true)
-  }
+    e.stopPropagation();
+    setSelectedSlot(slot);
+    setEditCapacity(slot.total_capacity);
+    setEditBlocked(slot.is_blocked ?? false);
+    setEditBlockReason('');
+    setShowDetailModal(true);
+  };
 
   // Create new slot
   const handleCreateSlot = async () => {
-    if (!selectedDate) return
+    if (!selectedDate) return;
 
-    setIsCreating(true)
+    setIsCreating(true);
     try {
       const input: SlotCreateInput = {
         experienceId,
@@ -254,39 +264,42 @@ export function VendorAvailabilityCalendar({
         priceOverrideAmount: createPriceOverride
           ? Math.round(parseFloat(createPriceOverride) * 100)
           : null,
-      }
+      };
 
-      const { data, error } = await slotService.createSlot(input)
+      const { data, error } = await slotService.createSlot(input);
       if (data) {
-        toast.success('Slot created successfully')
-        setShowCreateModal(false)
-        loadSlots()
+        toast.success('Slot created successfully');
+        setShowCreateModal(false);
+        loadSlots();
       } else {
-        toast.error(error || 'Failed to create slot')
+        toast.error(error || 'Failed to create slot');
       }
     } catch (error) {
-      console.error('Create slot error:', error)
-      toast.error('Failed to create slot')
+      console.error('Create slot error:', error);
+      toast.error('Failed to create slot');
     } finally {
-      setIsCreating(false)
+      setIsCreating(false);
     }
-  }
+  };
 
   // Update slot (capacity, block status)
   const handleUpdateSlot = async () => {
-    if (!selectedSlot) return
+    if (!selectedSlot) return;
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       if (editBlocked !== selectedSlot.is_blocked) {
         // Toggle block status
         const { data, error } = editBlocked
-          ? await slotService.blockSlot(selectedSlot.id, editBlockReason || undefined)
-          : await slotService.unblockSlot(selectedSlot.id)
+          ? await slotService.blockSlot(
+              selectedSlot.id,
+              editBlockReason || undefined,
+            )
+          : await slotService.unblockSlot(selectedSlot.id);
 
         if (!data) {
-          toast.error(error || 'Failed to update slot')
-          return
+          toast.error(error || 'Failed to update slot');
+          return;
         }
       }
 
@@ -294,140 +307,156 @@ export function VendorAvailabilityCalendar({
         const { data, error } = await slotService.updateSlot(selectedSlot.id, {
           totalCapacity: editCapacity,
           availableCount: Math.min(selectedSlot.available_count, editCapacity),
-        })
+        });
         if (!data) {
-          toast.error(error || 'Failed to update capacity')
-          return
+          toast.error(error || 'Failed to update capacity');
+          return;
         }
       }
 
-      toast.success('Slot updated successfully')
-      setShowDetailModal(false)
-      loadSlots()
+      toast.success('Slot updated successfully');
+      setShowDetailModal(false);
+      loadSlots();
     } catch (error) {
-      console.error('Update slot error:', error)
-      toast.error('Failed to update slot')
+      console.error('Update slot error:', error);
+      toast.error('Failed to update slot');
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   // Delete slot
   const handleDeleteSlot = async () => {
-    if (!selectedSlot) return
+    if (!selectedSlot) return;
 
     if (selectedSlot.available_count < selectedSlot.total_capacity) {
-      toast.error('Cannot delete slot with existing bookings')
-      return
+      toast.error('Cannot delete slot with existing bookings');
+      return;
     }
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
-      const { data, error } = await slotService.deleteSlot(selectedSlot.id)
+      const { data, error } = await slotService.deleteSlot(selectedSlot.id);
       if (data) {
-        toast.success('Slot deleted')
-        setShowDetailModal(false)
-        loadSlots()
+        toast.success('Slot deleted');
+        setShowDetailModal(false);
+        loadSlots();
       } else {
-        toast.error(error || 'Failed to delete slot')
+        toast.error(error || 'Failed to delete slot');
       }
     } catch (error) {
-      console.error('Delete slot error:', error)
-      toast.error('Failed to delete slot')
+      console.error('Delete slot error:', error);
+      toast.error('Failed to delete slot');
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   // Create recurring slots
   const handleCreateRecurring = async () => {
     if (!recurringStartDate || !recurringEndDate) {
-      toast.error('Please select start and end dates')
-      return
+      toast.error('Please select start and end dates');
+      return;
     }
 
     if (!recurringDays.some((d) => d)) {
-      toast.error('Please select at least one day of the week')
-      return
+      toast.error('Please select at least one day of the week');
+      return;
     }
 
-    setIsCreatingRecurring(true)
+    setIsCreatingRecurring(true);
     try {
-      const inputs: SlotCreateInput[] = []
-      const start = new Date(recurringStartDate)
-      const end = new Date(recurringEndDate)
-      const current = new Date(start)
+      const inputs: SlotCreateInput[] = [];
+      const start = new Date(recurringStartDate);
+      const end = new Date(recurringEndDate);
+      const current = new Date(start);
 
       while (current <= end) {
-        const dayOfWeek = current.getDay()
+        const dayOfWeek = current.getDay();
         if (recurringDays[dayOfWeek]) {
-          const dateStr = current.toISOString().split('T')[0]!
+          const dateStr = current.toISOString().split('T')[0]!;
           inputs.push({
             experienceId,
             slotDate: dateStr,
             slotTime: recurringTime,
             totalCapacity: recurringCapacity,
-          })
+          });
         }
-        current.setDate(current.getDate() + 1)
+        current.setDate(current.getDate() + 1);
       }
 
       if (inputs.length === 0) {
-        toast.error('No dates match the selected criteria')
-        return
+        toast.error('No dates match the selected criteria');
+        return;
       }
 
-      const result = await slotService.createBulkSlots(inputs)
+      const result = await slotService.createBulkSlots(inputs);
       if (result.success) {
-        toast.success(`Created ${result.created} slots`)
-        setShowRecurringModal(false)
-        loadSlots()
+        toast.success(`Created ${result.created} slots`);
+        setShowRecurringModal(false);
+        loadSlots();
       } else {
-        toast.warning(`Created ${result.created} slots, ${result.failed} failed`)
+        toast.warning(
+          `Created ${result.created} slots, ${result.failed} failed`,
+        );
         if (result.errors.length > 0) {
-          console.error('Recurring slot errors:', result.errors)
+          console.error('Recurring slot errors:', result.errors);
         }
-        loadSlots()
+        loadSlots();
       }
     } catch (error) {
-      console.error('Create recurring error:', error)
-      toast.error('Failed to create recurring slots')
+      console.error('Create recurring error:', error);
+      toast.error('Failed to create recurring slots');
     } finally {
-      setIsCreatingRecurring(false)
+      setIsCreatingRecurring(false);
     }
-  }
+  };
 
   // Navigation
   const goToPreviousMonth = () => {
-    const newMonth = new Date(currentMonth)
-    newMonth.setMonth(currentMonth.getMonth() - 1)
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(currentMonth.getMonth() - 1);
     // Don't go before current month
-    const now = new Date()
-    if (newMonth.getFullYear() > now.getFullYear() ||
-      (newMonth.getFullYear() === now.getFullYear() && newMonth.getMonth() >= now.getMonth())) {
-      setCurrentMonth(newMonth)
+    const now = new Date();
+    if (
+      newMonth.getFullYear() > now.getFullYear() ||
+      (newMonth.getFullYear() === now.getFullYear() &&
+        newMonth.getMonth() >= now.getMonth())
+    ) {
+      setCurrentMonth(newMonth);
     }
-  }
+  };
 
   const goToNextMonth = () => {
-    const newMonth = new Date(currentMonth)
-    newMonth.setMonth(currentMonth.getMonth() + 1)
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(currentMonth.getMonth() + 1);
     // Limit to 12 months from now
-    const maxDate = new Date()
-    maxDate.setMonth(maxDate.getMonth() + 12)
+    const maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + 12);
     if (newMonth <= maxDate) {
-      setCurrentMonth(newMonth)
+      setCurrentMonth(newMonth);
     }
-  }
+  };
 
-  const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const fullDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const monthName = currentMonth.toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const fullDayNames = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
 
   const getMonthStartOffset = () => {
-    if (monthDates.length === 0) return 0
-    return monthDates[0]?.getDay() ?? 0
-  }
+    if (monthDates.length === 0) return 0;
+    return monthDates[0]?.getDay() ?? 0;
+  };
 
   // Format time for display
   const formatTime = (time: string) => {
@@ -435,20 +464,20 @@ export function VendorAvailabilityCalendar({
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
-    })
-  }
+    });
+  };
 
   // Calculate end time from start + duration
   const getEndTime = (startTime: string, durationMinutes: number) => {
-    const parts = startTime.split(':').map(Number)
-    const hours = parts[0] ?? 0
-    const minutes = parts[1] ?? 0
-    const startMinutes = hours * 60 + minutes
-    const endMinutes = startMinutes + durationMinutes
-    const endHours = Math.floor(endMinutes / 60) % 24
-    const endMins = endMinutes % 60
-    return `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`
-  }
+    const parts = startTime.split(':').map(Number);
+    const hours = parts[0] ?? 0;
+    const minutes = parts[1] ?? 0;
+    const startMinutes = hours * 60 + minutes;
+    const endMinutes = startMinutes + durationMinutes;
+    const endHours = Math.floor(endMinutes / 60) % 24;
+    const endMins = endMinutes % 60;
+    return `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -464,8 +493,12 @@ export function VendorAvailabilityCalendar({
             Back to Experiences
           </Button>
           <div>
-            <h1 className="text-3xl font-display font-bold">Manage Availability</h1>
-            <p className="text-white/80 mt-1">Create and manage time slots for your experience</p>
+            <h1 className="text-3xl font-display font-bold">
+              Manage Availability
+            </h1>
+            <p className="text-white/80 mt-1">
+              Create and manage time slots for your experience
+            </p>
           </div>
         </div>
       </div>
@@ -536,9 +569,9 @@ export function VendorAvailabilityCalendar({
 
                 {/* Date cells */}
                 {monthDates.map((date) => {
-                  const status = getDateStatus(date)
-                  const dateSlots = getSlotsForDate(date)
-                  const colorClass = getDateColorClass(status)
+                  const status = getDateStatus(date);
+                  const dateSlots = getSlotsForDate(date);
+                  const colorClass = getDateColorClass(status);
 
                   return (
                     <button
@@ -561,11 +594,12 @@ export function VendorAvailabilityCalendar({
                               onClick={(e) => handleSlotClick(slot, e)}
                               className={`
                                 text-xs px-1 py-0.5 rounded truncate cursor-pointer
-                                ${slot.is_blocked
-                                  ? 'bg-gray-300 text-gray-600'
-                                  : slot.available_count === 0
-                                    ? 'bg-red-200 text-red-700'
-                                    : 'bg-white/50 text-inherit'
+                                ${
+                                  slot.is_blocked
+                                    ? 'bg-gray-300 text-gray-600'
+                                    : slot.available_count === 0
+                                      ? 'bg-red-200 text-red-700'
+                                      : 'bg-white/50 text-inherit'
                                 }
                               `}
                             >
@@ -580,7 +614,7 @@ export function VendorAvailabilityCalendar({
                         </div>
                       )}
                     </button>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -593,14 +627,21 @@ export function VendorAvailabilityCalendar({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Add Time Slot - {selectedDate && new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
+              Add Time Slot -{' '}
+              {selectedDate &&
+                new Date(selectedDate + 'T00:00:00').toLocaleDateString(
+                  'en-US',
+                  {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  },
+                )}
             </DialogTitle>
-            <DialogDescription>Create a new availability slot for this date</DialogDescription>
+            <DialogDescription>
+              Create a new availability slot for this date
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
@@ -657,14 +698,20 @@ export function VendorAvailabilityCalendar({
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => setCreateCapacity(Math.max(1, createCapacity - 1))}
+                  onClick={() =>
+                    setCreateCapacity(Math.max(1, createCapacity - 1))
+                  }
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <Input
                   type="number"
                   value={createCapacity}
-                  onChange={(e) => setCreateCapacity(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) =>
+                    setCreateCapacity(
+                      Math.max(1, parseInt(e.target.value) || 1),
+                    )
+                  }
                   className="text-center w-20"
                   min="1"
                 />
@@ -686,7 +733,11 @@ export function VendorAvailabilityCalendar({
               </Label>
               <Input
                 type="number"
-                placeholder={experienceBasePrice > 0 ? `Default: $${(experienceBasePrice / 100).toFixed(2)}` : 'Set custom price'}
+                placeholder={
+                  experienceBasePrice > 0
+                    ? `Default: $${(experienceBasePrice / 100).toFixed(2)}`
+                    : 'Set custom price'
+                }
                 value={createPriceOverride}
                 onChange={(e) => setCreatePriceOverride(e.target.value)}
                 min="0"
@@ -715,15 +766,19 @@ export function VendorAvailabilityCalendar({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Slot Details - {selectedSlot && formatTime(selectedSlot.slot_time)}
+              Slot Details -{' '}
+              {selectedSlot && formatTime(selectedSlot.slot_time)}
             </DialogTitle>
             <DialogDescription>
-              {selectedSlot && new Date(selectedSlot.slot_date + 'T00:00:00').toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
+              {selectedSlot &&
+                new Date(
+                  selectedSlot.slot_date + 'T00:00:00',
+                ).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
             </DialogDescription>
           </DialogHeader>
 
@@ -732,14 +787,18 @@ export function VendorAvailabilityCalendar({
               {/* Current Status */}
               <div className="bg-muted p-3 rounded-lg space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Available</span>
+                  <span className="text-sm text-muted-foreground">
+                    Available
+                  </span>
                   <span className="font-medium">
-                    {selectedSlot.available_count} / {selectedSlot.total_capacity}
+                    {selectedSlot.available_count} /{' '}
+                    {selectedSlot.total_capacity}
                   </span>
                 </div>
                 {selectedSlot.available_count < selectedSlot.total_capacity && (
                   <p className="text-xs text-orange-600">
-                    {selectedSlot.total_capacity - selectedSlot.available_count} booked
+                    {selectedSlot.total_capacity - selectedSlot.available_count}{' '}
+                    booked
                   </p>
                 )}
               </div>
@@ -773,7 +832,9 @@ export function VendorAvailabilityCalendar({
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => setEditCapacity(Math.max(1, editCapacity - 1))}
+                      onClick={() =>
+                        setEditCapacity(Math.max(1, editCapacity - 1))
+                      }
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
@@ -781,7 +842,11 @@ export function VendorAvailabilityCalendar({
                       id="capacity"
                       type="number"
                       value={editCapacity}
-                      onChange={(e) => setEditCapacity(Math.max(1, parseInt(e.target.value) || 1))}
+                      onChange={(e) =>
+                        setEditCapacity(
+                          Math.max(1, parseInt(e.target.value) || 1),
+                        )
+                      }
                       className="text-center w-20"
                       min="1"
                     />
@@ -793,9 +858,14 @@ export function VendorAvailabilityCalendar({
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  {editCapacity < selectedSlot.total_capacity - selectedSlot.available_count && (
+                  {editCapacity <
+                    selectedSlot.total_capacity -
+                      selectedSlot.available_count && (
                     <p className="text-xs text-red-600">
-                      Cannot reduce below booked count ({selectedSlot.total_capacity - selectedSlot.available_count})
+                      Cannot reduce below booked count (
+                      {selectedSlot.total_capacity -
+                        selectedSlot.available_count}
+                      )
                     </p>
                   )}
                 </div>
@@ -808,17 +878,26 @@ export function VendorAvailabilityCalendar({
               variant="destructive"
               size="sm"
               onClick={handleDeleteSlot}
-              disabled={isUpdating || (selectedSlot?.available_count ?? 0) < (selectedSlot?.total_capacity ?? 0)}
+              disabled={
+                isUpdating ||
+                (selectedSlot?.available_count ?? 0) <
+                  (selectedSlot?.total_capacity ?? 0)
+              }
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Delete
             </Button>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setShowDetailModal(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowDetailModal(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={handleUpdateSlot} disabled={isUpdating}>
-                {isUpdating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {isUpdating && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                )}
                 Save Changes
               </Button>
             </div>
@@ -831,7 +910,9 @@ export function VendorAvailabilityCalendar({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Set Recurring Availability</DialogTitle>
-            <DialogDescription>Create slots for multiple dates at once</DialogDescription>
+            <DialogDescription>
+              Create slots for multiple dates at once
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
@@ -845,9 +926,9 @@ export function VendorAvailabilityCalendar({
                       id={`day-${index}`}
                       checked={recurringDays[index]}
                       onCheckedChange={(checked) => {
-                        const newDays = [...recurringDays]
-                        newDays[index] = checked as boolean
-                        setRecurringDays(newDays)
+                        const newDays = [...recurringDays];
+                        newDays[index] = checked as boolean;
+                        setRecurringDays(newDays);
                       }}
                     />
                     <label
@@ -885,14 +966,20 @@ export function VendorAvailabilityCalendar({
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => setRecurringCapacity(Math.max(1, recurringCapacity - 1))}
+                  onClick={() =>
+                    setRecurringCapacity(Math.max(1, recurringCapacity - 1))
+                  }
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <Input
                   type="number"
                   value={recurringCapacity}
-                  onChange={(e) => setRecurringCapacity(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) =>
+                    setRecurringCapacity(
+                      Math.max(1, parseInt(e.target.value) || 1),
+                    )
+                  }
                   className="text-center w-20"
                   min="1"
                 />
@@ -925,23 +1012,33 @@ export function VendorAvailabilityCalendar({
                   type="date"
                   value={recurringEndDate}
                   onChange={(e) => setRecurringEndDate(e.target.value)}
-                  min={recurringStartDate || new Date().toISOString().split('T')[0]}
+                  min={
+                    recurringStartDate || new Date().toISOString().split('T')[0]
+                  }
                 />
               </div>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRecurringModal(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowRecurringModal(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleCreateRecurring} disabled={isCreatingRecurring}>
-              {isCreatingRecurring && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+            <Button
+              onClick={handleCreateRecurring}
+              disabled={isCreatingRecurring}
+            >
+              {isCreatingRecurring && (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              )}
               Create Slots
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

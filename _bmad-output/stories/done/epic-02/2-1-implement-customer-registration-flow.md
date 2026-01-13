@@ -31,15 +31,18 @@ so that I can save my trips and preferences into my personal Spark KV space.
 ## Suggested Implementation Steps
 
 ### 1. Define User Schema & Types
+
 - Update `User` interface in `src/lib/types.ts` to include `email`, `hashedPassword`, `salt`, and `createdAt`.
 - Create a `registrationSchema` using `zod`.
 
 ### 2. Implement Crypto Utility
+
 - Create `src/lib/crypto.ts` with:
   - `generateSalt()`: Returns a random Uint8Array.
   - `hashPassword(password, salt)`: Uses PBKDF2 to derive a hash.
 
 ### 3. Build Registration Logic
+
 - In `CustomerRegister.tsx`:
   - Implement form state with `react-hook-form` and `zodResolver`.
   - On submit:
@@ -49,6 +52,7 @@ so that I can save my trips and preferences into my personal Spark KV space.
     4. Trigger success callback.
 
 ### 4. Update App Routing
+
 - Ensure `App.tsx` handles the transition from `customerRegister` to `onboarding` correctly via `setUser`.
 
 ## Disaster Prevention (CRITICAL)

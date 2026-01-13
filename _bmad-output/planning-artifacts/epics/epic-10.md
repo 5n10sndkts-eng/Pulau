@@ -16,17 +16,18 @@ So that I can complete my booking securely.
 **And** the checkout Edge Function processes my cart data
 **And** session validation occurs via Supabase Auth
 **And** I see a 4-step progress indicator at top:
-  - Step 1: Review (active)
-  - Step 2: Traveler Details
-  - Step 3: Payment
-  - Step 4: Confirmation
-**And** progress bar fills as I advance through steps
-**And** step labels show: completed (checkmark), current (filled circle), upcoming (empty circle)
-**And** I can tap completed steps to go back
-**And** I cannot skip ahead to future steps
-**And** checkout state persists to session (survives page refresh)
-**And** inventory validation runs against real-time availability
-**And** checkout session expires after 30 minutes of inactivity
+
+- Step 1: Review (active)
+- Step 2: Traveler Details
+- Step 3: Payment
+- Step 4: Confirmation
+  **And** progress bar fills as I advance through steps
+  **And** step labels show: completed (checkmark), current (filled circle), upcoming (empty circle)
+  **And** I can tap completed steps to go back
+  **And** I cannot skip ahead to future steps
+  **And** checkout state persists to session (survives page refresh)
+  **And** inventory validation runs against real-time availability
+  **And** checkout session expires after 30 minutes of inactivity
 
 ### Story 10.2: Build Step 1 - Trip Review Screen
 
@@ -39,17 +40,18 @@ So that I can confirm my selections.
 **Given** I am on checkout Step 1 (Review)
 **When** the screen loads
 **Then** I see all trip items displayed:
-  - Experience image thumbnail
-  - Experience title
-  - Scheduled date and time (or "Unscheduled")
-  - Guest count with edit button
-  - Item price (price × guests)
-**And** price summary at bottom: Subtotal, Service Fee (10%), Total
-**And** "Edit Trip" link returns to trip builder
-**And** "Continue" button advances to Step 2
-**When** I tap edit on guest count
-**Then** inline stepper allows adjustment
-**And** prices update immediately
+
+- Experience image thumbnail
+- Experience title
+- Scheduled date and time (or "Unscheduled")
+- Guest count with edit button
+- Item price (price × guests)
+  **And** price summary at bottom: Subtotal, Service Fee (10%), Total
+  **And** "Edit Trip" link returns to trip builder
+  **And** "Continue" button advances to Step 2
+  **When** I tap edit on guest count
+  **Then** inline stepper allows adjustment
+  **And** prices update immediately
 
 ### Story 10.3: Build Step 2 - Traveler Details Form
 
@@ -62,17 +64,18 @@ So that operators can reach me.
 **Given** I am on checkout Step 2 (Traveler Details)
 **When** the screen loads
 **Then** form displays fields (pre-filled if logged in):
-  - Primary Contact: First Name*, Last Name*, Email*, Phone*
-  - Trip Lead: Same as contact (checkbox), or separate fields
-  - Special Requests: textarea (optional)
-**And** fields marked with * are required
-**And** form uses React Hook Form with Zod validation schema
-**When** I submit with missing required fields
-**Then** validation errors display inline below each field
-**And** error border (red) highlights invalid fields
-**When** all required fields are valid
-**Then** "Continue to Payment" button enables
-**And** form data persists to checkout session state
+
+- Primary Contact: First Name*, Last Name*, Email*, Phone*
+- Trip Lead: Same as contact (checkbox), or separate fields
+- Special Requests: textarea (optional)
+  **And** fields marked with \* are required
+  **And** form uses React Hook Form with Zod validation schema
+  **When** I submit with missing required fields
+  **Then** validation errors display inline below each field
+  **And** error border (red) highlights invalid fields
+  **When** all required fields are valid
+  **Then** "Continue to Payment" button enables
+  **And** form data persists to checkout session state
 
 ### Story 10.4: Build Step 3 - Payment Screen
 
@@ -87,18 +90,19 @@ So that I can complete my purchase.
 **Then** I see order summary: item count, total price
 **And** saved payment methods display (if any from user profile)
 **And** "Add New Card" option with fields:
-  - Card Number (with card brand icon detection)
-  - Expiry Date (MM/YY)
-  - CVV
-  - Cardholder Name
-**And** alternative payment buttons: PayPal, Apple Pay (if available), Google Pay (if available)
-**And** "Save this card for future bookings" checkbox
-**When** I select a saved card
-**Then** CVV re-entry is required for security
-**When** I enter card details
-**Then** card number formats automatically (#### #### #### ####)
-**And** card brand icon appears (Visa/Mastercard/Amex)
-**And** validation runs on blur and submit
+
+- Card Number (with card brand icon detection)
+- Expiry Date (MM/YY)
+- CVV
+- Cardholder Name
+  **And** alternative payment buttons: PayPal, Apple Pay (if available), Google Pay (if available)
+  **And** "Save this card for future bookings" checkbox
+  **When** I select a saved card
+  **Then** CVV re-entry is required for security
+  **When** I enter card details
+  **Then** card number formats automatically (#### #### #### ####)
+  **And** card brand icon appears (Visa/Mastercard/Amex)
+  **And** validation runs on blur and submit
 
 ### Story 10.5: Implement Payment Processing
 
@@ -114,15 +118,16 @@ So that my booking is confirmed.
 **And** all form inputs are disabled during processing
 **And** payment token is generated via payment gateway (Stripe/PayPal)
 **And** booking record created in bookings table:
-  - id, user_id, trip_id, status: 'pending', total_amount, payment_token, created_at
-**When** payment succeeds
-**Then** booking status updates to 'confirmed'
-**And** booking_reference generated (format: PL-XXXXXX)
-**And** user advances to Step 4 (Confirmation)
-**When** payment fails
-**Then** error message displays: "Payment failed: [reason]"
-**And** "Try Again" button allows retry
-**And** booking status remains 'pending' or 'failed'
+
+- id, user_id, trip_id, status: 'pending', total_amount, payment_token, created_at
+  **When** payment succeeds
+  **Then** booking status updates to 'confirmed'
+  **And** booking_reference generated (format: PL-XXXXXX)
+  **And** user advances to Step 4 (Confirmation)
+  **When** payment fails
+  **Then** error message displays: "Payment failed: [reason]"
+  **And** "Try Again" button allows retry
+  **And** booking status remains 'pending' or 'failed'
 
 ### Story 10.6: Build Step 4 - Confirmation Screen
 
@@ -136,15 +141,16 @@ So that I know my reservation is secured.
 **When** the screen loads
 **Then** success animation plays: confetti burst (500ms) with green checkmark
 **And** confirmation displays:
-  - "Booking Confirmed!" heading
-  - Booking reference: PL-XXXXXX (tappable to copy)
-  - "Confirmation sent to [email]" message
-  - Trip summary: dates, item count, total paid
-**And** action buttons:
-  - "View My Trips" (primary) - navigates to booking history
-  - "Back to Home" (secondary)
-**And** confirmation email is triggered (queued for sending)
-**And** trip status updates from 'planning' to 'booked'
+
+- "Booking Confirmed!" heading
+- Booking reference: PL-XXXXXX (tappable to copy)
+- "Confirmation sent to [email]" message
+- Trip summary: dates, item count, total paid
+  **And** action buttons:
+- "View My Trips" (primary) - navigates to booking history
+- "Back to Home" (secondary)
+  **And** confirmation email is triggered (queued for sending)
+  **And** trip status updates from 'planning' to 'booked'
 
 ### Story 10.7: Implement Form Validation with Zod
 
@@ -157,17 +163,18 @@ So that user input is validated reliably.
 **Given** checkout forms use React Hook Form
 **When** Zod schemas are defined
 **Then** travelerDetailsSchema validates:
-  - firstName: string, min 1, max 50
-  - lastName: string, min 1, max 50
-  - email: valid email format
-  - phone: valid phone format (international)
-**And** paymentSchema validates:
-  - cardNumber: 13-19 digits (Luhn algorithm)
-  - expiryDate: MM/YY format, not expired
-  - cvv: 3-4 digits
-  - cardholderName: string, min 2
-**And** validation errors display user-friendly messages
-**And** form submission is blocked until valid
+
+- firstName: string, min 1, max 50
+- lastName: string, min 1, max 50
+- email: valid email format
+- phone: valid phone format (international)
+  **And** paymentSchema validates:
+- cardNumber: 13-19 digits (Luhn algorithm)
+- expiryDate: MM/YY format, not expired
+- cvv: 3-4 digits
+- cardholderName: string, min 2
+  **And** validation errors display user-friendly messages
+  **And** form submission is blocked until valid
 
 ### Story 10.8: Session Persistence for Incomplete Bookings
 

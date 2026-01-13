@@ -15,16 +15,17 @@ So that I can resolve customer issues efficiently.
 **Then** the system creates the audit_logs table if not exists (id, table_name, record_id, action, old_values, new_values, user_id, timestamp)
 **And** the refund search interface displays with filters (booking ID, customer email, date range, refund status)
 **And** I can search by:
-  - Booking ID (exact match)
-  - Traveler email (partial match)
-  - Vendor name (partial match)
-  - Date range
-  - Booking status
-**And** search results show booking details, payment amount, refund eligibility
-**And** I can click a booking to view full details
-**And** search supports pagination for large result sets
-**And** all admin actions are logged to audit_logs table
-**And** appropriate RLS policies restrict audit log access to admin users
+
+- Booking ID (exact match)
+- Traveler email (partial match)
+- Vendor name (partial match)
+- Date range
+- Booking status
+  **And** search results show booking details, payment amount, refund eligibility
+  **And** I can click a booking to view full details
+  **And** search supports pagination for large result sets
+  **And** all admin actions are logged to audit_logs table
+  **And** appropriate RLS policies restrict audit log access to admin users
 
 ---
 
@@ -39,14 +40,15 @@ So that I can resolve customer issues efficiently.
 **Given** I am viewing a booking detail
 **When** I click "Process Refund"
 **Then** I can choose:
-  - Full refund (100% of payment)
-  - Partial refund (custom amount up to total)
-**And** I must enter a refund reason
-**And** I see the calculated amounts:
-  - Amount to refund traveler
-  - Amount deducted from vendor (if applicable)
-  - Platform fee handling
-**And** I must confirm before processing
+
+- Full refund (100% of payment)
+- Partial refund (custom amount up to total)
+  **And** I must enter a refund reason
+  **And** I see the calculated amounts:
+- Amount to refund traveler
+- Amount deducted from vendor (if applicable)
+- Platform fee handling
+  **And** I must confirm before processing
 
 ---
 
@@ -61,14 +63,15 @@ So that refunds are processed securely via Stripe.
 **Given** an admin initiates a refund
 **When** the `process-refund` Edge Function is called
 **Then** it:
-  - Validates admin has refund permissions
-  - Validates refund amount doesn't exceed original payment
-  - Creates Stripe refund via API
-  - Updates payment record with refund_amount and refund_reason
-  - Updates booking status to "refunded" or "partially_refunded"
-  - Creates audit log entry with all details
-**And** uses idempotency key to prevent duplicate refunds
-**And** handles Stripe errors gracefully
+
+- Validates admin has refund permissions
+- Validates refund amount doesn't exceed original payment
+- Creates Stripe refund via API
+- Updates payment record with refund_amount and refund_reason
+- Updates booking status to "refunded" or "partially_refunded"
+- Creates audit log entry with all details
+  **And** uses idempotency key to prevent duplicate refunds
+  **And** handles Stripe errors gracefully
 
 ---
 
@@ -83,13 +86,14 @@ So that I can understand exactly what happened for dispute resolution.
 **Given** I am viewing a booking detail
 **When** I click "View Audit Log"
 **Then** I see a chronological list of all events:
-  - Event type (created, payment_received, confirmed, checked_in, refunded, etc.)
-  - Timestamp
-  - Actor (user, vendor, admin, system)
-  - Metadata (amounts, reasons, etc.)
-**And** events are displayed newest-first by default
-**And** I can filter by event type
-**And** Stripe event IDs are shown for payment events
+
+- Event type (created, payment_received, confirmed, checked_in, refunded, etc.)
+- Timestamp
+- Actor (user, vendor, admin, system)
+- Metadata (amounts, reasons, etc.)
+  **And** events are displayed newest-first by default
+  **And** I can filter by event type
+  **And** Stripe event IDs are shown for payment events
 
 ---
 
@@ -104,12 +108,13 @@ So that audit log operations are centralized.
 **Given** the auditService module exists
 **When** used throughout the application
 **Then** it provides functions for:
-  - `createAuditEntry(eventType, entityType, entityId, actorId, metadata)` - Log event
-  - `getAuditLog(entityType, entityId)` - Retrieve log for entity
-  - `getAuditLogByDateRange(startDate, endDate)` - Time-based query
-**And** entries are insert-only (no updates or deletes)
-**And** TypeScript types for event types are exhaustive
-**And** sensitive data is redacted from metadata
+
+- `createAuditEntry(eventType, entityType, entityId, actorId, metadata)` - Log event
+- `getAuditLog(entityType, entityId)` - Retrieve log for entity
+- `getAuditLogByDateRange(startDate, endDate)` - Time-based query
+  **And** entries are insert-only (no updates or deletes)
+  **And** TypeScript types for event types are exhaustive
+  **And** sensitive data is redacted from metadata
 
 ---
 
@@ -141,11 +146,12 @@ So that vendor payment onboarding state can be tracked.
 **Given** the `vendors` table exists in the database
 **When** the migration is applied
 **Then** the following columns are added:
-  - `stripe_account_id` (TEXT, nullable)
-  - `stripe_onboarding_complete` (BOOLEAN, default false)
-  - `instant_book_enabled` (BOOLEAN, default false)
-  - `last_activity_at` (TIMESTAMPTZ, nullable)
-**And** existing vendor records are not affected (nullable columns)
+
+- `stripe_account_id` (TEXT, nullable)
+- `stripe_onboarding_complete` (BOOLEAN, default false)
+- `instant_book_enabled` (BOOLEAN, default false)
+- `last_activity_at` (TIMESTAMPTZ, nullable)
+  **And** existing vendor records are not affected (nullable columns)
 
 ---
 
@@ -160,14 +166,14 @@ So that data access is properly controlled at the database level.
 **Given** the experience_slots, payments, and audit_logs tables exist
 **When** RLS is enabled and policies are applied
 **Then** for `experience_slots`:
-  - All users can SELECT (public read)
-  - Only vendors who own the experience can INSERT/UPDATE/DELETE
-**And** for `payments`:
-  - Users can SELECT payments for their own bookings
-  - Vendors can SELECT payments received for their experiences
-  - No direct INSERT/UPDATE/DELETE (service role only)
-**And** for `audit_logs`:
-  - INSERT allowed for authenticated users
-  - No SELECT access via RLS (service role only for admin queries)
-  - No UPDATE or DELETE allowed
 
+- All users can SELECT (public read)
+- Only vendors who own the experience can INSERT/UPDATE/DELETE
+  **And** for `payments`:
+- Users can SELECT payments for their own bookings
+- Vendors can SELECT payments received for their experiences
+- No direct INSERT/UPDATE/DELETE (service role only)
+  **And** for `audit_logs`:
+- INSERT allowed for authenticated users
+- No SELECT access via RLS (service role only for admin queries)
+- No UPDATE or DELETE allowed

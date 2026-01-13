@@ -17,34 +17,34 @@ So that we have reliable, scalable transactional email delivery.
 1. **Given** I need to send transactional emails
    **When** setting up Resend
    **Then** it requires:
-     - Resend account created
-     - Domain verified (pulau.app)
-     - API key generated and stored securely
-     - DNS records configured (SPF, DKIM, DMARC)
+   - Resend account created
+   - Domain verified (pulau.app)
+   - API key generated and stored securely
+   - DNS records configured (SPF, DKIM, DMARC)
 
 2. **Given** domain is verified
    **When** sending emails via Resend
    **Then** they:
-     - Send from verified domain (bookings@pulau.app)
-     - Pass SPF and DKIM checks
-     - Have proper sender reputation
-     - Support reply-to functionality
+   - Send from verified domain (bookings@pulau.app)
+   - Pass SPF and DKIM checks
+   - Have proper sender reputation
+   - Support reply-to functionality
 
 3. **Given** emails are sent successfully
    **When** monitoring delivery
    **Then** we can:
-     - Track delivery status via webhooks
-     - View delivery analytics in Resend dashboard
-     - Debug bounces and failures
-     - Monitor sender reputation
+   - Track delivery status via webhooks
+   - View delivery analytics in Resend dashboard
+   - Debug bounces and failures
+   - Monitor sender reputation
 
 4. **Given** Resend API is integrated
    **When** errors occur
    **Then** the system:
-     - Handles rate limits gracefully
-     - Retries transient failures
-     - Logs all API interactions
-     - Alerts on sustained failures
+   - Handles rate limits gracefully
+   - Retries transient failures
+   - Logs all API interactions
+   - Alerts on sustained failures
 
 ## Tasks / Subtasks
 
@@ -92,11 +92,13 @@ So that we have reliable, scalable transactional email delivery.
 ### Architecture Patterns & Constraints
 
 **Resend Pricing:**
+
 - Free: 100 emails/day, 1 domain
 - Pro: $20/month - 50,000 emails/month
 - Scale: Custom pricing
 
 **DNS Records (Example):**
+
 ```
 # SPF Record
 pulau.app TXT "v=spf1 include:_spf.resend.com ~all"
@@ -109,6 +111,7 @@ _dmarc.pulau.app TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@pulau.app"
 ```
 
 **Environment Variables:**
+
 ```bash
 # Production
 RESEND_API_KEY=re_123456789
@@ -120,10 +123,11 @@ RESEND_FROM_EMAIL=dev@pulau.app
 ```
 
 **Resend SDK Usage:**
-```typescript
-import { Resend } from 'https://esm.sh/resend@2?target=deno'
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY')!)
+```typescript
+import { Resend } from 'https://esm.sh/resend@2?target=deno';
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY')!);
 
 // Send email
 const { data, error } = await resend.emails.send({
@@ -137,63 +141,67 @@ const { data, error } = await resend.emails.send({
       content: pdfBuffer,
     },
   ],
-})
+});
 
 if (error) {
-  throw new Error(`Resend error: ${error.message}`)
+  throw new Error(`Resend error: ${error.message}`);
 }
 
-return data // { id: 'resend_message_id' }
+return data; // { id: 'resend_message_id' }
 ```
 
 **Error Handling:**
+
 ```typescript
 const sendWithRetry = async (emailData: any, maxRetries = 3) => {
   for (let i = 0; i < maxRetries; i++) {
     try {
-      const { data, error } = await resend.emails.send(emailData)
+      const { data, error } = await resend.emails.send(emailData);
       if (error) {
         // Check if error is retryable
-        if (error.statusCode === 429) { // Rate limit
-          await sleep(Math.pow(2, i) * 1000) // Exponential backoff
-          continue
+        if (error.statusCode === 429) {
+          // Rate limit
+          await sleep(Math.pow(2, i) * 1000); // Exponential backoff
+          continue;
         }
-        throw error
+        throw error;
       }
-      return data
+      return data;
     } catch (err) {
-      if (i === maxRetries - 1) throw err
-      await sleep(Math.pow(2, i) * 1000)
+      if (i === maxRetries - 1) throw err;
+      await sleep(Math.pow(2, i) * 1000);
     }
   }
-}
+};
 ```
 
 **Webhook Handler:**
+
 ```typescript
 // Create supabase/functions/resend-webhook/index.ts
 serve(async (req) => {
-  const event = await req.json()
-  
+  const event = await req.json();
+
   switch (event.type) {
     case 'email.delivered':
-      await updateEmailLog(event.data.email_id, 'delivered')
-      break
+      await updateEmailLog(event.data.email_id, 'delivered');
+      break;
     case 'email.bounced':
-      await updateEmailLog(event.data.email_id, 'bounced')
-      await alertOnBounce(event.data)
-      break
+      await updateEmailLog(event.data.email_id, 'bounced');
+      await alertOnBounce(event.data);
+      break;
     case 'email.complained':
-      await updateEmailLog(event.data.email_id, 'complained')
-      await handleComplaint(event.data)
-      break
+      await updateEmailLog(event.data.email_id, 'complained');
+      await handleComplaint(event.data);
+      break;
   }
-  
-  return new Response('ok', { status: 200 })
-})
+
+  return new Response('ok', { status: 200 });
+});
 ```
 
 **Update email_logs Schema:**
+
 ```sql
 ALTER TABLE email_logs ADD COLUMN delivered_at TIMESTAMPTZ;
 ALTER TABLE email_logs ADD COLUMN bounced_at TIMESTAMPTZ;
@@ -202,12 +210,14 @@ ALTER TABLE email_logs ADD COLUMN complained_at TIMESTAMPTZ;
 ```
 
 **Monitoring Metrics:**
+
 - Delivery rate (target: > 98%)
 - Bounce rate (target: < 2%)
 - Complaint rate (target: < 0.1%)
 - Average send time (target: < 2s)
 
 **Rate Limits:**
+
 - Resend Free: 100/day
 - Resend Pro: Burst of 10/second
 - Implement client-side queueing if needed
@@ -215,22 +225,26 @@ ALTER TABLE email_logs ADD COLUMN complained_at TIMESTAMPTZ;
 ## Testing Strategy
 
 ### Unit Tests
+
 - Test API key validation
 - Test retry logic
 - Test webhook event handling
 
 ### Integration Tests
+
 - Send test email to real inbox
 - Verify SPF/DKIM pass
 - Test bounce handling
 - Test webhook delivery
 
 ### Load Testing
+
 - Simulate 1000 concurrent sends
 - Verify rate limit handling
 - Test queue behavior
 
 ### Manual QA
+
 - Send to Gmail and verify headers
 - Check mail-tester.com score (target: 10/10)
 - Verify Resend dashboard shows delivery
@@ -268,6 +282,7 @@ ALTER TABLE email_logs ADD COLUMN complained_at TIMESTAMPTZ;
 ## 📋 MANUAL SETUP CHECKLIST
 
 ### Step 1: Create Resend Account (15 minutes)
+
 ```bash
 1. Go to: https://resend.com
 2. Sign up with: moe@pulau.app (or company email)
@@ -278,6 +293,7 @@ ALTER TABLE email_logs ADD COLUMN complained_at TIMESTAMPTZ;
 ```
 
 ### Step 2: Add Domain (5 minutes)
+
 ```bash
 1. In Resend dashboard → Domains → Add Domain
 2. Enter: pulau.app
@@ -285,6 +301,7 @@ ALTER TABLE email_logs ADD COLUMN complained_at TIMESTAMPTZ;
 ```
 
 ### Step 3: Configure DNS Records (10 minutes + 24-48h wait)
+
 ```bash
 # Log into DNS provider (Cloudflare, Route53, etc.)
 # Add these TXT records:
@@ -299,13 +316,14 @@ Name: resend._domainkey.pulau.app
 Value: [COPY FROM RESEND DASHBOARD]
 TTL: 3600
 
-Type: TXT  
+Type: TXT
 Name: _dmarc.pulau.app
 Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@pulau.app
 TTL: 3600
 ```
 
 ### Step 4: Generate API Keys (2 minutes)
+
 ```bash
 1. Resend dashboard → API Keys → Create API Key
 2. Name: "Pulau Production"
@@ -314,6 +332,7 @@ TTL: 3600
 ```
 
 ### Step 5: Configure Supabase (5 minutes)
+
 ```bash
 # Add to Supabase Edge Function secrets:
 supabase secrets set RESEND_API_KEY=re_your_production_key
@@ -324,6 +343,7 @@ RESEND_FROM_EMAIL=bookings@pulau.app
 ```
 
 ### Step 6: Verify Setup (5 minutes)
+
 ```bash
 1. Wait 24-48 hours for DNS propagation
 2. Check Resend dashboard - domain should show green checkmark
@@ -337,6 +357,7 @@ RESEND_FROM_EMAIL=bookings@pulau.app
 ```
 
 ### Step 7: Monitor First Week
+
 ```bash
 1. Resend dashboard → Analytics
 2. Check delivery rate (target: > 98%)
@@ -362,6 +383,7 @@ RESEND_FROM_EMAIL=bookings@pulau.app
 - **Postmark**: Good alternative, slightly more expensive
 
 **Why Resend:**
+
 - Modern developer experience
 - Simple pricing
 - Excellent deliverability

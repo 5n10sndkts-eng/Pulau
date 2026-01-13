@@ -1,48 +1,52 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { useTrip } from "@/contexts/TripContext"
-import { useAuth } from "@/contexts/AuthContext"
-import { Button } from "@/components/ui/button"
-import { ChevronUp, ShoppingBag, Wallet } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
-import { TripCanvas } from "./TripCanvas"
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTrip } from '@/contexts/TripContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { ChevronUp, ShoppingBag, Wallet } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import { TripCanvas } from './TripCanvas';
 import {
   getRemainingBudget,
   getBudgetStatus,
   getBudgetStatusColor,
   formatBudgetMessage,
-} from "@/lib/budgetHelpers"
+} from '@/lib/budgetHelpers';
 
 export function StickyTripBar() {
-  const { trip, itemCount, removeFromTrip } = useTrip()
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const [isHighlighted, setIsHighlighted] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const { trip, itemCount, removeFromTrip } = useTrip();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Get user's budget preference
-  const budgetPref = user?.preferences?.budget
-  const remaining = budgetPref ? getRemainingBudget(budgetPref, trip.total) : null
-  const budgetStatus = budgetPref ? getBudgetStatus(budgetPref, trip.total) : null
-  const budgetColor = budgetStatus ? getBudgetStatusColor(budgetStatus) : ''
+  const budgetPref = user?.preferences?.budget;
+  const remaining = budgetPref
+    ? getRemainingBudget(budgetPref, trip.total)
+    : null;
+  const budgetStatus = budgetPref
+    ? getBudgetStatus(budgetPref, trip.total)
+    : null;
+  const budgetColor = budgetStatus ? getBudgetStatusColor(budgetStatus) : '';
 
   // Pulse effect on update
   useEffect(() => {
     if (itemCount > 0) {
-      setIsHighlighted(true)
-      const timer = setTimeout(() => setIsHighlighted(false), 300)
-      return () => clearTimeout(timer)
+      setIsHighlighted(true);
+      const timer = setTimeout(() => setIsHighlighted(false), 300);
+      return () => clearTimeout(timer);
     }
-  }, [trip.total, itemCount])
+  }, [trip.total, itemCount]);
 
-  if (itemCount === 0) return null
+  if (itemCount === 0) return null;
 
   const handleCheckout = (e?: React.MouseEvent) => {
-    e?.stopPropagation()
-    setIsOpen(false)
-    navigate('/checkout')
-  }
+    e?.stopPropagation();
+    setIsOpen(false);
+    navigate('/checkout');
+  };
 
   return (
     <AnimatePresence>
@@ -52,12 +56,12 @@ export function StickyTripBar() {
           animate={{
             y: 0,
             opacity: 1,
-            scale: isHighlighted ? [1, 1.05, 1] : 1
+            scale: isHighlighted ? [1, 1.05, 1] : 1,
           }}
           exit={{ y: 100, opacity: 0 }}
           transition={{
-            y: { type: "spring", stiffness: 300, damping: 30 },
-            scale: { duration: 0.3 }
+            y: { type: 'spring', stiffness: 300, damping: 30 },
+            scale: { duration: 0.3 },
           }}
           className="fixed bottom-0 left-0 right-0 z-[100] pb-safe pointer-events-none"
         >
@@ -91,14 +95,23 @@ export function StickyTripBar() {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                      Total <ChevronUp size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                      Total{' '}
+                      <ChevronUp
+                        size={12}
+                        className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                      />
                     </span>
                     <span className="font-bold font-mono">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(trip.total)}
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      }).format(trip.total)}
                     </span>
                     {/* Budget Remaining (AC #1) */}
                     {budgetPref && remaining !== null && (
-                      <span className={`text-[10px] font-medium flex items-center gap-1 ${budgetColor}`}>
+                      <span
+                        className={`text-[10px] font-medium flex items-center gap-1 ${budgetColor}`}
+                      >
                         <Wallet size={10} />
                         {formatBudgetMessage(budgetPref, trip.total)}
                       </span>
@@ -128,6 +141,5 @@ export function StickyTripBar() {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }
-

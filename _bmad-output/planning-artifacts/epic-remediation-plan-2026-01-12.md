@@ -3,13 +3,14 @@
 **Generated**: January 12, 2026  
 **Project**: Pulau Epic Quality Remediation  
 **Scope**: Eliminate Epic 20 & 21 Structural Violations  
-**Timeline**: 1-2 days planning effort  
+**Timeline**: 1-2 days planning effort
 
 ## 🎯 REMEDIATION OVERVIEW
 
 **Objective**: Transform 4 technical infrastructure epics into user-value-delivering feature integration
 
 **Critical Violations to Fix**:
+
 - 🔴 Epic 21: Database Schema Extensions (F - Critical)
 - 🔴 Epic 20: Backend Integration - Supabase (F - Critical)
 - 🟠 Epic 1: Foundation & Technical Infrastructure (C - Fair)
@@ -24,8 +25,9 @@
 ### Current Epic 21: Database Schema Extensions for Phase 2
 
 **Problematic Stories**:
+
 - 21.1: Create Experience Slots Table
-- 21.2: Create Payments Table  
+- 21.2: Create Payments Table
 - 21.3: Create Audit Logs Table
 - 21.4: Add Stripe Columns to Vendors Table
 - 21.5: Implement RLS Policies for New Tables
@@ -33,6 +35,7 @@
 ### ✅ **REMEDIATION: Distribute Database Setup**
 
 #### 21.1 → Epic 22.1 (Enhanced)
+
 **New Epic 22.1**: Vendor Stripe Onboarding with Database Setup
 
 ```markdown
@@ -56,6 +59,7 @@ So that I can receive payments for my experiences.
 ```
 
 #### 21.2 → Epic 24.1 (Enhanced)
+
 **New Epic 24.1**: Checkout with Payment Table Setup
 
 ```markdown
@@ -77,7 +81,8 @@ So that I can confirm my bookings with payment.
 **And** appropriate RLS policies are applied to payments table
 ```
 
-#### 21.3 → Epic 28.1 (Enhanced) 
+#### 21.3 → Epic 28.1 (Enhanced)
+
 **New Epic 28.1**: Admin Refund Interface with Audit Infrastructure
 
 ```markdown
@@ -99,6 +104,7 @@ So that I can resolve customer issues efficiently.
 ```
 
 #### 21.4 & 21.5 → Distributed Across Multiple Epics
+
 **Integration Strategy**: Each epic's first story includes necessary database setup
 
 ---
@@ -112,6 +118,7 @@ So that I can resolve customer issues efficiently.
 ### ✅ **REMEDIATION: Feature-Driven Integration**
 
 #### 20.1 → Epic 2.1 (Enhanced)
+
 **New Epic 2.1**: User Registration with Supabase Auth
 
 ```markdown
@@ -135,6 +142,7 @@ So that I can save my trips and preferences securely.
 ```
 
 #### 20.2 → Epic 5.1 (Enhanced)
+
 **New Epic 5.1**: Experience Creation with Database Integration
 
 ```markdown
@@ -158,6 +166,7 @@ So that travelers can discover and book my offerings.
 ```
 
 #### 20.3 → Epic 10.1 (Enhanced)
+
 **New Epic 10.1**: Checkout with Edge Function Infrastructure
 
 ```markdown
@@ -214,7 +223,7 @@ So that I can immediately begin discovering experiences.
 
 ---
 
-## 🧭 EPIC 18: NAVIGATION ARCHITECTURE INTEGRATION  
+## 🧭 EPIC 18: NAVIGATION ARCHITECTURE INTEGRATION
 
 ### Current Epic 18: Bottom Navigation & Screen Architecture
 
@@ -223,6 +232,7 @@ So that I can immediately begin discovering experiences.
 ### ✅ **REMEDIATION: Integrate into User Journey Epics**
 
 #### 18.1 → Epic 4.4 (Enhanced)
+
 **New Epic 4.4**: Complete Onboarding with App Navigation
 
 ```markdown
@@ -245,8 +255,9 @@ So that I can immediately start discovering experiences.
 ```
 
 #### Distribute Remaining Navigation Stories
+
 - 18.2 → Epic 6: Experience Discovery (tab integration)
-- 18.3 → Epic 8: Trip Canvas (trip tab integration)  
+- 18.3 → Epic 8: Trip Canvas (trip tab integration)
 - 18.4 → Epic 7: Wishlist (wishlist tab integration)
 
 ---
@@ -254,6 +265,7 @@ So that I can immediately start discovering experiences.
 ## 📋 IMPLEMENTATION EXECUTION PLAN
 
 ### Phase 1: Epic Elimination (Day 1, Morning)
+
 **Duration**: 4 hours
 
 1. **Delete Epic 21 Completely**
@@ -261,7 +273,7 @@ So that I can immediately start discovering experiences.
    - Remove from PRD epic references
    - Update epic numbering if needed
 
-2. **Delete Epic 20 Completely**  
+2. **Delete Epic 20 Completely**
    - Archive epic-20.md file
    - Remove backend integration references
 
@@ -270,16 +282,18 @@ So that I can immediately start discovering experiences.
    - Document redistribution plan
 
 ### Phase 2: Story Enhancement (Day 1, Afternoon)
+
 **Duration**: 4 hours
 
 1. **Enhance Epic 22.1** - Add vendor database setup
-2. **Enhance Epic 24.1** - Add payment table creation  
+2. **Enhance Epic 24.1** - Add payment table creation
 3. **Enhance Epic 28.1** - Add audit infrastructure
 4. **Enhance Epic 2.1** - Add Supabase Auth integration
 5. **Enhance Epic 5.1** - Add database operations
 6. **Enhance Epic 10.1** - Add Edge Functions setup
 
-### Phase 3: Navigation Integration (Day 2, Morning)  
+### Phase 3: Navigation Integration (Day 2, Morning)
+
 **Duration**: 3 hours
 
 1. **Enhance Epic 4.4** - Add navigation foundation
@@ -287,10 +301,11 @@ So that I can immediately start discovering experiences.
 3. **Update cross-references** between epics
 
 ### Phase 4: Validation & Documentation (Day 2, Afternoon)
+
 **Duration**: 2 hours
 
 1. **Validate enhanced stories** follow Given/When/Then format
-2. **Ensure user value clarity** in each enhanced story  
+2. **Ensure user value clarity** in each enhanced story
 3. **Update epic dependency mapping**
 4. **Create implementation sequence plan**
 
@@ -301,6 +316,7 @@ So that I can immediately start discovering experiences.
 ### Pre-Implementation Checklist
 
 **For Each Enhanced Story**:
+
 - [ ] Maintains clear user value proposition
 - [ ] Includes necessary technical setup within user context
 - [ ] Follows Given/When/Then acceptance criteria format
@@ -309,6 +325,7 @@ So that I can immediately start discovering experiences.
 - [ ] Includes security/compliance considerations
 
 **Epic-Level Validation**:
+
 - [ ] Each epic delivers standalone user value
 - [ ] No technical milestones disguised as epics
 - [ ] Dependencies flow logically (no circular references)
@@ -318,8 +335,9 @@ So that I can immediately start discovering experiences.
 ### Post-Remediation Metrics
 
 **Target Outcomes**:
+
 - Epic count: 21 → 17 epics (-4 eliminated)
-- User value delivery: 85% → 100% of epics  
+- User value delivery: 85% → 100% of epics
 - Quality grade: B+ → A- (95%+ excellence)
 - Implementation blockers: 4 critical → 0 blockers
 
@@ -330,14 +348,14 @@ So that I can immediately start discovering experiences.
 ### Immediate Success Indicators
 
 1. **Zero Infrastructure-Only Epics** - All epics deliver user value
-2. **Distributed Database Setup** - No waterfall dependencies  
+2. **Distributed Database Setup** - No waterfall dependencies
 3. **Feature-Driven Integration** - Backend setup embedded in user stories
 4. **Maintained Story Quality** - Enhanced stories keep A-grade acceptance criteria
 
 ### Long-Term Implementation Benefits
 
 1. **Parallel Development Ready** - Teams can work on multiple epics simultaneously
-2. **User Value Per Sprint** - Every sprint delivers customer-facing functionality  
+2. **User Value Per Sprint** - Every sprint delivers customer-facing functionality
 3. **Reduced Technical Debt** - Infrastructure setup tied to feature delivery
 4. **Clear Success Metrics** - User outcomes measurable per epic
 
@@ -346,20 +364,22 @@ So that I can immediately start discovering experiences.
 ## 📊 BEFORE/AFTER COMPARISON
 
 ### Before Remediation
-| Metric | Value | Grade |
-|--------|-------|-------|
-| User-Value Epics | 17/21 (81%) | B+ |  
-| Technical Milestones | 4 (19%) | F |
-| Implementation Blockers | 4 Critical | ❌ |
-| Waterfall Dependencies | Yes (Epic 21) | ❌ |
 
-### After Remediation  
-| Metric | Value | Grade |
-|--------|-------|-------|
-| User-Value Epics | 17/17 (100%) | A |
-| Technical Milestones | 0 (0%) | ✅ |
-| Implementation Blockers | 0 | ✅ |
-| Waterfall Dependencies | None | ✅ |
+| Metric                  | Value         | Grade |
+| ----------------------- | ------------- | ----- |
+| User-Value Epics        | 17/21 (81%)   | B+    |
+| Technical Milestones    | 4 (19%)       | F     |
+| Implementation Blockers | 4 Critical    | ❌    |
+| Waterfall Dependencies  | Yes (Epic 21) | ❌    |
+
+### After Remediation
+
+| Metric                  | Value        | Grade |
+| ----------------------- | ------------ | ----- |
+| User-Value Epics        | 17/17 (100%) | A     |
+| Technical Milestones    | 0 (0%)       | ✅    |
+| Implementation Blockers | 0            | ✅    |
+| Waterfall Dependencies  | None         | ✅    |
 
 ---
 
@@ -367,7 +387,7 @@ So that I can immediately start discovering experiences.
 
 1. **Execute Remediation Plan** (1-2 days)
 2. **Validate Enhanced Stories** against quality gates
-3. **Update Implementation Roadmap** with new epic sequence  
+3. **Update Implementation Roadmap** with new epic sequence
 4. **Begin Implementation** with Epic 2: User Authentication
 5. **Parallel Development Planning** for Epic 4, 6, and 8
 
@@ -382,4 +402,4 @@ This plan transforms the 10% critical structural violations into 100% user-value
 **Remediation Plan Completed**: January 12, 2026  
 **Analyst**: BMad Master  
 **Implementation Timeline**: 1-2 days → Ready for Development  
-**Quality Outcome**: B+ → A- (Industry-Leading Epic Quality)**
+**Quality Outcome**: B+ → A- (Industry-Leading Epic Quality)\*\*

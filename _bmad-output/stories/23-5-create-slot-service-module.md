@@ -9,13 +9,14 @@ So that slot CRUD operations are centralized and type-safe.
 **Given** the slotService module exists
 **When** used throughout the application
 **Then** it provides functions for:
-  - `createSlot(experienceId, slotData)` - Create new slot
-  - `updateSlot(slotId, updates)` - Update slot details
-  - `blockSlot(slotId, reason?)` - Mark slot as blocked
-  - `unblockSlot(slotId)` - Remove block
-  - `getAvailableSlots(experienceId, dateRange)` - Query available slots
-  - `decrementAvailability(slotId, count)` - Atomic decrement with locking
-**And** all mutations create appropriate audit log entries
-**And** TypeScript types match the database schema
+
+- `createSlot(experienceId, slotData)` - Create new slot
+- `updateSlot(slotId, updates)` - Update slot details
+- `blockSlot(slotId, reason?)` - Mark slot as blocked
+- `unblockSlot(slotId)` - Remove block
+- `getAvailableSlots(experienceId, dateRange)` - Query available slots
+- `decrementAvailability(slotId, count)` - Atomic decrement with locking
+  **And** all mutations create appropriate audit log entries
+  **And** TypeScript types match the database schema
 
 ---

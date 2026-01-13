@@ -11,42 +11,49 @@ So that I can find interesting experiences beyond categories.
 ## Acceptance Criteria
 
 ### AC 1: Navigation Access
+
 **Given** I am using the app
 **When** I tap "Explore" in bottom navigation (Compass icon)
 **Then** the Explore screen loads
 **And** the screen is accessible from any part of the app
 
 ### AC 2: Vertically Scrolling Sections
+
 **Given** the Explore screen has loaded
 **When** I view the screen
 **Then** I see vertically scrolling sections in this order:
+
 - Search bar at top (sticky)
 - "Trending in Bali" horizontal carousel
 - "Hidden Gems" horizontal carousel
 - "Limited Availability" horizontal carousel
 - "Destination Guides" grid (2 columns)
 - "Stories from Travelers" vertical list
-**And** all sections are properly spaced and styled
+  **And** all sections are properly spaced and styled
 
 ### AC 3: Sticky Search Bar
+
 **Given** I am viewing the Explore screen
 **When** I scroll down through sections
 **Then** the search bar at top remains sticky (visible)
 **And** the search bar doesn't scroll off screen
 
 ### AC 4: See All Links
+
 **Given** each section is displayed
 **When** I view a section header
 **Then** each section has "See All" link
 **And** tapping "See All" navigates to full section view
 
 ### AC 5: Pull-to-Refresh
+
 **Given** I am on the Explore screen
 **When** I pull down from the top
 **Then** pull-to-refresh triggers content refresh
 **And** all sections reload with fresh data
 
 ### AC 6: Loading States
+
 **Given** the Explore screen is loading
 **When** data is being fetched
 **Then** skeleton loading states display while data loads
@@ -55,6 +62,7 @@ So that I can find interesting experiences beyond categories.
 ## Tasks / Subtasks
 
 ### Task 1: Create ExploreScreen Component (AC: #1, #2)
+
 - [x] Create ExploreScreen component in `src/pages/Explore.tsx`
 - [x] Set up main container with vertical scrolling (overflow-y-auto)
 - [x] Add route for `/explore` in React Router configuration
@@ -63,6 +71,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Import and configure Tailwind CSS classes for layout
 
 ### Task 2: Build Sticky Search Bar (AC: #3)
+
 - [x] Create SearchBar component in `src/components/explore/SearchBar.tsx`
 - [x] Implement sticky positioning using `className="sticky top-0 z-10"`
 - [x] Add Search icon from Lucide React
@@ -72,6 +81,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Add white/dark background with proper z-index
 
 ### Task 3: Create Section Container Components (AC: #2, #4)
+
 - [x] Create ExploreSectionContainer component in `src/components/explore/SectionContainer.tsx`
 - [x] Add section header with title (h2) and "See All" link
 - [x] Implement "See All" navigation using React Router Link
@@ -80,6 +90,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Support children prop for section content
 
 ### Task 4: Build Trending Section Layout (AC: #2)
+
 - [x] Create TrendingSection component in `src/components/explore/TrendingSection.tsx`
 - [x] Implement horizontal scrollable container using `overflow-x-auto snap-x`
 - [x] Add section header "Trending in Bali"
@@ -88,6 +99,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Add smooth scrolling with snap-to-point behavior
 
 ### Task 5: Build Hidden Gems Section Layout (AC: #2)
+
 - [x] Create HiddenGemsSection component in `src/components/explore/HiddenGemsSection.tsx`
 - [x] Implement horizontal scroll container with snap points
 - [x] Add section header "Hidden Gems"
@@ -96,6 +108,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Hide scrollbar using Tailwind `scrollbar-hide` or custom CSS
 
 ### Task 6: Build Limited Availability Section Layout (AC: #2)
+
 - [x] Create LimitedAvailabilitySection component in `src/components/explore/LimitedAvailabilitySection.tsx`
 - [x] Implement horizontal carousel with urgency indicators
 - [x] Add section header "Limited Availability"
@@ -104,6 +117,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Add countdown or "Only X left" indicators
 
 ### Task 7: Build Destination Guides Grid (AC: #2)
+
 - [x] Create DestinationGuidesSection component in `src/components/explore/DestinationGuidesSection.tsx`
 - [x] Implement 2-column grid using `grid grid-cols-2 gap-4`
 - [x] Add section header "Destination Guides"
@@ -112,6 +126,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Add proper aspect ratios for guide images
 
 ### Task 8: Build Traveler Stories List (AC: #2)
+
 - [x] Create TravelerStoriesSection component in `src/components/explore/TravelerStoriesSection.tsx`
 - [x] Implement vertical list using `space-y-4` instead of carousel
 - [x] Add section header "Stories from Travelers"
@@ -120,6 +135,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Limit initial render to 5 stories with "Load More" button
 
 ### Task 9: Implement Pull-to-Refresh (AC: #5)
+
 - [x] Create custom pull-to-refresh hook using pointer events
 - [x] Detect pull-down gesture on desktop (mouse) and mobile (touch)
 - [x] Create `refreshExploreData` function to refetch all section data
@@ -128,6 +144,7 @@ So that I can find interesting experiences beyond categories.
 - [x] Alternative: Use bobjectser's native pull-to-refresh on mobile web
 
 ### Task 10: Create Skeleton Loading States (AC: #6)
+
 - [x] Create ExploreScreenSkeleton component in `src/components/explore/ExploreScreenSkeleton.tsx`
 - [x] Build skeleton placeholders for each section using Tailwind
 - [x] Use `animate-pulse` class for shimmer effect
@@ -138,6 +155,7 @@ So that I can find interesting experiences beyond categories.
 ## Dev Notes
 
 ### Screen Structure
+
 ```typescript
 // src/pages/Explore.tsx
 import { useState } from 'react';
@@ -148,7 +166,7 @@ import { TrendingSection } from '@/components/explore/TrendingSection';
 
 export function ExplorePage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     // Refetch all section data
@@ -159,44 +177,44 @@ export function ExplorePage() {
     ]);
     setIsRefreshing(false);
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sticky search bar */}
       <SearchBar className="sticky top-0 z-10" />
-      
+
       {/* Scrollable content */}
       <div className="space-y-8 pb-8">
-        <ExploreSectionContainer 
-          title="Trending in Bali" 
+        <ExploreSectionContainer
+          title="Trending in Bali"
           onSeeAll={() => navigate('/explore/trending')}
         >
           <TrendingSection />
         </ExploreSectionContainer>
 
-        <ExploreSectionContainer 
-          title="Hidden Gems" 
+        <ExploreSectionContainer
+          title="Hidden Gems"
           onSeeAll={() => navigate('/explore/hidden-gems')}
         >
           <HiddenGemsSection />
         </ExploreSectionContainer>
 
-        <ExploreSectionContainer 
-          title="Limited Availability" 
+        <ExploreSectionContainer
+          title="Limited Availability"
           onSeeAll={() => navigate('/explore/limited')}
         >
           <LimitedAvailabilitySection />
         </ExploreSectionContainer>
 
-        <ExploreSectionContainer 
-          title="Destination Guides" 
+        <ExploreSectionContainer
+          title="Destination Guides"
           onSeeAll={() => navigate('/explore/guides')}
         >
           <DestinationGuidesSection />
         </ExploreSectionContainer>
 
-        <ExploreSectionContainer 
-          title="Stories from Travelers" 
+        <ExploreSectionContainer
+          title="Stories from Travelers"
           onSeeAll={() => navigate('/explore/stories')}
         >
           <TravelerStoriesSection />
@@ -208,6 +226,7 @@ export function ExplorePage() {
 ```
 
 ### Horizontal Carousel Pattern
+
 ```typescript
 // src/components/explore/HorizontalCarousel.tsx
 interface HorizontalCarouselProps<T> {
@@ -230,6 +249,7 @@ export function HorizontalCarousel<T>({ items, renderItem }: HorizontalCarouselP
 ```
 
 ### Sticky Search Bar
+
 ```typescript
 // src/components/explore/SearchBar.tsx
 import { Search } from 'lucide-react';
@@ -237,17 +257,17 @@ import { useNavigate } from 'react-router-dom';
 
 export function SearchBar({ className = '' }: { className?: string }) {
   const navigate = useNavigate();
-  
+
   return (
     <div className={`bg-white dark:bg-gray-800 shadow-md backdrop-blur-sm ${className}`}>
       <div className="max-w-7xl mx-auto px-4 py-3">
-        <div 
+        <div
           onClick={() => navigate('/search')}
           className="flex items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition"
         >
           <Search className="w-5 h-5 text-gray-500" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search experiences..."
             className="bg-transparent border-none outline-none flex-1 text-gray-700 dark:text-gray-200"
             readOnly
@@ -260,6 +280,7 @@ export function SearchBar({ className = '' }: { className?: string }) {
 ```
 
 ### Performance Considerations
+
 - Use React.lazy() and Suspense for code-splitting section components
 - Implement intersection observer for lazy loading sections as user scrolls
 - Cache section data using React Query or SWR to avoid unnecessary refetches
@@ -268,6 +289,7 @@ export function SearchBar({ className = '' }: { className?: string }) {
 - Consider virtual scrolling for very long lists
 
 ### Responsive Design
+
 ```typescript
 // Responsive grid example
 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -281,6 +303,7 @@ export function SearchBar({ className = '' }: { className?: string }) {
 ```
 
 ### Testing Considerations
+
 - Test sticky search bar behavior on scroll (e.g., Cypress, Playwright)
 - Verify all "See All" links navigate to correct routes
 - Test pull-to-refresh gesture detection on touch devices
@@ -319,6 +342,7 @@ GitHub Spark AI Agent
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ File paths updated (`app/(tabs)/` → `src/pages/`, `src/components/`)
 2. ✅ React Native components → React Web (ScrollView → div, FlatList → CSS)
 3. ✅ Navigation updated (tab navigation → React Router)

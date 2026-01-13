@@ -24,6 +24,7 @@ So that users are warned about overlapping activities.
 ## Tasks / Subtasks
 
 ### Task 1: Create time range calculation utilities (AC: #1)
+
 - [x] Implement parseTimeString: convert "HH:MM" to minutes since midnight
 - [x] Implement calculateEndTime: start_time + duration_hours
 - [x] Implement isOverlapping: check if two time ranges overlap
@@ -31,6 +32,7 @@ So that users are warned about overlapping activities.
 - [x] Write unit tests for time calculations
 
 ### Task 2: Build conflict detection algorithm (AC: #1, #2)
+
 - [x] Create detectConflicts function taking trip items as input
 - [x] Group items by scheduled_date
 - [x] For each day: compare all pairs of items for overlap
@@ -38,6 +40,7 @@ So that users are warned about overlapping activities.
 - [x] Return array of Conflict objects with item IDs and overlap details
 
 ### Task 3: Implement conflict data structure (AC: #2)
+
 - [x] Define Conflict interface: { item_ids, overlap_minutes, date, conflictId }
 - [x] Calculate overlap_minutes for each conflict pair
 - [x] Generate unique conflictId for each conflict
@@ -45,6 +48,7 @@ So that users are warned about overlapping activities.
 - [x] Clear stale conflicts when items are updated
 
 ### Task 4: Optimize algorithm performance (AC: #2)
+
 - [x] Benchmark algorithm with 20 items per day
 - [x] Ensure execution time is <50ms
 - [x] Use early exit strategies when no times are set
@@ -52,6 +56,7 @@ So that users are warned about overlapping activities.
 - [x] Add performance monitoring in development mode
 
 ### Task 5: Integrate algorithm into trip management hook (AC: #1, #2)
+
 - [x] Run detectConflicts whenever trip items change
 - [x] Trigger on: item add, remove, date/time update
 - [x] Store conflicts in useTripManagement state
@@ -61,6 +66,7 @@ So that users are warned about overlapping activities.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Time format: use 24-hour format "HH:MM" (e.g., "14:30")
 - Duration: stored as decimal hours (e.g., 2.5 for 2.5 hours)
 - Overlap algorithm: classic interval overlap check
@@ -68,6 +74,7 @@ So that users are warned about overlapping activities.
 - Memoization: use `useMemo` to cache conflict results
 
 ### Time Utilities
+
 ```typescript
 const parseTimeToMinutes = (time: string): number => {
   const [hours, minutes] = time.split(':').map(Number);
@@ -88,6 +95,7 @@ const calculateEndTime = (startTime: string, durationHours: number): string => {
 ```
 
 ### Conflict Detection Algorithm
+
 ```typescript
 interface Conflict {
   conflictId: string;
@@ -96,19 +104,22 @@ interface Conflict {
   date: string;
 }
 
-const detectConflicts = (items: TripItem[], experiences: Experience[]): Conflict[] => {
+const detectConflicts = (
+  items: TripItem[],
+  experiences: Experience[],
+): Conflict[] => {
   const conflicts: Conflict[] = [];
-  const itemsByDay = groupBy(items, item => item.scheduled_date);
+  const itemsByDay = groupBy(items, (item) => item.scheduled_date);
 
   Object.entries(itemsByDay).forEach(([date, dayItems]) => {
-    const itemsWithTime = dayItems.filter(item => item.scheduled_time);
+    const itemsWithTime = dayItems.filter((item) => item.scheduled_time);
 
     for (let i = 0; i < itemsWithTime.length; i++) {
       for (let j = i + 1; j < itemsWithTime.length; j++) {
         const itemA = itemsWithTime[i];
         const itemB = itemsWithTime[j];
-        const expA = experiences.find(exp => exp.id === itemA.experience_id);
-        const expB = experiences.find(exp => exp.id === itemB.experience_id);
+        const expA = experiences.find((exp) => exp.id === itemA.experience_id);
+        const expB = experiences.find((exp) => exp.id === itemB.experience_id);
 
         if (!expA || !expB) continue;
 
@@ -127,7 +138,7 @@ const detectConflicts = (items: TripItem[], experiences: Experience[]): Conflict
             conflictId: `${itemA.id}-${itemB.id}`,
             item_ids: [itemA.id, itemB.id],
             overlap_minutes: overlapMinutes,
-            date
+            date,
           });
         }
       }
@@ -139,6 +150,7 @@ const detectConflicts = (items: TripItem[], experiences: Experience[]): Conflict
 ```
 
 ### Performance Considerations
+
 - Early exit: if no items have scheduled_time, skip detection
 - Memoization: cache results based on items array reference
 - Debounce: wait 100ms after rapid changes before re-running
@@ -164,5 +176,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

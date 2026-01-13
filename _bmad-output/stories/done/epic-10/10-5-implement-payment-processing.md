@@ -19,7 +19,8 @@ So that my booking is confirmed.
 
 **AC #2: Create booking record**
 **And** booking record created in bookings KV namespace:
-  - id, user_id, trip_id, status: 'pending', total_amount, payment_token, created_at
+
+- id, user_id, trip_id, status: 'pending', total_amount, payment_token, created_at
 
 **AC #3: Handle successful payment**
 **When** payment succeeds
@@ -36,6 +37,7 @@ So that my booking is confirmed.
 ## Tasks / Subtasks
 
 ### Task 1: Integrate payment gateway SDK (AC: #1)
+
 - [x] Install Stripe SDK: `@stripe/stripe-js` and `@stripe/react-stripe-js`
 - [x] Initialize Stripe with publishable key
 - [x] Wrap payment form in Elements provider
@@ -43,6 +45,7 @@ So that my booking is confirmed.
 - [x] Set up PayPal SDK if supporting PayPal
 
 ### Task 2: Implement payment token generation (AC: #1)
+
 - [x] Create payment method using Stripe Elements
 - [x] Generate payment token from card details
 - [x] Handle tokenization errors (invalid card, etc.)
@@ -50,6 +53,7 @@ So that my booking is confirmed.
 - [x] Show loading state during token generation
 
 ### Task 3: Create booking record on payment submission (AC: #2)
+
 - [x] Create POST /api/bookings endpoint
 - [x] Generate booking record with pending status
 - [x] Store trip snapshot, traveler details, and payment token
@@ -57,6 +61,7 @@ So that my booking is confirmed.
 - [x] Handle Spark KV store errors gracefully
 
 ### Task 4: Process payment and confirm booking (AC: #3)
+
 - [x] Send payment token to backend for processing
 - [x] Charge payment via Stripe/PayPal API
 - [x] Update booking status to 'confirmed' on success
@@ -64,6 +69,7 @@ So that my booking is confirmed.
 - [x] Store payment transaction ID in Spark KV store
 
 ### Task 5: Handle payment errors and retries (AC: #4)
+
 - [x] Catch payment processing errors
 - [x] Display user-friendly error messages
 - [x] Map Stripe error codes to readable messages
@@ -73,6 +79,7 @@ So that my booking is confirmed.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use Stripe for credit card processing (PCI compliant)
 - Never store raw card details on client or server
 - Payment tokens are single-use and expire
@@ -80,6 +87,7 @@ So that my booking is confirmed.
 - Use Stripe webhooks for async payment confirmations
 
 ### Stripe Integration
+
 ```typescript
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -137,6 +145,7 @@ const PaymentForm = () => {
 ```
 
 ### Booking Reference Generation
+
 ```typescript
 const generateBookingReference = (): string => {
   const prefix = 'PL';
@@ -146,20 +155,25 @@ const generateBookingReference = (): string => {
 ```
 
 ### Error Handling
+
 ```typescript
 const mapStripeError = (errorCode: string): string => {
   const errorMap: Record<string, string> = {
-    'card_declined': 'Your card was declined. Please try another payment method.',
-    'insufficient_funds': 'Your card has insufficient funds.',
-    'expired_card': 'Your card has expired. Please use a different card.',
-    'incorrect_cvc': 'The CVV code is incorrect.',
-    'processing_error': 'An error occurred while processing your payment. Please try again.'
+    card_declined: 'Your card was declined. Please try another payment method.',
+    insufficient_funds: 'Your card has insufficient funds.',
+    expired_card: 'Your card has expired. Please use a different card.',
+    incorrect_cvc: 'The CVV code is incorrect.',
+    processing_error:
+      'An error occurred while processing your payment. Please try again.',
   };
-  return errorMap[errorCode] || 'Payment could not be processed. Please try again.';
+  return (
+    errorMap[errorCode] || 'Payment could not be processed. Please try again.'
+  );
 };
 ```
 
 ### Booking Data Structure
+
 ```typescript
 interface Booking {
   id: string;
@@ -178,6 +192,7 @@ interface Booking {
 ```
 
 ### Security Considerations
+
 - Use HTTPS for all payment requests
 - Validate payment amount on server (don't trust client)
 - Implement rate limiting on payment endpoint
@@ -205,5 +220,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

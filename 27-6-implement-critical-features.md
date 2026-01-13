@@ -3,7 +3,7 @@
 **Epic**: 27 - Vendor Check-In & Operations  
 **Priority**: P1 - Critical Missing Functionality  
 **Status**: ready-for-dev  
-**Effort**: 1.5-2 days  
+**Effort**: 1.5-2 days
 
 ## Context
 
@@ -26,6 +26,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 ## Tasks
 
 ### QR Scanner Implementation
+
 - [ ] **DEF-006**: Install QR decode library: `npm install jsqr`
 - [ ] Implement `detectQRCode()` in `src/components/vendor/QRScanner.tsx`
 - [ ] Extract booking ID from QR code data format
@@ -33,6 +34,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [ ] Test with actual QR code generated from booking confirmation
 
 ### Real Data Loading
+
 - [ ] **DEF-007**: Replace mock data in `VendorOperationsPage.tsx:29-49`
 - [ ] Create Supabase query for today's bookings filtered by vendor
 - [ ] Integrate TanStack Query for data fetching
@@ -40,6 +42,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [ ] Implement experience filter dropdown
 
 ### Ticket Validation RPC
+
 - [ ] **DEF-008**: Create `validate_booking_for_checkin` RPC function
 - [ ] Write migration in `supabase/migrations/`
 - [ ] Implement validation checks:
@@ -51,6 +54,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [ ] Regenerate types: `npm run db:types`
 
 ### Check-In Persistence
+
 - [ ] **DEF-010**: Implement `bookingService.checkInBooking(bookingId)`
 - [ ] Update booking status to 'checked-in'
 - [ ] Record check-in timestamp
@@ -59,6 +63,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [ ] Handle errors gracefully
 
 ### No-Show Persistence
+
 - [ ] **DEF-011**: Implement `bookingService.markNoShow(bookingId)`
 - [ ] Update booking status to 'no-show'
 - [ ] Record timestamp
@@ -66,12 +71,14 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [ ] Update local state after successful persistence
 
 ### Offline Queue (Optional - DEF-009)
+
 - [ ] Create `src/lib/offlineQueue.ts` with IndexedDB
 - [ ] Queue check-ins when offline
 - [ ] Sync queued actions on network restoration
 - [ ] Show pending sync indicator
 
 ### Testing
+
 - [ ] Create E2E test: `tests/e2e/vendor-check-in.spec.ts`
 - [ ] Test QR scan → validation → check-in flow
 - [ ] Test no-show marking
@@ -80,9 +87,11 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 ## Technical Notes
 
 ### QR Code Format
+
 Booking confirmation QR should encode: `pulau://booking/{bookingId}`
 
 ### RPC Function Schema
+
 ```sql
 CREATE OR REPLACE FUNCTION validate_booking_for_checkin(
   booking_id_param UUID,
@@ -100,23 +109,23 @@ BEGIN
   FROM bookings b
   JOIN experiences e ON b.experience_id = e.id
   WHERE b.id = booking_id_param;
-  
+
   IF booking_record IS NULL THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Booking not found');
   END IF;
-  
+
   IF booking_record.vendor_id != vendor_id_param THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Unauthorized');
   END IF;
-  
+
   IF booking_record.status = 'checked-in' THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Already checked in');
   END IF;
-  
+
   IF booking_record.status != 'confirmed' THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Booking not confirmed');
   END IF;
-  
+
   RETURN jsonb_build_object('valid', true, 'booking', row_to_json(booking_record));
 END;
 $$;

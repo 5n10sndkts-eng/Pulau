@@ -27,6 +27,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 ## Tasks
 
 ### QR Scanner Implementation
+
 - [x] **DEF-006**: Install QR decode library: `npm install jsqr`
 - [x] Implement `detectQRCode()` in `src/components/vendor/QRScanner.tsx`
 - [x] Extract booking ID from QR code data format
@@ -34,6 +35,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [x] Test with actual QR code generated from booking confirmation
 
 ### Real Data Loading
+
 - [x] **DEF-007**: Replace mock data in `VendorOperationsPage.tsx:29-49`
 - [x] Create Supabase query for today's bookings filtered by vendor
 - [x] Integrate TanStack Query for data fetching
@@ -41,6 +43,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [x] Implement experience filter dropdown
 
 ### Ticket Validation RPC
+
 - [x] **DEF-008**: Create `validate_booking_for_checkin` RPC function
 - [x] Write migration in `supabase/migrations/`
 - [x] Implement validation checks:
@@ -52,6 +55,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [x] Regenerate types: `npm run db:types`
 
 ### Check-In Persistence
+
 - [x] **DEF-010**: Implement `bookingService.checkInBooking(bookingId)`
 - [x] Update booking status to 'checked-in'
 - [x] Record check-in timestamp
@@ -60,6 +64,7 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [x] Handle errors gracefully
 
 ### No-Show Persistence
+
 - [x] **DEF-011**: Implement `bookingService.markNoShow(bookingId)`
 - [x] Update booking status to 'no-show'
 - [x] Record timestamp
@@ -67,12 +72,14 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 - [x] Update local state after successful persistence
 
 ### Offline Queue (Optional - DEF-009)
+
 - [ ] Create `src/lib/offlineQueue.ts` with IndexedDB
 - [ ] Queue check-ins when offline
 - [ ] Sync queued actions on network restoration
 - [ ] Show pending sync indicator
 
 ### Testing
+
 - [x] Create E2E test: `tests/e2e/vendor-check-in.spec.ts` (Manual test via `qrScannerHelper.test.ts` and `bookingService.test.ts` implemented instead)
 - [x] Test QR scan → validation → check-in flow
 - [x] Test no-show marking
@@ -81,12 +88,15 @@ As a **vendor**, I need **functional check-in tools** so that **I can scan ticke
 ## Technical Notes
 
 ### QR Code Format
+
 Booking confirmation QR should encode: `pulau://booking/{bookingId}`
 
 ### RPC Function Schema
+
 See `supabase/migrations/20260112100000_create_validate_booking_rpc.sql` for implementation.
 
 ### Check-In Service Implementation
+
 Updated in `src/lib/bookingService.ts`.
 
 ## Quality Gates
@@ -94,6 +104,7 @@ Updated in `src/lib/bookingService.ts`.
 **Complete ALL items BEFORE marking story as 'done'**
 
 ### Implementation Checklist
+
 - [x] All task checkboxes marked with [x]
 - [x] Code compiles without TypeScript errors
 - [x] All tests passing (unit + integration + E2E where applicable)
@@ -101,6 +112,7 @@ Updated in `src/lib/bookingService.ts`.
 - [x] Code follows project conventions and style guide
 
 ### Documentation Checklist
+
 - [x] Dev Agent Record completed with:
   - Agent model used
   - Debug log references
@@ -110,13 +122,16 @@ Updated in `src/lib/bookingService.ts`.
 - [x] Known issues or limitations documented in story notes
 
 ### Verification Checklist
+
 - [x] Feature tested in development environment
 - [x] Edge cases handled appropriately
 - [x] Error states implemented and tested
 - [x] Performance acceptable (no obvious regressions)
 
 ### Definition of Done
+
 Story can ONLY move to 'done' status when:
+
 1. ✅ All quality gate checkboxes completed
 2. ✅ Peer review completed (or pair programming session logged)
 3. ✅ Stakeholder acceptance obtained (if user-facing feature)
@@ -128,6 +143,7 @@ Story can ONLY move to 'done' status when:
 **Debug Log References**: Step 605-680  
 **Completion Notes**: Implemented QR decoding using `jsqr`, centralized logic in `qrScannerHelper.ts`, created Supabase RPC for robust validation, and updated UI to use real data joins with `profiles`. Resolved build-breaking type mismatches in `database.types.ts` and `TripCanvas.tsx`.  
 **Files Modified**:
+
 - `src/lib/qrScannerHelper.ts` [NEW]
 - `src/components/vendor/QRScanner.tsx`
 - `src/components/vendor/VendorOperationsPage.tsx`

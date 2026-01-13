@@ -22,11 +22,13 @@ Set up production hosting for the Pulau frontend application using Vercel or Net
 ## Recommended Platform
 
 **Vercel** (Recommended for React/Vite apps)
+
 - Pros: Zero-config for Vite, edge functions, great DX
 - Cons: More expensive at scale
 - Pricing: Free (hobby), $20/month (Pro)
 
 **Alternative: Netlify**
+
 - Pros: Generous free tier, good plugin ecosystem
 - Cons: Slower cold starts
 - Pricing: Free (up to 100GB bandwidth)
@@ -141,6 +143,7 @@ vercel env add VITE_STRIPE_PUBLISHABLE_KEY production
 ### 6. Optimize Build Performance
 
 **Update `vite.config.ts`:**
+
 ```typescript
 export default defineConfig({
   plugins: [react()],
@@ -164,10 +167,11 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
   },
-})
+});
 ```
 
 **Update `package.json`:**
+
 ```json
 {
   "scripts": {
@@ -234,7 +238,7 @@ cat > netlify.toml << EOF
 [build]
   command = "npm run build"
   publish = "dist"
-  
+
 [build.environment]
   NODE_VERSION = "18"
 
@@ -249,7 +253,7 @@ cat > netlify.toml << EOF
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
-    
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
@@ -301,10 +305,10 @@ netlify deploy --prod
 // api/health.ts
 export const config = {
   runtime: 'edge',
-}
+};
 
 export default function handler(request: Request) {
-  return new Response('OK', { status: 200 })
+  return new Response('OK', { status: 200 });
 }
 ```
 
@@ -313,8 +317,8 @@ export default function handler(request: Request) {
 ```typescript
 // Use Vercel's automatic image optimization
 // In components:
-<img 
-  src="/images/hero.jpg" 
+<img
+  src="/images/hero.jpg"
   alt="Hero"
   loading="lazy"
   decoding="async"
@@ -339,13 +343,13 @@ import { Analytics } from '@vercel/analytics/react'
 
 ```typescript
 // Add to main.tsx
-import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals'
+import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals';
 
-onCLS(console.log)
-onFID(console.log)
-onFCP(console.log)
-onLCP(console.log)
-onTTFB(console.log)
+onCLS(console.log);
+onFID(console.log);
+onFCP(console.log);
+onLCP(console.log);
+onTTFB(console.log);
 ```
 
 ## Security Configuration
@@ -422,13 +426,13 @@ curl https://pulau.app/vendor/dashboard
 
 ## Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| Build fails | Check Node version (18+), run `npm ci` |
-| 404 on routes | Verify SPA redirect in vercel.json |
-| Env vars not loaded | Redeploy after setting variables |
-| Large bundle size | Analyze with `vite-bundle-visualizer` |
-| Slow cold starts | Enable Edge Functions, optimize chunks |
+| Issue               | Solution                               |
+| ------------------- | -------------------------------------- |
+| Build fails         | Check Node version (18+), run `npm ci` |
+| 404 on routes       | Verify SPA redirect in vercel.json     |
+| Env vars not loaded | Redeploy after setting variables       |
+| Large bundle size   | Analyze with `vite-bundle-visualizer`  |
+| Slow cold starts    | Enable Edge Functions, optimize chunks |
 
 ## Post-Deployment
 

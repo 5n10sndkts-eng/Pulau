@@ -1,62 +1,74 @@
-import { useState } from 'react'
-import { MessageSquare, Mail, Phone, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { useState } from 'react';
+import { MessageSquare, Mail, Phone, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { toast } from 'sonner'
+} from '@/components/ui/accordion';
+import { toast } from 'sonner';
 
 interface HelpAndSupportScreenProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
 const faqs = [
   {
     question: 'How do I book an experience?',
-    answer: 'Browse experiences, add them to your trip, then proceed to checkout. You can add multiple experiences and book them all together.'
+    answer:
+      'Browse experiences, add them to your trip, then proceed to checkout. You can add multiple experiences and book them all together.',
   },
   {
     question: 'What is the cancellation policy?',
-    answer: 'Cancellation policies vary by experience. Check the "Cancellation Policy" section on each experience page for specific details.'
+    answer:
+      'Cancellation policies vary by experience. Check the "Cancellation Policy" section on each experience page for specific details.',
   },
   {
     question: 'How do I contact a vendor?',
-    answer: 'After booking, you can message vendors directly through the Messages tab. Before booking, use the "Ask a Question" button on the experience page.'
+    answer:
+      'After booking, you can message vendors directly through the Messages tab. Before booking, use the "Ask a Question" button on the experience page.',
   },
   {
     question: 'Can I modify my booking?',
-    answer: 'Visit "My Trips" in your profile, select the booking, and choose "Modify Booking" to change dates or guest count (subject to availability).'
+    answer:
+      'Visit "My Trips" in your profile, select the booking, and choose "Modify Booking" to change dates or guest count (subject to availability).',
   },
   {
     question: 'What payment methods are accepted?',
-    answer: 'We accept major credit cards (Visa, Mastercard, Amex), debit cards, and PayPal. All payments are processed securely.'
+    answer:
+      'We accept major credit cards (Visa, Mastercard, Amex), debit cards, and PayPal. All payments are processed securely.',
   },
   {
     question: 'How do I get a refund?',
-    answer: 'Refund eligibility depends on the cancellation policy. Cancel your booking through "My Trips" and eligible refunds are processed within 5-7 business days.'
+    answer:
+      'Refund eligibility depends on the cancellation policy. Cancel your booking through "My Trips" and eligible refunds are processed within 5-7 business days.',
   },
-]
+];
 
 export function HelpAndSupportScreen({ onBack }: HelpAndSupportScreenProps) {
-  const [subject, setSubject] = useState('')
-  const [message, setMessage] = useState('')
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSubmit = () => {
     if (!subject.trim() || !message.trim()) {
-      toast.error('Please fill in all fields')
-      return
+      toast.error('Please fill in all fields');
+      return;
     }
-    toast.success('Support request submitted. We\'ll get back to you soon!')
-    setSubject('')
-    setMessage('')
-  }
+    toast.success("Support request submitted. We'll get back to you soon!");
+    setSubject('');
+    setMessage('');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,7 +77,9 @@ export function HelpAndSupportScreen({ onBack }: HelpAndSupportScreenProps) {
           <Button variant="ghost" size="sm" onClick={onBack}>
             ← Back
           </Button>
-          <h1 className="font-display text-2xl font-semibold">Help & Support</h1>
+          <h1 className="font-display text-2xl font-semibold">
+            Help & Support
+          </h1>
         </div>
       </div>
 
@@ -73,7 +87,9 @@ export function HelpAndSupportScreen({ onBack }: HelpAndSupportScreenProps) {
         <Card>
           <CardHeader>
             <CardTitle>Contact Us</CardTitle>
-            <CardDescription>Get in touch with our support team</CardDescription>
+            <CardDescription>
+              Get in touch with our support team
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button variant="outline" className="w-full justify-start">
@@ -113,7 +129,9 @@ export function HelpAndSupportScreen({ onBack }: HelpAndSupportScreenProps) {
         <Card>
           <CardHeader>
             <CardTitle>Send a Message</CardTitle>
-            <CardDescription>Can't find what you're looking for? Send us a message</CardDescription>
+            <CardDescription>
+              Can't find what you're looking for? Send us a message
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -142,5 +160,5 @@ export function HelpAndSupportScreen({ onBack }: HelpAndSupportScreenProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }

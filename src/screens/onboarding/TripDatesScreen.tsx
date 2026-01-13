@@ -16,13 +16,19 @@ interface TripDatesScreenProps {
   onBack: () => void;
 }
 
-export function TripDatesScreen({ onContinue, onSkip, onBack }: TripDatesScreenProps) {
+export function TripDatesScreen({
+  onContinue,
+  onSkip,
+  onBack,
+}: TripDatesScreenProps) {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
 
   const today = new Date().toISOString().split('T')[0];
   const minEndDate = startDate
-    ? new Date(new Date(startDate).getTime() + 86400000).toISOString().split('T')[0]
+    ? new Date(new Date(startDate).getTime() + 86400000)
+        .toISOString()
+        .split('T')[0]
     : today;
 
   const handleContinue = () => {
@@ -37,7 +43,9 @@ export function TripDatesScreen({ onContinue, onSkip, onBack }: TripDatesScreenP
     <div className="flex min-h-screen flex-col bg-slate-50">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white px-6 py-4 shadow-sm">
-        <div className="text-center text-sm font-medium text-slate-600">3 of 3</div>
+        <div className="text-center text-sm font-medium text-slate-600">
+          3 of 3
+        </div>
         <h2 className="mt-2 text-center text-2xl font-bold text-slate-900">
           When Are You Visiting?
         </h2>
@@ -64,14 +72,17 @@ export function TripDatesScreen({ onContinue, onSkip, onBack }: TripDatesScreenP
           <div className="space-y-4">
             {/* Arrival Date */}
             <div className="space-y-2">
-              <Label htmlFor="arrival-date" className="text-base font-medium text-slate-900">
+              <Label
+                htmlFor="arrival-date"
+                className="text-base font-medium text-slate-900"
+              >
                 Arrival Date
               </Label>
               <Input
                 id="arrival-date"
                 type="date"
                 value={startDate}
-                onChange={e => setStartDate(e.target.value)}
+                onChange={(e) => setStartDate(e.target.value)}
                 min={today}
                 className="h-12 text-base"
               />
@@ -79,20 +90,25 @@ export function TripDatesScreen({ onContinue, onSkip, onBack }: TripDatesScreenP
 
             {/* Departure Date */}
             <div className="space-y-2">
-              <Label htmlFor="departure-date" className="text-base font-medium text-slate-900">
+              <Label
+                htmlFor="departure-date"
+                className="text-base font-medium text-slate-900"
+              >
                 Departure Date
               </Label>
               <Input
                 id="departure-date"
                 type="date"
                 value={endDate}
-                onChange={e => setEndDate(e.target.value)}
+                onChange={(e) => setEndDate(e.target.value)}
                 min={minEndDate}
                 disabled={!startDate}
                 className="h-12 text-base disabled:cursor-not-allowed disabled:opacity-50"
               />
               {!startDate && (
-                <p className="text-sm text-slate-500">Select an arrival date first</p>
+                <p className="text-sm text-slate-500">
+                  Select an arrival date first
+                </p>
               )}
             </div>
           </div>
@@ -100,7 +116,8 @@ export function TripDatesScreen({ onContinue, onSkip, onBack }: TripDatesScreenP
           {/* Info Card */}
           <div className="rounded-lg bg-blue-50 p-4">
             <p className="text-sm text-blue-900">
-              💡 You can always add or change your dates later in your trip planner.
+              💡 You can always add or change your dates later in your trip
+              planner.
             </p>
           </div>
         </motion.div>

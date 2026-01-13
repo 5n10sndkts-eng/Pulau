@@ -14,10 +14,11 @@ So that I always know my current spend.
 **Given** I have items in my trip
 **When** viewing any trip context (canvas, builder, or checkout)
 **Then** price breakdown shows:
-  - Subtotal: SUM(each item's price × guest_count)
-  - Service Fee: subtotal × 0.10 (10%)
-  - Total: subtotal + service_fee
-**And** all prices formatted with currency symbol (e.g., "$125.00")
+
+- Subtotal: SUM(each item's price × guest_count)
+- Service Fee: subtotal × 0.10 (10%)
+- Total: subtotal + service_fee
+  **And** all prices formatted with currency symbol (e.g., "$125.00")
 
 **AC #2: Update prices in real-time**
 **When** I add, remove, or adjust guest count
@@ -27,6 +28,7 @@ So that I always know my current spend.
 ## Tasks / Subtasks
 
 ### Task 1: Create price calculation utility functions (AC: #1)
+
 - [x] Implement calculateSubtotal: sum of all item prices × guest counts
 - [x] Implement calculateServiceFee: subtotal × 0.10
 - [x] Implement calculateTotal: subtotal + service fee
@@ -34,6 +36,7 @@ So that I always know my current spend.
 - [x] Export functions from shared utils for reuse
 
 ### Task 2: Build PriceSummary component (AC: #1)
+
 - [x] Create PriceSummary component displaying all three values
 - [x] Show subtotal, service fee, and total with labels
 - [x] Format all prices with currency symbol and 2 decimals
@@ -41,6 +44,7 @@ So that I always know my current spend.
 - [x] Add divider line between fee and total
 
 ### Task 3: Integrate price calculations in trip context (AC: #1, #2)
+
 - [x] Add useMemo to calculate prices whenever trip.items changes
 - [x] Recalculate on: item add, remove, guest count change
 - [x] Ensure calculations run within 100ms (no blocking)
@@ -48,6 +52,7 @@ So that I always know my current spend.
 - [x] Test with large trip (50+ items) for performance
 
 ### Task 4: Add price change highlight animations (AC: #2)
+
 - [x] Detect when price values change (use useEffect)
 - [x] Apply pulse/highlight animation to changed value
 - [x] Use teal color for highlight (primary brand color)
@@ -55,6 +60,7 @@ So that I always know my current spend.
 - [x] Remove highlight after animation completes
 
 ### Task 5: Display PriceSummary in all trip contexts (AC: #1)
+
 - [x] Add to TripCanvasHome footer
 - [x] Add to TripBuilder sticky footer
 - [x] Add to Checkout review step
@@ -64,6 +70,7 @@ So that I always know my current spend.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use `useMemo` for expensive calculations to prevent re-renders
 - Price format: use `Intl.NumberFormat` for locale-aware currency formatting
 - Service fee rate: configurable constant (10% = 0.10)
@@ -71,16 +78,23 @@ So that I always know my current spend.
 - Prices should always show 2 decimal places
 
 ### Price Calculation Functions
+
 ```typescript
-const calculateSubtotal = (items: TripItem[], experiences: Experience[]): number => {
+const calculateSubtotal = (
+  items: TripItem[],
+  experiences: Experience[],
+): number => {
   return items.reduce((sum, item) => {
-    const experience = experiences.find(exp => exp.id === item.experience_id);
+    const experience = experiences.find((exp) => exp.id === item.experience_id);
     if (!experience) return sum;
-    return sum + (experience.price * item.guest_count);
+    return sum + experience.price * item.guest_count;
   }, 0);
 };
 
-const calculateServiceFee = (subtotal: number, feeRate: number = 0.10): number => {
+const calculateServiceFee = (
+  subtotal: number,
+  feeRate: number = 0.1,
+): number => {
   return subtotal * feeRate;
 };
 
@@ -93,12 +107,13 @@ const formatPrice = (amount: number, currency: string = 'USD'): string => {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 ```
 
 ### PriceSummary Component
+
 ```typescript
 <PriceSummary>
   <PriceRow label="Subtotal" amount={formatPrice(subtotal)} />
@@ -114,17 +129,19 @@ const formatPrice = (amount: number, currency: string = 'USD'): string => {
 ```
 
 ### Animation Configuration
+
 ```typescript
 const priceHighlight = {
   initial: { backgroundColor: 'transparent' },
   animate: {
     backgroundColor: ['transparent', '#0D737720', 'transparent'],
-    transition: { duration: 0.3, times: [0, 0.5, 1] }
-  }
+    transition: { duration: 0.3, times: [0, 0.5, 1] },
+  },
 };
 ```
 
 ### Performance Considerations
+
 - Memoize calculations to avoid re-computing on every render
 - Debounce rapid changes (e.g., holding down guest count stepper)
 - Use React.memo for PriceSummary to prevent unnecessary re-renders
@@ -150,5 +167,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

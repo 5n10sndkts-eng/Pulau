@@ -45,32 +45,36 @@ Pulau is a React-based single-page application (SPA) built for the GitHub Spark 
 ## Technology Stack
 
 ### Core Framework
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 19.0.0 | UI framework |
-| TypeScript | 5.7.2 | Type safety |
-| Vite | 7.2.6 | Build tool & dev server |
+
+| Technology | Version | Purpose                 |
+| ---------- | ------- | ----------------------- |
+| React      | 19.0.0  | UI framework            |
+| TypeScript | 5.7.2   | Type safety             |
+| Vite       | 7.2.6   | Build tool & dev server |
 
 ### Styling & UI
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| TailwindCSS | 4.1.11 | Utility-first CSS |
-| Radix UI | Various | Accessible UI primitives |
-| shadcn/ui | - | Component library |
-| Framer Motion | 12.23.26 | Animations |
+
+| Technology    | Version  | Purpose                  |
+| ------------- | -------- | ------------------------ |
+| TailwindCSS   | 4.1.11   | Utility-first CSS        |
+| Radix UI      | Various  | Accessible UI primitives |
+| shadcn/ui     | -        | Component library        |
+| Framer Motion | 12.23.26 | Animations               |
 
 ### State & Data
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| GitHub Spark KV | - | Persistent state storage |
-| Zod | 4.3.4 | Schema validation |
-| React Hook Form | 7.54.2 | Form management |
+
+| Technology      | Version | Purpose                  |
+| --------------- | ------- | ------------------------ |
+| GitHub Spark KV | -       | Persistent state storage |
+| Zod             | 4.3.4   | Schema validation        |
+| React Hook Form | 7.54.2  | Form management          |
 
 ### Platform
-| Technology | Purpose |
-|------------|---------|
-| GitHub Spark | Hosting & services platform |
-| @github/spark | Platform SDK |
+
+| Technology    | Purpose                     |
+| ------------- | --------------------------- |
+| GitHub Spark  | Hosting & services platform |
+| @github/spark | Platform SDK                |
 
 ## Application Structure
 
@@ -90,18 +94,18 @@ type Screen =
   | { type: 'saved' }
   | { type: 'profile' }
   | { type: 'trips' }
-  | { type: 'tripDetail'; tripId: string }
+  | { type: 'tripDetail'; tripId: string };
 ```
 
 ### State Management
 
 Three primary KV stores manage application state:
 
-| Key | Type | Purpose |
-|-----|------|---------|
-| `pulau_user` | `User` | User preferences, saved items |
-| `pulau_current_trip` | `Trip` | Active trip being built |
-| `pulau_bookings` | `Booking[]` | Completed booking history |
+| Key                  | Type        | Purpose                       |
+| -------------------- | ----------- | ----------------------------- |
+| `pulau_user`         | `User`      | User preferences, saved items |
+| `pulau_current_trip` | `Trip`      | Active trip being built       |
+| `pulau_bookings`     | `Booking[]` | Completed booking history     |
 
 ### Component Hierarchy
 
@@ -160,19 +164,19 @@ const handleQuickAdd = (experience: Experience) => {
     experienceId: experience.id,
     guests: 2,
     totalPrice: experience.price.amount * 2,
-  }
+  };
 
   setTrip((current) => {
-    const base = current || defaultTrip
-    const updatedItems = [...base.items, newItem]
-    const totals = calculateTripTotal(updatedItems)
+    const base = current || defaultTrip;
+    const updatedItems = [...base.items, newItem];
+    const totals = calculateTripTotal(updatedItems);
     return {
       ...base,
       items: updatedItems,
       ...totals,
-    }
-  })
-}
+    };
+  });
+};
 ```
 
 ## Domain Model
@@ -182,38 +186,38 @@ const handleQuickAdd = (experience: Experience) => {
 ```typescript
 // User entity
 interface User {
-  id: string
-  preferences: UserPreferences
-  saved: string[]
-  currency: string
-  language: string
-  hasCompletedOnboarding?: boolean
+  id: string;
+  preferences: UserPreferences;
+  saved: string[];
+  currency: string;
+  language: string;
+  hasCompletedOnboarding?: boolean;
 }
 
 // Trip entity
 interface Trip {
-  id: string
-  userId: string
-  destination: string
-  startDate?: string
-  endDate?: string
-  travelers: number
-  status: 'planning' | 'booked' | 'active' | 'completed' | 'cancelled'
-  items: TripItem[]
-  subtotal: number
-  serviceFee: number
-  total: number
+  id: string;
+  userId: string;
+  destination: string;
+  startDate?: string;
+  endDate?: string;
+  travelers: number;
+  status: 'planning' | 'booked' | 'active' | 'completed' | 'cancelled';
+  items: TripItem[];
+  subtotal: number;
+  serviceFee: number;
+  total: number;
 }
 
 // Experience entity
 interface Experience {
-  id: string
-  title: string
-  category: string
-  provider: Provider
-  price: { amount: number; currency: string; per: string }
-  duration: string
-  groupSize: { min: number; max: number }
+  id: string;
+  title: string;
+  category: string;
+  provider: Provider;
+  price: { amount: number; currency: string; per: string };
+  duration: string;
+  groupSize: { min: number; max: number };
   // ... additional fields
 }
 ```
@@ -221,18 +225,22 @@ interface Experience {
 ## Design Patterns
 
 ### 1. Container/Presentational Pattern
+
 - Screen components handle state and logic
 - UI components are presentational
 
 ### 2. Composition Pattern
+
 - shadcn/ui components compose Radix primitives
 - Checkout flow composes step components
 
 ### 3. Discriminated Union for Screens
+
 - Type-safe screen navigation
 - Exhaustive pattern matching
 
 ### 4. Functional Updates for State
+
 - KV setters use functional updates
 - Ensures correct state derivation
 
@@ -269,4 +277,5 @@ interface Experience {
 ```
 
 ---
-*Generated by BMAD Document Project Workflow v1.2.0*
+
+_Generated by BMAD Document Project Workflow v1.2.0_

@@ -3,7 +3,7 @@
 **Epic**: 28 - Admin Refunds & Audit Trail  
 **Priority**: P1 - Critical Missing Functionality  
 **Status**: ready-for-dev  
-**Effort**: 1 day  
+**Effort**: 1 day
 
 ## Context
 
@@ -27,6 +27,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 ## Tasks
 
 ### Stripe Integration
+
 - [ ] **DEF-005**: Add Stripe SDK to edge function
 - [ ] Import and initialize Stripe with secret key from environment
 - [ ] Implement `stripe.refunds.create()` call
@@ -35,6 +36,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 - [ ] Handle Stripe webhook for refund completion (async)
 
 ### Database Updates
+
 - [ ] Update `payments` table:
   - Set `status = 'refunded'`
   - Set `refund_id` from Stripe response
@@ -45,6 +47,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
   - Set `refunded_by = admin_user_id`
 
 ### Audit Trail
+
 - [ ] Call `auditService.logAction()` with:
   - `action: 'booking.refund'`
   - `resource_type: 'booking'`
@@ -54,6 +57,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
   - `metadata: { refund_id, amount, reason }`
 
 ### Error Handling
+
 - [ ] Check if already refunded (idempotency)
 - [ ] Validate booking exists and is in refundable state
 - [ ] Catch Stripe API errors (insufficient funds, invalid payment, etc.)
@@ -61,6 +65,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 - [ ] Log errors to monitoring service
 
 ### Testing
+
 - [ ] Create E2E test: `tests/e2e/admin-refund.spec.ts`
 - [ ] Test successful refund flow
 - [ ] Test duplicate refund attempt (idempotency)
@@ -70,6 +75,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 ## Technical Implementation
 
 ### Edge Function Structure
+
 ```typescript
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
@@ -81,30 +87,36 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
 Deno.serve(async (req) => {
   try {
     const { bookingId, reason, adminUserId } = await req.json();
-    
+
     // 1. Fetch booking and payment
     const { data: booking } = await supabase
       .from('bookings')
       .select('*, payment:payments(*)')
       .eq('id', bookingId)
       .single();
-    
+
     if (!booking) {
-      return new Response(JSON.stringify({ error: 'Booking not found' }), { status: 404 });
+      return new Response(JSON.stringify({ error: 'Booking not found' }), {
+        status: 404,
+      });
     }
-    
+
     if (booking.status === 'refunded') {
-      return new Response(JSON.stringify({ success: true, message: 'Already refunded' }), { status: 200 });
+      return new Response(
+        JSON.stringify({ success: true, message: 'Already refunded' }),
+        { status: 200 },
+      );
     }
-    
+
     // 2. Process Stripe refund logic here...
     // (See full implementation details in task list)
-    
+
     return new Response(JSON.stringify({ success: true }), { status: 200 });
-    
   } catch (error) {
     console.error('Refund error:', error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
 });
 ```

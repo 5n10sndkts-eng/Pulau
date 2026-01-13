@@ -11,27 +11,32 @@ So that I can communicate about bookings.
 ## Acceptance Criteria
 
 ### AC1: Messages Screen Navigation
+
 **Given** I navigate to "Messages" (inbox icon in header)
 **When** the messages screen loads
 **Then** I see list of conversation threads
 
 ### AC2: Thread List Display
+
 **And** each thread shows:
-  - Other party's name and photo
-  - Experience name (context)
-  - Last message preview (truncated)
-  - Timestamp
-  - Unread badge (if new messages)
-**And** threads sorted by last_message_at DESC
-**And** threads load from messages KV namespace grouped by conversation_id
+
+- Other party's name and photo
+- Experience name (context)
+- Last message preview (truncated)
+- Timestamp
+- Unread badge (if new messages)
+  **And** threads sorted by last_message_at DESC
+  **And** threads load from messages KV namespace grouped by conversation_id
 
 ### AC3: Thread Navigation
+
 **When** I tap a thread
 **Then** I open the full conversation view
 
 ## Tasks / Subtasks
 
 ### Task 1: Build Message Thread List Component (AC: #1, #2)
+
 - [x] Create MessageThreadList component with scrollable list container
 - [x] Build ThreadListItem component showing avatar, names, preview, timestamp
 - [x] Implement unread badge indicator (count of unread messages)
@@ -39,6 +44,7 @@ So that I can communicate about bookings.
 - [x] Apply mobile-first responsive layout
 
 ### Task 2: Query and Group Conversation Threads (AC: #2)
+
 - [x] Query messages KV namespace, group by conversation_id
 - [x] Join with users KV namespace to get other party's name and photo
 - [x] Join with experiences KV namespace to get experience context
@@ -46,6 +52,7 @@ So that I can communicate about bookings.
 - [x] Sort threads by last_message_at DESC
 
 ### Task 3: Display Thread Metadata (AC: #2)
+
 - [x] Show other party's avatar (circular, 48px) and full name
 - [x] Display experience name as subtitle/context (gray text)
 - [x] Truncate last message preview to 60 characters with ellipsis
@@ -53,6 +60,7 @@ So that I can communicate about bookings.
 - [x] Add unread badge (coral circle with count) if has_unread = true
 
 ### Task 4: Implement Thread Navigation (AC: #3)
+
 - [x] Add tap handler to each ThreadListItem
 - [x] Navigate to ConversationView with conversation_id parameter
 - [x] Mark thread as read when opened (update unread_count to 0)
@@ -60,6 +68,7 @@ So that I can communicate about bookings.
 - [x] Pass experience context to conversation view
 
 ### Task 5: Optimize Performance and Accessibility (AC: #1, #2, #3)
+
 - [x] Implement virtual scrolling for long thread lists (react-window)
 - [x] Cache thread list data with Spark useKV (refresh every 30s)
 - [x] Add pull-to-refresh gesture on mobile
@@ -69,32 +78,46 @@ So that I can communicate about bookings.
 ## Dev Notes
 
 ### Technical Implementation
+
 - Component location: `src/components/messaging/MessageThreadList.tsx`
 - Use Spark useKV for caching thread list queries
 - Database query pattern:
+
 ```typescript
 const threads = await db.messages
   .select([
     'conversation_id',
     'MAX(sent_at) as last_message_at',
     'content as last_message',
-    db.raw('COUNT(CASE WHEN is_read = false AND receiver_id = ? THEN 1 END) as unread_count', [currentUserId])
+    db.raw(
+      'COUNT(CASE WHEN is_read = false AND receiver_id = ? THEN 1 END) as unread_count',
+      [currentUserId],
+    ),
   ])
   .where('sender_id', '=', currentUserId)
   .orWhere('receiver_id', '=', currentUserId)
   .groupBy('conversation_id')
-  .join('users', 'users.id', '=', db.raw('CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END', [currentUserId]))
+  .join(
+    'users',
+    'users.id',
+    '=',
+    db.raw('CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END', [
+      currentUserId,
+    ]),
+  )
   .join('experiences', 'experiences.id', '=', 'messages.experience_id')
   .orderBy('last_message_at', 'desc')
   .execute();
 ```
 
 ### Conversation Grouping
-- conversation_id format: `{experience_id}_{user1_id}_{user2_id}` (alphabetically sorted user IDs)
+
+- conversation*id format: `{experience_id}*{user1*id}*{user2_id}` (alphabetically sorted user IDs)
 - Determine "other party" based on current user: if sender_id = me, other = receiver_id, else other = sender_id
 - Unread messages: WHERE receiver_id = currentUserId AND is_read = false
 
 ### Relative Timestamp Formatting
+
 ```typescript
 const formatRelativeTime = (timestamp: Date) => {
   const diff = Date.now() - timestamp.getTime();
@@ -107,6 +130,7 @@ const formatRelativeTime = (timestamp: Date) => {
 ```
 
 ### Design System
+
 - Thread item: Card with `hover:bg-gray-50` effect
 - Avatar: 48px circular image with fallback initials
 - Unread badge: Coral (`bg-coral-500`) circle, white text, positioned top-right
@@ -114,11 +138,13 @@ const formatRelativeTime = (timestamp: Date) => {
 - Timestamp: Small gray text (`text-sm text-gray-500`)
 
 ### Empty State
+
 - Icon: InboxIcon (lucide-react)
 - Message: "No conversations yet"
 - CTA: "Bobjectse experiences to start messaging operators"
 
 ### Accessibility
+
 - Each thread item is a focusable button with full thread info in aria-label
 - Unread badge announced: "X unread messages"
 - Keyboard navigation: Tab through threads, Enter to open
@@ -144,5 +170,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

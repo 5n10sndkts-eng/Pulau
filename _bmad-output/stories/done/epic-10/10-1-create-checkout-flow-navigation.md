@@ -14,11 +14,12 @@ So that I can complete my booking with confidence.
 **Given** I tap "Continue to Booking" from trip builder
 **When** checkout flow initiates
 **Then** I see a 4-step progress indicator at top:
-  - Step 1: Review (active)
-  - Step 2: Traveler Details
-  - Step 3: Payment
-  - Step 4: Confirmation
-**And** progress bar fills as I advance through steps
+
+- Step 1: Review (active)
+- Step 2: Traveler Details
+- Step 3: Payment
+- Step 4: Confirmation
+  **And** progress bar fills as I advance through steps
 
 **AC #2: Show step status with icons**
 **And** step labels show: completed (checkmark), current (filled circle), upcoming (empty circle)
@@ -33,6 +34,7 @@ So that I can complete my booking with confidence.
 ## Tasks / Subtasks
 
 ### Task 1: Create CheckoutFlow container component (AC: #1, #2, #3, #4)
+
 - [x] Build CheckoutFlow component managing step state
 - [x] Initialize with currentStep state (1-4)
 - [x] Add StepProgressIndicator to header
@@ -40,6 +42,7 @@ So that I can complete my booking with confidence.
 - [x] Add prev/next navigation functions
 
 ### Task 2: Implement StepProgressIndicator component (AC: #1, #2)
+
 - [x] Create visual progress bar with 4 steps
 - [x] Display step numbers and labels
 - [x] Show status icons: checkmark (completed), filled circle (current), empty circle (upcoming)
@@ -47,6 +50,7 @@ So that I can complete my booking with confidence.
 - [x] Style with teal primary color for active/completed steps
 
 ### Task 3: Add step navigation logic (AC: #3)
+
 - [x] Implement nextStep() function advancing to next step
 - [x] Implement goToStep(stepNumber) allowing backward navigation
 - [x] Prevent forward skipping: only allow navigating to current or completed steps
@@ -54,6 +58,7 @@ So that I can complete my booking with confidence.
 - [x] Validate current step before allowing navigation
 
 ### Task 4: Persist checkout state with useKV (AC: #4)
+
 - [x] Store checkout session data in useKV: { currentStep, formData, tripSnapshot }
 - [x] Save state on every step change
 - [x] Restore state on component mount if session exists
@@ -61,6 +66,7 @@ So that I can complete my booking with confidence.
 - [x] Add session expiry timestamp (24 hours)
 
 ### Task 5: Build step routing and component rendering (AC: #1)
+
 - [x] Create switch/router for step components
 - [x] Step 1: render TripReviewStep
 - [x] Step 2: render TravelerDetailsStep
@@ -71,6 +77,7 @@ So that I can complete my booking with confidence.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Checkout state: use `useKV<CheckoutSession>('checkout_session', null)`
 - Progress indicator: use Tailwind's `w-[25%]` for progress width
 - Step validation: block nextStep() if current step form is invalid
@@ -78,6 +85,7 @@ So that I can complete my booking with confidence.
 - Animations: Framer Motion's AnimatePresence for step transitions
 
 ### Checkout Session Data Structure
+
 ```typescript
 interface CheckoutSession {
   currentStep: 1 | 2 | 3 | 4;
@@ -91,6 +99,7 @@ interface CheckoutSession {
 ```
 
 ### Step Progress Indicator
+
 ```typescript
 const StepProgressIndicator = ({ currentStep, completedSteps, onStepClick }) => {
   const steps = [
@@ -120,16 +129,19 @@ const StepProgressIndicator = ({ currentStep, completedSteps, onStepClick }) => 
 ```
 
 ### Navigation Logic
+
 ```typescript
 const useCheckoutNavigation = () => {
   const [session, setSession] = useKV<CheckoutSession>('checkout_session');
   const [currentStep, setCurrentStep] = useState(session?.currentStep || 1);
-  const [completedSteps, setCompletedSteps] = useState<number[]>(session?.completedSteps || []);
+  const [completedSteps, setCompletedSteps] = useState<number[]>(
+    session?.completedSteps || [],
+  );
 
   const nextStep = () => {
     if (validateCurrentStep() && currentStep < 4) {
-      setCompletedSteps(prev => [...new Set([...prev, currentStep])]);
-      setCurrentStep(prev => prev + 1);
+      setCompletedSteps((prev) => [...new Set([...prev, currentStep])]);
+      setCurrentStep((prev) => prev + 1);
       saveSession();
     }
   };
@@ -146,6 +158,7 @@ const useCheckoutNavigation = () => {
 ```
 
 ### Visual Specifications
+
 - Progress bar: height 4px, teal color, rounded ends
 - Step icons: 32px diameter circles
 - Completed icon: checkmark in green circle
@@ -174,5 +187,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

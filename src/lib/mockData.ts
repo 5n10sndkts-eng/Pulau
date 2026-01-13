@@ -1,4 +1,13 @@
-import { Destination, Category, Experience, Vendor, ExperienceCategory, Difficulty, PricePer, ExperienceStatus } from './types'
+import {
+  Destination,
+  Category,
+  Experience,
+  Vendor,
+  ExperienceCategory,
+  Difficulty,
+  PricePer,
+  ExperienceStatus,
+} from './types';
 
 export const destinations: Destination[] = [
   {
@@ -6,7 +15,8 @@ export const destinations: Destination[] = [
     name: 'Bali',
     country: 'Indonesia',
     tagline: 'Island of the Gods',
-    heroImage: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&h=600&fit=crop',
+    heroImage:
+      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&h=600&fit=crop',
     currency: 'USD',
     timezone: 'Asia/Makassar',
     active: true,
@@ -16,7 +26,8 @@ export const destinations: Destination[] = [
     name: 'Phuket',
     country: 'Thailand',
     tagline: 'Pearl of the Andaman',
-    heroImage: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=1200&h=600&fit=crop',
+    heroImage:
+      'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=1200&h=600&fit=crop',
     currency: 'USD',
     timezone: 'Asia/Bangkok',
     active: false,
@@ -26,7 +37,8 @@ export const destinations: Destination[] = [
     name: 'Maldives',
     country: 'Maldives',
     tagline: 'Paradise Islands',
-    heroImage: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&h=600&fit=crop',
+    heroImage:
+      'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&h=600&fit=crop',
     currency: 'USD',
     timezone: 'Indian/Maldives',
     active: false,
@@ -36,12 +48,13 @@ export const destinations: Destination[] = [
     name: 'Santorini',
     country: 'Greece',
     tagline: 'Aegean Jewel',
-    heroImage: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&h=600&fit=crop',
+    heroImage:
+      'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&h=600&fit=crop',
     currency: 'EUR',
     timezone: 'Europe/Athens',
     active: false,
   },
-]
+];
 
 export const categories: Category[] = [
   {
@@ -49,44 +62,50 @@ export const categories: Category[] = [
     name: 'Water Adventures',
     icon: 'waves',
     tagline: 'Boat trips, snorkeling, diving',
-    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
   },
   {
     id: ExperienceCategory.LandExplorations,
     name: 'Land Explorations',
     icon: 'bicycle',
     tagline: 'Bikes, scooters, guided treks',
-    image: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=800&h=600&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=800&h=600&fit=crop',
   },
   {
     id: ExperienceCategory.CultureExperiences,
     name: 'Culture & Experiences',
     icon: 'temple',
     tagline: 'Temples, ceremonies, cooking classes',
-    image: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&h=600&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&h=600&fit=crop',
   },
   {
     id: ExperienceCategory.FoodNightlife,
     name: 'Food & Nightlife',
     icon: 'utensils',
     tagline: 'Local warungs to beach clubs',
-    image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=800&h=600&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=800&h=600&fit=crop',
   },
   {
     id: ExperienceCategory.Transportation,
     name: 'Getting Around',
     icon: 'car',
     tagline: 'Transfers, drivers, day trips',
-    image: 'https://images.unsplash.com/photo-1586339277861-560376e85e32?w=800&h=600&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1586339277861-560376e85e32?w=800&h=600&fit=crop',
   },
   {
     id: ExperienceCategory.Stays,
     name: 'Destinations & Stays',
     icon: 'home',
     tagline: 'Where will you wake up?',
-    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop',
   },
-]
+];
 
 export const experiences: Experience[] = [
   {
@@ -98,8 +117,9 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_001',
       name: "Wayan's Dive Shop",
-      photo: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
-      bio: "Wayan learned to freedive from his father at age 7 in the waters off Lovina. After working as a dive instructor across Indonesia for 15 years, he returned home to start his own operation with his wife Ketut.",
+      photo:
+        'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
+      bio: 'Wayan learned to freedive from his father at age 7 in the waters off Lovina. After working as a dive instructor across Indonesia for 15 years, he returned home to start his own operation with his wife Ketut.',
       since: 1998,
       rating: 4.9,
       reviewCount: 127,
@@ -124,7 +144,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1682687220795-796d3f6f7000?w=1200&h=800&fit=crop',
     ],
-    description: "You'll meet your guide at dawn as the fishing boats head out to sea. The 90-minute boat ride to Menjangan Island is an adventure in itself, with dolphins often joining alongside.\n\nThe water at this hour is impossibly calm, and as you slip beneath the surface, you'll discover a coral garden that few tourists ever see. Your guide knows exactly where the sea turtles rest and where the colorful schools gather.\n\nAfter two snorkeling sessions at different spots, you'll enjoy a traditional Balinese breakfast on the boat as the sun climbs higher. The return journey offers stunning views of Bali's volcanic coastline.",
+    description:
+      "You'll meet your guide at dawn as the fishing boats head out to sea. The 90-minute boat ride to Menjangan Island is an adventure in itself, with dolphins often joining alongside.\n\nThe water at this hour is impossibly calm, and as you slip beneath the surface, you'll discover a coral garden that few tourists ever see. Your guide knows exactly where the sea turtles rest and where the colorful schools gather.\n\nAfter two snorkeling sessions at different spots, you'll enjoy a traditional Balinese breakfast on the boat as the sun climbs higher. The return journey offers stunning views of Bali's volcanic coastline.",
     included: [
       'Hotel pickup & drop-off (Lovina, Pemuteran areas)',
       'Professional snorkeling equipment',
@@ -142,10 +163,17 @@ export const experiences: Experience[] = [
       address: 'Jl. Raya Lovina, Kalibukbuk, Buleleng',
       lat: -8.1592,
       lng: 115.0449,
-      instructions: "Look for the blue boat with 'Wayan's Dive' painted on the side. Wayan will be waiting with hot coffee.",
+      instructions:
+        "Look for the blue boat with 'Wayan's Dive' painted on the side. Wayan will be waiting with hot coffee.",
     },
-    cancellation: 'Free cancellation up to 24 hours before. Full refund, no questions asked.',
-    whatToBring: ['Sunscreen (reef-safe please!)', 'Swimwear', 'Camera', 'Light jacket for morning'],
+    cancellation:
+      'Free cancellation up to 24 hours before. Full refund, no questions asked.',
+    whatToBring: [
+      'Sunscreen (reef-safe please!)',
+      'Swimwear',
+      'Camera',
+      'Light jacket for morning',
+    ],
     reviews: [
       {
         id: 'rev_001',
@@ -153,7 +181,7 @@ export const experiences: Experience[] = [
         country: 'AU',
         date: '2024-12-15',
         rating: 5,
-        text: "Absolutely magical experience! Wayan knew exactly where to find the turtles. The breakfast on the boat was such a nice touch. Highly recommend getting the photos - the underwater shots are incredible.",
+        text: 'Absolutely magical experience! Wayan knew exactly where to find the turtles. The breakfast on the boat was such a nice touch. Highly recommend getting the photos - the underwater shots are incredible.',
         helpful: 23,
       },
       {
@@ -186,7 +214,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_002',
       name: 'Batur Mountain Guides Association',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
       bio: 'The official association of Mount Batur guides, ensuring safe and authentic volcano experiences since 1995. All guides are local villagers who know every path and story of the sacred mountain.',
       since: 1995,
       rating: 4.8,
@@ -211,7 +240,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200&h=800&fit=crop',
     ],
-    description: "The alarm will feel brutal at 1 AM, but trust us - this is worth every lost hour of sleep.\n\nYour guide picks you up in the darkness for the drive to Batur's base. The trek begins under starlight, with headlamps illuminating the volcanic soil path. Your guide shares stories of the mountain's 1963 eruption and its spiritual significance to Balinese Hindus.\n\nThe 2-hour climb is steady but achievable for anyone with moderate fitness. And then it happens - the sky begins to glow. Watching the sun rise over Mount Agung and Lake Batur from 1,717 meters is genuinely one of Bali's most profound moments.\n\nBreakfast is served at the summit: eggs cooked in volcanic steam, banana sandwiches, and hot drinks. After exploring the crater rim, you'll descend as the mountain reveals its dramatic moonscape in full daylight.",
+    description:
+      "The alarm will feel brutal at 1 AM, but trust us - this is worth every lost hour of sleep.\n\nYour guide picks you up in the darkness for the drive to Batur's base. The trek begins under starlight, with headlamps illuminating the volcanic soil path. Your guide shares stories of the mountain's 1963 eruption and its spiritual significance to Balinese Hindus.\n\nThe 2-hour climb is steady but achievable for anyone with moderate fitness. And then it happens - the sky begins to glow. Watching the sun rise over Mount Agung and Lake Batur from 1,717 meters is genuinely one of Bali's most profound moments.\n\nBreakfast is served at the summit: eggs cooked in volcanic steam, banana sandwiches, and hot drinks. After exploring the crater rim, you'll descend as the mountain reveals its dramatic moonscape in full daylight.",
     included: [
       'Hotel pickup & drop-off (Ubud, Sanur, Seminyak)',
       'Professional certified mountain guide',
@@ -227,10 +257,17 @@ export const experiences: Experience[] = [
     ],
     meetingPoint: {
       name: 'Hotel pickup',
-      instructions: 'Your guide will pick you up from your hotel lobby between 1:30-2:30 AM depending on your location.',
+      instructions:
+        'Your guide will pick you up from your hotel lobby between 1:30-2:30 AM depending on your location.',
     },
-    cancellation: 'Free cancellation up to 24 hours before. Cancellation required if heavy rain is forecast.',
-    whatToBring: ["Warm layers (it's cold at the top!)", 'Good walking shoes', 'Camera', 'Water bottle'],
+    cancellation:
+      'Free cancellation up to 24 hours before. Cancellation required if heavy rain is forecast.',
+    whatToBring: [
+      "Warm layers (it's cold at the top!)",
+      'Good walking shoes',
+      'Camera',
+      'Water bottle',
+    ],
     reviews: [
       {
         id: 'rev_004',
@@ -262,7 +299,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_003',
       name: "Ibu Mangku's Kitchen",
-      photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop',
       bio: 'Ibu Mangku has been cooking traditional Balinese food for over 40 years. She learned from her grandmother and now shares these recipes with travelers in her family compound, just as her grandmother taught her.',
       since: 2010,
       rating: 4.9,
@@ -286,7 +324,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1609501676725-7186f017a4b0?w=1200&h=800&fit=crop',
     ],
-    description: "Begin your morning at the local market with Ibu Mangku, where she'll teach you to select the freshest ingredients while sharing stories of Balinese daily life.\n\nBack at her family compound in Ubud's outskirts, you'll discover an open-air kitchen where generations have prepared food for ceremonies and celebrations. Learn to grind your own spice pastes using traditional stone tools, wrap satay by hand, and master the balance of Balinese flavors.\n\nYou'll prepare 6-7 dishes including Lawar (traditional chopped meat salad), Sate Lilit (minced seafood satay), Pepes Ikan (fish wrapped in banana leaf), and Dadar Gulung (coconut pancakes). Then sit down with the family to enjoy everything you've made.\n\nRecipes and a small spice kit are included so you can recreate these dishes at home.",
+    description:
+      "Begin your morning at the local market with Ibu Mangku, where she'll teach you to select the freshest ingredients while sharing stories of Balinese daily life.\n\nBack at her family compound in Ubud's outskirts, you'll discover an open-air kitchen where generations have prepared food for ceremonies and celebrations. Learn to grind your own spice pastes using traditional stone tools, wrap satay by hand, and master the balance of Balinese flavors.\n\nYou'll prepare 6-7 dishes including Lawar (traditional chopped meat salad), Sate Lilit (minced seafood satay), Pepes Ikan (fish wrapped in banana leaf), and Dadar Gulung (coconut pancakes). Then sit down with the family to enjoy everything you've made.\n\nRecipes and a small spice kit are included so you can recreate these dishes at home.",
     included: [
       'Hotel pickup & drop-off (Ubud area)',
       'Market tour with guide',
@@ -299,7 +338,8 @@ export const experiences: Experience[] = [
     notIncluded: ['Alcoholic drinks', 'Personal purchases at market'],
     meetingPoint: {
       name: 'Hotel pickup',
-      instructions: 'Pickup from Ubud area hotels at 8 AM. For locations outside Ubud, meeting at Ubud central.',
+      instructions:
+        'Pickup from Ubud area hotels at 8 AM. For locations outside Ubud, meeting at Ubud central.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
     whatToBring: ['Comfortable clothes', 'Appetite', 'Camera'],
@@ -310,7 +350,7 @@ export const experiences: Experience[] = [
         country: 'NZ',
         date: '2024-12-05',
         rating: 5,
-        text: "Ibu Mangku is a gem! Such a warm host and amazing cook. Learned so much and the food was delicious. Definitely doing these recipes at home.",
+        text: 'Ibu Mangku is a gem! Such a warm host and amazing cook. Learned so much and the food was delicious. Definitely doing these recipes at home.',
         helpful: 28,
       },
       {
@@ -334,8 +374,9 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_004',
       name: "Ketut's Bali Drivers",
-      photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
-      bio: "Ketut started driving tourists in 1990 with a borrowed car. Now his fleet of 12 comfortable vehicles and team of professional drivers provide safe, reliable transport across Bali.",
+      photo:
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
+      bio: 'Ketut started driving tourists in 1990 with a borrowed car. Now his fleet of 12 comfortable vehicles and team of professional drivers provide safe, reliable transport across Bali.',
       since: 1990,
       rating: 4.7,
       reviewCount: 89,
@@ -355,7 +396,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1586339277861-560376e85e32?w=1200&h=800&fit=crop',
     ],
-    description: "Skip the taxi queue and start your Bali trip stress-free. Your driver will be waiting in arrivals with your name sign, help with luggage, and provide a comfortable air-conditioned ride direct to your accommodation.\n\nCold water and WiFi available in vehicle. Driver can make a quick stop if you need to get cash or SIM card on the way.",
+    description:
+      'Skip the taxi queue and start your Bali trip stress-free. Your driver will be waiting in arrivals with your name sign, help with luggage, and provide a comfortable air-conditioned ride direct to your accommodation.\n\nCold water and WiFi available in vehicle. Driver can make a quick stop if you need to get cash or SIM card on the way.',
     included: [
       'Meet and greet in arrivals hall',
       'Air-conditioned private vehicle',
@@ -367,7 +409,8 @@ export const experiences: Experience[] = [
     notIncluded: ['Stop at attractions en route (available for extra fee)'],
     meetingPoint: {
       name: 'Ngurah Rai International Airport (DPS)',
-      instructions: 'After exiting customs, look for your driver holding a sign with your name in the arrivals hall.',
+      instructions:
+        'After exiting customs, look for your driver holding a sign with your name in the arrivals hall.',
     },
     cancellation: 'Free cancellation up to 12 hours before.',
     whatToBring: [],
@@ -393,7 +436,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_005',
       name: 'Penida Island Tours',
-      photo: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&h=200&fit=crop',
       bio: 'Local guides born and raised on Nusa Penida, sharing the hidden gems and dramatic landscapes of their island home with small groups.',
       since: 2015,
       rating: 4.8,
@@ -416,7 +460,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1583012239766-8c2c93e68d20?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1606158911056-e9445e4312ad?w=1200&h=800&fit=crop',
     ],
-    description: "Escape to one of Bali's most dramatic islands for a day of jaw-dropping coastal scenery. The fast boat ride to Nusa Penida takes 45 minutes, cutting through turquoise waters.\n\nYour guide will take you to the island's most iconic spots: Kelingking Beach (T-Rex cliff), Angel's Billabong natural infinity pool, Broken Beach's natural archway, and Crystal Bay for swimming. The landscapes here are unlike anywhere else in Bali - rugged, dramatic, and incredibly photogenic.\n\nLunch is included at a local warung with ocean views. Be prepared for some adventurous roads and stairs, but the views are absolutely worth it.",
+    description:
+      "Escape to one of Bali's most dramatic islands for a day of jaw-dropping coastal scenery. The fast boat ride to Nusa Penida takes 45 minutes, cutting through turquoise waters.\n\nYour guide will take you to the island's most iconic spots: Kelingking Beach (T-Rex cliff), Angel's Billabong natural infinity pool, Broken Beach's natural archway, and Crystal Bay for swimming. The landscapes here are unlike anywhere else in Bali - rugged, dramatic, and incredibly photogenic.\n\nLunch is included at a local warung with ocean views. Be prepared for some adventurous roads and stairs, but the views are absolutely worth it.",
     included: [
       'Hotel pickup & drop-off (Sanur, Seminyak, Ubud)',
       'Fast boat tickets round trip',
@@ -429,10 +474,18 @@ export const experiences: Experience[] = [
     notIncluded: ['Drinks and snacks', 'Tips for guide and driver'],
     meetingPoint: {
       name: 'Hotel pickup',
-      instructions: 'Pickup from hotel between 6:30-7:30 AM depending on location.',
+      instructions:
+        'Pickup from hotel between 6:30-7:30 AM depending on location.',
     },
-    cancellation: 'Free cancellation up to 48 hours before due to boat booking.',
-    whatToBring: ['Swimwear', 'Sunscreen', 'Good walking shoes', 'Camera', 'Water bottle'],
+    cancellation:
+      'Free cancellation up to 48 hours before due to boat booking.',
+    whatToBring: [
+      'Swimwear',
+      'Sunscreen',
+      'Good walking shoes',
+      'Camera',
+      'Water bottle',
+    ],
     reviews: [
       {
         id: 'rev_009',
@@ -440,7 +493,7 @@ export const experiences: Experience[] = [
         country: 'FR',
         date: '2024-12-12',
         rating: 5,
-        text: "Incredible day! Kelingking Beach viewpoint is absolutely stunning. The boat ride was smooth and our guide was fantastic. Long day but worth every minute.",
+        text: 'Incredible day! Kelingking Beach viewpoint is absolutely stunning. The boat ride was smooth and our guide was fantastic. Long day but worth every minute.',
         helpful: 34,
       },
       {
@@ -464,7 +517,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_006',
       name: 'Tulamben Dive Center',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
       bio: 'PADI 5-star dive center specializing in beginner courses and the famous USAT Liberty shipwreck. Safety-first approach with experienced instructors.',
       since: 2005,
       rating: 4.9,
@@ -487,7 +541,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1682687220801-eef408f95d71?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1682687221038-404cb8830901?w=1200&h=800&fit=crop',
     ],
-    description: "Always wanted to try scuba diving? This is your perfect introduction. Start with pool training where you'll learn basic skills in shallow water with patient instructors. Once comfortable, you'll make two open water dives at the famous USAT Liberty shipwreck in Tulamben.\n\nThis World War II cargo ship, torpedoed in 1942, now rests in 5-30 meters of water and is covered in vibrant coral. It's one of the world's most accessible wreck dives - you can swim to it directly from the beach.\n\nNo certification required, no prior experience needed. Just curiosity and a sense of adventure. Who knows, this might be the start of a lifelong passion.",
+    description:
+      "Always wanted to try scuba diving? This is your perfect introduction. Start with pool training where you'll learn basic skills in shallow water with patient instructors. Once comfortable, you'll make two open water dives at the famous USAT Liberty shipwreck in Tulamben.\n\nThis World War II cargo ship, torpedoed in 1942, now rests in 5-30 meters of water and is covered in vibrant coral. It's one of the world's most accessible wreck dives - you can swim to it directly from the beach.\n\nNo certification required, no prior experience needed. Just curiosity and a sense of adventure. Who knows, this might be the start of a lifelong passion.",
     included: [
       'Hotel pickup & drop-off',
       'Professional PADI instructor (max 4 students per instructor)',
@@ -497,13 +552,22 @@ export const experiences: Experience[] = [
       'Lunch and refreshments',
       'Underwater photos',
     ],
-    notIncluded: ['Dive certification (this is a try-dive, not certification course)', 'Personal dive computer'],
+    notIncluded: [
+      'Dive certification (this is a try-dive, not certification course)',
+      'Personal dive computer',
+    ],
     meetingPoint: {
       name: 'Hotel pickup',
-      instructions: 'Pickup from East Bali hotels. Surcharge for pickup from Ubud/Seminyak.',
+      instructions:
+        'Pickup from East Bali hotels. Surcharge for pickup from Ubud/Seminyak.',
     },
     cancellation: 'Free cancellation up to 48 hours before.',
-    whatToBring: ['Swimwear', 'Towel', 'Change of clothes', 'Sense of adventure'],
+    whatToBring: [
+      'Swimwear',
+      'Towel',
+      'Change of clothes',
+      'Sense of adventure',
+    ],
     reviews: [
       {
         id: 'rev_011',
@@ -511,7 +575,7 @@ export const experiences: Experience[] = [
         country: 'US',
         date: '2024-12-08',
         rating: 5,
-        text: "First time diving and it was incredible! The instructors were so patient and made me feel completely safe. The shipwreck is amazing - saw so many fish!",
+        text: 'First time diving and it was incredible! The instructors were so patient and made me feel completely safe. The shipwreck is amazing - saw so many fish!',
         helpful: 29,
       },
     ],
@@ -526,7 +590,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_007',
       name: 'Canggu Surf School',
-      photo: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=200&h=200&fit=crop',
       bio: 'Professional surf instructors teaching beginners and intermediate surfers since 2012. Small groups ensure personalized attention and faster progress.',
       since: 2012,
       rating: 4.7,
@@ -548,13 +613,20 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1502933691298-84fc14542831?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1621883863991-1cd7e7b838be?w=1200&h=800&fit=crop',
     ],
-    description: "Canggu's gentle waves are perfect for learning to surf. Your instructor will start with beach technique - how to pop up, paddle, and read the waves. Then it's into the water for practice.\n\nMost beginners catch their first wave within the first hour. By the end of the session, you'll have the basics down and a huge smile on your face. The stoke is real.",
-    included: ['Surfboard rental', 'Rash guard', 'Professional instructor', 'Beach shower access'],
+    description:
+      "Canggu's gentle waves are perfect for learning to surf. Your instructor will start with beach technique - how to pop up, paddle, and read the waves. Then it's into the water for practice.\n\nMost beginners catch their first wave within the first hour. By the end of the session, you'll have the basics down and a huge smile on your face. The stoke is real.",
+    included: [
+      'Surfboard rental',
+      'Rash guard',
+      'Professional instructor',
+      'Beach shower access',
+    ],
     notIncluded: ['Photos (available for purchase)', 'Transportation'],
     meetingPoint: {
       name: 'Batu Bolong Beach, Canggu',
       address: 'Jl. Pantai Batu Bolong, Canggu',
-      instructions: 'Meet at the surf school hut with blue and yellow umbrellas.',
+      instructions:
+        'Meet at the surf school hut with blue and yellow umbrellas.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
     whatToBring: ['Swimwear', 'Sunscreen', 'Towel', 'Positive attitude'],
@@ -580,7 +652,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_008',
       name: 'Ubud Cycling Adventures',
-      photo: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=200&h=200&fit=crop',
       bio: 'Small-group cycling tours through traditional villages and rice terraces, led by local guides who share insights into Balinese rural life.',
       since: 2008,
       rating: 4.8,
@@ -603,7 +676,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1580735960274-3bf47a5b1a7f?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1589811828791-be878d1d09c8?w=1200&h=800&fit=crop',
     ],
-    description: "Cycle downhill through some of Bali's most beautiful countryside. Start high in the hills and coast through emerald rice terraces, past family compounds, and through quiet villages.\n\nYour guide stops frequently to explain the rice growing process, traditional architecture, and daily village life. Visit a local home, see how coconut oil is made, and stop at a coffee plantation.\n\nThe route is mostly downhill and suitable for all fitness levels. Finish with a traditional Balinese lunch overlooking the rice fields.",
+    description:
+      "Cycle downhill through some of Bali's most beautiful countryside. Start high in the hills and coast through emerald rice terraces, past family compounds, and through quiet villages.\n\nYour guide stops frequently to explain the rice growing process, traditional architecture, and daily village life. Visit a local home, see how coconut oil is made, and stop at a coffee plantation.\n\nThe route is mostly downhill and suitable for all fitness levels. Finish with a traditional Balinese lunch overlooking the rice fields.",
     included: [
       'Hotel pickup & drop-off (Ubud, Sanur, Seminyak)',
       'Quality mountain bike and helmet',
@@ -619,7 +693,12 @@ export const experiences: Experience[] = [
       instructions: 'Pickup from hotel between 6:30-7:30 AM.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
-    whatToBring: ['Comfortable clothes', 'Closed-toe shoes', 'Sunscreen', 'Camera'],
+    whatToBring: [
+      'Comfortable clothes',
+      'Closed-toe shoes',
+      'Sunscreen',
+      'Camera',
+    ],
     reviews: [
       {
         id: 'rev_013',
@@ -642,7 +721,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_009',
       name: 'Bali Bike Rentals',
-      photo: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=200&h=200&fit=crop',
       bio: 'Well-maintained scooters and motorcycles for rent with helmet, insurance, and 24/7 roadside assistance included.',
       since: 2010,
       rating: 4.6,
@@ -663,16 +743,31 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1586339277861-560376e85e32?w=1200&h=800&fit=crop',
     ],
-    description: "Freedom to explore Bali at your own pace. Our scooters are serviced regularly and come with helmets, basic insurance, and roadside assistance.\n\nPick up from our shop or we can deliver to your hotel for a small fee. Return the next day or extend for multiple days at discounted rates.",
-    included: ['Helmet', 'Basic insurance', '24/7 roadside assistance', 'Full tank of fuel'],
-    notIncluded: ['Fuel refill', 'International driving permit (required by law)', 'Delivery fee if applicable'],
+    description:
+      'Freedom to explore Bali at your own pace. Our scooters are serviced regularly and come with helmets, basic insurance, and roadside assistance.\n\nPick up from our shop or we can deliver to your hotel for a small fee. Return the next day or extend for multiple days at discounted rates.',
+    included: [
+      'Helmet',
+      'Basic insurance',
+      '24/7 roadside assistance',
+      'Full tank of fuel',
+    ],
+    notIncluded: [
+      'Fuel refill',
+      'International driving permit (required by law)',
+      'Delivery fee if applicable',
+    ],
     meetingPoint: {
       name: 'Bali Bike Rentals Shop',
       address: 'Jl. Raya Seminyak No. 42, Seminyak',
-      instructions: 'Come to our shop with your license and passport. Or request hotel delivery.',
+      instructions:
+        'Come to our shop with your license and passport. Or request hotel delivery.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
-    whatToBring: ['Valid driving license', 'International driving permit', 'Passport or ID'],
+    whatToBring: [
+      'Valid driving license',
+      'International driving permit',
+      'Passport or ID',
+    ],
     reviews: [
       {
         id: 'rev_014',
@@ -695,7 +790,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_010',
       name: 'Ubud Heritage Walks',
-      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
       bio: 'Local historians and cultural guides sharing the stories and traditions of Ubud through intimate walking tours.',
       since: 2013,
       rating: 4.8,
@@ -718,7 +814,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1580735960274-3bf47a5b1a7f?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1512100356356-de1b84283e18?w=1200&h=800&fit=crop',
     ],
-    description: "Explore the heart of Ubud on foot with a local guide. Start at the bustling art market where you'll learn bargaining techniques and discover traditional crafts. Your guide explains the significance of different items and introduces you to artisan vendors.\n\nContinue to Ubud Palace and the sacred Saraswati Temple with its beautiful lotus pond. Learn about Balinese Hinduism, daily offerings, and temple etiquette. Walk through quiet neighborhood streets to see how locals actually live.\n\nA gentle-paced tour perfect for getting oriented to Ubud and understanding Balinese culture.",
+    description:
+      "Explore the heart of Ubud on foot with a local guide. Start at the bustling art market where you'll learn bargaining techniques and discover traditional crafts. Your guide explains the significance of different items and introduces you to artisan vendors.\n\nContinue to Ubud Palace and the sacred Saraswati Temple with its beautiful lotus pond. Learn about Balinese Hinduism, daily offerings, and temple etiquette. Walk through quiet neighborhood streets to see how locals actually live.\n\nA gentle-paced tour perfect for getting oriented to Ubud and understanding Balinese culture.",
     included: [
       'English-speaking local guide',
       'Temple entrance fees',
@@ -733,7 +830,12 @@ export const experiences: Experience[] = [
       instructions: 'Meet your guide at the main entrance of Ubud Palace.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
-    whatToBring: ['Comfortable walking shoes', 'Sun protection', 'Camera', 'Respectful clothing (covered shoulders/knees for temples)'],
+    whatToBring: [
+      'Comfortable walking shoes',
+      'Sun protection',
+      'Camera',
+      'Respectful clothing (covered shoulders/knees for temples)',
+    ],
     reviews: [
       {
         id: 'rev_015',
@@ -756,7 +858,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_011',
       name: 'Uluwatu Temple Cultural Center',
-      photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop',
       bio: 'Preserving and performing traditional Balinese dance at the stunning clifftop Uluwatu Temple since 1975.',
       since: 1975,
       rating: 4.7,
@@ -778,16 +881,29 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1580709840101-ec78c1e7372e?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1554222311-aa7c14bc5cce?w=1200&h=800&fit=crop',
     ],
-    description: "Watch the mesmerizing Kecak fire dance at sunset in one of Bali's most spectacular settings - clifftop Uluwatu Temple overlooking the Indian Ocean.\n\nThe Kecak tells the story of Ramayana through chanting by 50+ shirtless male dancers sitting in concentric circles, creating hypnotic rhythms without any musical instruments. As the sun sets behind the performers and monkeys play in the temple grounds, you'll witness one of Bali's most iconic cultural experiences.\n\nArrive early to explore the temple grounds and secure good seating for the performance.",
-    included: ['Kecak dance performance ticket', 'Temple entrance fee', 'Performance program/guide'],
-    notIncluded: ['Transportation to Uluwatu', 'Sarong rental (required for temple, 10,000 IDR)'],
+    description:
+      "Watch the mesmerizing Kecak fire dance at sunset in one of Bali's most spectacular settings - clifftop Uluwatu Temple overlooking the Indian Ocean.\n\nThe Kecak tells the story of Ramayana through chanting by 50+ shirtless male dancers sitting in concentric circles, creating hypnotic rhythms without any musical instruments. As the sun sets behind the performers and monkeys play in the temple grounds, you'll witness one of Bali's most iconic cultural experiences.\n\nArrive early to explore the temple grounds and secure good seating for the performance.",
+    included: [
+      'Kecak dance performance ticket',
+      'Temple entrance fee',
+      'Performance program/guide',
+    ],
+    notIncluded: [
+      'Transportation to Uluwatu',
+      'Sarong rental (required for temple, 10,000 IDR)',
+    ],
     meetingPoint: {
       name: 'Uluwatu Temple',
       address: 'Pecatu, South Kuta, Badung',
-      instructions: 'Purchase tickets at temple entrance. Performance starts at 6 PM. Arrive by 5:30 PM for temple visit and seating.',
+      instructions:
+        'Purchase tickets at temple entrance. Performance starts at 6 PM. Arrive by 5:30 PM for temple visit and seating.',
     },
     cancellation: 'Tickets non-refundable but can be used any day.',
-    whatToBring: ['Camera', 'Sarong for temple entry', 'Light jacket (can be windy on cliff)'],
+    whatToBring: [
+      'Camera',
+      'Sarong for temple entry',
+      'Light jacket (can be windy on cliff)',
+    ],
     reviews: [
       {
         id: 'rev_016',
@@ -810,7 +926,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_012',
       name: "Finn's Beach Club",
-      photo: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
       bio: "Bali's most iconic beach club offering stunning ocean views, infinity pool, world-class dining, and unforgettable sunsets.",
       since: 2016,
       rating: 4.6,
@@ -832,9 +949,19 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=800&fit=crop',
     ],
-    description: "Spend the day in paradise at Finn's Beach Club, perched on the clifftops of Uluwatu. Lounge by the infinity pool overlooking the Indian Ocean, enjoy world-class cocktails, and watch one of Bali's best sunsets.\n\nYour day pass includes pool access, beach club lounger, and towel service. Full restaurant and bar menu available for purchase.",
-    included: ['Infinity pool access', 'Beach club lounger', 'Towel service', '$25 food & beverage credit'],
-    notIncluded: ['Food and drinks beyond credit', 'Transportation', 'Spa services'],
+    description:
+      "Spend the day in paradise at Finn's Beach Club, perched on the clifftops of Uluwatu. Lounge by the infinity pool overlooking the Indian Ocean, enjoy world-class cocktails, and watch one of Bali's best sunsets.\n\nYour day pass includes pool access, beach club lounger, and towel service. Full restaurant and bar menu available for purchase.",
+    included: [
+      'Infinity pool access',
+      'Beach club lounger',
+      'Towel service',
+      '$25 food & beverage credit',
+    ],
+    notIncluded: [
+      'Food and drinks beyond credit',
+      'Transportation',
+      'Spa services',
+    ],
     meetingPoint: {
       name: "Finn's Beach Club",
       address: 'Jl. Pantai Selatan Gau, Ungasan',
@@ -864,8 +991,9 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_004',
       name: "Ketut's Bali Drivers",
-      photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
-      bio: "Professional drivers who know Bali inside out. Design your own itinerary or ask for suggestions.",
+      photo:
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
+      bio: 'Professional drivers who know Bali inside out. Design your own itinerary or ask for suggestions.',
       since: 1990,
       rating: 4.8,
       reviewCount: 234,
@@ -886,7 +1014,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=800&fit=crop',
     ],
-    description: "Your own private driver and comfortable car for the day. Create your own itinerary or ask your driver for recommendations - they know the best spots, hidden temples, and local warungs.\n\nPopular routes include: Ubud highlights (monkey forest, rice terraces, waterfalls), East Bali temples (Tirta Gangga, Lempuyang), or North Bali beaches. Your driver waits while you explore each location.\n\nFlexible timing and route. Stop anywhere for photos, bathroom breaks, or snacks. It's your day, your way.",
+    description:
+      "Your own private driver and comfortable car for the day. Create your own itinerary or ask your driver for recommendations - they know the best spots, hidden temples, and local warungs.\n\nPopular routes include: Ubud highlights (monkey forest, rice terraces, waterfalls), East Bali temples (Tirta Gangga, Lempuyang), or North Bali beaches. Your driver waits while you explore each location.\n\nFlexible timing and route. Stop anywhere for photos, bathroom breaks, or snacks. It's your day, your way.",
     included: [
       'Private air-conditioned vehicle',
       'English-speaking driver',
@@ -901,7 +1030,11 @@ export const experiences: Experience[] = [
       instructions: 'Driver picks you up from your hotel at agreed time.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
-    whatToBring: ['Camera', 'Comfortable clothes', 'List of places you want to visit'],
+    whatToBring: [
+      'Camera',
+      'Comfortable clothes',
+      'List of places you want to visit',
+    ],
     reviews: [
       {
         id: 'rev_018',
@@ -924,7 +1057,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_014',
       name: 'Tegalalang Eco Tours',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
       bio: 'Sustainable tourism supporting local rice farmers while providing Instagram-worthy experiences.',
       since: 2014,
       rating: 4.5,
@@ -947,7 +1081,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1552055568-3590dd346511?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1589811828791-be878d1d09c8?w=1200&h=800&fit=crop',
     ],
-    description: "Visit Bali's most photographed rice terraces and swing over the jungle canopy. Walk through the stunning UNESCO-heritage rice terraces of Tegalalang, learning about traditional Subak irrigation system from local farmers.\n\nThen it's time for the famous jungle swings - soar over the palm trees and rice fields with the jungle as your backdrop. Multiple swings and photo spots available. Professional photos included.\n\nFinish with coffee and snacks at a terrace café overlooking the valley.",
+    description:
+      "Visit Bali's most photographed rice terraces and swing over the jungle canopy. Walk through the stunning UNESCO-heritage rice terraces of Tegalalang, learning about traditional Subak irrigation system from local farmers.\n\nThen it's time for the famous jungle swings - soar over the palm trees and rice fields with the jungle as your backdrop. Multiple swings and photo spots available. Professional photos included.\n\nFinish with coffee and snacks at a terrace café overlooking the valley.",
     included: [
       'Rice terrace entrance fee',
       'Jungle swing access (multiple swings)',
@@ -955,14 +1090,22 @@ export const experiences: Experience[] = [
       'Coffee/tea and snack',
       'Guide services',
     ],
-    notIncluded: ['Transportation (easy to combine with private driver)', 'Additional food and drinks'],
+    notIncluded: [
+      'Transportation (easy to combine with private driver)',
+      'Additional food and drinks',
+    ],
     meetingPoint: {
       name: 'Tegalalang Rice Terrace Main Entrance',
       address: 'Jl. Raya Tegallalang, Tegallalang, Gianyar',
       instructions: 'Look for our booth at the main entrance.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
-    whatToBring: ['Camera', 'Comfortable shoes for walking', 'Dress nicely for photos', 'Sunscreen'],
+    whatToBring: [
+      'Camera',
+      'Comfortable shoes for walking',
+      'Dress nicely for photos',
+      'Sunscreen',
+    ],
     reviews: [
       {
         id: 'rev_019',
@@ -985,7 +1128,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_015',
       name: 'Hidden Bali Adventures',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
       bio: 'Small group tours to the secret spots that most tourists miss. Supporting local communities through responsible tourism.',
       since: 2016,
       rating: 4.9,
@@ -1008,7 +1152,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1484821582734-6c9c9c689e0d?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1200&h=800&fit=crop',
     ],
-    description: "Escape the tourist crowds and discover Bali's hidden waterfalls and secret spots. Visit 3-4 stunning waterfalls including Tukad Cepung (sunlight beams through the cave), Tibumana (perfect for swimming), and Kanto Lampo (unique tiered cascades).\n\nYour guide takes you to local villages, traditional markets, and viewpoints that aren't in the guidebooks. Swim in natural pools, explore jungle trails, and experience authentic Bali.\n\nSmall groups ensure a personalized experience and access to spots that big tour buses can't reach.",
+    description:
+      "Escape the tourist crowds and discover Bali's hidden waterfalls and secret spots. Visit 3-4 stunning waterfalls including Tukad Cepung (sunlight beams through the cave), Tibumana (perfect for swimming), and Kanto Lampo (unique tiered cascades).\n\nYour guide takes you to local villages, traditional markets, and viewpoints that aren't in the guidebooks. Swim in natural pools, explore jungle trails, and experience authentic Bali.\n\nSmall groups ensure a personalized experience and access to spots that big tour buses can't reach.",
     included: [
       'Hotel pickup & drop-off',
       'Private air-conditioned vehicle',
@@ -1020,10 +1165,17 @@ export const experiences: Experience[] = [
     notIncluded: ['Personal expenses', 'Tips'],
     meetingPoint: {
       name: 'Hotel pickup',
-      instructions: 'Pickup from Ubud, Sanur, Seminyak areas between 7:30-8:30 AM.',
+      instructions:
+        'Pickup from Ubud, Sanur, Seminyak areas between 7:30-8:30 AM.',
     },
     cancellation: 'Free cancellation up to 24 hours before.',
-    whatToBring: ['Swimwear', 'Towel', 'Change of clothes', 'Water shoes or sandals', 'Waterproof bag for phone'],
+    whatToBring: [
+      'Swimwear',
+      'Towel',
+      'Change of clothes',
+      'Water shoes or sandals',
+      'Waterproof bag for phone',
+    ],
     reviews: [
       {
         id: 'rev_020',
@@ -1046,7 +1198,8 @@ export const experiences: Experience[] = [
     provider: {
       id: 'prov_016',
       name: 'Bali Hai Cruises',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
+      photo:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
       bio: 'Luxury catamaran cruises offering unforgettable evenings on the water with world-class dining and entertainment.',
       since: 2000,
       rating: 4.7,
@@ -1069,7 +1222,8 @@ export const experiences: Experience[] = [
       'https://images.unsplash.com/photo-1566024287286-457247b70310?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&h=800&fit=crop',
     ],
-    description: "Set sail on a luxury catamaran for an unforgettable sunset experience. Cruise along Bali's stunning coastline while enjoying a gourmet international buffet dinner, unlimited drinks, and live entertainment.\n\nWatch the sky turn brilliant shades of orange and pink as the sun sets over the Indian Ocean. Dance to live music, relax on the deck with a cocktail, or simply take in the views.\n\nPerfect for couples, celebrations, or anyone who wants to experience Bali from a different perspective.",
+    description:
+      "Set sail on a luxury catamaran for an unforgettable sunset experience. Cruise along Bali's stunning coastline while enjoying a gourmet international buffet dinner, unlimited drinks, and live entertainment.\n\nWatch the sky turn brilliant shades of orange and pink as the sun sets over the Indian Ocean. Dance to live music, relax on the deck with a cocktail, or simply take in the views.\n\nPerfect for couples, celebrations, or anyone who wants to experience Bali from a different perspective.",
     included: [
       'Hotel pickup & drop-off (Nusa Dua, Sanur, Seminyak)',
       'Welcome drink on boarding',
@@ -1078,13 +1232,22 @@ export const experiences: Experience[] = [
       'Live entertainment and DJ',
       'Sunset viewing from the deck',
     ],
-    notIncluded: ['Premium cocktails and spirits', 'Photos (available for purchase)', 'Tips'],
+    notIncluded: [
+      'Premium cocktails and spirits',
+      'Photos (available for purchase)',
+      'Tips',
+    ],
     meetingPoint: {
       name: 'Benoa Harbor',
-      instructions: 'Check in at Bali Hai Cruises terminal 30 minutes before departure.',
+      instructions:
+        'Check in at Bali Hai Cruises terminal 30 minutes before departure.',
     },
     cancellation: 'Free cancellation up to 48 hours before.',
-    whatToBring: ['Light jacket or shawl (can be breezy)', 'Camera', 'Appetite'],
+    whatToBring: [
+      'Light jacket or shawl (can be breezy)',
+      'Camera',
+      'Appetite',
+    ],
     reviews: [
       {
         id: 'rev_021',
@@ -1098,7 +1261,7 @@ export const experiences: Experience[] = [
     ],
     tags: ['toprated', 'group'],
   },
-]
+];
 
 export const vendors: Vendor[] = [
   {
@@ -1112,8 +1275,9 @@ export const vendors: Vendor[] = [
     verified: true,
     status: 'active',
     createdAt: '2024-01-15T08:00:00Z',
-    photo: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
-    bio: "Wayan learned to freedive from his father at age 7 in the waters off Lovina. After working as a dive instructor across Indonesia for 15 years, he returned home to start his own operation with his wife Ketut.",
+    photo:
+      'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop',
+    bio: 'Wayan learned to freedive from his father at age 7 in the waters off Lovina. After working as a dive instructor across Indonesia for 15 years, he returned home to start his own operation with his wife Ketut.',
   },
   {
     id: 'prov_002',
@@ -1126,7 +1290,8 @@ export const vendors: Vendor[] = [
     verified: true,
     status: 'active',
     createdAt: '2024-02-20T10:30:00Z',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+    photo:
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
     bio: 'Made has been guiding treks on Mount Batur for over a decade, sharing his deep knowledge of Balinese culture and nature.',
   },
   {
@@ -1140,7 +1305,8 @@ export const vendors: Vendor[] = [
     verified: true,
     status: 'active',
     createdAt: '2025-01-01T00:00:00Z',
-    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
+    photo:
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
     bio: 'Demo vendor account for testing purposes.',
   },
-]
+];

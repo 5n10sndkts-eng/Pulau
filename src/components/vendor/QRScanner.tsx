@@ -6,190 +6,188 @@
  * Uses jsQR library for QR code detection from camera feed
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { X, Camera, AlertCircle, CheckCircle2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { scanQRCode } from '@/lib/qrScannerHelper'
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { X, Camera, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { scanQRCode } from '@/lib/qrScannerHelper';
 
 interface QRScannerProps {
-  onScan: (bookingId: string) => void
-  onClose: () => void
-  isOpen: boolean
+  onScan: (bookingId: string) => void;
+  onClose: () => void;
+  isOpen: boolean;
 }
 
-
 export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
-  const [error, setError] = useState<string | null>(null)
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null)
-  const [scanSuccess, setScanSuccess] = useState(false)
-  const [lastScannedCode, setLastScannedCode] = useState<string | null>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const scanningRef = useRef(false)
-  const scanIntervalRef = useRef<number | null>(null)
-
+  const [error, setError] = useState<string | null>(null);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [scanSuccess, setScanSuccess] = useState(false);
+  const [lastScannedCode, setLastScannedCode] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const scanningRef = useRef(false);
+  const scanIntervalRef = useRef<number | null>(null);
 
   // Handle successful QR scan
   const handleQRDetected = useCallback(
     (bookingId: string) => {
       // Prevent duplicate scans of same code
       if (bookingId === lastScannedCode) {
-        return
+        return;
       }
 
-      setLastScannedCode(bookingId)
-      setScanSuccess(true)
+      setLastScannedCode(bookingId);
+      setScanSuccess(true);
 
       // Stop scanning
-      scanningRef.current = false
+      scanningRef.current = false;
       if (scanIntervalRef.current) {
-        clearInterval(scanIntervalRef.current)
-        scanIntervalRef.current = null
+        clearInterval(scanIntervalRef.current);
+        scanIntervalRef.current = null;
       }
 
       // Brief visual feedback then trigger callback
       setTimeout(() => {
-        onScan(bookingId)
-        onClose()
-      }, 500)
+        onScan(bookingId);
+        onClose();
+      }, 500);
     },
-    [lastScannedCode, onScan, onClose]
-  )
-
-
+    [lastScannedCode, onScan, onClose],
+  );
 
   const stopCamera = useCallback(() => {
     if (scanIntervalRef.current) {
-      clearInterval(scanIntervalRef.current)
-      scanIntervalRef.current = null
+      clearInterval(scanIntervalRef.current);
+      scanIntervalRef.current = null;
     }
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop())
-      streamRef.current = null
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
     }
-    scanningRef.current = false
-  }, [])
+    scanningRef.current = false;
+  }, []);
 
   const startQRScanning = useCallback(async () => {
-    if (!videoRef.current || scanningRef.current) return
+    if (!videoRef.current || scanningRef.current) return;
 
-    scanningRef.current = true
+    scanningRef.current = true;
 
     // Create canvas for frame capture if not exists
     if (!canvasRef.current) {
-      canvasRef.current = document.createElement('canvas')
+      canvasRef.current = document.createElement('canvas');
     }
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d', { willReadFrequently: true })
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d', { willReadFrequently: true });
 
     if (!context) {
-      console.error('[QRScanner] Failed to get canvas context')
-      return
+      console.error('[QRScanner] Failed to get canvas context');
+      return;
     }
 
     // Scan at 10 FPS for balance between responsiveness and performance
     scanIntervalRef.current = window.setInterval(async () => {
       if (!videoRef.current || !scanningRef.current) {
         if (scanIntervalRef.current) {
-          clearInterval(scanIntervalRef.current)
-          scanIntervalRef.current = null
+          clearInterval(scanIntervalRef.current);
+          scanIntervalRef.current = null;
         }
-        return
+        return;
       }
 
-      const video = videoRef.current
+      const video = videoRef.current;
 
       // Only process when video has data
       if (video.readyState !== video.HAVE_ENOUGH_DATA) {
-        return
+        return;
       }
 
       // Set canvas size to match video
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
       // Draw current video frame to canvas
-      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       // Get image data for processing
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
       // Detect QR code using helper
-      const result = scanQRCode(imageData)
+      const result = scanQRCode(imageData);
 
       if (result.success && result.bookingId) {
-        console.log('[QRScanner] QR code detected:', result.bookingId)
-        handleQRDetected(result.bookingId)
+        console.log('[QRScanner] QR code detected:', result.bookingId);
+        handleQRDetected(result.bookingId);
       } else if (result.error) {
-        console.debug('[QRScanner] Scan attempt failed:', result.error)
+        console.debug('[QRScanner] Scan attempt failed:', result.error);
       }
-    }, 100) // 100ms = 10 FPS
-  }, [handleQRDetected])
+    }, 100); // 100ms = 10 FPS
+  }, [handleQRDetected]);
 
   const startCamera = useCallback(async () => {
     try {
-      setError(null)
+      setError(null);
 
       // Request camera permission
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' } // Use back camera on mobile
-      })
+        video: { facingMode: 'environment' }, // Use back camera on mobile
+      });
 
-      streamRef.current = stream
-      setHasPermission(true)
+      streamRef.current = stream;
+      setHasPermission(true);
 
       // Attach stream to video element
       if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.play()
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
       }
 
       // Start scanning for QR codes
-      startQRScanning()
+      startQRScanning();
     } catch (err) {
-      console.error('Camera access error:', err)
-      setHasPermission(false)
+      console.error('Camera access error:', err);
+      setHasPermission(false);
 
       if (err instanceof Error) {
         if (err.name === 'NotAllowedError') {
-          setError('Camera permission denied. Please allow camera access in your browser settings.')
+          setError(
+            'Camera permission denied. Please allow camera access in your browser settings.',
+          );
         } else if (err.name === 'NotFoundError') {
-          setError('No camera found on this device.')
+          setError('No camera found on this device.');
         } else {
-          setError('Failed to access camera. Please try again.')
+          setError('Failed to access camera. Please try again.');
         }
       }
     }
-  }, [startQRScanning])
+  }, [startQRScanning]);
 
   useEffect(() => {
     if (!isOpen) {
-      stopCamera()
-      setScanSuccess(false)
-      setLastScannedCode(null)
-      return
+      stopCamera();
+      setScanSuccess(false);
+      setLastScannedCode(null);
+      return;
     }
 
-    startCamera()
+    startCamera();
 
     return () => {
-      stopCamera()
-    }
-  }, [isOpen, startCamera, stopCamera])
+      stopCamera();
+    };
+  }, [isOpen, startCamera, stopCamera]);
 
   const handleManualInput = () => {
-    const bookingId = prompt('Enter booking ID manually:')
+    const bookingId = prompt('Enter booking ID manually:');
     if (bookingId) {
-      onScan(bookingId.trim())
-      onClose()
+      onScan(bookingId.trim());
+      onClose();
     }
-  }
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
@@ -236,7 +234,11 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
                 <Button onClick={startCamera} className="w-full">
                   Try Again
                 </Button>
-                <Button onClick={handleManualInput} variant="outline" className="w-full">
+                <Button
+                  onClick={handleManualInput}
+                  variant="outline"
+                  className="w-full"
+                >
                   Enter Booking ID Manually
                 </Button>
               </div>
@@ -258,20 +260,24 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
                   {/* Corner markers - change color on success */}
                   <div className="w-64 h-64 relative">
                     <div
-                      className={`absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
-                        }`}
+                      className={`absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
                     ></div>
                     <div
-                      className={`absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
-                        }`}
+                      className={`absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
                     ></div>
                     <div
-                      className={`absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
-                        }`}
+                      className={`absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
                     ></div>
                     <div
-                      className={`absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 transition-colors ${scanSuccess ? 'border-green-400' : 'border-white'
-                        }`}
+                      className={`absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 transition-colors ${
+                        scanSuccess ? 'border-green-400' : 'border-white'
+                      }`}
                     ></div>
 
                     {/* Success indicator or scanning line */}
@@ -322,5 +328,5 @@ export function QRScanner({ onScan, onClose, isOpen }: QRScannerProps) {
         )}
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

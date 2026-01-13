@@ -9,11 +9,12 @@ So that I only admit travelers with valid reservations.
 **Given** I scan a QR code
 **When** the booking ID is decoded
 **Then** the system validates:
-  - Booking exists and is confirmed
-  - Booking is for today's date
-  - Booking is for one of my experiences
-  - Booking hasn't already been checked in
-**And** if valid, I see green "VALID" indicator with details
-**And** if invalid, I see red "INVALID" with reason
+
+- Booking exists and is confirmed
+- Booking is for today's date
+- Booking is for one of my experiences
+- Booking hasn't already been checked in
+  **And** if valid, I see green "VALID" indicator with details
+  **And** if invalid, I see red "INVALID" with reason
 
 ---

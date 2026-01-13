@@ -16,7 +16,7 @@ export type User = {
 export const createUser = (overrides: Partial<User> = {}): User => {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
-  
+
   return {
     id: faker.string.uuid(),
     email: faker.internet.email({ firstName, lastName }),

@@ -3,6 +3,7 @@
 ## Vendor Portal Requirements
 
 **Vendor Login & Management:**
+
 - Vendors (local operators like "Wayan's Dive Shop", "Ibu Mangku's Kitchen") need ability to:
   - Create vendor account and login
   - Add new experiences/offerings to platform
@@ -14,6 +15,7 @@
   - View bookings and manage reservations
 
 **Vendor Dashboard:**
+
 - Overview of their listings
 - Booking management interface
 - Revenue tracking
@@ -23,6 +25,7 @@
 ## Customer Authentication
 
 **Customer Login:**
+
 - Customers need ability to:
   - Create account and login
   - Save trip plans across devices
@@ -33,6 +36,7 @@
   - Save wishlist/favorites
 
 **Benefits:**
+
 - Seamless experience across mobile/desktop
 - Trip planning can be saved and resumed
 - Faster checkout with saved details
@@ -42,6 +46,7 @@
 ## Platform Customization
 
 **Customer Trip Customization:**
+
 - Flexible vacation package building
 - Mix and match experiences from different vendors
 - Dynamic pricing based on selections

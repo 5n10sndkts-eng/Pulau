@@ -14,11 +14,12 @@ So that I can quickly fix my itinerary.
 **Given** a conflict warning banner is displayed
 **When** I tap the warning banner
 **Then** a bottom sheet opens with resolution options:
-  - "Move [Item A] to [suggested time]" (next available slot)
-  - "Move [Item B] to [suggested time]"
-  - "Move [Item A] to another day"
-  - "Remove [Item A] from trip"
-**And** suggestions are calculated based on item durations and available gaps
+
+- "Move [Item A] to [suggested time]" (next available slot)
+- "Move [Item B] to [suggested time]"
+- "Move [Item A] to another day"
+- "Remove [Item A] from trip"
+  **And** suggestions are calculated based on item durations and available gaps
 
 **AC #2: Apply resolution and re-run detection**
 **When** I select a suggestion
@@ -29,6 +30,7 @@ So that I can quickly fix my itinerary.
 ## Tasks / Subtasks
 
 ### Task 1: Create ConflictResolutionSheet component (AC: #1)
+
 - [x] Build bottom sheet component using shadcn/ui Sheet
 - [x] Display conflict details: both item names and overlap duration
 - [x] List 4 resolution options as action buttons
@@ -36,6 +38,7 @@ So that I can quickly fix my itinerary.
 - [x] Add "Cancel" button to close without action
 
 ### Task 2: Implement time suggestion algorithm (AC: #1)
+
 - [x] Create findNextAvailableSlot function
 - [x] Calculate time gaps in the day's schedule
 - [x] Find first gap that fits the item's duration
@@ -43,6 +46,7 @@ So that I can quickly fix my itinerary.
 - [x] Handle case: no available slots (suggest next day)
 
 ### Task 3: Build resolution action handlers (AC: #2)
+
 - [x] Implement moveToSuggestedTime: update item's scheduled_time
 - [x] Implement moveTo AnotherDay: show date picker
 - [x] Implement removeFromTrip: delete item from trip
@@ -50,6 +54,7 @@ So that I can quickly fix my itinerary.
 - [x] Close bottom sheet after action applied
 
 ### Task 4: Re-run conflict detection after resolution (AC: #2)
+
 - [x] Trigger conflict detection after any schedule change
 - [x] Remove resolved conflict from conflicts array
 - [x] Check if new conflicts were created by resolution
@@ -57,6 +62,7 @@ So that I can quickly fix my itinerary.
 - [x] Show toast: "Conflict resolved" or "New conflict detected"
 
 ### Task 5: Add suggested time formatting and validation (AC: #1)
+
 - [x] Format suggested times in 12-hour format (e.g., "3:00 PM")
 - [x] Validate suggestions: ensure within reasonable hours (6 AM - 11 PM)
 - [x] Show duration needed in suggestion text
@@ -66,6 +72,7 @@ So that I can quickly fix my itinerary.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Bottom sheet: shadcn/ui Sheet component
 - Time suggestions: scan day's schedule for gaps ≥ item duration
 - Resolution actions: use useTripManagement update functions
@@ -73,6 +80,7 @@ So that I can quickly fix my itinerary.
 - Toast: shadcn/ui Toast with success styling
 
 ### Resolution Options Logic
+
 ```typescript
 interface ResolutionOption {
   label: string;
@@ -84,7 +92,7 @@ const generateResolutionOptions = (
   conflict: Conflict,
   itemA: TripItem,
   itemB: TripItem,
-  daySchedule: TripItem[]
+  daySchedule: TripItem[],
 ): ResolutionOption[] => {
   const expA = getExperience(itemA.experience_id);
   const expB = getExperience(itemB.experience_id);
@@ -96,37 +104,42 @@ const generateResolutionOptions = (
     {
       label: `Move ${expA.title} to ${formatTime(nextSlotA)}`,
       description: `Reschedule to next available time`,
-      action: () => moveItemToTime(itemA.id, nextSlotA)
+      action: () => moveItemToTime(itemA.id, nextSlotA),
     },
     {
       label: `Move ${expB.title} to ${formatTime(nextSlotB)}`,
       description: `Reschedule to next available time`,
-      action: () => moveItemToTime(itemB.id, nextSlotB)
+      action: () => moveItemToTime(itemB.id, nextSlotB),
     },
     {
       label: `Move ${expA.title} to another day`,
       description: `Choose a different date`,
-      action: () => openDatePickerFor(itemA.id)
+      action: () => openDatePickerFor(itemA.id),
     },
     {
       label: `Remove ${expA.title} from trip`,
       description: `Permanently remove this experience`,
-      action: () => removeItem(itemA.id)
-    }
+      action: () => removeItem(itemA.id),
+    },
   ];
 };
 ```
 
 ### Find Next Available Slot Algorithm
+
 ```typescript
 const findNextAvailableSlot = (
   dayItems: TripItem[],
-  durationHours: number
+  durationHours: number,
 ): string | null => {
   // Sort items by scheduled_time
   const sorted = dayItems
-    .filter(item => item.scheduled_time)
-    .sort((a, b) => parseTimeToMinutes(a.scheduled_time!) - parseTimeToMinutes(b.scheduled_time!));
+    .filter((item) => item.scheduled_time)
+    .sort(
+      (a, b) =>
+        parseTimeToMinutes(a.scheduled_time!) -
+        parseTimeToMinutes(b.scheduled_time!),
+    );
 
   const durationMinutes = durationHours * 60;
   let searchStart = 6 * 60; // Start at 6 AM
@@ -144,7 +157,8 @@ const findNextAvailableSlot = (
   }
 
   // Check gap after last item
-  if (searchStart + durationMinutes <= 23 * 60) { // Before 11 PM
+  if (searchStart + durationMinutes <= 23 * 60) {
+    // Before 11 PM
     return minutesToTime(searchStart);
   }
 
@@ -153,6 +167,7 @@ const findNextAvailableSlot = (
 ```
 
 ### Resolution Sheet Layout
+
 ```
 ConflictResolutionSheet
 ├── Header
@@ -168,6 +183,7 @@ ConflictResolutionSheet
 ```
 
 ### Visual Specifications
+
 - Sheet height: auto, max 80% screen height
 - Option buttons: full width, left-aligned text
 - Icon per option: Clock, Calendar, Trash
@@ -195,5 +211,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

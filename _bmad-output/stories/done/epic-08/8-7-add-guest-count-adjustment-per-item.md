@@ -26,6 +26,7 @@ So that pricing reflects my actual group size.
 ## Tasks / Subtasks
 
 ### Task 1: Create GuestCountStepper component (AC: #1)
+
 - [x] Build stepper UI with minus, count display, and plus buttons
 - [x] Style buttons with circular design and borders
 - [x] Disable minus button when count is 1 (minimum)
@@ -33,6 +34,7 @@ So that pricing reflects my actual group size.
 - [x] Add 44x44px touch target for mobile accessibility
 
 ### Task 2: Implement increment and decrement handlers (AC: #1, #2)
+
 - [x] Create handleIncrement function checking max limit
 - [x] Create handleDecrement function checking min limit (1)
 - [x] Update trip item's guest_count in state
@@ -40,6 +42,7 @@ So that pricing reflects my actual group size.
 - [x] Add haptic feedback on button tap (mobile)
 
 ### Task 3: Integrate stepper into TripItemCard (AC: #1, #2)
+
 - [x] Add GuestCountStepper to TripItemCard component
 - [x] Position stepper near price display
 - [x] Make stepper inline-ediKV namespace (click to show stepper)
@@ -47,6 +50,7 @@ So that pricing reflects my actual group size.
 - [x] Format display: "1 guest" or "2 guests" (singular/plural)
 
 ### Task 4: Update item price calculation (AC: #2)
+
 - [x] Calculate item price: experience.price × guest_count
 - [x] Display calculated price on TripItemCard
 - [x] Add visual highlight animation when price changes
@@ -54,6 +58,7 @@ So that pricing reflects my actual group size.
 - [x] Update immediately on guest count change (no debounce)
 
 ### Task 5: Trigger trip total recalculation (AC: #2)
+
 - [x] Listen for guest_count changes in useTripManagement
 - [x] Recalculate trip total: SUM(all item prices)
 - [x] Update TripFooter total display
@@ -63,6 +68,7 @@ So that pricing reflects my actual group size.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Stepper component: can use shadcn/ui or custom implementation
 - Guest count limits: fetch from experience.group_size_max (default 10 if not set)
 - Price calculation: always use current guest_count from trip item state
@@ -70,6 +76,7 @@ So that pricing reflects my actual group size.
 - Format helper: `${count} ${count === 1 ? 'guest' : 'guests'}`
 
 ### Component Structure
+
 ```typescript
 <TripItemCard>
   <ItemHeader />
@@ -86,6 +93,7 @@ So that pricing reflects my actual group size.
 ```
 
 ### Price Calculation Logic
+
 ```typescript
 const calculateItemPrice = (item: TripItem, experience: Experience): number => {
   return experience.price * item.guest_count;
@@ -93,13 +101,14 @@ const calculateItemPrice = (item: TripItem, experience: Experience): number => {
 
 const calculateTripTotal = (trip: Trip, experiences: Experience[]): number => {
   return trip.items.reduce((total, item) => {
-    const experience = experiences.find(exp => exp.id === item.experience_id);
+    const experience = experiences.find((exp) => exp.id === item.experience_id);
     return total + (experience ? calculateItemPrice(item, experience) : 0);
   }, 0);
 };
 ```
 
 ### Stepper Styling
+
 - Button size: 32px diameter
 - Icon size: 16px
 - Active button: teal background
@@ -126,5 +135,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

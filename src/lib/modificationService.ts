@@ -7,53 +7,56 @@
  * Integrates with Supabase RPC functions for validation and execution.
  */
 
-import { supabase } from './supabase'
-import { Database } from './database.types'
+import { supabase } from './supabase';
+import { Database } from './database.types';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-export type ModificationType = Database['public']['Enums']['modification_type']
-export type ModificationStatus = Database['public']['Enums']['modification_request_status']
-export type BookingModification = Database['public']['Tables']['booking_modifications']['Row']
-export type BookingModificationInsert = Database['public']['Tables']['booking_modifications']['Insert']
+export type ModificationType = Database['public']['Enums']['modification_type'];
+export type ModificationStatus =
+  Database['public']['Enums']['modification_request_status'];
+export type BookingModification =
+  Database['public']['Tables']['booking_modifications']['Row'];
+export type BookingModificationInsert =
+  Database['public']['Tables']['booking_modifications']['Insert'];
 
 export interface ModificationAllowedResult {
-  allowed: boolean
-  reason?: string
-  modification_count?: number
-  max_modifications?: number
-  cutoff_hours?: number
-  hours_until_start?: number
+  allowed: boolean;
+  reason?: string;
+  modification_count?: number;
+  max_modifications?: number;
+  cutoff_hours?: number;
+  hours_until_start?: number;
 }
 
 export interface ModificationPriceResult {
-  original_total: number
-  new_total: number
-  price_difference: number
-  price_per_guest: number
-  guests: number
-  slot_available: boolean
-  original_date?: string
-  original_time?: string
-  original_guests?: number
-  error?: string
+  original_total: number;
+  new_total: number;
+  price_difference: number;
+  price_per_guest: number;
+  guests: number;
+  slot_available: boolean;
+  original_date?: string;
+  original_time?: string;
+  original_guests?: number;
+  error?: string;
 }
 
 export interface ModificationRequest {
-  bookingId: string
-  tripItemId: string
-  vendorId: string
-  modificationType: ModificationType
-  originalDate?: string
-  originalTime?: string
-  originalGuests?: number
-  originalTotalPrice?: number
-  requestedDate?: string
-  requestedTime?: string
-  requestedGuests?: number
-  customerNotes?: string
+  bookingId: string;
+  tripItemId: string;
+  vendorId: string;
+  modificationType: ModificationType;
+  originalDate?: string;
+  originalTime?: string;
+  originalGuests?: number;
+  originalTotalPrice?: number;
+  requestedDate?: string;
+  requestedTime?: string;
+  requestedGuests?: number;
+  customerNotes?: string;
 }
 
 // ============================================================================
@@ -64,7 +67,8 @@ export interface ModificationRequest {
  * UUID v4 validation regex pattern
  * Prevents injection attacks by ensuring IDs match expected format
  */
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /**
  * Validate that a string is a valid UUID
@@ -72,7 +76,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
  */
 function validateUUID(id: string, paramName: string): void {
   if (!UUID_PATTERN.test(id)) {
-    throw new Error(`Invalid ${paramName}: must be a valid UUID format`)
+    throw new Error(`Invalid ${paramName}: must be a valid UUID format`);
   }
 }
 
@@ -86,24 +90,24 @@ function validateUUID(id: string, paramName: string): void {
  */
 export async function checkModificationAllowed(
   tripItemId: string,
-  modificationType: ModificationType = 'reschedule'
+  modificationType: ModificationType = 'reschedule',
 ): Promise<ModificationAllowedResult> {
-  validateUUID(tripItemId, 'tripItemId')
+  validateUUID(tripItemId, 'tripItemId');
 
   const { data, error } = await supabase.rpc('check_modification_allowed', {
     p_trip_item_id: tripItemId,
     p_modification_type: modificationType,
-  })
+  });
 
   if (error) {
-    console.error('Error checking modification eligibility:', error)
+    console.error('Error checking modification eligibility:', error);
     return {
       allowed: false,
       reason: 'Failed to check modification eligibility',
-    }
+    };
   }
 
-  return data as unknown as ModificationAllowedResult
+  return data as unknown as ModificationAllowedResult;
 }
 
 // ============================================================================
@@ -118,19 +122,19 @@ export async function calculateModificationPrice(
   tripItemId: string,
   newDate?: string,
   newTime?: string,
-  newGuests?: number
+  newGuests?: number,
 ): Promise<ModificationPriceResult> {
-  validateUUID(tripItemId, 'tripItemId')
+  validateUUID(tripItemId, 'tripItemId');
 
   const { data, error } = await supabase.rpc('calculate_modification_price', {
     p_trip_item_id: tripItemId,
     p_new_date: newDate,
     p_new_time: newTime,
     p_new_guests: newGuests,
-  })
+  });
 
   if (error) {
-    console.error('Error calculating modification price:', error)
+    console.error('Error calculating modification price:', error);
     return {
       original_total: 0,
       new_total: 0,
@@ -139,10 +143,10 @@ export async function calculateModificationPrice(
       guests: 0,
       slot_available: false,
       error: 'Failed to calculate price',
-    }
+    };
   }
 
-  return data as unknown as ModificationPriceResult
+  return data as unknown as ModificationPriceResult;
 }
 
 // ============================================================================
@@ -154,24 +158,24 @@ export async function calculateModificationPrice(
  * Request goes to vendor for approval (unless instant modification is allowed)
  */
 export async function createModificationRequest(
-  request: ModificationRequest
+  request: ModificationRequest,
 ): Promise<{ data: BookingModification | null; error: string | null }> {
   // Validate all UUID parameters
-  validateUUID(request.bookingId, 'bookingId')
-  validateUUID(request.tripItemId, 'tripItemId')
-  validateUUID(request.vendorId, 'vendorId')
+  validateUUID(request.bookingId, 'bookingId');
+  validateUUID(request.tripItemId, 'tripItemId');
+  validateUUID(request.vendorId, 'vendorId');
 
   // First check if modification is allowed
   const eligibility = await checkModificationAllowed(
     request.tripItemId,
-    request.modificationType
-  )
+    request.modificationType,
+  );
 
   if (!eligibility.allowed) {
     return {
       data: null,
       error: eligibility.reason || 'Modification not allowed',
-    }
+    };
   }
 
   // Calculate price difference
@@ -179,38 +183,38 @@ export async function createModificationRequest(
     request.tripItemId,
     request.requestedDate,
     request.requestedTime,
-    request.requestedGuests
-  )
+    request.requestedGuests,
+  );
 
   if (priceCalc.error) {
     return {
       data: null,
       error: priceCalc.error,
-    }
+    };
   }
 
   if (!priceCalc.slot_available) {
     return {
       data: null,
       error: 'No available slot for the requested date/time',
-    }
+    };
   }
 
   // Get current user
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return {
       data: null,
       error: 'User not authenticated',
-    }
+    };
   }
 
   // Create expiry date (48 hours from now for vendor to respond)
-  const expiresAt = new Date()
-  expiresAt.setHours(expiresAt.getHours() + 48)
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 48);
 
   // Create the modification request
   const { data, error } = await supabase
@@ -235,17 +239,17 @@ export async function createModificationRequest(
       expires_at: expiresAt.toISOString(),
     })
     .select()
-    .single()
+    .single();
 
   if (error) {
-    console.error('Error creating modification request:', error)
+    console.error('Error creating modification request:', error);
     return {
       data: null,
       error: 'Failed to create modification request',
-    }
+    };
   }
 
-  return { data, error: null }
+  return { data, error: null };
 }
 
 // ============================================================================
@@ -256,45 +260,45 @@ export async function createModificationRequest(
  * Get modification requests for a booking
  */
 export async function getModificationsByBooking(
-  bookingId: string
+  bookingId: string,
 ): Promise<BookingModification[]> {
-  validateUUID(bookingId, 'bookingId')
+  validateUUID(bookingId, 'bookingId');
 
   const { data, error } = await supabase
     .from('booking_modifications')
     .select('*')
     .eq('booking_id', bookingId)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching modifications:', error)
-    return []
+    console.error('Error fetching modifications:', error);
+    return [];
   }
 
-  return data
+  return data;
 }
 
 /**
  * Get pending modification requests for a vendor
  */
 export async function getVendorPendingModifications(
-  vendorId: string
+  vendorId: string,
 ): Promise<BookingModification[]> {
-  validateUUID(vendorId, 'vendorId')
+  validateUUID(vendorId, 'vendorId');
 
   const { data, error } = await supabase
     .from('booking_modifications')
     .select('*')
     .eq('vendor_id', vendorId)
     .eq('status', 'pending')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching vendor modifications:', error)
-    return []
+    console.error('Error fetching vendor modifications:', error);
+    return [];
   }
 
-  return data
+  return data;
 }
 
 /**
@@ -302,23 +306,23 @@ export async function getVendorPendingModifications(
  */
 export async function getVendorModifications(
   vendorId: string,
-  limit: number = 50
+  limit: number = 50,
 ): Promise<BookingModification[]> {
-  validateUUID(vendorId, 'vendorId')
+  validateUUID(vendorId, 'vendorId');
 
   const { data, error } = await supabase
     .from('booking_modifications')
     .select('*')
     .eq('vendor_id', vendorId)
     .order('created_at', { ascending: false })
-    .limit(limit)
+    .limit(limit);
 
   if (error) {
-    console.error('Error fetching vendor modifications:', error)
-    return []
+    console.error('Error fetching vendor modifications:', error);
+    return [];
   }
 
-  return data
+  return data;
 }
 
 // ============================================================================
@@ -330,16 +334,16 @@ export async function getVendorModifications(
  */
 export async function approveModification(
   modificationId: string,
-  vendorNotes?: string
+  vendorNotes?: string,
 ): Promise<{ success: boolean; error: string | null }> {
-  validateUUID(modificationId, 'modificationId')
+  validateUUID(modificationId, 'modificationId');
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: 'User not authenticated' }
+    return { success: false, error: 'User not authenticated' };
   }
 
   const { error } = await supabase
@@ -351,14 +355,14 @@ export async function approveModification(
       vendor_notes: vendorNotes,
     })
     .eq('id', modificationId)
-    .eq('status', 'pending')
+    .eq('status', 'pending');
 
   if (error) {
-    console.error('Error approving modification:', error)
-    return { success: false, error: 'Failed to approve modification' }
+    console.error('Error approving modification:', error);
+    return { success: false, error: 'Failed to approve modification' };
   }
 
-  return { success: true, error: null }
+  return { success: true, error: null };
 }
 
 /**
@@ -366,16 +370,16 @@ export async function approveModification(
  */
 export async function rejectModification(
   modificationId: string,
-  rejectionReason: string
+  rejectionReason: string,
 ): Promise<{ success: boolean; error: string | null }> {
-  validateUUID(modificationId, 'modificationId')
+  validateUUID(modificationId, 'modificationId');
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: 'User not authenticated' }
+    return { success: false, error: 'User not authenticated' };
   }
 
   const { error } = await supabase
@@ -387,14 +391,14 @@ export async function rejectModification(
       rejection_reason: rejectionReason,
     })
     .eq('id', modificationId)
-    .eq('status', 'pending')
+    .eq('status', 'pending');
 
   if (error) {
-    console.error('Error rejecting modification:', error)
-    return { success: false, error: 'Failed to reject modification' }
+    console.error('Error rejecting modification:', error);
+    return { success: false, error: 'Failed to reject modification' };
   }
 
-  return { success: true, error: null }
+  return { success: true, error: null };
 }
 
 // ============================================================================
@@ -405,22 +409,22 @@ export async function rejectModification(
  * Customer cancels their pending modification request
  */
 export async function cancelModificationRequest(
-  modificationId: string
+  modificationId: string,
 ): Promise<{ success: boolean; error: string | null }> {
-  validateUUID(modificationId, 'modificationId')
+  validateUUID(modificationId, 'modificationId');
 
   const { error } = await supabase
     .from('booking_modifications')
     .update({ status: 'cancelled' })
     .eq('id', modificationId)
-    .eq('status', 'pending')
+    .eq('status', 'pending');
 
   if (error) {
-    console.error('Error cancelling modification request:', error)
-    return { success: false, error: 'Failed to cancel request' }
+    console.error('Error cancelling modification request:', error);
+    return { success: false, error: 'Failed to cancel request' };
   }
 
-  return { success: true, error: null }
+  return { success: true, error: null };
 }
 
 // ============================================================================
@@ -428,13 +432,13 @@ export async function cancelModificationRequest(
 // ============================================================================
 
 export interface ExecuteModificationResult {
-  success: boolean
-  error: string | null
-  newDate?: string
-  newTime?: string
-  priceDifference?: number
-  refundId?: string
-  paymentIntentId?: string
+  success: boolean;
+  error: string | null;
+  newDate?: string;
+  newTime?: string;
+  priceDifference?: number;
+  refundId?: string;
+  paymentIntentId?: string;
 }
 
 /**
@@ -442,32 +446,35 @@ export interface ExecuteModificationResult {
  * Handles slot inventory, price differences, and Stripe operations
  */
 export async function executeModification(
-  modificationId: string
+  modificationId: string,
 ): Promise<ExecuteModificationResult> {
-  validateUUID(modificationId, 'modificationId')
+  validateUUID(modificationId, 'modificationId');
 
   try {
-    const { data, error } = await supabase.functions.invoke('process-reschedule', {
-      body: { modificationId },
-    })
+    const { data, error } = await supabase.functions.invoke(
+      'process-reschedule',
+      {
+        body: { modificationId },
+      },
+    );
 
     if (error) {
-      console.error('Error executing modification:', error)
-      return { success: false, error: 'Failed to execute modification' }
+      console.error('Error executing modification:', error);
+      return { success: false, error: 'Failed to execute modification' };
     }
 
     const result = data as {
-      success?: boolean
-      error?: string
-      newDate?: string
-      newTime?: string
-      priceDifference?: number
-      refundId?: string
-      paymentIntentId?: string
-    }
+      success?: boolean;
+      error?: string;
+      newDate?: string;
+      newTime?: string;
+      priceDifference?: number;
+      refundId?: string;
+      paymentIntentId?: string;
+    };
 
     if (!result.success) {
-      return { success: false, error: result.error || 'Modification failed' }
+      return { success: false, error: result.error || 'Modification failed' };
     }
 
     return {
@@ -478,10 +485,10 @@ export async function executeModification(
       priceDifference: result.priceDifference,
       refundId: result.refundId,
       paymentIntentId: result.paymentIntentId,
-    }
+    };
   } catch (err) {
-    console.error('Unexpected error executing modification:', err)
-    return { success: false, error: 'Unexpected error occurred' }
+    console.error('Unexpected error executing modification:', err);
+    return { success: false, error: 'Unexpected error occurred' };
   }
 }
 
@@ -490,26 +497,26 @@ export async function executeModification(
  * Use this for basic modifications without Stripe integration
  */
 export async function executeModificationSimple(
-  modificationId: string
+  modificationId: string,
 ): Promise<{ success: boolean; error: string | null }> {
-  validateUUID(modificationId, 'modificationId')
+  validateUUID(modificationId, 'modificationId');
 
   const { data, error } = await supabase.rpc('execute_booking_modification', {
     p_modification_id: modificationId,
-  })
+  });
 
   if (error) {
-    console.error('Error executing modification:', error)
-    return { success: false, error: 'Failed to execute modification' }
+    console.error('Error executing modification:', error);
+    return { success: false, error: 'Failed to execute modification' };
   }
 
-  const result = data as unknown as { success?: boolean; error?: string }
+  const result = data as unknown as { success?: boolean; error?: string };
 
   if (result.error) {
-    return { success: false, error: result.error }
+    return { success: false, error: result.error };
   }
 
-  return { success: true, error: null }
+  return { success: true, error: null };
 }
 
 // ============================================================================
@@ -522,23 +529,23 @@ export async function executeModificationSimple(
 export function getModificationPolicyDescription(
   rescheduleAllowed: boolean,
   guestChangeAllowed: boolean,
-  cutoffHours: number
+  cutoffHours: number,
 ): string {
-  const policies: string[] = []
+  const policies: string[] = [];
 
   if (rescheduleAllowed) {
-    policies.push(`Rescheduling allowed up to ${cutoffHours}h before`)
+    policies.push(`Rescheduling allowed up to ${cutoffHours}h before`);
   } else {
-    policies.push('No rescheduling')
+    policies.push('No rescheduling');
   }
 
   if (guestChangeAllowed) {
-    policies.push('Guest count changes allowed')
+    policies.push('Guest count changes allowed');
   } else {
-    policies.push('Guest count fixed')
+    policies.push('Guest count fixed');
   }
 
-  return policies.join(' • ')
+  return policies.join(' • ');
 }
 
 /**
@@ -546,16 +553,16 @@ export function getModificationPolicyDescription(
  * Positive = customer owes more, negative = customer gets refund
  */
 export function formatPriceDifference(priceDiffCents: number): string {
-  const amount = Math.abs(priceDiffCents / 100)
+  const amount = Math.abs(priceDiffCents / 100);
   const formatted = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format(amount)
+  }).format(amount);
 
   if (priceDiffCents > 0) {
-    return `+${formatted} (additional charge)`
+    return `+${formatted} (additional charge)`;
   } else if (priceDiffCents < 0) {
-    return `-${formatted} (refund)`
+    return `-${formatted} (refund)`;
   }
-  return 'No price change'
+  return 'No price change';
 }

@@ -76,6 +76,7 @@ so that I can see what's available.
 ## Dev Notes
 
 ### TypeScript Interfaces
+
 ```typescript
 interface Experience {
   id: string;
@@ -103,6 +104,7 @@ interface Review {
 ```
 
 ### Data Fetching Hook
+
 ```typescript
 import { useKV } from '@/hooks/useKV';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -114,12 +116,11 @@ const useExperiences = (categoryId: string) => {
     queryKey: ['experiences', 'category', categoryId],
     queryFn: async ({ pageParam = 0 }) => {
       const allExperiences = await kv.get<Experience[]>(
-        `experiences:category:${categoryId}`
+        `experiences:category:${categoryId}`,
       );
-      
-      const activeExperiences = allExperiences?.filter(
-        exp => exp.status === 'active'
-      ) || [];
+
+      const activeExperiences =
+        allExperiences?.filter((exp) => exp.status === 'active') || [];
 
       const start = pageParam * 20;
       const end = start + 20;
@@ -137,6 +138,7 @@ const useExperiences = (categoryId: string) => {
 ```
 
 ### ExperienceCard Component
+
 ```typescript
 import { Clock, Users, Star, Plus, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -231,12 +233,13 @@ const ExperienceCard = ({ experience, onQuickAdd }: ExperienceCardProps) => {
 ```
 
 ### Infinite Scroll Implementation
+
 ```typescript
 import { useRef, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const CategoryBobjectse = () => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = 
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useExperiences(categoryId);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -283,6 +286,7 @@ const CategoryBobjectse = () => {
 ```
 
 ### Skeleton Component
+
 ```typescript
 const ExperienceCardSkeleton = () => (
   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
@@ -319,6 +323,7 @@ const ExperienceCardSkeleton = () => (
 - Support keyboard navigation (tab through cards, enter to select)
 
 ### Testing Considerations
+
 - Test with empty category (no experiences)
 - Test with single experience
 - Test with 100+ experiences (infinite scroll)
@@ -344,6 +349,7 @@ const ExperienceCardSkeleton = () => (
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ File paths: `src/screens/bobjectse/CategoryBobjectseScreen.tsx` → `src/pages/CategoryBobjectse.tsx`
 2. ✅ Data layer: Supabase KV namespace queries → KV store with key pattern `experiences:category:{categoryId}`
 3. ✅ Components: React Native SafeAreaView/ScrollView → HTML semantic elements with Tailwind
@@ -380,5 +386,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

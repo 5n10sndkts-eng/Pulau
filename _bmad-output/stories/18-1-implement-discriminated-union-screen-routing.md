@@ -9,6 +9,7 @@ So that navigation is predictable and bug-free.
 **Given** the app uses state-based routing (no react-router)
 **When** Screen type is defined
 **Then** discriminated union covers all screens:
+
 ```typescript
 type Screen =
   | { type: 'home' }
@@ -21,8 +22,9 @@ type Screen =
   | { type: 'profile' }
   | { type: 'bookingHistory' }
   | { type: 'bookingDetail'; bookingId: string }
-  | { type: 'settings'; section: string }
+  | { type: 'settings'; section: string };
 ```
+
 **And** App.tsx switches on screen.type to render correct component
 **And** TypeScript ensures exhaustive handling
 **And** invalid screens cause compile-time error

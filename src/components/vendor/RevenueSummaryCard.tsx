@@ -5,19 +5,22 @@
  * Displays individual revenue metrics with trend indicators.
  */
 
-import { Card } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { TrendingUp, TrendingDown, LucideIcon } from 'lucide-react'
-import { formatCurrency, formatPercentChange } from '@/lib/vendorAnalyticsService'
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { TrendingUp, TrendingDown, LucideIcon } from 'lucide-react';
+import {
+  formatCurrency,
+  formatPercentChange,
+} from '@/lib/vendorAnalyticsService';
 
 interface RevenueSummaryCardProps {
-  title: string
-  amount: number
-  percentChange?: number
-  icon: LucideIcon
-  iconBgColor: string
-  iconColor: string
-  isLoading: boolean
+  title: string;
+  amount: number;
+  percentChange?: number;
+  icon: LucideIcon;
+  iconBgColor: string;
+  iconColor: string;
+  isLoading: boolean;
 }
 
 export function RevenueSummaryCard({
@@ -29,7 +32,7 @@ export function RevenueSummaryCard({
   iconColor,
   isLoading,
 }: RevenueSummaryCardProps) {
-  const hasChange = percentChange !== undefined && percentChange !== 0
+  const hasChange = percentChange !== undefined && percentChange !== 0;
 
   if (isLoading) {
     return (
@@ -43,7 +46,7 @@ export function RevenueSummaryCard({
           <Skeleton className="h-12 w-12 rounded-full" />
         </div>
       </Card>
-    )
+    );
   }
 
   return (
@@ -74,5 +77,5 @@ export function RevenueSummaryCard({
         </div>
       </div>
     </Card>
-  )
+  );
 }

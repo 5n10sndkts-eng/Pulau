@@ -1,12 +1,18 @@
 /**
  * Email Rendering Tests
- * 
+ *
  * Validates that emails render correctly across different email clients
  * and devices (Gmail, Outlook, Apple Mail, dark mode, mobile, etc.)
  */
 
 import { test, expect } from '@playwright/test';
-import { createMailosaurClient, generateTestEmail, waitForEmail, checkEmailRendering, completeBookingFlow } from '../support/email-helpers';
+import {
+  createMailosaurClient,
+  generateTestEmail,
+  waitForEmail,
+  checkEmailRendering,
+  completeBookingFlow,
+} from '../support/email-helpers';
 import dns from 'dns/promises';
 
 const mailosaur = createMailosaurClient();
@@ -45,7 +51,9 @@ test.describe('Email Rendering Validation', () => {
   });
 
   test('contains viewport meta tag for mobile', async () => {
-    expect(emailHtml).toMatch(/<meta[^>]+name=["']viewport["'][^>]+content=["'][^"']*width=device-width[^"']*["']/i);
+    expect(emailHtml).toMatch(
+      /<meta[^>]+name=["']viewport["'][^>]+content=["'][^"']*width=device-width[^"']*["']/i,
+    );
   });
 
   test('uses inline CSS for critical styles', async () => {
@@ -90,7 +98,7 @@ test.describe('DNS & SPF/DKIM Validation', () => {
 
   test('SPF record configured correctly', async () => {
     const records = await dns.resolveTxt(domain);
-    const spfRecord = records.flat().find(r => r.includes('v=spf1'));
+    const spfRecord = records.flat().find((r) => r.includes('v=spf1'));
 
     expect(spfRecord).toBeTruthy();
     expect(spfRecord).toContain('include:sendgrid.net'); // Resend uses SendGrid
@@ -98,7 +106,7 @@ test.describe('DNS & SPF/DKIM Validation', () => {
 
   test('DMARC policy configured', async () => {
     const records = await dns.resolveTxt(`_dmarc.${domain}`);
-    const dmarcRecord = records.flat().find(r => r.includes('v=DMARC1'));
+    const dmarcRecord = records.flat().find((r) => r.includes('v=DMARC1'));
 
     expect(dmarcRecord).toBeTruthy();
     expect(dmarcRecord).toMatch(/p=(quarantine|reject|none)/);
@@ -156,4 +164,3 @@ test.describe('Accessibility', () => {
     expect(emailHtml).not.toMatch(/>click here</i);
   });
 });
-

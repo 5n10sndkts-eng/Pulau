@@ -4,44 +4,46 @@
 // AC #1: Branded Email Templates
 // ================================================
 
-import { wrapInBaseTemplate, components } from './base.ts'
+import { wrapInBaseTemplate, components } from './base.ts';
 import {
   escapeHtml,
   formatDate,
   generateMapsLink,
   getImageUrl,
   toHtmlList,
-} from './utils.ts'
+} from './utils.ts';
 
 export interface BookingReminderData {
-  booking_reference: string
-  experience_name: string
-  experience_image?: string
-  experience_date: string
-  experience_time: string
-  guest_count: number
-  traveler_name: string
-  meeting_point?: string
-  what_to_bring?: string[]
-  weather_note?: string
-  ticket_url?: string
-  reminder_type?: '24h' | '2h' | 'morning'
+  booking_reference: string;
+  experience_name: string;
+  experience_image?: string;
+  experience_date: string;
+  experience_time: string;
+  guest_count: number;
+  traveler_name: string;
+  meeting_point?: string;
+  what_to_bring?: string[];
+  weather_note?: string;
+  ticket_url?: string;
+  reminder_type?: '24h' | '2h' | 'morning';
 }
 
 /**
  * Generate the booking reminder email HTML
  * Sent before the experience to ensure traveler is prepared
  */
-export function generateBookingReminderEmail(data: BookingReminderData): string {
+export function generateBookingReminderEmail(
+  data: BookingReminderData,
+): string {
   // Determine urgency messaging based on reminder type
-  const reminderType = data.reminder_type ?? '24h'
+  const reminderType = data.reminder_type ?? '24h';
   const urgencyText = {
     '24h': 'is tomorrow',
     '2h': 'starts in 2 hours',
     morning: 'is today',
-  }[reminderType]
+  }[reminderType];
 
-  const subject = `Reminder: ${data.experience_name} ${urgencyText}!`
+  const subject = `Reminder: ${data.experience_name} ${urgencyText}!`;
 
   // Meeting point section with map link
   const meetingPointSection = data.meeting_point
@@ -58,7 +60,7 @@ export function generateBookingReminderEmail(data: BookingReminderData): string 
         </a>
       `)}
     `
-    : ''
+    : '';
 
   // What to bring checklist
   const whatToBringSection =
@@ -73,7 +75,7 @@ export function generateBookingReminderEmail(data: BookingReminderData): string 
         </ul>
       `)}
     `
-      : ''
+      : '';
 
   // Weather note if provided
   const weatherSection = data.weather_note
@@ -85,12 +87,12 @@ export function generateBookingReminderEmail(data: BookingReminderData): string 
         </p>
       `)}
     `
-    : ''
+    : '';
 
   // CTA button
   const ctaButton = data.ticket_url
     ? components.button(data.ticket_url, 'View My Ticket')
-    : ''
+    : '';
 
   const content = `
     <!-- Excitement Header -->
@@ -173,7 +175,7 @@ export function generateBookingReminderEmail(data: BookingReminderData): string 
     <p style="margin: 32px 0 0; text-align: center; color: #888; font-size: 13px;">
       Need help? Contact us at <a href="mailto:support@pulau.app" style="color: #0D7377;">support@pulau.app</a>
     </p>
-  `
+  `;
 
-  return wrapInBaseTemplate(content, subject)
+  return wrapInBaseTemplate(content, subject);
 }

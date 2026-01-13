@@ -13,6 +13,7 @@ So that navigation is predictable and bug-free.
 **Given** the app uses state-based routing (no react-router)
 **When** Screen type is defined
 **Then** discriminated union covers all screens:
+
 ```typescript
 type Screen =
   | { type: 'home' }
@@ -25,8 +26,9 @@ type Screen =
   | { type: 'profile' }
   | { type: 'bookingHistory' }
   | { type: 'bookingDetail'; bookingId: string }
-  | { type: 'settings'; section: string }
+  | { type: 'settings'; section: string };
 ```
+
 **And** App.tsx switches on screen.type to render correct component
 **And** TypeScript ensures exhaustive handling
 **And** invalid screens cause compile-time error
@@ -42,17 +44,18 @@ So that I can switch between main sections quickly.
 **Given** I am on any main screen
 **When** bottom navigation renders
 **Then** I see 5 tabs in fixed footer:
-  - Home (House icon) - navigates to home screen
-  - Explore (Compass icon) - navigates to explore
-  - Quick Add (PlusCircle icon, larger, centered) - opens modal
-  - Saved (Heart icon) - navigates to wishlist
-  - Profile (User icon) - navigates to profile
-**And** current tab highlighted (teal fill, label visible)
-**And** other tabs show outline icons, no labels
-**And** tab bar height 64px + safe area inset (env(safe-area-inset-bottom))
-**When** I tap a tab
-**Then** screen changes with fade transition (150ms)
-**And** scroll position resets to top
+
+- Home (House icon) - navigates to home screen
+- Explore (Compass icon) - navigates to explore
+- Quick Add (PlusCircle icon, larger, centered) - opens modal
+- Saved (Heart icon) - navigates to wishlist
+- Profile (User icon) - navigates to profile
+  **And** current tab highlighted (teal fill, label visible)
+  **And** other tabs show outline icons, no labels
+  **And** tab bar height 64px + safe area inset (env(safe-area-inset-bottom))
+  **When** I tap a tab
+  **Then** screen changes with fade transition (150ms)
+  **And** scroll position resets to top
 
 ### Story 18.3: Implement Quick Add Category Modal
 
@@ -65,14 +68,15 @@ So that I can add experiences without extra navigation.
 **Given** I tap the Quick Add tab (center plus icon)
 **When** the modal opens
 **Then** bottom sheet slides up with category grid:
-  - 6 category cards (same as home screen)
-  - "Quick Add to Trip" header
-  - Drag handle at top
-  - Tap outside or swipe down to dismiss
-**When** I tap a category
-**Then** modal dismisses
-**And** I navigate to that category's browse screen
-**And** browse screen has "Back to Trip" in header (returns to trip builder)
+
+- 6 category cards (same as home screen)
+- "Quick Add to Trip" header
+- Drag handle at top
+- Tap outside or swipe down to dismiss
+  **When** I tap a category
+  **Then** modal dismisses
+  **And** I navigate to that category's browse screen
+  **And** browse screen has "Back to Trip" in header (returns to trip builder)
 
 ### Story 18.4: Handle Deep Screens with Back Navigation
 

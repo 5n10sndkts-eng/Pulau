@@ -11,14 +11,17 @@ So that my account details are current.
 ## Acceptance Criteria
 
 ### AC 1: Navigation to Edit Screen
+
 **Given** I tap "Edit Profile" from profile screen
 **When** the edit profile screen loads
 **Then** I see the profile editing form
 
 ### AC 2: Form Fields Display
+
 **Given** the edit profile screen has loaded
 **When** I view the form
 **Then** I see form with current values:
+
 - Profile photo with "Change Photo" overlay
 - First Name input
 - Last Name input
@@ -26,18 +29,21 @@ So that my account details are current.
 - Email (read-only, displays "Contact support to change")
 
 ### AC 3: Photo Selection Options
+
 **Given** I tap profile photo
 **When** the photo options appear
 **Then** options appear: "Take Photo", "Choose from Library", "Remove Photo"
 **And** I can select any option to update my photo
 
 ### AC 4: Photo Upload Process
+
 **Given** I select a photo
 **When** the photo is being processed
 **Then** selected photo crops to square and uploads
 **And** upload progress is shown
 
 ### AC 5: Save Changes
+
 **Given** I modify any field and tap save
 **When** the save process executes
 **Then** user_profiles KV namespace updates
@@ -47,6 +53,7 @@ So that my account details are current.
 ## Tasks / Subtasks
 
 ### Task 1: Create EditProfile Component (AC: #1, #2)
+
 - [x] Create `EditProfile` component in `src/pages/EditProfile.tsx`
 - [x] Pre-populate form with current user data from KV store
 - [x] Add "Save Changes" button at bottom of form
@@ -54,6 +61,7 @@ So that my account details are current.
 - [x] Set page title to "Edit Profile" (using document.title or header component)
 
 ### Task 2: Build Form with React Hook Form (AC: #2)
+
 - [x] Set up React Hook Form with Zod validation
 - [x] Create form fields: firstName, lastName, phoneNumber
 - [x] Display email field as read-only with helper text "Contact support to change email"
@@ -61,6 +69,7 @@ So that my account details are current.
 - [x] Show validation errors inline using Tailwind error states
 
 ### Task 3: Implement Photo Selection (AC: #3)
+
 - [x] Add HTML file input with `accept="image/*"` for photo selection
 - [x] Create Radix UI DropdownMenu with options: "Upload Photo", "Remove Photo"
 - [x] Handle file input change event to read selected image
@@ -68,6 +77,7 @@ So that my account details are current.
 - [x] Show current profile photo with overlay button to trigger dropdown
 
 ### Task 4: Add Photo Processing and Storage (AC: #4)
+
 - [x] Convert selected image to base64 data URL for preview
 - [x] Implement client-side image cropping to square aspect ratio using Canvas API
 - [x] Resize image to 500x500px for optimization
@@ -76,6 +86,7 @@ So that my account details are current.
 - [x] Update profilePhotoUrl in user profile data after processing
 
 ### Task 5: Implement Save Functionality (AC: #5)
+
 - [x] Create updateProfile function using useKV hook
 - [x] Validate form before saving using React Hook Form validation
 - [x] Update KV store with key `user:profile:{userId}` with new values
@@ -85,6 +96,7 @@ So that my account details are current.
 - [x] Trigger re-fetch of profile data to refresh display
 
 ### Task 6: Add Loading and Error States
+
 - [x] Show skeleton placeholders while loading current profile data from KV
 - [x] Display loading spinner during save operation
 - [x] Handle network errors gracefully with error boundaries
@@ -94,6 +106,7 @@ So that my account details are current.
 ## Dev Notes
 
 ### TypeScript Interface
+
 ```typescript
 interface UserProfile {
   id: string;
@@ -108,6 +121,7 @@ interface UserProfile {
 ```
 
 ### Form Schema with Zod
+
 ```typescript
 import { z } from 'zod';
 
@@ -123,6 +137,7 @@ type EditProfileFormData = z.infer<typeof editProfileSchema>;
 ```
 
 ### Photo Selection with HTML File Input
+
 ```typescript
 import { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -147,9 +162,9 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange }) => {
 
   return (
     <div className="relative w-32 h-32 mx-auto">
-      <img 
-        src={currentPhotoUrl || '/default-avatar.png'} 
-        alt="Profile" 
+      <img
+        src={currentPhotoUrl || '/default-avatar.png'}
+        alt="Profile"
         className="w-full h-full rounded-full object-cover"
       />
       <DropdownMenu.Root>
@@ -160,14 +175,14 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange }) => {
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2">
-            <DropdownMenu.Item 
+            <DropdownMenu.Item
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
             >
               <Upload size={16} />
               Upload Photo
             </DropdownMenu.Item>
-            <DropdownMenu.Item 
+            <DropdownMenu.Item
               onClick={() => onPhotoChange(null)}
               className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer text-red-600"
             >
@@ -191,6 +206,7 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange }) => {
 ```
 
 ### Image Cropping with Canvas API
+
 ```typescript
 const cropToSquare = async (dataUrl: string): Promise<string> => {
   return new Promise((resolve) => {
@@ -200,11 +216,11 @@ const cropToSquare = async (dataUrl: string): Promise<string> => {
       const size = Math.min(img.width, img.height);
       canvas.width = 500;
       canvas.height = 500;
-      
+
       const ctx = canvas.getContext('2d')!;
       const sourceX = (img.width - size) / 2;
       const sourceY = (img.height - size) / 2;
-      
+
       ctx.drawImage(img, sourceX, sourceY, size, size, 0, 0, 500, 500);
       resolve(canvas.toDataURL('image/jpeg', 0.8));
     };
@@ -214,6 +230,7 @@ const cropToSquare = async (dataUrl: string): Promise<string> => {
 ```
 
 ### Save Profile with KV Store
+
 ```typescript
 import { useKV } from '@/hooks/useKV';
 import { useNavigate } from 'react-router-dom';
@@ -233,7 +250,7 @@ const EditProfile = () => {
   const updateProfile = useMutation({
     mutationFn: async (data: EditProfileFormData) => {
       const userId = getCurrentUserId();
-      
+
       // Update profile data
       await kv.set(`user:profile:${userId}`, {
         ...profile,
@@ -275,6 +292,7 @@ const EditProfile = () => {
 ```
 
 ### Complete Form Component Structure
+
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -294,9 +312,9 @@ const EditProfile = () => {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-      
+
       <form onSubmit={handleSubmit((data) => updateProfile.mutate(data))} className="space-y-6">
-        <PhotoUpload 
+        <PhotoUpload
           currentPhotoUrl={profile?.profilePhotoUrl}
           onPhotoChange={(url) => setValue('profilePhotoUrl', url)}
         />
@@ -375,6 +393,7 @@ const EditProfile = () => {
 ```
 
 ### Testing Considerations
+
 - Test with all fields populated
 - Test with missing optional fields
 - Verify phone number validation (international formats)
@@ -400,6 +419,7 @@ const EditProfile = () => {
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ File paths: `app/profile/edit.tsx` → `src/pages/EditProfile.tsx`
 2. ✅ Photo selection: expo-image-picker → HTML file input with Radix UI DropdownMenu
 3. ✅ Image processing: expo-image-manipulator → Canvas API for cropping
@@ -433,5 +453,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

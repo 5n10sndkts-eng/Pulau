@@ -4,7 +4,7 @@
  */
 
 interface DesignSystemTestProps {
-  className?: string
+  className?: string;
 }
 
 export function DesignSystemTest({ className = '' }: DesignSystemTestProps) {
@@ -124,5 +124,5 @@ export function DesignSystemTest({ className = '' }: DesignSystemTestProps) {
         </div>
       </section>
     </div>
-  )
+  );
 }

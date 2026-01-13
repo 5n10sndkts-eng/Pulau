@@ -1,10 +1,10 @@
 /**
  * Sentry Error Tracking E2E Tests
- * 
+ *
  * Tests the complete error tracking flow from error occurrence
  * to Sentry capture, including error boundaries, user context,
  * and performance monitoring.
- * 
+ *
  * Story: 32.1.5 - Test Error Reporting E2E
  */
 
@@ -13,7 +13,7 @@ import { test, expect, type Page } from '@playwright/test';
 test.describe('Sentry Error Tracking', () => {
   test.beforeEach(async ({ page }) => {
     // Intercept Sentry requests to verify they're sent
-    await page.route('**/*sentry.io/**', route => {
+    await page.route('**/*sentry.io/**', (route) => {
       console.log('Sentry request intercepted:', route.request().url());
       // Allow the request to proceed
       route.continue();
@@ -50,15 +50,17 @@ test.describe('Sentry Error Tracking', () => {
     // In development, the error might be rethrown
     // In production, error boundary should show fallback UI
     // Check for error fallback component
-    const errorDisplayed = await page.locator('text=/something went wrong/i').count();
-    
+    const errorDisplayed = await page
+      .locator('text=/something went wrong/i')
+      .count();
+
     // Log result for verification
     console.log('Error boundary triggered:', errorDisplayed > 0);
   });
 
   test('tracks user navigation for context', async ({ page }) => {
     await page.goto('/');
-    
+
     // Navigate to different pages to build breadcrumbs
     await page.goto('/experiences');
     await page.goto('/bookings');
@@ -76,24 +78,26 @@ test.describe('Sentry Error Tracking', () => {
 
   test('captures form validation errors with context', async ({ page }) => {
     await page.goto('/');
-    
+
     // Try to submit a form with invalid data
     await page.click('button:has-text("Book Now")');
-    
+
     // Submit without filling required fields
     const submitButton = page.locator('button:has-text("Complete Booking")');
-    if (await submitButton.count() > 0) {
+    if ((await submitButton.count()) > 0) {
       await submitButton.click();
-      
+
       // Validation errors should appear
-      const validationError = await page.locator('.text-destructive, .error').count();
+      const validationError = await page
+        .locator('.text-destructive, .error')
+        .count();
       expect(validationError).toBeGreaterThan(0);
     }
   });
 
   test('handles API errors gracefully', async ({ page }) => {
     // Mock API to return error
-    await page.route('**/supabase.co/**', route => {
+    await page.route('**/supabase.co/**', (route) => {
       route.fulfill({
         status: 500,
         body: JSON.stringify({ error: 'Internal server error' }),
@@ -103,7 +107,9 @@ test.describe('Sentry Error Tracking', () => {
     await page.goto('/experiences');
 
     // App should show error state, not crash
-    const errorState = await page.locator('text=/error|failed|try again/i').count();
+    const errorState = await page
+      .locator('text=/error|failed|try again/i')
+      .count();
     expect(errorState).toBeGreaterThanOrEqual(0);
   });
 
@@ -111,10 +117,10 @@ test.describe('Sentry Error Tracking', () => {
     let sentryPayload: any = null;
 
     // Intercept Sentry requests and capture payload
-    await page.route('**/*sentry.io/**', route => {
+    await page.route('**/*sentry.io/**', (route) => {
       const request = route.request();
       const postData = request.postData();
-      
+
       if (postData) {
         try {
           sentryPayload = JSON.parse(postData);
@@ -122,7 +128,7 @@ test.describe('Sentry Error Tracking', () => {
           // Not JSON, skip
         }
       }
-      
+
       route.continue();
     });
 
@@ -132,7 +138,7 @@ test.describe('Sentry Error Tracking', () => {
       // Simulate logged-in user
       // @ts-ignore
       window.setSentryUser?.('user-123');
-      
+
       // Throw error
       throw new Error('Test error with user context');
     });
@@ -154,9 +160,9 @@ test.describe('Sentry Error Tracking', () => {
 test.describe('Sentry Performance Monitoring', () => {
   test('tracks page load performance', async ({ page }) => {
     const startTime = Date.now();
-    
+
     await page.goto('/');
-    
+
     const loadTime = Date.now() - startTime;
     console.log('Page load time:', loadTime, 'ms');
 
@@ -169,10 +175,10 @@ test.describe('Sentry Performance Monitoring', () => {
 
     // Start checkout flow
     const startTime = Date.now();
-    
+
     await page.click('button:has-text("Book Now")');
     await page.waitForSelector('input[name="fullName"]');
-    
+
     const checkoutLoadTime = Date.now() - startTime;
     console.log('Checkout load time:', checkoutLoadTime, 'ms');
 
@@ -184,7 +190,7 @@ test.describe('Sentry Performance Monitoring', () => {
     const apiCalls: { url: string; duration: number }[] = [];
 
     // Monitor API calls
-    page.on('response', response => {
+    page.on('response', (response) => {
       if (response.url().includes('supabase.co')) {
         const timing = response.timing();
         if (timing) {
@@ -203,12 +209,12 @@ test.describe('Sentry Performance Monitoring', () => {
 
     // Log API performance
     console.log('API calls:', apiCalls.length);
-    apiCalls.forEach(call => {
+    apiCalls.forEach((call) => {
       console.log(`  ${call.url}: ${call.duration.toFixed(2)}ms`);
     });
 
     // Verify API calls are reasonably fast
-    const slowCalls = apiCalls.filter(call => call.duration > 3000);
+    const slowCalls = apiCalls.filter((call) => call.duration > 3000);
     expect(slowCalls.length).toBe(0);
   });
 
@@ -324,7 +330,7 @@ test.describe('Sentry Configuration Validation', () => {
     console.log('  - tracesSampleRate: 0.1 (10%)');
     console.log('  - replaysSessionSampleRate: 0.1 (10%)');
     console.log('  - replaysOnErrorSampleRate: 1.0 (100%)');
-    
+
     expect(true).toBeTruthy();
   });
 

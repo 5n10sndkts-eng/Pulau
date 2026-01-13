@@ -88,12 +88,7 @@
     },
     "existing_documentation": {
       "count": 4,
-      "files": [
-        "README.md",
-        "PRD.md",
-        "SECURITY.md",
-        "AUDIT_REPORT.md"
-      ]
+      "files": ["README.md", "PRD.md", "SECURITY.md", "AUDIT_REPORT.md"]
     },
     "technology_stack": {
       "language": "TypeScript 5.7",

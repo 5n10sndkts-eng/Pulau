@@ -1,16 +1,16 @@
 /**
  * OfflineBanner Component
  * Story: 26.2 - Build Offline Ticket Display
- * 
+ *
  * Banner to indicate offline mode
  */
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { WifiOff } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { motion, AnimatePresence } from 'framer-motion';
+import { WifiOff } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface OfflineBannerProps {
-  isOnline: boolean
+  isOnline: boolean;
 }
 
 export function OfflineBanner({ isOnline }: OfflineBannerProps) {
@@ -33,5 +33,5 @@ export function OfflineBanner({ isOnline }: OfflineBannerProps) {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

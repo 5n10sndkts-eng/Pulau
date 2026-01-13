@@ -19,6 +19,7 @@ tests/
 ## Getting Started
 
 1. **Install Dependencies**:
+
    ```bash
    npm install
    npx playwright install --with-deps
@@ -26,6 +27,7 @@ tests/
 
 2. **Configure Environment**:
    Copy `.env.example` to `.env` and adjust the variables as needed.
+
    ```bash
    cp .env.example .env
    ```
@@ -50,9 +52,11 @@ Tests are configured to run in parallel with automatic trace and video capture o
 ## Knowledge Base References
 
 This setup follows patterns from the BMM Test Architect knowledge fragments:
+
 - **Fixture Architecture**: Pure functions → fixture → mergeTests composition.
 - **Data Factories**: Faker-based factories with auto-cleanup.
 - **Test Quality**: Deterministic, isolated, and focused test design.
 
 ---
-*Initialized by Murat (Master Test Architect)*
+
+_Initialized by Murat (Master Test Architect)_

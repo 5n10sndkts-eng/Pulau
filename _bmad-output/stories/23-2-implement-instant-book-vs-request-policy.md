@@ -9,10 +9,11 @@ So that I can control how reservations are confirmed.
 **Given** I am managing my experience settings
 **When** I configure booking policy
 **Then** I can select:
-  - "Instant Book" - Bookings are confirmed immediately upon payment
-  - "Request to Book" - I must approve each booking request within 24 hours
-**And** the policy is saved to `experiences.instant_book_enabled`
-**And** "Instant Book" is only available if my vendor status is BANK_LINKED or ACTIVE
+
+- "Instant Book" - Bookings are confirmed immediately upon payment
+- "Request to Book" - I must approve each booking request within 24 hours
+  **And** the policy is saved to `experiences.instant_book_enabled`
+  **And** "Instant Book" is only available if my vendor status is BANK_LINKED or ACTIVE
 
 **Given** an experience has "Request to Book" policy
 **When** a traveler requests a booking

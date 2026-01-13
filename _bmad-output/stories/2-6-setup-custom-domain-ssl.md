@@ -24,6 +24,7 @@ Configure custom domain (pulau.app) with SSL certificate for production deployme
 ### 1. Purchase Domain (if not already owned)
 
 **Recommended Registrars:**
+
 - Namecheap: ~$10/year for .app domains
 - Google Domains: ~$12/year
 - Cloudflare Registrar: At-cost pricing
@@ -67,11 +68,13 @@ vercel domains add pulau.app
 ### 4. Configure WWW Redirect
 
 In Vercel:
+
 1. Add both `pulau.app` and `www.pulau.app`
 2. Set `pulau.app` as primary
 3. Enable "Redirect www to root domain"
 
 Or in DNS:
+
 ```
 Type     Name    Value
 CNAME    www     pulau.app
@@ -80,12 +83,14 @@ CNAME    www     pulau.app
 ### 5. Set Up SSL Certificate
 
 **Vercel (Automatic):**
+
 - SSL certificate provisioned automatically
 - Uses Let's Encrypt
 - Auto-renews every 90 days
 - Supports wildcard certificates
 
 **Verify SSL:**
+
 ```bash
 # Check certificate
 curl -vI https://pulau.app 2>&1 | grep -i "SSL certificate"
@@ -188,15 +193,18 @@ Adds cryptographic signatures to DNS records to prevent tampering.
 ### 2. Use Cloudflare Proxy (Optional)
 
 **Pros:**
+
 - Additional DDoS protection
 - Advanced analytics
 - Free CDN
 
 **Cons:**
+
 - Additional complexity
 - May interfere with Vercel's edge network
 
 **If using:**
+
 ```
 Type     Name    Value                  Proxy
 A        @       76.76.21.21            Enabled
@@ -250,6 +258,7 @@ https://web.dev/measure/
 After domain is live, update:
 
 ### Environment Variables
+
 ```bash
 # Update in Vercel
 vercel env rm VITE_APP_URL production
@@ -261,16 +270,19 @@ supabase secrets set APP_URL=https://pulau.app
 ```
 
 ### Stripe Webhooks
+
 1. Go to Stripe Dashboard → Webhooks
 2. Update endpoint URL:
    - Old: `https://[project-ref].supabase.co/functions/v1/stripe-webhook`
    - Keep (Supabase URL still needed for webhooks)
 
 ### OAuth Redirect URLs (if applicable)
+
 - Update Google/Facebook OAuth URLs
 - Update Supabase Auth redirect URLs
 
 ### sitemap.xml
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -288,6 +300,7 @@ supabase secrets set APP_URL=https://pulau.app
 ```
 
 ### robots.txt
+
 ```
 User-agent: *
 Allow: /
@@ -297,14 +310,14 @@ Sitemap: https://pulau.app/sitemap.xml
 
 ## Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| DNS not propagating | Wait 24-48 hours, or flush local DNS: `ipconfig /flushdns` |
-| SSL certificate pending | Wait 10-15 minutes, Vercel auto-provisions |
-| CORS errors | Update APP_URL in all services |
-| Email DKIM fails | Verify DKIM record copied exactly from Resend |
-| Mixed content warnings | Ensure all resources use HTTPS URLs |
-| WWW not redirecting | Verify redirect rule in Vercel or add CNAME |
+| Issue                   | Solution                                                   |
+| ----------------------- | ---------------------------------------------------------- |
+| DNS not propagating     | Wait 24-48 hours, or flush local DNS: `ipconfig /flushdns` |
+| SSL certificate pending | Wait 10-15 minutes, Vercel auto-provisions                 |
+| CORS errors             | Update APP_URL in all services                             |
+| Email DKIM fails        | Verify DKIM record copied exactly from Resend              |
+| Mixed content warnings  | Ensure all resources use HTTPS URLs                        |
+| WWW not redirecting     | Verify redirect rule in Vercel or add CNAME                |
 
 ## Related Files
 
@@ -336,15 +349,19 @@ Sitemap: https://pulau.app/sitemap.xml
 ## Post-Setup
 
 ### Submit to HSTS Preload (Optional)
+
 https://hstspreload.org
+
 - Enables browser-level HSTS before first visit
 - Permanent decision, difficult to reverse
 
 ### Monitor SSL Expiry
+
 - Vercel auto-renews, but set up monitoring
 - Use: https://www.sslshopper.com/ssl-checker.html
 
 ### Set Up Domain Auto-Renewal
+
 - Enable auto-renewal in registrar
 - Prevent accidental expiration
 

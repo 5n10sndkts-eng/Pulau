@@ -21,24 +21,25 @@ so that **users can only access data they're authorized to see and modify**.
 
 ### Access Control Summary
 
-| Table | SELECT | INSERT | UPDATE | DELETE |
-|-------|--------|--------|--------|--------|
-| `destinations` | Public | Admin only | Admin only | Admin only |
-| `profiles` | Public | Own (auth.uid = id) | Own | - |
-| `vendors` | Public | Own (auth.uid = owner_id) | Own | - |
-| `experiences` | Active=public, Draft=vendor | Vendor owns | Vendor owns | - |
-| `experience_images` | Inherit from experience | Vendor owns | Vendor owns | Vendor owns |
-| `experience_inclusions` | Inherit from experience | Vendor owns | Vendor owns | Vendor owns |
-| `experience_availability` | Public | Vendor owns | Vendor owns | Vendor owns |
-| `reviews` | Public | Authenticated (own user_id) | Own | - |
-| `trips` | Own (user_id) | Own | Own | Own |
-| `trip_items` | Via parent trip | Via parent trip | Via parent trip | Via parent trip |
-| `bookings` | Via parent trip | Via parent trip | Via parent trip | - |
-| `payment_methods` | Own + not deleted | Own | Own | - (soft delete) |
+| Table                     | SELECT                      | INSERT                      | UPDATE          | DELETE          |
+| ------------------------- | --------------------------- | --------------------------- | --------------- | --------------- |
+| `destinations`            | Public                      | Admin only                  | Admin only      | Admin only      |
+| `profiles`                | Public                      | Own (auth.uid = id)         | Own             | -               |
+| `vendors`                 | Public                      | Own (auth.uid = owner_id)   | Own             | -               |
+| `experiences`             | Active=public, Draft=vendor | Vendor owns                 | Vendor owns     | -               |
+| `experience_images`       | Inherit from experience     | Vendor owns                 | Vendor owns     | Vendor owns     |
+| `experience_inclusions`   | Inherit from experience     | Vendor owns                 | Vendor owns     | Vendor owns     |
+| `experience_availability` | Public                      | Vendor owns                 | Vendor owns     | Vendor owns     |
+| `reviews`                 | Public                      | Authenticated (own user_id) | Own             | -               |
+| `trips`                   | Own (user_id)               | Own                         | Own             | Own             |
+| `trip_items`              | Via parent trip             | Via parent trip             | Via parent trip | Via parent trip |
+| `bookings`                | Via parent trip             | Via parent trip             | Via parent trip | -               |
+| `payment_methods`         | Own + not deleted           | Own                         | Own             | - (soft delete) |
 
 ### Policy Details by Table
 
 #### profiles
+
 ```sql
 -- Anyone can view profiles (public directory)
 SELECT: using ( true )
@@ -49,6 +50,7 @@ UPDATE: using ( auth.uid() = id )
 ```
 
 #### vendors
+
 ```sql
 -- Public vendor directory
 SELECT: using ( true )
@@ -59,6 +61,7 @@ UPDATE: using ( auth.uid() = owner_id )
 ```
 
 #### experiences
+
 ```sql
 -- Active experiences are public; vendors see their own drafts
 SELECT: using ( status = 'active' OR auth.uid() in (
@@ -72,6 +75,7 @@ INSERT/UPDATE: using ( auth.uid() in (
 ```
 
 #### trips & trip_items
+
 ```sql
 -- Users only see their own trips
 SELECT: using ( auth.uid() = user_id )
@@ -86,6 +90,7 @@ SELECT/INSERT/UPDATE/DELETE: using (
 ```
 
 #### payment_methods
+
 ```sql
 -- Users see their own non-deleted methods
 SELECT: using ( auth.uid() = user_id and deleted_at is null )
@@ -108,11 +113,11 @@ UPDATE: using ( auth.uid() = user_id )
 
 RLS policies are defined across these migrations:
 
-| Migration | Tables Covered |
-|-----------|----------------|
-| `20260108000000_initial_schema.sql` | profiles, vendors, experiences |
-| `20260108000001_trips_schema.sql` | trips, trip_items |
-| `20260108000002_bookings_schema.sql` | bookings |
+| Migration                            | Tables Covered                                                                                            |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `20260108000000_initial_schema.sql`  | profiles, vendors, experiences                                                                            |
+| `20260108000001_trips_schema.sql`    | trips, trip_items                                                                                         |
+| `20260108000002_bookings_schema.sql` | bookings                                                                                                  |
 | `20260108000005_complete_schema.sql` | destinations, experience_images, experience_inclusions, experience_availability, reviews, payment_methods |
 
 ## References
@@ -172,14 +177,14 @@ RLS policies were already comprehensively defined in the migration files. This s
 
 ### Issues Found & Fixed
 
-| # | Severity | Issue | Resolution |
-|---|----------|-------|------------|
-| 1 | MEDIUM | experience_inclusions uses `for all` policy - too broad | Fixed: Split into separate INSERT/UPDATE/DELETE policies |
-| 2 | MEDIUM | experience_availability uses `for all` policy - too broad | Fixed: Split into separate INSERT/UPDATE/DELETE policies |
-| 3 | MEDIUM | No DELETE policy for experiences table | Fixed: Added vendor delete policy |
-| 4 | MEDIUM | No DELETE policy for vendors table | Fixed: Added owner delete policy |
-| 5 | LOW | reviews missing DELETE policy | Fixed: Added user delete policy |
-| 6 | LOW | handle_new_user SECURITY DEFINER without search_path | Fixed: Added `set search_path = public` |
+| #   | Severity | Issue                                                     | Resolution                                               |
+| --- | -------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| 1   | MEDIUM   | experience_inclusions uses `for all` policy - too broad   | Fixed: Split into separate INSERT/UPDATE/DELETE policies |
+| 2   | MEDIUM   | experience_availability uses `for all` policy - too broad | Fixed: Split into separate INSERT/UPDATE/DELETE policies |
+| 3   | MEDIUM   | No DELETE policy for experiences table                    | Fixed: Added vendor delete policy                        |
+| 4   | MEDIUM   | No DELETE policy for vendors table                        | Fixed: Added owner delete policy                         |
+| 5   | LOW      | reviews missing DELETE policy                             | Fixed: Added user delete policy                          |
+| 6   | LOW      | handle_new_user SECURITY DEFINER without search_path      | Fixed: Added `set search_path = public`                  |
 
 ### Files Modified by Review
 

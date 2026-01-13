@@ -6,15 +6,15 @@
  * and browser notification triggers for new bookings.
  */
 
-import { useEffect, useState, useCallback, useRef } from 'react'
-import { toast } from 'sonner'
-import { DollarSign } from 'lucide-react'
-import { createElement } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { toast } from 'sonner';
+import { DollarSign } from 'lucide-react';
+import { createElement } from 'react';
 import {
   subscribeToVendorBookings,
   unsubscribe,
   type BookingChangePayload,
-} from '@/lib/realtimeService'
+} from '@/lib/realtimeService';
 import {
   VendorNotification,
   NotificationPermissionStatus,
@@ -31,34 +31,34 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
   clearNotificationHistory,
-} from '@/lib/vendorNotificationService'
-import { formatCurrency } from '@/lib/vendorAnalyticsService'
+} from '@/lib/vendorNotificationService';
+import { formatCurrency } from '@/lib/vendorAnalyticsService';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 interface UseVendorNotificationsOptions {
-  vendorId: string
-  enabled?: boolean
-  simulateForDemo?: boolean
+  vendorId: string;
+  enabled?: boolean;
+  simulateForDemo?: boolean;
 }
 
 interface UseVendorNotificationsReturn {
   // State
-  notifications: VendorNotification[]
-  unreadCount: number
-  permissionStatus: NotificationPermissionStatus
-  preferences: NotificationPreferences
-  isSubscribed: boolean
+  notifications: VendorNotification[];
+  unreadCount: number;
+  permissionStatus: NotificationPermissionStatus;
+  preferences: NotificationPreferences;
+  isSubscribed: boolean;
 
   // Actions
-  requestPermission: () => Promise<NotificationPermissionStatus>
-  updatePreferences: (prefs: Partial<NotificationPreferences>) => void
-  markAsRead: (notificationId: string) => void
-  markAllAsRead: () => void
-  clearAll: () => void
-  simulateBooking: () => void // For demo/testing
+  requestPermission: () => Promise<NotificationPermissionStatus>;
+  updatePreferences: (prefs: Partial<NotificationPreferences>) => void;
+  markAsRead: (notificationId: string) => void;
+  markAllAsRead: () => void;
+  clearAll: () => void;
+  simulateBooking: () => void; // For demo/testing
 }
 
 // ============================================================================
@@ -71,15 +71,15 @@ const MOCK_EXPERIENCES = [
   { id: 'exp-3', title: 'Traditional Cooking Class', price: 6500 },
   { id: 'exp-4', title: 'Temple & Waterfall Tour', price: 7500 },
   { id: 'exp-5', title: 'Snorkeling Adventure', price: 9500 },
-] as const
+] as const;
 
-function getRandomExperience(): typeof MOCK_EXPERIENCES[number] {
-  const index = Math.floor(Math.random() * MOCK_EXPERIENCES.length)
-  return MOCK_EXPERIENCES[index]!
+function getRandomExperience(): (typeof MOCK_EXPERIENCES)[number] {
+  const index = Math.floor(Math.random() * MOCK_EXPERIENCES.length);
+  return MOCK_EXPERIENCES[index]!;
 }
 
 function getRandomGuestCount() {
-  return Math.floor(Math.random() * 4) + 1 // 1-4 guests
+  return Math.floor(Math.random() * 4) + 1; // 1-4 guests
 }
 
 // ============================================================================
@@ -93,20 +93,19 @@ export function useVendorNotifications({
 }: UseVendorNotificationsOptions): UseVendorNotificationsReturn {
   // State
   const [notifications, setNotifications] = useState<VendorNotification[]>(() =>
-    getNotificationHistory()
-  )
-  const [unreadCount, setUnreadCount] = useState(() => getUnreadCount())
-  const [permissionStatus, setPermissionStatus] = useState<NotificationPermissionStatus>(() =>
-    getNotificationPermission()
-  )
+    getNotificationHistory(),
+  );
+  const [unreadCount, setUnreadCount] = useState(() => getUnreadCount());
+  const [permissionStatus, setPermissionStatus] =
+    useState<NotificationPermissionStatus>(() => getNotificationPermission());
   const [preferences, setPreferences] = useState<NotificationPreferences>(() =>
-    getNotificationPreferences()
-  )
-  const [isSubscribed, setIsSubscribed] = useState(false)
+    getNotificationPreferences(),
+  );
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   // Refs
-  const subscriptionIdRef = useRef<string | null>(null)
-  const simulationIntervalRef = useRef<number | null>(null)
+  const subscriptionIdRef = useRef<string | null>(null);
+  const simulationIntervalRef = useRef<number | null>(null);
 
   // ============================================================================
   // NOTIFICATION HANDLER
@@ -118,7 +117,7 @@ export function useVendorNotifications({
       experienceTitle: string,
       guestCount: number,
       totalAmount: number,
-      experienceId?: string
+      experienceId?: string,
     ) => {
       // Create notification
       const notification = createBookingNotification(
@@ -126,32 +125,34 @@ export function useVendorNotifications({
         experienceTitle,
         guestCount,
         totalAmount,
-        experienceId
-      )
+        experienceId,
+      );
 
       // Add to history
-      addToNotificationHistory(notification)
+      addToNotificationHistory(notification);
 
       // Update state
-      setNotifications(getNotificationHistory())
-      setUnreadCount(getUnreadCount())
+      setNotifications(getNotificationHistory());
+      setUnreadCount(getUnreadCount());
 
       // Show toast notification if enabled
       if (preferences.toastNotificationsEnabled) {
         toast.success(notification.title, {
           description: notification.message,
-          icon: createElement(DollarSign, { className: 'h-4 w-4 text-green-600' }),
+          icon: createElement(DollarSign, {
+            className: 'h-4 w-4 text-green-600',
+          }),
           duration: 5000,
           action: {
             label: 'View',
             onClick: () => {
               // Mark as read when clicked
-              markNotificationAsRead(notification.id)
-              setNotifications(getNotificationHistory())
-              setUnreadCount(getUnreadCount())
+              markNotificationAsRead(notification.id);
+              setNotifications(getNotificationHistory());
+              setUnreadCount(getUnreadCount());
             },
           },
-        })
+        });
       }
 
       // Show browser notification if enabled and permitted
@@ -159,11 +160,11 @@ export function useVendorNotifications({
         preferences.browserNotificationsEnabled &&
         permissionStatus === 'granted'
       ) {
-        showBrowserNotification(notification)
+        showBrowserNotification(notification);
       }
     },
-    [preferences, permissionStatus]
-  )
+    [preferences, permissionStatus],
+  );
 
   // ============================================================================
   // REALTIME SUBSCRIPTION
@@ -171,7 +172,7 @@ export function useVendorNotifications({
 
   useEffect(() => {
     if (!enabled || !vendorId) {
-      return
+      return;
     }
 
     // Subscribe to vendor bookings
@@ -183,37 +184,37 @@ export function useVendorNotifications({
         (payload: BookingChangePayload) => {
           // Handle new booking (INSERT) or status update to 'confirmed' (UPDATE)
           if (payload.eventType === 'INSERT') {
-            const booking = payload.new
+            const booking = payload.new;
             // In production, we'd join with trip_items/experiences to get details
             // For now, log the event
-            console.log('[VendorNotifications] New booking detected:', booking)
+            console.log('[VendorNotifications] New booking detected:', booking);
           } else if (payload.eventType === 'UPDATE') {
-            const booking = payload.new
-            const oldBooking = payload.old
+            const booking = payload.new;
+            const oldBooking = payload.old;
             // Check if status changed to confirmed
             if (
               oldBooking?.status !== 'confirmed' &&
               booking?.status === 'confirmed'
             ) {
-              console.log('[VendorNotifications] Booking confirmed:', booking)
+              console.log('[VendorNotifications] Booking confirmed:', booking);
             }
           }
-        }
-      )
-      setIsSubscribed(true)
+        },
+      );
+      setIsSubscribed(true);
     } catch (error) {
-      console.error('[VendorNotifications] Failed to subscribe:', error)
-      setIsSubscribed(false)
+      console.error('[VendorNotifications] Failed to subscribe:', error);
+      setIsSubscribed(false);
     }
 
     return () => {
       if (subscriptionIdRef.current) {
-        unsubscribe(subscriptionIdRef.current)
-        subscriptionIdRef.current = null
-        setIsSubscribed(false)
+        unsubscribe(subscriptionIdRef.current);
+        subscriptionIdRef.current = null;
+        setIsSubscribed(false);
       }
-    }
-  }, [enabled, vendorId])
+    };
+  }, [enabled, vendorId]);
 
   // ============================================================================
   // DEMO SIMULATION
@@ -221,85 +222,76 @@ export function useVendorNotifications({
 
   useEffect(() => {
     if (!simulateForDemo || !enabled) {
-      return
+      return;
     }
 
     // Simulate a booking every 30-60 seconds for demo purposes
     const scheduleNextSimulation = () => {
-      const delay = 30000 + Math.random() * 30000 // 30-60 seconds
+      const delay = 30000 + Math.random() * 30000; // 30-60 seconds
       simulationIntervalRef.current = window.setTimeout(() => {
-        const exp = getRandomExperience()
-        const guests = getRandomGuestCount()
-        const total = exp.price * guests
+        const exp = getRandomExperience();
+        const guests = getRandomGuestCount();
+        const total = exp.price * guests;
 
-        handleNewBooking(
-          `sim-${Date.now()}`,
-          exp.title,
-          guests,
-          total,
-          exp.id
-        )
+        handleNewBooking(`sim-${Date.now()}`, exp.title, guests, total, exp.id);
 
-        scheduleNextSimulation()
-      }, delay)
-    }
+        scheduleNextSimulation();
+      }, delay);
+    };
 
-    scheduleNextSimulation()
+    scheduleNextSimulation();
 
     return () => {
       if (simulationIntervalRef.current) {
-        clearTimeout(simulationIntervalRef.current)
-        simulationIntervalRef.current = null
+        clearTimeout(simulationIntervalRef.current);
+        simulationIntervalRef.current = null;
       }
-    }
-  }, [simulateForDemo, enabled, handleNewBooking])
+    };
+  }, [simulateForDemo, enabled, handleNewBooking]);
 
   // ============================================================================
   // ACTIONS
   // ============================================================================
 
   const requestPermission = useCallback(async () => {
-    const status = await requestNotificationPermission()
-    setPermissionStatus(status)
-    return status
-  }, [])
+    const status = await requestNotificationPermission();
+    setPermissionStatus(status);
+    return status;
+  }, []);
 
-  const updatePreferences = useCallback((prefs: Partial<NotificationPreferences>) => {
-    saveNotificationPreferences(prefs)
-    setPreferences(getNotificationPreferences())
-  }, [])
+  const updatePreferences = useCallback(
+    (prefs: Partial<NotificationPreferences>) => {
+      saveNotificationPreferences(prefs);
+      setPreferences(getNotificationPreferences());
+    },
+    [],
+  );
 
   const markAsRead = useCallback((notificationId: string) => {
-    markNotificationAsRead(notificationId)
-    setNotifications(getNotificationHistory())
-    setUnreadCount(getUnreadCount())
-  }, [])
+    markNotificationAsRead(notificationId);
+    setNotifications(getNotificationHistory());
+    setUnreadCount(getUnreadCount());
+  }, []);
 
   const markAllAsRead = useCallback(() => {
-    markAllNotificationsAsRead()
-    setNotifications(getNotificationHistory())
-    setUnreadCount(getUnreadCount())
-  }, [])
+    markAllNotificationsAsRead();
+    setNotifications(getNotificationHistory());
+    setUnreadCount(getUnreadCount());
+  }, []);
 
   const clearAll = useCallback(() => {
-    clearNotificationHistory()
-    setNotifications([])
-    setUnreadCount(0)
-  }, [])
+    clearNotificationHistory();
+    setNotifications([]);
+    setUnreadCount(0);
+  }, []);
 
   const simulateBooking = useCallback(() => {
-    const exp = getRandomExperience()
-    const guests = getRandomGuestCount()
-    const total = exp.price * guests
+    const exp = getRandomExperience();
+    const guests = getRandomGuestCount();
+    const total = exp.price * guests;
 
-    handleNewBooking(
-      `manual-${Date.now()}`,
-      exp.title,
-      guests,
-      total,
-      exp.id
-    )
-  }, [handleNewBooking])
+    handleNewBooking(`manual-${Date.now()}`, exp.title, guests, total, exp.id);
+  }, [handleNewBooking]);
 
   // ============================================================================
   // RETURN
@@ -317,5 +309,5 @@ export function useVendorNotifications({
     markAllAsRead,
     clearAll,
     simulateBooking,
-  }
+  };
 }

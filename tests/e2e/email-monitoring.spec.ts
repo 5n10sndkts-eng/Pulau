@@ -1,6 +1,6 @@
 /**
  * Email Delivery Monitoring Tests
- * 
+ *
  * Tests for tracking email delivery metrics:
  * - Delivery rate
  * - Bounce rate
@@ -15,7 +15,9 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set');
+  throw new Error(
+    'VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set',
+  );
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -52,7 +54,9 @@ test.describe('Email Delivery Metrics', () => {
 
     if (data && data.length > 0) {
       const stats = data[0];
-      console.log(`Stats - Sent: ${stats.total_sent}, Delivered: ${stats.total_delivered}, Rate: ${stats.delivery_rate}%`);
+      console.log(
+        `Stats - Sent: ${stats.total_sent}, Delivered: ${stats.total_delivered}, Rate: ${stats.delivery_rate}%`,
+      );
 
       // If we have enough data, verify target
       if (stats.total_sent > 10) {
@@ -74,15 +78,18 @@ test.describe('Email Delivery Metrics', () => {
 
     if (logs && logs.length > 0) {
       const deliveryTimes = logs
-        .map(log => {
+        .map((log) => {
           const created = new Date(log.created_at).getTime();
           const delivered = new Date(log.delivered_at!).getTime();
           return delivered - created;
         })
-        .filter(time => time > 0);
+        .filter((time) => time > 0);
 
       if (deliveryTimes.length > 0) {
-        const avgSeconds = (deliveryTimes.reduce((a, b) => a + b, 0) / deliveryTimes.length) / 1000;
+        const avgSeconds =
+          deliveryTimes.reduce((a, b) => a + b, 0) /
+          deliveryTimes.length /
+          1000;
         console.log(`Average delivery time: ${avgSeconds.toFixed(2)}s`);
         expect(avgSeconds).toBeLessThan(60); // Target < 30s, allowing more padding for tests
       }
@@ -95,12 +102,16 @@ test.describe('Webhook Integration Simulation', () => {
 
   test.beforeAll(async () => {
     // Create a dummy log to "update" via simulated webhook
-    const { data } = await supabase.from('email_logs').insert({
-      resend_message_id: `test-webhook-${Date.now()}`,
-      to_email: 'test@example.com',
-      template: 'booking_confirmation',
-      status: 'sent'
-    }).select().single();
+    const { data } = await supabase
+      .from('email_logs')
+      .insert({
+        resend_message_id: `test-webhook-${Date.now()}`,
+        to_email: 'test@example.com',
+        template: 'booking_confirmation',
+        status: 'sent',
+      })
+      .select()
+      .single();
 
     testMsgId = data.resend_message_id;
   });
@@ -111,7 +122,7 @@ test.describe('Webhook Integration Simulation', () => {
       .from('email_logs')
       .update({
         status: 'delivered',
-        delivered_at: new Date().toISOString()
+        delivered_at: new Date().toISOString(),
       })
       .eq('resend_message_id', testMsgId);
 
@@ -134,7 +145,7 @@ test.describe('Webhook Integration Simulation', () => {
       resend_message_id: bounceMsgId,
       to_email: 'invalid@example.com',
       template: 'booking_confirmation',
-      status: 'sent'
+      status: 'sent',
     });
 
     // Simulate bounce update
@@ -143,7 +154,7 @@ test.describe('Webhook Integration Simulation', () => {
       .update({
         status: 'bounced',
         bounced_at: new Date().toISOString(),
-        bounce_reason: 'Permanent bounce'
+        bounce_reason: 'Permanent bounce',
       })
       .eq('resend_message_id', bounceMsgId);
 
@@ -173,4 +184,3 @@ test.describe('Alert Thresholds', () => {
     }
   });
 });
-

@@ -13,6 +13,7 @@ While launching in Bali, this app architecture must support expansion to other d
 ## TARGET USERS
 
 **Primary**: International travelers (25-45) planning Bali trips who want:
+
 - Authentic local experiences over tourist traps
 - Easy booking without language barriers
 - Flexible itinerary building
@@ -25,6 +26,7 @@ While launching in Bali, this app architecture must support expansion to other d
 ### 1. ONBOARDING FLOW (3 screens max)
 
 **Screen 1: Welcome**
+
 - Beautiful full-screen Bali imagery with app logo
 - "Build Your Bali Dream" tagline
 - "Get Started" button
@@ -33,23 +35,27 @@ While launching in Bali, this app architecture must support expansion to other d
 Quick preference cards user can tap (multiple selections allowed):
 
 Travel style section:
+
 - Adventure
-- Relaxation  
+- Relaxation
 - Culture
 - Mix of everything
 
 Group type section:
+
 - Solo
 - Couple
 - Friends
 - Family
 
 Budget feel section:
+
 - Budget-conscious
 - Mid-range
 - Luxury
 
 **Screen 3: Trip Dates**
+
 - Arrival date picker
 - Departure date picker
 - "Skip for now - Just browsing" text link at bottom
@@ -61,12 +67,14 @@ This is the emotional center of the app. NOT a typical list of services. Visuali
 **Layout:**
 
 **Top Section:**
+
 - Destination header with beautiful parallax image of Bali
 - Trip dates displayed elegantly (or "Set your dates" prompt if not set)
 - Location pin icon with "Bali, Indonesia"
 
 **Main Area - Empty State:**
 When user has no items added yet, show:
+
 - Inspiring illustration or image
 - Text: "Your Bali story starts here"
 - Subtext: "What sounds amazing?"
@@ -82,6 +90,7 @@ Below the empty state prompt, show 6 category cards in a 2x3 grid. Each card has
 6. 🚐 **Getting Around** - "Transfers, drivers, day trips"
 
 **Bottom Floating Bar (appears after first item added):**
+
 - Shows: Item count icon with number
 - Estimated total price
 - "View Trip" button
@@ -97,6 +106,7 @@ When user taps a category, smooth slide transition to category browser. When the
 **Example: Water Adventures**
 
 **Header:**
+
 - Back arrow
 - Category title "Water Adventures"
 - Search icon
@@ -112,6 +122,7 @@ If user selected "Relaxation" + "Couple", show private sunset cruise first
 
 **Content List:**
 Vertical scrolling cards, each card contains:
+
 - Hero image (16:9 ratio, high quality, with slight rounded corners)
 - Small provider badge overlay on image: "Wayan's Dive Shop"
 - Experience title below image: "Sunrise Snorkeling at Menjangan Island"
@@ -121,6 +132,7 @@ Vertical scrolling cards, each card contains:
 
 **Empty State:**
 If no results match filters:
+
 - Friendly illustration
 - "No experiences match these filters"
 - "Try adjusting your filters or explore all options"
@@ -131,6 +143,7 @@ If no results match filters:
 Premium, informative, trustworthy feel. This is where users decide to commit.
 
 **A. Hero Section**
+
 - Full-width image carousel (swipeable, 4-6 images)
 - Dot indicators at bottom of carousel
 - Floating circular back button (top left, semi-transparent background)
@@ -144,6 +157,7 @@ Single row with icons and labels:
 
 **C. Booking Action Box**
 Prominent card that becomes sticky when scrolling past it:
+
 - "From $65 per person" in large text
 - Date selector dropdown (showing available dates)
 - Guest count stepper with +/- buttons (price updates live as count changes)
@@ -172,6 +186,7 @@ Checklist with X marks:
 
 **F. Meet Your Local Operator**
 Card with warm background color:
+
 - Circular photo of operator/owner
 - Name: "Wayan's Dive Shop"
 - Tagline: "Family operated since 1998"
@@ -181,15 +196,18 @@ Card with warm background color:
 
 **G. Reviews Section**
 Section heading: "What Travelers Say"
+
 - Large rating: "4.9" with star icon
 - Review count: "127 reviews"
 - Rating breakdown bars (5 star: 90%, 4 star: 7%, etc.)
 
 Subheading: "Traveler Photos"
+
 - Horizontal scrollable row of user-submitted photos
 
 Review cards (show 3, with "See all reviews" link):
 Each card shows:
+
 - Reviewer first name and country flag emoji
 - Date: "December 2024"
 - Star rating (5 stars shown as icons)
@@ -198,18 +216,21 @@ Each card shows:
 
 **H. Meeting Point**
 Section heading: "Where You'll Meet"
+
 - Embedded map showing pickup zone or meeting location (static map image is fine for prototype)
 - Address text with copy icon button
 - "Get Directions" link
 
 **I. Cancellation & Policies**
 Section heading: "Good to Know"
+
 - Cancellation policy in friendly language: "Plans change, we get it. Cancel up to 24 hours before for a full refund, no questions asked."
 - What to bring: "Sunscreen, swimwear, camera, sense of adventure"
 - Health/safety notes if relevant
 
 **J. You Might Also Like**
 Section heading: "Similar Experiences"
+
 - Horizontal scroll of 3-4 smaller experience cards
 - Each card: image, title, price, rating
 
@@ -218,6 +239,7 @@ Section heading: "Similar Experiences"
 The shopping cart reimagined as a visual itinerary planner.
 
 **Header:**
+
 - "Your Bali Trip" title
 - Date range: "March 15-22, 2025" (tappable to edit)
 - Share icon button (generates shareable link)
@@ -227,6 +249,7 @@ Two-button toggle: [Calendar View] [List View]
 
 **Calendar View:**
 Monthly calendar grid with:
+
 - Days with activities show colored dots
 - Tapping a day shows that day's items in a bottom sheet
 - Visual overview of trip density
@@ -237,35 +260,36 @@ Organized by day with timeline visual:
 Saturday, March 15
 ✈️ Arriving in Bali
 ┌─────────────────────────────┐
-│ 🚐 Airport Pickup to Ubud   │
-│    2:00 PM · 1.5 hours      │
-│    $25                      │
-│    [Edit] [Remove]          │
+│ 🚐 Airport Pickup to Ubud │
+│ 2:00 PM · 1.5 hours │
+│ $25 │
+│ [Edit] [Remove] │
 └─────────────────────────────┘
 Evening free
 [+ Add something for evening]
 ━━━ DAY 2 ━━━━━━━━━━━━━━━━━━━━━━━━━
 Sunday, March 16
 ┌─────────────────────────────┐
-│ 🚴 Rice Terrace Cycling     │
-│    7:00 AM · 4 hours        │
-│    $45 × 2 guests = $90     │
-│    [Edit] [Remove]          │
+│ 🚴 Rice Terrace Cycling │
+│ 7:00 AM · 4 hours │
+│ $45 × 2 guests = $90 │
+│ [Edit] [Remove] │
 └─────────────────────────────┘
 Afternoon & evening free
 [+ Add something]
 ━━━ DAY 3 ━━━━━━━━━━━━━━━━━━━━━━━━━
 Monday, March 17
 ┌─────────────────────────────┐
-│ 🚤 Nusa Penida Island Trip  │
-│    6:00 AM · Full day       │
-│    $85 × 2 guests = $170    │
-│    [Edit] [Remove]          │
+│ 🚤 Nusa Penida Island Trip │
+│ 6:00 AM · Full day │
+│ $85 × 2 guests = $170 │
+│ [Edit] [Remove] │
 └─────────────────────────────┘
 
 [+ Add Another Day] button at end
 
 **Each Item Card Shows:**
+
 - Category icon
 - Experience title
 - Time and duration
@@ -274,31 +298,34 @@ Monday, March 17
 
 **Unscheduled Items Section:**
 If user added items without assigning dates:
+
 - Section heading: "Not Yet Scheduled"
 - List of items with "Assign to Day" button on each
 - Or drag-and-drop to a day above
 
 **Conflict Warning:**
 If two items overlap in time:
+
 - Yellow warning banner
 - "Heads up: Your cycling tour and cooking class overlap on Day 2"
 - Suggestion to adjust
 
 **Bottom Summary Bar (Always Visible, Sticky):**
 ┌─────────────────────────────────────┐
-│  🎒 7 experiences · 5 days          │
-│                                     │
-│  Subtotal           $487.00         │
-│  Service fee         $24.35         │
-│  ───────────────────────────        │
-│  Total              $511.35         │
-│                                     │
-│  [ Continue to Booking ]            │
-│         Large primary button        │
+│ 🎒 7 experiences · 5 days │
+│ │
+│ Subtotal $487.00 │
+│ Service fee $24.35 │
+│ ─────────────────────────── │
+│ Total $511.35 │
+│ │
+│ [ Continue to Booking ] │
+│ Large primary button │
 └─────────────────────────────────────┘
 
 **Empty State:**
 If no items added:
+
 - Illustration of empty suitcase or blank map
 - "Your trip is waiting to be built"
 - "Browse experiences and add them here"
@@ -321,6 +348,7 @@ Each row shows: Date | Experience name | Guests | Price
 Tappable to expand details
 
 Conflict checker results:
+
 - Green checkmark: "No scheduling conflicts found"
 - Or yellow warning if issues exist
 
@@ -335,6 +363,7 @@ Total at bottom
 Heading: "Who's Traveling?"
 
 Lead Traveler card:
+
 - First name field
 - Last name field
 - Email field
@@ -343,11 +372,13 @@ Lead Traveler card:
 
 Additional Travelers section (if guest count > 1):
 "Traveler 2", "Traveler 3" etc.
+
 - First name field
 - Last name field
 - Nationality dropdown
 
 Special Requests section:
+
 - Text area with placeholder: "Allergies, accessibility needs, dietary restrictions, celebrating something special?"
 - Character count indicator
 
@@ -358,6 +389,7 @@ Special Requests section:
 Heading: "Payment"
 
 Order Summary card:
+
 - Itemized list (collapsible)
 - Subtotal
 - Service fee (with info icon explaining it)
@@ -365,6 +397,7 @@ Order Summary card:
 - Total in bold
 
 Payment Method section:
+
 - Credit/Debit Card option (Visa, Mastercard, Amex icons)
   - Card number field
   - Expiry field
@@ -383,22 +416,26 @@ Security badges: "Secure payment" with lock icon, "256-bit encryption"
 **Step 4: Confirmation**
 
 Success state:
+
 - Animated checkmark or confetti animation
 - "You're going to Bali!" heading
 - Booking reference: "PUL-2025-78234" (large, copyable)
 
 Confirmation details card:
+
 - Trip dates
 - Number of experiences booked
 - Total paid
 - "Confirmation email sent to [email]"
 
 Quick Actions:
+
 - [View Your Trip] primary button
 - [Add to Calendar] secondary button with calendar icon
 - [Share with Friends] secondary button with share icon
 
 What's Next section:
+
 - "Your booking confirmations will arrive by email within 1 hour"
 - "Local operators may contact you to confirm pickup details"
 - "Download the app for easy access to your trip on the go"
@@ -413,12 +450,14 @@ Current date prominently displayed
 
 **Today's Schedule (Main Focus):**
 Timeline view of today's activities:
+
 - Current/next activity highlighted
 - Countdown: "Snorkeling trip starts in 2 hours"
 - Quick access buttons on each item: [View Details] [Get Directions] [Contact Operator]
 
 **Quick Access Cards:**
 Row of cards for:
+
 - "My Confirmations" - all booking confirmations with QR codes
 - "Emergency Contacts" - local emergency numbers, operator contacts
 - "Today's Weather" - weather widget
@@ -439,26 +478,31 @@ Prominent at top with placeholder: "Search experiences, places, activities..."
 **Content Sections (Vertical Scroll):**
 
 **Section 1: "Trending in Bali"**
+
 - Horizontal scroll of experience cards
 - Shows most-booked experiences this week
 
 **Section 2: "Hidden Gems"**
+
 - Horizontal scroll
 - Lesser-known local favorites
 - Badge: "Local Secret"
 
 **Section 3: "Limited Availability"**
+
 - Experiences with few spots left or special seasonal offerings
 - Urgency indicator: "Only 3 spots left for this week"
 
 **Section 4: "Destination Guides"**
 Tappable cards for different areas:
+
 - "First Time in Ubud? Start here"
 - "Canggu: Surf, Coffee & Sunsets"
 - "The Gili Islands Day Trip Guide"
-Each opens a curated collection of experiences
+  Each opens a curated collection of experiences
 
 **Section 5: "Stories from Travelers"**
+
 - User-generated content style
 - Photo with short caption/review
 - "Sarah from Australia did 5 experiences" → tappable to see what she did
@@ -471,11 +515,13 @@ Accessed via heart icon in tab bar or profile
 
 **Content:**
 Grid or list of saved experiences:
+
 - Each card shows image, title, price, rating
 - Heart icon (filled) to unsave
 - [Add to Trip] button
 
 **Empty State:**
+
 - Heart illustration
 - "Save experiences you love"
 - "Tap the heart icon on any experience to save it here"
@@ -486,17 +532,20 @@ Grid or list of saved experiences:
 Accessed via profile icon in tab bar
 
 **Profile Header:**
+
 - Profile photo (or placeholder initial)
 - User name
 - Member since date
 - [Edit Profile] button
 
 **My Trips Section:**
+
 - "Upcoming Trips" - cards of upcoming trips (tappable)
 - "Past Trips" - cards of completed trips with "Book Again" option
 
 **Quick Links:**
 List items with chevron arrows:
+
 - Payment Methods
 - Notifications
 - Currency (showing current: USD)
@@ -513,6 +562,7 @@ List items with chevron arrows:
 ### 11. BOTTOM TAB BAR
 
 5 tabs:
+
 1. Home icon - "Trip" - Goes to Trip Canvas/Home
 2. Compass icon - "Explore" - Goes to Discovery screen
 3. Plus icon in circle (prominent) - Quick Add - Opens category selector modal
@@ -536,7 +586,7 @@ List items with chevron arrows:
    - Pull to refresh = custom wave or tropical themed loader
    - Scrolling image carousels = smooth with subtle parallax
 
-6. **Mobile-First, Thumb-Friendly**: 
+6. **Mobile-First, Thumb-Friendly**:
    - Primary actions in bottom 60% of screen
    - One-handed operation possible
    - Minimum tap target size 44x44 pixels
@@ -547,6 +597,7 @@ List items with chevron arrows:
 ## DESIGN AESTHETIC
 
 **Color Palette:**
+
 - Primary: Deep teal #0D7377 - ocean/tropical, trustworthy
 - Secondary: Warm coral #FF6B6B - sunset warmth, call-to-action accents
 - Accent: Golden sand #F4D03F - highlights, stars, premium indicators
@@ -561,6 +612,7 @@ List items with chevron arrows:
 - Dark mode card: #252542
 
 **Typography:**
+
 - Headlines: Plus Jakarta Sans Bold or DM Sans Bold
 - Subheadings: Plus Jakarta Sans SemiBold
 - Body: Inter Regular (highly readable)
@@ -568,6 +620,7 @@ List items with chevron arrows:
 - Optional accent: One script/handwritten font for special callouts like "Local favorite" (use very sparingly)
 
 **Font Sizes:**
+
 - Large title: 28-32px
 - Title: 22-24px
 - Headline: 18-20px
@@ -576,6 +629,7 @@ List items with chevron arrows:
 - Small: 12px
 
 **Imagery Style:**
+
 - Vibrant but natural colors (avoid over-saturated)
 - Real people in photos, candid moments over posed stock
 - Golden hour / magic hour lighting preferred
@@ -583,12 +637,14 @@ List items with chevron arrows:
 - Local life - not just tourist attractions
 
 **Iconography:**
+
 - Rounded, friendly line icons
 - Consistent 2px stroke weight
 - Custom category icons with subtle Balinese/tropical influence
 - Lucide icons or Phosphor icons as base
 
 **UI Components:**
+
 - Border radius: 12-16px for cards, 8px for buttons, 24px for chips/pills
 - Shadows: Subtle, layered (e.g., 0 2px 8px rgba(0,0,0,0.08))
 - Cards: White background, subtle shadow, generous padding (16-20px)
@@ -596,6 +652,7 @@ List items with chevron arrows:
 - Input fields: Large, clear labels above, 48px height minimum
 
 **Spacing System:**
+
 - Base unit: 4px
 - Common spacing: 8px, 12px, 16px, 20px, 24px, 32px, 48px
 - Card padding: 16px or 20px
@@ -621,21 +678,25 @@ List items with chevron arrows:
 ## STATES TO DESIGN
 
 **Loading States:**
+
 - Skeleton screens for experience lists (gray placeholders in card shapes)
 - Spinner for checkout processing
 - Progress bar for image loading
 
 **Empty States:**
+
 - Empty trip: Illustration + encouraging message + CTA
 - Empty search results: Illustration + "No matches" + suggestions
 - Empty wishlist: Heart illustration + "Start saving" message
 
 **Error States:**
+
 - Network error: "Connection lost" + retry button
 - Booking failed: Clear error message + contact support option
 - Payment failed: Specific error + retry option
 
 **Success States:**
+
 - Added to trip: Toast notification with checkmark
 - Booking confirmed: Full-screen success with animation
 - Saved to wishlist: Heart animation + subtle toast
@@ -654,6 +715,7 @@ List items with chevron arrows:
 ## SUCCESS CRITERIA
 
 A traveler should be able to:
+
 1. Open the app and immediately understand what it does
 2. Set their preferences and trip dates
 3. Browse experiences and feel excited about possibilities

@@ -5,19 +5,19 @@
  * Allows admins to search, filter, and export booking data
  */
 
-import { useState, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -25,38 +25,39 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Search, Download, Loader2, RefreshCw, Calendar } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
-import { format, subDays, startOfDay } from 'date-fns'
+} from '@/components/ui/table';
+import { Search, Download, Loader2, RefreshCw, Calendar } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { format, subDays, startOfDay } from 'date-fns';
 
 interface BookingSearchResult {
-  id: string
-  reference: string
-  status: 'confirmed' | 'pending' | 'cancelled' | 'completed'
-  booked_at: string
-  trip_id: string
+  id: string;
+  reference: string;
+  status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
+  booked_at: string;
+  trip_id: string;
   trip: {
-    id: string
-    name: string | null
-    user_id: string
-    travelers: number
-    start_date: string | null
-    destination_id: string
-  } | null
+    id: string;
+    name: string | null;
+    user_id: string;
+    travelers: number;
+    start_date: string | null;
+    destination_id: string;
+  } | null;
 }
 
-type DateRange = '7days' | '30days' | '90days' | 'all'
-type StatusFilter = 'all' | 'confirmed' | 'pending' | 'cancelled' | 'completed'
+type DateRange = '7days' | '30days' | '90days' | 'all';
+type StatusFilter = 'all' | 'confirmed' | 'pending' | 'cancelled' | 'completed';
 
 async function searchBookings(
   searchTerm: string,
   statusFilter: StatusFilter,
-  dateRange: DateRange
+  dateRange: DateRange,
 ): Promise<BookingSearchResult[]> {
   let query = supabase
     .from('bookings')
-    .select(`
+    .select(
+      `
       id,
       reference,
       status,
@@ -70,36 +71,37 @@ async function searchBookings(
         start_date,
         destination_id
       )
-    `)
+    `,
+    )
     .order('booked_at', { ascending: false })
-    .limit(100)
+    .limit(100);
 
   // Apply status filter
   if (statusFilter !== 'all') {
-    query = query.eq('status', statusFilter)
+    query = query.eq('status', statusFilter);
   }
 
   // Apply date range filter
   if (dateRange !== 'all') {
-    const days = dateRange === '7days' ? 7 : dateRange === '30days' ? 30 : 90
-    const startDate = startOfDay(subDays(new Date(), days)).toISOString()
-    query = query.gte('booked_at', startDate)
+    const days = dateRange === '7days' ? 7 : dateRange === '30days' ? 30 : 90;
+    const startDate = startOfDay(subDays(new Date(), days)).toISOString();
+    query = query.gte('booked_at', startDate);
   }
 
   // Apply search term filter (reference only - sanitized)
   if (searchTerm.trim()) {
     // Escape PostgREST special characters to prevent filter injection
     const sanitizedSearch = searchTerm
-      .replace(/[%_\\]/g, '\\$&')  // Escape SQL wildcards
-      .replace(/[,()]/g, '')       // Remove PostgREST operators
-    query = query.ilike('reference', `%${sanitizedSearch}%`)
+      .replace(/[%_\\]/g, '\\$&') // Escape SQL wildcards
+      .replace(/[,()]/g, ''); // Remove PostgREST operators
+    query = query.ilike('reference', `%${sanitizedSearch}%`);
   }
 
-  const { data, error } = await query
+  const { data, error } = await query;
 
   if (error) {
-    console.error('Error searching bookings:', error)
-    throw error
+    console.error('Error searching bookings:', error);
+    throw error;
   }
 
   return (data || [])
@@ -120,7 +122,7 @@ async function searchBookings(
             destination_id: row.trips.destination_id,
           }
         : null,
-    }))
+    }));
 }
 
 function exportToCSV(bookings: BookingSearchResult[]) {
@@ -131,7 +133,7 @@ function exportToCSV(bookings: BookingSearchResult[]) {
     'Travelers',
     'Trip Date',
     'Destination',
-  ]
+  ];
 
   const rows = bookings.map((b) => [
     b.reference,
@@ -140,20 +142,20 @@ function exportToCSV(bookings: BookingSearchResult[]) {
     b.trip?.travelers?.toString() || '',
     b.trip?.start_date || '',
     b.trip?.destination_id || '',
-  ])
+  ]);
 
   const csvContent = [
     headers.join(','),
     ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
-  ].join('\n')
+  ].join('\n');
 
-  const blob = new Blob([csvContent], { type: 'text/csv' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `bookings-export-${format(new Date(), 'yyyy-MM-dd')}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bookings-export-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 const statusColors: Record<string, string> = {
@@ -161,21 +163,21 @@ const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   cancelled: 'bg-red-100 text-red-800',
   completed: 'bg-blue-100 text-blue-800',
-}
+};
 
 export function AdminBookingSearch() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
-  const [dateRange, setDateRange] = useState<DateRange>('30days')
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [dateRange, setDateRange] = useState<DateRange>('30days');
 
   // Debounce search input
   useMemo(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(searchTerm)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [searchTerm])
+      setDebouncedSearch(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const {
     data: bookings = [],
@@ -185,7 +187,7 @@ export function AdminBookingSearch() {
   } = useQuery({
     queryKey: ['admin-bookings', debouncedSearch, statusFilter, dateRange],
     queryFn: () => searchBookings(debouncedSearch, statusFilter, dateRange),
-  })
+  });
 
   return (
     <div className="space-y-6">
@@ -319,5 +321,5 @@ export function AdminBookingSearch() {
         )}
       </Card>
     </div>
-  )
+  );
 }

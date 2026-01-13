@@ -7,37 +7,41 @@
  * Handles vendor Stripe Connect onboarding operations.
  */
 
-import { supabase } from './supabase'
+import { supabase } from './supabase';
 import {
   vendorStateMachine,
   VendorOnboardingStateValue,
   VendorCapabilities,
   getVendorCapabilities,
-} from './vendorStateMachine'
+} from './vendorStateMachine';
 
 export interface VendorOnboardResponse {
-  success: boolean
-  accountLinkUrl?: string
-  stripeAccountId?: string
-  error?: string
+  success: boolean;
+  accountLinkUrl?: string;
+  stripeAccountId?: string;
+  error?: string;
 }
 
-export type VerificationStepStatus = 'pending' | 'in_progress' | 'complete' | 'failed'
+export type VerificationStepStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'complete'
+  | 'failed';
 
 export interface VerificationStep {
-  id: string
-  label: string
-  status: VerificationStepStatus
-  description?: string
+  id: string;
+  label: string;
+  status: VerificationStepStatus;
+  description?: string;
 }
 
-export type PayoutInterval = 'manual' | 'daily' | 'weekly' | 'monthly'
+export type PayoutInterval = 'manual' | 'daily' | 'weekly' | 'monthly';
 
 export interface PayoutSchedule {
-  interval: PayoutInterval
-  weeklyAnchor?: string    // e.g., 'friday'
-  monthlyAnchor?: number   // Day of month (1-31)
-  delayDays?: number       // Payout delay (e.g., 7 for T+7)
+  interval: PayoutInterval;
+  weeklyAnchor?: string; // e.g., 'friday'
+  monthlyAnchor?: number; // Day of month (1-31)
+  delayDays?: number; // Payout delay (e.g., 7 for T+7)
 }
 
 export type VendorOnboardingState =
@@ -45,20 +49,20 @@ export type VendorOnboardingState =
   | 'in_progress'
   | 'pending_verification'
   | 'active'
-  | 'restricted'
+  | 'restricted';
 
 export interface VendorPaymentStatus {
-  hasStripeAccount: boolean
-  stripeAccountId: string | null
-  onboardingComplete: boolean
-  instantBookEnabled: boolean
-  onboardingState: VendorOnboardingState
-  vendorState: VendorOnboardingStateValue  // State machine state
-  capabilities: VendorCapabilities          // Gated capabilities
-  verificationSteps: VerificationStep[]
-  payoutSchedule: PayoutSchedule | null
-  chargesEnabled: boolean
-  payoutsEnabled: boolean
+  hasStripeAccount: boolean;
+  stripeAccountId: string | null;
+  onboardingComplete: boolean;
+  instantBookEnabled: boolean;
+  onboardingState: VendorOnboardingState;
+  vendorState: VendorOnboardingStateValue; // State machine state
+  capabilities: VendorCapabilities; // Gated capabilities
+  verificationSteps: VerificationStep[];
+  payoutSchedule: PayoutSchedule | null;
+  chargesEnabled: boolean;
+  payoutsEnabled: boolean;
 }
 
 /**
@@ -68,28 +72,26 @@ export interface VendorPaymentStatus {
  */
 export async function initiateStripeOnboarding(): Promise<VendorOnboardResponse> {
   try {
-    const { data, error } = await supabase.functions.invoke<VendorOnboardResponse>(
-      'vendor-onboard',
-      {
+    const { data, error } =
+      await supabase.functions.invoke<VendorOnboardResponse>('vendor-onboard', {
         body: {},
-      }
-    )
+      });
 
     if (error) {
-      console.error('Stripe onboarding error:', error)
+      console.error('Stripe onboarding error:', error);
       return {
         success: false,
         error: error.message || 'Failed to initiate Stripe onboarding',
-      }
+      };
     }
 
-    return data || { success: false, error: 'No response from server' }
+    return data || { success: false, error: 'No response from server' };
   } catch (e) {
-    console.error('Stripe onboarding exception:', e)
+    console.error('Stripe onboarding exception:', e);
     return {
       success: false,
       error: 'Failed to connect to payment service',
-    }
+    };
   }
 }
 
@@ -101,14 +103,29 @@ function inferVerificationSteps(
   hasStripeAccount: boolean,
   onboardingComplete: boolean,
   chargesEnabled: boolean,
-  payoutsEnabled: boolean
+  payoutsEnabled: boolean,
 ): VerificationStep[] {
   if (!hasStripeAccount) {
     return [
-      { id: 'identity', label: 'Identity Verification', status: 'pending', description: 'Verify your identity with a government ID' },
-      { id: 'business', label: 'Business Information', status: 'pending', description: 'Provide your business details' },
-      { id: 'bank', label: 'Bank Account', status: 'pending', description: 'Connect your bank account for payouts' },
-    ]
+      {
+        id: 'identity',
+        label: 'Identity Verification',
+        status: 'pending',
+        description: 'Verify your identity with a government ID',
+      },
+      {
+        id: 'business',
+        label: 'Business Information',
+        status: 'pending',
+        description: 'Provide your business details',
+      },
+      {
+        id: 'bank',
+        label: 'Bank Account',
+        status: 'pending',
+        description: 'Connect your bank account for payouts',
+      },
+    ];
   }
 
   if (onboardingComplete && chargesEnabled && payoutsEnabled) {
@@ -116,19 +133,37 @@ function inferVerificationSteps(
       { id: 'identity', label: 'Identity Verification', status: 'complete' },
       { id: 'business', label: 'Business Information', status: 'complete' },
       { id: 'bank', label: 'Bank Account', status: 'complete' },
-    ]
+    ];
   }
 
   // Partial completion - infer from what's enabled
-  const identityStatus: VerificationStepStatus = chargesEnabled ? 'complete' : 'in_progress'
-  const businessStatus: VerificationStepStatus = chargesEnabled ? 'complete' : 'pending'
-  const bankStatus: VerificationStepStatus = payoutsEnabled ? 'complete' : 'pending'
+  const identityStatus: VerificationStepStatus = chargesEnabled
+    ? 'complete'
+    : 'in_progress';
+  const businessStatus: VerificationStepStatus = chargesEnabled
+    ? 'complete'
+    : 'pending';
+  const bankStatus: VerificationStepStatus = payoutsEnabled
+    ? 'complete'
+    : 'pending';
 
   return [
-    { id: 'identity', label: 'Identity Verification', status: identityStatus, description: identityStatus === 'in_progress' ? 'Under review' : undefined },
+    {
+      id: 'identity',
+      label: 'Identity Verification',
+      status: identityStatus,
+      description:
+        identityStatus === 'in_progress' ? 'Under review' : undefined,
+    },
     { id: 'business', label: 'Business Information', status: businessStatus },
-    { id: 'bank', label: 'Bank Account', status: bankStatus, description: bankStatus === 'pending' ? 'Required to receive payouts' : undefined },
-  ]
+    {
+      id: 'bank',
+      label: 'Bank Account',
+      status: bankStatus,
+      description:
+        bankStatus === 'pending' ? 'Required to receive payouts' : undefined,
+    },
+  ];
 }
 
 /**
@@ -138,27 +173,27 @@ function determineOnboardingState(
   hasStripeAccount: boolean,
   onboardingComplete: boolean,
   chargesEnabled: boolean,
-  payoutsEnabled: boolean
+  payoutsEnabled: boolean,
 ): VendorOnboardingState {
   if (!hasStripeAccount) {
-    return 'not_started'
+    return 'not_started';
   }
 
   if (onboardingComplete && chargesEnabled && payoutsEnabled) {
-    return 'active'
+    return 'active';
   }
 
   // Has account but not fully enabled - could be pending verification
   if (hasStripeAccount && !chargesEnabled) {
-    return 'pending_verification'
+    return 'pending_verification';
   }
 
   // Has some capabilities but not all
   if (hasStripeAccount && chargesEnabled && !payoutsEnabled) {
-    return 'in_progress'
+    return 'in_progress';
   }
 
-  return 'in_progress'
+  return 'in_progress';
 }
 
 /**
@@ -166,16 +201,18 @@ function determineOnboardingState(
  * Integrates with the vendor state machine for capability gating.
  */
 export async function getVendorPaymentStatus(
-  vendorId: string
+  vendorId: string,
 ): Promise<VendorPaymentStatus> {
   const { data, error } = await supabase
     .from('vendors')
-    .select('stripe_account_id, stripe_onboarding_complete, instant_book_enabled, onboarding_state')
+    .select(
+      'stripe_account_id, stripe_onboarding_complete, instant_book_enabled, onboarding_state',
+    )
     .eq('id', vendorId)
-    .single()
+    .single();
 
   // Default state for not found or error
-  const defaultVendorState: VendorOnboardingStateValue = 'registered'
+  const defaultVendorState: VendorOnboardingStateValue = 'registered';
 
   if (error || !data) {
     return {
@@ -190,44 +227,45 @@ export async function getVendorPaymentStatus(
       payoutSchedule: null,
       chargesEnabled: false,
       payoutsEnabled: false,
-    }
+    };
   }
 
-  const hasStripeAccount = !!data.stripe_account_id
-  const onboardingComplete = data.stripe_onboarding_complete || false
-  const instantBookEnabled = data.instant_book_enabled || false
-  const vendorState = (data.onboarding_state as VendorOnboardingStateValue) || defaultVendorState
+  const hasStripeAccount = !!data.stripe_account_id;
+  const onboardingComplete = data.stripe_onboarding_complete || false;
+  const instantBookEnabled = data.instant_book_enabled || false;
+  const vendorState =
+    (data.onboarding_state as VendorOnboardingStateValue) || defaultVendorState;
 
   // Infer charges/payouts enabled from onboarding complete status
   // In a real implementation, this would come from Stripe webhook data stored in DB
-  const chargesEnabled = onboardingComplete
-  const payoutsEnabled = onboardingComplete
+  const chargesEnabled = onboardingComplete;
+  const payoutsEnabled = onboardingComplete;
 
   const onboardingState = determineOnboardingState(
     hasStripeAccount,
     onboardingComplete,
     chargesEnabled,
-    payoutsEnabled
-  )
+    payoutsEnabled,
+  );
 
   const verificationSteps = inferVerificationSteps(
     hasStripeAccount,
     onboardingComplete,
     chargesEnabled,
-    payoutsEnabled
-  )
+    payoutsEnabled,
+  );
 
   // Default payout schedule for Stripe Express in Indonesia (T+7 weekly)
   const payoutSchedule: PayoutSchedule | null = onboardingComplete
     ? {
-      interval: 'weekly',
-      weeklyAnchor: 'friday',
-      delayDays: 7,
-    }
-    : null
+        interval: 'weekly',
+        weeklyAnchor: 'friday',
+        delayDays: 7,
+      }
+    : null;
 
   // Get capabilities from state machine
-  const capabilities = getVendorCapabilities(vendorState)
+  const capabilities = getVendorCapabilities(vendorState);
 
   return {
     hasStripeAccount,
@@ -241,7 +279,7 @@ export async function getVendorPaymentStatus(
     payoutSchedule,
     chargesEnabled,
     payoutsEnabled,
-  }
+  };
 }
 
 /**
@@ -249,9 +287,9 @@ export async function getVendorPaymentStatus(
  * Only works if the vendor has completed onboarding.
  */
 export async function getStripeExpressDashboardLink(): Promise<{
-  success: boolean
-  dashboardUrl?: string
-  error?: string
+  success: boolean;
+  dashboardUrl?: string;
+  error?: string;
 }> {
   try {
     // This would call another Edge Function to generate a login link
@@ -259,12 +297,12 @@ export async function getStripeExpressDashboardLink(): Promise<{
     return {
       success: true,
       dashboardUrl: 'https://connect.stripe.com/express_login',
-    }
+    };
   } catch (e) {
     return {
       success: false,
       error: 'Failed to get dashboard link',
-    }
+    };
   }
 }
 
@@ -272,28 +310,36 @@ export async function getStripeExpressDashboardLink(): Promise<{
  * Formats payout schedule for display.
  */
 export function formatPayoutSchedule(schedule: PayoutSchedule | null): string {
-  if (!schedule) return 'Not configured'
+  if (!schedule) return 'Not configured';
 
-  const delayText = schedule.delayDays ? ` (T+${schedule.delayDays})` : ''
+  const delayText = schedule.delayDays ? ` (T+${schedule.delayDays})` : '';
 
   switch (schedule.interval) {
     case 'daily':
-      return `Daily${delayText}`
+      return `Daily${delayText}`;
     case 'weekly': {
       const day = schedule.weeklyAnchor
-        ? schedule.weeklyAnchor.charAt(0).toUpperCase() + schedule.weeklyAnchor.slice(1)
-        : 'Friday'
-      return `Weekly on ${day}s${delayText}`
+        ? schedule.weeklyAnchor.charAt(0).toUpperCase() +
+          schedule.weeklyAnchor.slice(1)
+        : 'Friday';
+      return `Weekly on ${day}s${delayText}`;
     }
     case 'monthly': {
-      const dayOfMonth = schedule.monthlyAnchor || 1
-      const suffix = dayOfMonth === 1 ? 'st' : dayOfMonth === 2 ? 'nd' : dayOfMonth === 3 ? 'rd' : 'th'
-      return `Monthly on the ${dayOfMonth}${suffix}${delayText}`
+      const dayOfMonth = schedule.monthlyAnchor || 1;
+      const suffix =
+        dayOfMonth === 1
+          ? 'st'
+          : dayOfMonth === 2
+            ? 'nd'
+            : dayOfMonth === 3
+              ? 'rd'
+              : 'th';
+      return `Monthly on the ${dayOfMonth}${suffix}${delayText}`;
     }
     case 'manual':
-      return 'Manual (on request)'
+      return 'Manual (on request)';
     default:
-      return 'Not configured'
+      return 'Not configured';
   }
 }
 
@@ -304,22 +350,24 @@ export function formatPayoutSchedule(schedule: PayoutSchedule | null): string {
 export async function transitionVendorAfterStripeEvent(
   vendorId: string,
   stripeData: {
-    hasAccount: boolean
-    chargesEnabled: boolean
-    payoutsEnabled: boolean
-    detailsSubmitted: boolean
-  }
+    hasAccount: boolean;
+    chargesEnabled: boolean;
+    payoutsEnabled: boolean;
+    detailsSubmitted: boolean;
+  },
 ): Promise<{ success: boolean; error?: string }> {
-  const targetState = vendorStateMachine.determineStateFromStripeData(stripeData)
-  const currentState = await vendorStateMachine.getVendorOnboardingState(vendorId)
+  const targetState =
+    vendorStateMachine.determineStateFromStripeData(stripeData);
+  const currentState =
+    await vendorStateMachine.getVendorOnboardingState(vendorId);
 
   if (!currentState) {
-    return { success: false, error: 'Vendor not found' }
+    return { success: false, error: 'Vendor not found' };
   }
 
   // If already at target state or no transition needed
   if (currentState === targetState) {
-    return { success: true }
+    return { success: true };
   }
 
   // Validate and execute transition
@@ -330,19 +378,28 @@ export async function transitionVendorAfterStripeEvent(
       actor: 'stripe_webhook',
       reason: `Stripe account update - ${targetState}`,
       metadata: stripeData,
-    })
-    return { success: result.success, error: result.error }
+    });
+    return { success: result.success, error: result.error };
   }
 
   // Transition not valid from current state - may need intermediate steps
   // For now, just log and return success (webhook data is processed regardless)
-  console.log(`Skipping invalid transition from ${currentState} to ${targetState}`)
-  return { success: true }
+  console.log(
+    `Skipping invalid transition from ${currentState} to ${targetState}`,
+  );
+  return { success: true };
 }
 
 // Re-export state machine types and functions for convenience
-export type { VendorOnboardingStateValue, VendorCapabilities } from './vendorStateMachine'
-export { getVendorCapabilities, vendorStateMachine, STATE_LABELS } from './vendorStateMachine'
+export type {
+  VendorOnboardingStateValue,
+  VendorCapabilities,
+} from './vendorStateMachine';
+export {
+  getVendorCapabilities,
+  vendorStateMachine,
+  STATE_LABELS,
+} from './vendorStateMachine';
 
 export const vendorOnboardService = {
   initiateStripeOnboarding,
@@ -352,4 +409,4 @@ export const vendorOnboardService = {
   transitionVendorAfterStripeEvent,
   // State machine helpers
   ...vendorStateMachine,
-}
+};

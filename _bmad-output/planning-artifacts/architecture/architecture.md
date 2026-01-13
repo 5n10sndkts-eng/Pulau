@@ -31,6 +31,7 @@ The Pulau application delivers 6 core features forming a complete travel booking
 6. **Booking Dashboard** - Trip history with status tracking, rebooking functionality
 
 **Non-Functional Requirements:**
+
 - **Performance**: Instant filter updates, <10 min trip building workflow
 - **Offline Resilience**: Local data persistence via Spark KV
 - **Mobile-First**: 44x44px touch targets, responsive breakpoints at 640px/768px/1024px
@@ -38,6 +39,7 @@ The Pulau application delivers 6 core features forming a complete travel booking
 - **Animation**: Physics-based transitions (150-500ms), reduced-motion support
 
 **Scale & Complexity:**
+
 - Primary domain: Web SPA (Mobile-First React Application)
 - Complexity level: Medium-High
 - Estimated architectural components: 15-20 distinct modules
@@ -45,13 +47,13 @@ The Pulau application delivers 6 core features forming a complete travel booking
 
 ### Technical Constraints & Dependencies
 
-| Constraint | Impact |
-|------------|--------|
-| GitHub Spark Platform | Must use @github/spark SDK, useKV hook, Vite plugins |
-| Client-Side Only | All business logic in browser, localStorage limits (~5MB) |
-| No Backend Currently | Mock data architecture, API integration needed for production |
-| React 19 | Automatic JSX transform, concurrent features available |
-| TypeScript Strict | Null safety, explicit types, no `any` |
+| Constraint            | Impact                                                        |
+| --------------------- | ------------------------------------------------------------- |
+| GitHub Spark Platform | Must use @github/spark SDK, useKV hook, Vite plugins          |
+| Client-Side Only      | All business logic in browser, localStorage limits (~5MB)     |
+| No Backend Currently  | Mock data architecture, API integration needed for production |
+| React 19              | Automatic JSX transform, concurrent features available        |
+| TypeScript Strict     | Null safety, explicit types, no `any`                         |
 
 ### Cross-Cutting Concerns Identified
 
@@ -76,6 +78,7 @@ The Pulau application delivers 6 core features forming a complete travel booking
 **GitHub Spark Template** - GitHub's internal starter for Spark platform applications.
 
 **Initialization (Already Complete):**
+
 ```bash
 # Project initialized via GitHub Spark Template
 # Timestamp: January 2026
@@ -84,34 +87,40 @@ The Pulau application delivers 6 core features forming a complete travel booking
 ### Architectural Decisions Established by Starter
 
 **Language & Runtime:**
+
 - TypeScript 5.7.2 with strict mode enabled
 - ES2020 target for modern JavaScript features
 - Bundler module resolution for ESM imports
 - Path aliases: `@/*` → `./src/*`
 
 **Styling Solution:**
+
 - Tailwind CSS 4.1.11 with Vite plugin integration
 - Design tokens for colors, typography, spacing
 - Mobile-first responsive breakpoints (sm/md/lg)
 - class-variance-authority for component variants
 
 **Build Tooling:**
+
 - Vite 7.2.6 with SWC-based React plugin
 - Optimized production builds with code splitting
 - GitHub Spark plugins (sparkPlugin, createIconImportProxy)
 
 **Component Architecture:**
+
 - Radix UI primitives for accessible interactions
 - shadcn/ui pattern for wrapped components
 - Single component per file convention
 - Props interfaces co-located with components
 
 **State Management:**
+
 - Spark useKV for persistent localStorage state
 - React useState for local UI state
 - Discriminated unions for screen routing
 
 **Development Experience:**
+
 - Hot Module Replacement via Vite
 - ESLint with TypeScript and React Hooks rules
 - Error boundary for production error handling
@@ -119,6 +128,7 @@ The Pulau application delivers 6 core features forming a complete travel booking
 ### Brownfield Project Status
 
 This is an existing project with frontend implementation complete. Architecture decisions focus on:
+
 1. Establishing consistency patterns for continued development
 2. Planning backend integration architecture
 3. Defining testing infrastructure
@@ -131,72 +141,76 @@ This is an existing project with frontend implementation complete. Architecture 
 ### Decision Priority Analysis
 
 **Critical Decisions (Block Implementation):**
+
 - Database platform: Supabase (PostgreSQL)
 - Authentication: Supabase Auth (all methods)
 - API pattern: Hybrid (SDK + Edge Functions)
 - Data layer: Service Layer + TanStack Query hooks
 
 **Important Decisions (Shape Architecture):**
+
 - RLS policies for user/vendor data isolation
 - Edge Functions for checkout/payment/booking flows
 - Service layer abstraction for Supabase calls
 
 **Deferred Decisions (Post-MVP):**
+
 - Frontend hosting platform selection
 - Advanced caching strategies
 - Realtime subscriptions scope
 
 ### Data Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Database | Supabase (PostgreSQL) | Already configured, relational data fits travel domain |
-| ORM/Client | @supabase/supabase-js | Native TypeScript, RLS integration |
-| Type Generation | Supabase CLI | Auto-generate types from schema |
-| Migrations | Supabase migrations | Version-controlled SQL files |
-| Caching | TanStack Query | Already in stack, handles client-side cache |
+| Decision        | Choice                | Rationale                                              |
+| --------------- | --------------------- | ------------------------------------------------------ |
+| Database        | Supabase (PostgreSQL) | Already configured, relational data fits travel domain |
+| ORM/Client      | @supabase/supabase-js | Native TypeScript, RLS integration                     |
+| Type Generation | Supabase CLI          | Auto-generate types from schema                        |
+| Migrations      | Supabase migrations   | Version-controlled SQL files                           |
+| Caching         | TanStack Query        | Already in stack, handles client-side cache            |
 
 ### Authentication & Security
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Auth Provider | Supabase Auth | Integrated with database, handles sessions |
-| Auth Methods | Email/Password, Magic Link, OAuth (Google, Apple) | Full coverage for travel audience |
-| Authorization | Row Level Security (RLS) | Database-level enforcement |
-| Role Separation | User/Vendor via RLS policies | Data isolation by role |
-| API Security | Supabase RLS + Edge Function validation | Defense in depth |
+| Decision        | Choice                                            | Rationale                                  |
+| --------------- | ------------------------------------------------- | ------------------------------------------ |
+| Auth Provider   | Supabase Auth                                     | Integrated with database, handles sessions |
+| Auth Methods    | Email/Password, Magic Link, OAuth (Google, Apple) | Full coverage for travel audience          |
+| Authorization   | Row Level Security (RLS)                          | Database-level enforcement                 |
+| Role Separation | User/Vendor via RLS policies                      | Data isolation by role                     |
+| API Security    | Supabase RLS + Edge Function validation           | Defense in depth                           |
 
 ### API & Communication Patterns
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Data Access | Supabase JS SDK | Direct access with RLS protection |
-| Business Logic | Supabase Edge Functions | Server-side validation for payments/bookings |
-| Error Handling | Consistent error shapes + existing boundaries | Unified UX for errors |
-| Realtime | Supabase Realtime (as needed) | Available for booking status updates |
+| Decision       | Choice                                        | Rationale                                    |
+| -------------- | --------------------------------------------- | -------------------------------------------- |
+| Data Access    | Supabase JS SDK                               | Direct access with RLS protection            |
+| Business Logic | Supabase Edge Functions                       | Server-side validation for payments/bookings |
+| Error Handling | Consistent error shapes + existing boundaries | Unified UX for errors                        |
+| Realtime       | Supabase Realtime (as needed)                 | Available for booking status updates         |
 
 ### Frontend Architecture
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Data Layer | Service Layer + TanStack Query hooks | Separation of concerns, testable |
-| Services Location | `lib/services/*.ts` | Supabase calls isolated |
-| Hooks Location | `hooks/use*.ts` | React integration with caching |
-| Component Access | Via hooks only | Components never call Supabase directly |
-| Existing Patterns | Unchanged | Routing, state, UI patterns preserved |
+| Decision          | Choice                               | Rationale                               |
+| ----------------- | ------------------------------------ | --------------------------------------- |
+| Data Layer        | Service Layer + TanStack Query hooks | Separation of concerns, testable        |
+| Services Location | `lib/services/*.ts`                  | Supabase calls isolated                 |
+| Hooks Location    | `hooks/use*.ts`                      | React integration with caching          |
+| Component Access  | Via hooks only                       | Components never call Supabase directly |
+| Existing Patterns | Unchanged                            | Routing, state, UI patterns preserved   |
 
 ### Infrastructure & Deployment
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Backend | Supabase | Already configured with MCP |
-| Frontend Hosting | TBD | Not blocking, decide before launch |
-| CI/CD | GitHub Actions | Lint, type-check, build on PR |
-| Environment Config | .env.local + platform vars | Standard approach |
+| Decision           | Choice                     | Rationale                          |
+| ------------------ | -------------------------- | ---------------------------------- |
+| Backend            | Supabase                   | Already configured with MCP        |
+| Frontend Hosting   | TBD                        | Not blocking, decide before launch |
+| CI/CD              | GitHub Actions             | Lint, type-check, build on PR      |
+| Environment Config | .env.local + platform vars | Standard approach                  |
 
 ### Decision Impact Analysis
 
 **Implementation Sequence:**
+
 1. Define Supabase schema (tables, relationships)
 2. Configure RLS policies
 3. Set up Supabase Auth
@@ -206,6 +220,7 @@ This is an existing project with frontend implementation complete. Architecture 
 7. Implement Edge Functions for checkout flow
 
 **Cross-Component Dependencies:**
+
 - Auth must be configured before RLS policies work
 - Schema must exist before service layer can be typed
 - Service layer must exist before hooks can wrap it
@@ -254,22 +269,22 @@ This is an existing project with frontend implementation complete. Architecture 
 ### Format Patterns
 
 **API Response Format (Discriminated Union):**
+
 ```typescript
 // All services and Edge Functions return this shape
-type ApiResponse<T> =
-  | { data: T; error: null }
-  | { data: null; error: string }
+type ApiResponse<T> = { data: T; error: null } | { data: null; error: string };
 
 // TypeScript narrows correctly:
-const result = await getExperiences()
+const result = await getExperiences();
 if (result.error) {
-  toast.error(result.error)
-  return
+  toast.error(result.error);
+  return;
 }
 // result.data is guaranteed to be T here
 ```
 
 **JSON Field Naming:**
+
 - Database → `snake_case` (PostgreSQL convention)
 - TypeScript/JSON responses → `camelCase` (JS convention)
 - Supabase auto-transforms between them
@@ -277,6 +292,7 @@ if (result.error) {
 ### Structure Patterns
 
 **Service Layer Organization:**
+
 ```
 src/lib/services/
   experienceService.ts       # Experience CRUD
@@ -289,6 +305,7 @@ src/lib/services/
 ```
 
 **Hook Organization:**
+
 ```
 src/hooks/
   useExperiences.ts          # Experience queries
@@ -301,6 +318,7 @@ src/hooks/
 ### Component & Screen Organization (BMAD Standard)
 
 **Directory Structure:**
+
 ```
 src/
 ├── components/
@@ -343,6 +361,7 @@ src/
    - Role-specific components organized under `auth/`, `vendor/`, `admin/`
 
 **Feedback Components:**
+
 ```
 src/components/feedback/
   Skeleton.tsx               # Reusable skeleton components
@@ -352,6 +371,7 @@ src/components/feedback/
 ```
 
 **Edge Functions Organization:**
+
 ```
 supabase/functions/
   checkout/index.ts          # Checkout flow
@@ -362,51 +382,50 @@ supabase/functions/
 ### Communication Patterns
 
 **TanStack Query Keys:**
+
 ```typescript
 // List queries
-['experiences']
-['bookings']
-['trips']
-
-// Single item queries
-['experiences', experienceId]
-['bookings', bookingId]
-
-// Filtered queries
-['bookings', { status: 'pending' }]
-['experiences', { categoryId: 'adventure' }]
+['experiences']['bookings']['trips'][
+  // Single item queries
+  ('experiences', experienceId)
+][('bookings', bookingId)][
+  // Filtered queries
+  ('bookings', { status: 'pending' })
+][('experiences', { categoryId: 'adventure' })];
 ```
 
 **Query Pattern:**
+
 ```typescript
 export function useExperiences() {
   return useQuery({
     queryKey: ['experiences'],
     queryFn: () => getExperiences(),
-  })
+  });
 }
 ```
 
 **Mutation Pattern with Optimistic Updates:**
+
 ```typescript
 export function useCreateBooking() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createBooking,
     onMutate: async (newBooking) => {
-      await queryClient.cancelQueries({ queryKey: ['bookings'] })
-      const previous = queryClient.getQueryData(['bookings'])
-      queryClient.setQueryData(['bookings'], (old) => [...old, newBooking])
-      return { previous }
+      await queryClient.cancelQueries({ queryKey: ['bookings'] });
+      const previous = queryClient.getQueryData(['bookings']);
+      queryClient.setQueryData(['bookings'], (old) => [...old, newBooking]);
+      return { previous };
     },
     onError: (err, newBooking, context) => {
-      queryClient.setQueryData(['bookings'], context.previous)
+      queryClient.setQueryData(['bookings'], context.previous);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings'] })
-      queryClient.invalidateQueries({ queryKey: ['trips'] })
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['trips'] });
     },
-  })
+  });
 }
 ```
 
@@ -423,6 +442,7 @@ export function useCreateBooking() {
 ### Process Patterns
 
 **Error Handling Flow:**
+
 1. Service layer returns `{ data: null, error: 'message' }`
 2. Hook passes error to component
 3. Component shows toast via Sonner: `toast.error(error)`
@@ -444,6 +464,7 @@ export function useCreateBooking() {
 | Validation errors | Inline field errors |
 
 **Standard Component Pattern:**
+
 ```typescript
 const { data, isLoading, error, refetch } = useExperiences()
 
@@ -463,6 +484,7 @@ return <ExperienceList experiences={data} />
 | MSW | API mocking (optional) |
 
 **Test File Convention:**
+
 - All tests use `.test.ts` extension
 - Tests are co-located with source files
 - Services tested with mocked Supabase client
@@ -472,6 +494,7 @@ return <ExperienceList experiences={data} />
 ### Enforcement Guidelines
 
 **All AI Agents MUST:**
+
 - Use `snake_case` for all database objects
 - Return discriminated `{ data, error }` from all service functions
 - Use hierarchical query keys for TanStack Query
@@ -481,6 +504,7 @@ return <ExperienceList experiences={data} />
 - Use optimistic updates only for low-risk mutations
 
 **Anti-Patterns to Avoid:**
+
 - ❌ `camelCase` table names (`userProfiles` → use `user_profiles`)
 - ❌ Throwing errors from services (return `{ data: null, error }` instead)
 - ❌ Flat query keys (`'experiences'` → use `['experiences']`)
@@ -625,6 +649,7 @@ pulau/
 | UI Primitives | `components/ui/` | None (pure components) |
 
 **Data Flow:**
+
 ```
 Component → Hook → Service → Supabase SDK → PostgreSQL (RLS)
      ↑         ↓
@@ -655,6 +680,7 @@ Component → Hook → Service → Supabase SDK → PostgreSQL (RLS)
 ### Integration Points
 
 **Internal Communication:**
+
 - Components consume hooks (never services directly)
 - Hooks wrap services with TanStack Query
 - Services return `{ data, error }` discriminated unions
@@ -671,16 +697,19 @@ Component → Hook → Service → Supabase SDK → PostgreSQL (RLS)
 ### File Organization Notes
 
 **Existing Structure Preserved:**
+
 - Services live in `lib/` (not `lib/services/`)
 - This is acceptable—service files are clearly named `*Service.ts`
 - Hooks will be added to existing `hooks/` folder
 
 **New Additions Required:**
+
 1. `components/feedback/` — Loading/error state components
 2. `hooks/useExperiences.ts`, `useBookings.ts`, `useTrips.ts` — TanStack Query hooks
 3. `supabase/functions/` — Edge Functions for business logic
 
 **Migration Path:**
+
 - `mockData.ts` will be deprecated as services connect to Supabase
 - Keep mockData.ts during transition for fallback/testing
 
@@ -692,6 +721,7 @@ Component → Hook → Service → Supabase SDK → PostgreSQL (RLS)
 
 **Decision Compatibility:**
 All technology choices work together without conflicts:
+
 - Supabase PostgreSQL + TypeScript types via CLI generation
 - TanStack Query integrates cleanly with Supabase SDK async calls
 - RLS policies work with Supabase Auth JWT tokens
@@ -700,6 +730,7 @@ All technology choices work together without conflicts:
 
 **Pattern Consistency:**
 Implementation patterns support architectural decisions:
+
 - `snake_case` database ↔ `camelCase` TypeScript (Supabase auto-transforms)
 - Discriminated union `{ data, error }` used consistently service → hook → component
 - Query key hierarchy matches data model relationships
@@ -707,6 +738,7 @@ Implementation patterns support architectural decisions:
 
 **Structure Alignment:**
 Project structure supports all architectural decisions:
+
 - Services in `lib/` with `*Service.ts` naming enables clear boundaries
 - Hooks in `hooks/` separate React integration from data access
 - Edge Functions in `supabase/functions/` follow Supabase conventions
@@ -716,6 +748,7 @@ Project structure supports all architectural decisions:
 
 **Epic/Feature Coverage:**
 All 19 epics have architectural support:
+
 - Customer Auth (Epic 2) → Supabase Auth + authService + RLS
 - Vendor Auth (Epic 3) → Supabase Auth + vendorService + role-based RLS
 - Experience Management (Epic 5-6) → experienceService + TanStack Query hooks
@@ -745,18 +778,21 @@ All 19 epics have architectural support:
 ### Implementation Readiness Validation ✅
 
 **Decision Completeness:**
+
 - ✅ All critical decisions documented with specific versions
 - ✅ Implementation patterns comprehensive with code examples
 - ✅ Consistency rules clear and enforceable
 - ✅ Anti-patterns explicitly listed for avoidance
 
 **Structure Completeness:**
+
 - ✅ Complete directory tree with all existing and new files
 - ✅ All files and directories defined with purposes
 - ✅ Integration points clearly specified
 - ✅ Component boundaries well-defined
 
 **Pattern Completeness:**
+
 - ✅ All potential conflict points addressed (12 areas)
 - ✅ Naming conventions comprehensive for all layers
 - ✅ Communication patterns fully specified
@@ -773,6 +809,7 @@ All 19 epics have architectural support:
 | Frontend hosting not selected | Decision deferred—not blocking development |
 
 **Nice-to-Have Improvements:**
+
 - Realtime subscription patterns (can add when needed)
 - Advanced caching strategies (TanStack Query sufficient for MVP)
 - Monitoring/observability patterns (post-launch concern)
@@ -784,24 +821,28 @@ No critical or important issues found during validation. All architectural decis
 ### Architecture Completeness Checklist
 
 **✅ Requirements Analysis**
+
 - [x] Project context thoroughly analyzed
 - [x] Scale and complexity assessed
 - [x] Technical constraints identified
 - [x] Cross-cutting concerns mapped
 
 **✅ Architectural Decisions**
+
 - [x] Critical decisions documented with versions
 - [x] Technology stack fully specified
 - [x] Integration patterns defined
 - [x] Performance considerations addressed
 
 **✅ Implementation Patterns**
+
 - [x] Naming conventions established
 - [x] Structure patterns defined
 - [x] Communication patterns specified
 - [x] Process patterns documented
 
 **✅ Project Structure**
+
 - [x] Complete directory structure defined
 - [x] Component boundaries established
 - [x] Integration points mapped
@@ -814,6 +855,7 @@ No critical or important issues found during validation. All architectural decis
 **Confidence Level:** HIGH based on validation results
 
 **Key Strengths:**
+
 - Brownfield project with proven frontend patterns—architecture extends rather than replaces
 - Supabase integration is well-understood with MCP already connected
 - Clear separation of concerns (Component → Hook → Service → Supabase)
@@ -821,6 +863,7 @@ No critical or important issues found during validation. All architectural decis
 - Comprehensive naming conventions prevent AI agent conflicts
 
 **Areas for Future Enhancement:**
+
 - Payment provider integration (when selected)
 - Realtime subscriptions for booking status updates
 - Advanced caching for offline-first enhancement
@@ -829,6 +872,7 @@ No critical or important issues found during validation. All architectural decis
 ### Implementation Handoff
 
 **AI Agent Guidelines:**
+
 - Follow all architectural decisions exactly as documented
 - Use implementation patterns consistently across all components
 - Respect project structure and boundaries
@@ -838,6 +882,7 @@ No critical or important issues found during validation. All architectural decis
 
 **First Implementation Priority:**
 Database schema creation via Supabase migrations, following the epic dependency order:
+
 1. Core tables (users, experiences, bookings, trips)
 2. RLS policies for user/vendor isolation
 3. Auth configuration
@@ -857,6 +902,7 @@ Database schema creation via Supabase migrations, following the epic dependency 
 ### Final Architecture Deliverables
 
 **📋 Complete Architecture Document**
+
 - All architectural decisions documented with specific versions
 - Implementation patterns ensuring AI agent consistency
 - Complete project structure with all files and directories
@@ -864,12 +910,14 @@ Database schema creation via Supabase migrations, following the epic dependency 
 - Validation confirming coherence and completeness
 
 **🏗️ Implementation Ready Foundation**
+
 - 15+ architectural decisions made
 - 12 implementation patterns defined
 - 6 main architectural components specified
 - All 19 epics fully supported
 
 **📚 AI Agent Implementation Guide**
+
 - Technology stack with verified versions
 - Consistency rules that prevent implementation conflicts
 - Project structure with clear boundaries
@@ -881,6 +929,7 @@ Database schema creation via Supabase migrations, following the epic dependency 
 This architecture document is your complete guide for implementing Pulau. Follow all decisions, patterns, and structures exactly as documented.
 
 **First Implementation Priority:**
+
 ```bash
 # Database schema creation via Supabase MCP
 # 1. Create migrations for core tables
@@ -889,6 +938,7 @@ This architecture document is your complete guide for implementing Pulau. Follow
 ```
 
 **Development Sequence:**
+
 1. Initialize Supabase schema using documented migrations
 2. Set up RLS policies for user/vendor isolation
 3. Configure Supabase Auth (all methods)
@@ -900,18 +950,21 @@ This architecture document is your complete guide for implementing Pulau. Follow
 ### Quality Assurance Checklist
 
 **✅ Architecture Coherence**
+
 - [x] All decisions work together without conflicts
 - [x] Technology choices are compatible
 - [x] Patterns support the architectural decisions
 - [x] Structure aligns with all choices
 
 **✅ Requirements Coverage**
+
 - [x] All functional requirements are supported
 - [x] All non-functional requirements are addressed
 - [x] Cross-cutting concerns are handled
 - [x] Integration points are defined
 
 **✅ Implementation Readiness**
+
 - [x] Decisions are specific and actionable
 - [x] Patterns prevent agent conflicts
 - [x] Structure is complete and unambiguous
@@ -938,4 +991,3 @@ The Supabase + TanStack Query architecture provides a production-ready foundatio
 **Next Phase:** Begin implementation using the architectural decisions and patterns documented herein.
 
 **Document Maintenance:** Update this architecture when major technical decisions are made during implementation.
-

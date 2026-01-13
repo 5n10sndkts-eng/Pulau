@@ -20,8 +20,8 @@ test.describe('Vendor Operations - Check-in Flow', () => {
     profiles: {
       first_name: 'Alice',
       last_name: 'Traveler',
-      email: 'alice@example.com'
-    }
+      email: 'alice@example.com',
+    },
   };
 
   test.beforeEach(async ({ page }) => {
@@ -39,25 +39,31 @@ test.describe('Vendor Operations - Check-in Flow', () => {
     });
 
     // Mock RPC: validate_booking_for_checkin
-    await page.route('**/rest/v1/rpc/validate_booking_for_checkin', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          valid: true,
-          booking: bookingData,
-        }),
-      });
-    });
+    await page.route(
+      '**/rest/v1/rpc/validate_booking_for_checkin',
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            valid: true,
+            booking: bookingData,
+          }),
+        });
+      },
+    );
 
     // Mock Booking Update (Check-in/No-show)
-    await page.route(`**/rest/v1/bookings?id=eq.${bookingId}`, async (route) => {
-      if (route.request().method() === 'PATCH') {
-        await route.fulfill({ status: 204 });
-      } else {
-        await route.continue();
-      }
-    });
+    await page.route(
+      `**/rest/v1/bookings?id=eq.${bookingId}`,
+      async (route) => {
+        if (route.request().method() === 'PATCH') {
+          await route.fulfill({ status: 204 });
+        } else {
+          await route.continue();
+        }
+      },
+    );
 
     // Mock Audit Log creation
     await page.route('**/rest/v1/audit_logs', async (route) => {
@@ -69,7 +75,7 @@ test.describe('Vendor Operations - Check-in Flow', () => {
     await page.goto('/vendor/operations');
   });
 
-  test('should display today\'s bookings', async ({ page }) => {
+  test("should display today's bookings", async ({ page }) => {
     await expect(page.getByText('Island Hopping Adventure')).toBeVisible();
     await expect(page.getByText('Alice Traveler')).toBeVisible();
     await expect(page.getByText('Confirmed')).toBeVisible();
@@ -87,7 +93,9 @@ test.describe('Vendor Operations - Check-in Flow', () => {
     });
 
     // 3. Trigger Manual Entry
-    await page.getByRole('button', { name: /enter booking id manually/i }).click();
+    await page
+      .getByRole('button', { name: /enter booking id manually/i })
+      .click();
 
     // 4. Verify Success
     // Assuming UI shows a success message or updates status
@@ -96,8 +104,11 @@ test.describe('Vendor Operations - Check-in Flow', () => {
 
   test('should mark a booking as no-show', async ({ page }) => {
     // Find the booking card
-    const bookingCard = page.locator('div').filter({ hasText: 'Alice Traveler' }).first();
-    
+    const bookingCard = page
+      .locator('div')
+      .filter({ hasText: 'Alice Traveler' })
+      .first();
+
     // Click No-Show (assuming it's a visible button or in an actions menu)
     await bookingCard.getByRole('button', { name: /no-show/i }).click();
 

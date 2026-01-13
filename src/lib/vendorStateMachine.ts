@@ -6,7 +6,7 @@
  * the onboarding process from registration to full platform access.
  */
 
-import { supabase } from './supabase'
+import { supabase } from './supabase';
 
 // ================================================
 // STATE DEFINITIONS
@@ -18,19 +18,22 @@ import { supabase } from './supabase'
  * With rejection and suspension branches
  */
 export type VendorOnboardingStateValue =
-  | 'registered'      // Initial state after vendor registration
-  | 'kyc_submitted'   // Stripe Connect onboarding initiated
-  | 'kyc_verified'    // Identity verification complete
-  | 'kyc_rejected'    // Verification failed (can retry)
-  | 'bank_linked'     // Bank account connected
-  | 'active'          // Full platform access
-  | 'suspended'       // Account suspended by admin
+  | 'registered' // Initial state after vendor registration
+  | 'kyc_submitted' // Stripe Connect onboarding initiated
+  | 'kyc_verified' // Identity verification complete
+  | 'kyc_rejected' // Verification failed (can retry)
+  | 'bank_linked' // Bank account connected
+  | 'active' // Full platform access
+  | 'suspended'; // Account suspended by admin
 
 /**
  * Valid state transitions map.
  * Each state maps to an array of states it can transition to.
  */
-const VALID_TRANSITIONS: Record<VendorOnboardingStateValue, VendorOnboardingStateValue[]> = {
+const VALID_TRANSITIONS: Record<
+  VendorOnboardingStateValue,
+  VendorOnboardingStateValue[]
+> = {
   registered: ['kyc_submitted'],
   kyc_submitted: ['kyc_verified', 'kyc_rejected'],
   kyc_verified: ['bank_linked'],
@@ -38,7 +41,7 @@ const VALID_TRANSITIONS: Record<VendorOnboardingStateValue, VendorOnboardingStat
   bank_linked: ['active'],
   active: ['suspended'],
   suspended: ['active'], // Can reactivate
-}
+};
 
 /**
  * Human-readable labels for each state
@@ -51,7 +54,7 @@ export const STATE_LABELS: Record<VendorOnboardingStateValue, string> = {
   bank_linked: 'Bank Linked',
   active: 'Active',
   suspended: 'Suspended',
-}
+};
 
 // ================================================
 // CAPABILITY GATING
@@ -61,25 +64,29 @@ export const STATE_LABELS: Record<VendorOnboardingStateValue, string> = {
  * Capabilities available to vendors based on their onboarding state
  */
 export interface VendorCapabilities {
-  canCreateExperiences: boolean      // REGISTERED+
-  canEditExperiences: boolean        // REGISTERED+
-  canPublishExperiences: boolean     // KYC_VERIFIED+
-  canEnableInstantBook: boolean      // BANK_LINKED+
-  canReceivePayments: boolean        // ACTIVE only
-  canAccessDashboard: boolean        // All states except suspended
-  canViewAnalytics: boolean          // KYC_VERIFIED+
+  canCreateExperiences: boolean; // REGISTERED+
+  canEditExperiences: boolean; // REGISTERED+
+  canPublishExperiences: boolean; // KYC_VERIFIED+
+  canEnableInstantBook: boolean; // BANK_LINKED+
+  canReceivePayments: boolean; // ACTIVE only
+  canAccessDashboard: boolean; // All states except suspended
+  canViewAnalytics: boolean; // KYC_VERIFIED+
 }
 
 /**
  * Get capabilities available for a given onboarding state
  */
-export function getVendorCapabilities(state: VendorOnboardingStateValue): VendorCapabilities {
+export function getVendorCapabilities(
+  state: VendorOnboardingStateValue,
+): VendorCapabilities {
   // States that have progressed past a certain point
-  const isPastRegistered = state !== 'suspended'
-  const isPastKycSubmitted = ['kyc_verified', 'bank_linked', 'active'].includes(state)
-  const isPastBankLinked = ['bank_linked', 'active'].includes(state)
-  const isActive = state === 'active'
-  const isSuspended = state === 'suspended'
+  const isPastRegistered = state !== 'suspended';
+  const isPastKycSubmitted = ['kyc_verified', 'bank_linked', 'active'].includes(
+    state,
+  );
+  const isPastBankLinked = ['bank_linked', 'active'].includes(state);
+  const isActive = state === 'active';
+  const isSuspended = state === 'suspended';
 
   return {
     canCreateExperiences: isPastRegistered && !isSuspended,
@@ -89,7 +96,7 @@ export function getVendorCapabilities(state: VendorOnboardingStateValue): Vendor
     canReceivePayments: isActive,
     canAccessDashboard: !isSuspended,
     canViewAnalytics: isPastKycSubmitted && !isSuspended,
-  }
+  };
 }
 
 /**
@@ -97,10 +104,10 @@ export function getVendorCapabilities(state: VendorOnboardingStateValue): Vendor
  */
 export function canVendorPerform(
   state: VendorOnboardingStateValue,
-  action: keyof VendorCapabilities
+  action: keyof VendorCapabilities,
 ): boolean {
-  const capabilities = getVendorCapabilities(state)
-  return capabilities[action]
+  const capabilities = getVendorCapabilities(state);
+  return capabilities[action];
 }
 
 // ================================================
@@ -108,9 +115,9 @@ export function canVendorPerform(
 // ================================================
 
 export interface TransitionResult {
-  success: boolean
-  newState?: VendorOnboardingStateValue
-  error?: string
+  success: boolean;
+  newState?: VendorOnboardingStateValue;
+  error?: string;
 }
 
 /**
@@ -118,33 +125,33 @@ export interface TransitionResult {
  */
 export function isValidTransition(
   currentState: VendorOnboardingStateValue,
-  targetState: VendorOnboardingStateValue
+  targetState: VendorOnboardingStateValue,
 ): boolean {
-  const validTargets = VALID_TRANSITIONS[currentState]
-  return validTargets?.includes(targetState) ?? false
+  const validTargets = VALID_TRANSITIONS[currentState];
+  return validTargets?.includes(targetState) ?? false;
 }
 
 /**
  * Get all valid next states from current state
  */
 export function getValidNextStates(
-  currentState: VendorOnboardingStateValue
+  currentState: VendorOnboardingStateValue,
 ): VendorOnboardingStateValue[] {
-  return VALID_TRANSITIONS[currentState] ?? []
+  return VALID_TRANSITIONS[currentState] ?? [];
 }
 
 // ================================================
 // STATE TRANSITION SERVICE
 // ================================================
 
-export type TransitionActor = 'system' | 'admin' | 'stripe_webhook' | 'vendor'
+export type TransitionActor = 'system' | 'admin' | 'stripe_webhook' | 'vendor';
 
 export interface TransitionOptions {
-  vendorId: string
-  targetState: VendorOnboardingStateValue
-  actor: TransitionActor
-  reason?: string
-  metadata?: Record<string, unknown>
+  vendorId: string;
+  targetState: VendorOnboardingStateValue;
+  actor: TransitionActor;
+  reason?: string;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -152,9 +159,9 @@ export interface TransitionOptions {
  * Validates the transition and creates an audit log entry.
  */
 export async function transitionVendorState(
-  options: TransitionOptions
+  options: TransitionOptions,
 ): Promise<TransitionResult> {
-  const { vendorId, targetState, actor, reason, metadata } = options
+  const { vendorId, targetState, actor, reason, metadata } = options;
 
   try {
     // 1. Get current vendor state
@@ -162,23 +169,23 @@ export async function transitionVendorState(
       .from('vendors')
       .select('id, onboarding_state, business_name')
       .eq('id', vendorId)
-      .single()
+      .single();
 
     if (fetchError || !vendor) {
       return {
         success: false,
         error: `Vendor not found: ${vendorId}`,
-      }
+      };
     }
 
-    const currentState = vendor.onboarding_state as VendorOnboardingStateValue
+    const currentState = vendor.onboarding_state as VendorOnboardingStateValue;
 
     // 2. Validate the transition
     if (!isValidTransition(currentState, targetState)) {
       return {
         success: false,
         error: `Invalid transition from ${currentState} to ${targetState}. Valid targets: ${getValidNextStates(currentState).join(', ')}`,
-      }
+      };
     }
 
     // 3. Update vendor state
@@ -187,13 +194,13 @@ export async function transitionVendorState(
       .update({
         onboarding_state: targetState,
       })
-      .eq('id', vendorId)
+      .eq('id', vendorId);
 
     if (updateError) {
       return {
         success: false,
         error: `Failed to update vendor state: ${updateError.message}`,
-      }
+      };
     }
 
     // 4. Create audit log entry
@@ -204,18 +211,18 @@ export async function transitionVendorState(
       actor,
       reason,
       metadata,
-    })
+    });
 
     return {
       success: true,
       newState: targetState,
-    }
+    };
   } catch (e) {
-    console.error('State transition error:', e)
+    console.error('State transition error:', e);
     return {
       success: false,
       error: 'An unexpected error occurred during state transition',
-    }
+    };
   }
 }
 
@@ -224,16 +231,19 @@ export async function transitionVendorState(
 // ================================================
 
 interface AuditLogOptions {
-  vendorId: string
-  previousState: VendorOnboardingStateValue
-  newState: VendorOnboardingStateValue
-  actor: TransitionActor
-  reason?: string
-  metadata?: Record<string, unknown>
+  vendorId: string;
+  previousState: VendorOnboardingStateValue;
+  newState: VendorOnboardingStateValue;
+  actor: TransitionActor;
+  reason?: string;
+  metadata?: Record<string, unknown>;
 }
 
-async function createStateTransitionAuditLog(options: AuditLogOptions): Promise<void> {
-  const { vendorId, previousState, newState, actor, reason, metadata } = options
+async function createStateTransitionAuditLog(
+  options: AuditLogOptions,
+): Promise<void> {
+  const { vendorId, previousState, newState, actor, reason, metadata } =
+    options;
 
   try {
     await supabase.from('audit_logs').insert({
@@ -247,10 +257,10 @@ async function createStateTransitionAuditLog(options: AuditLogOptions): Promise<
         reason: reason || null,
         ...metadata,
       },
-    })
+    });
   } catch (e) {
     // Don't fail the transition if audit log fails, but log the error
-    console.error('Failed to create audit log entry:', e)
+    console.error('Failed to create audit log entry:', e);
   }
 }
 
@@ -262,19 +272,19 @@ async function createStateTransitionAuditLog(options: AuditLogOptions): Promise<
  * Get current vendor onboarding state
  */
 export async function getVendorOnboardingState(
-  vendorId: string
+  vendorId: string,
 ): Promise<VendorOnboardingStateValue | null> {
   const { data, error } = await supabase
     .from('vendors')
     .select('onboarding_state')
     .eq('id', vendorId)
-    .single()
+    .single();
 
   if (error || !data) {
-    return null
+    return null;
   }
 
-  return data.onboarding_state as VendorOnboardingStateValue
+  return data.onboarding_state as VendorOnboardingStateValue;
 }
 
 /**
@@ -282,43 +292,43 @@ export async function getVendorOnboardingState(
  * Called by webhook handler to determine state transitions.
  */
 export function determineStateFromStripeData(data: {
-  hasAccount: boolean
-  chargesEnabled: boolean
-  payoutsEnabled: boolean
-  detailsSubmitted: boolean
+  hasAccount: boolean;
+  chargesEnabled: boolean;
+  payoutsEnabled: boolean;
+  detailsSubmitted: boolean;
 }): VendorOnboardingStateValue {
-  const { hasAccount, chargesEnabled, payoutsEnabled, detailsSubmitted } = data
+  const { hasAccount, chargesEnabled, payoutsEnabled, detailsSubmitted } = data;
 
   if (!hasAccount) {
-    return 'registered'
+    return 'registered';
   }
 
   // Full verification and bank linked
   if (chargesEnabled && payoutsEnabled) {
-    return 'bank_linked' // Will transition to 'active' separately
+    return 'bank_linked'; // Will transition to 'active' separately
   }
 
   // Identity verified but bank not linked
   if (chargesEnabled && !payoutsEnabled) {
-    return 'kyc_verified'
+    return 'kyc_verified';
   }
 
   // Details submitted but not yet verified
   if (detailsSubmitted && !chargesEnabled) {
-    return 'kyc_submitted'
+    return 'kyc_submitted';
   }
 
   // Has account but nothing else
-  return 'kyc_submitted'
+  return 'kyc_submitted';
 }
 
 /**
  * Check if vendor can enable instant book based on their state
  */
 export async function canEnableInstantBook(vendorId: string): Promise<boolean> {
-  const state = await getVendorOnboardingState(vendorId)
-  if (!state) return false
-  return canVendorPerform(state, 'canEnableInstantBook')
+  const state = await getVendorOnboardingState(vendorId);
+  if (!state) return false;
+  return canVendorPerform(state, 'canEnableInstantBook');
 }
 
 /**
@@ -327,14 +337,14 @@ export async function canEnableInstantBook(vendorId: string): Promise<boolean> {
  */
 export async function activateVendor(
   vendorId: string,
-  actor: TransitionActor = 'system'
+  actor: TransitionActor = 'system',
 ): Promise<TransitionResult> {
   return transitionVendorState({
     vendorId,
     targetState: 'active',
     actor,
     reason: 'Vendor onboarding complete - all requirements met',
-  })
+  });
 }
 
 // ================================================
@@ -362,4 +372,4 @@ export const vendorStateMachine = {
   // Constants
   STATE_LABELS,
   VALID_TRANSITIONS,
-}
+};

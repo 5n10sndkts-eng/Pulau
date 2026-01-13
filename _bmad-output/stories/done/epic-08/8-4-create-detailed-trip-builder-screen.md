@@ -29,6 +29,7 @@ So that I can see all details and make adjustments.
 ## Tasks / Subtasks
 
 ### Task 1: Build TripBuilderScreen layout (AC: #1, #2, #3, #4)
+
 - [x] Create TripBuilderScreen component with full-screen layout
 - [x] Add header with back navigation, ediKV namespace title, share button
 - [x] Implement scrollable content area for trip items
@@ -36,6 +37,7 @@ So that I can see all details and make adjustments.
 - [x] Ensure proper z-index layering for fixed elements
 
 ### Task 2: Implement ediKV namespace trip name in header (AC: #1)
+
 - [x] Create inline ediKV namespace trip name component
 - [x] Show pencil icon on hover to indicate editability
 - [x] Save changes on blur or Enter key
@@ -43,6 +45,7 @@ So that I can see all details and make adjustments.
 - [x] Update trip.name in useKV persistence
 
 ### Task 3: Build date picker component (AC: #2)
+
 - [x] Create DateRangePicker component using shadcn/ui Calendar
 - [x] Display current arrival and departure dates (or "Set dates")
 - [x] Open calendar modal on click
@@ -50,6 +53,7 @@ So that I can see all details and make adjustments.
 - [x] Update trip.start_date and trip.end_date on selection
 
 ### Task 4: Implement item grouping by scheduled date (AC: #3)
+
 - [x] Group trip items by scheduled_date
 - [x] Create DaySection for each unique date
 - [x] Display day number and formatted date as section header
@@ -57,6 +61,7 @@ So that I can see all details and make adjustments.
 - [x] Create separate "Unscheduled" section for items with null scheduled_date
 
 ### Task 5: Build sticky footer with pricing and CTA (AC: #4)
+
 - [x] Create TripFooter component with fixed positioning
 - [x] Display item count: "5 experiences"
 - [x] Calculate and display total: SUM(price × guest_count)
@@ -67,6 +72,7 @@ So that I can see all details and make adjustments.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use `useTripManagement` hook to access and update trip data
 - Date picker: shadcn/ui Calendar with range selection mode
 - Inline edit: use contentEdiKV namespace or controlled input with auto-focus
@@ -74,6 +80,7 @@ So that I can see all details and make adjustments.
 - Footer should stick to bottom using `sticky` positioning
 
 ### Component Hierarchy
+
 ```
 TripBuilderScreen
 ├── TripBuilderHeader
@@ -93,6 +100,7 @@ TripBuilderScreen
 ```
 
 ### Layout Specifications
+
 - Header height: 64px with safe area inset
 - Content padding: 16px mobile, 24px desktop
 - Footer height: 80px + safe area inset
@@ -100,17 +108,22 @@ TripBuilderScreen
 - Day section spacing: 32px vertical gap
 
 ### Price Calculation Logic
+
 ```typescript
-const calculateTripTotal = (items: TripItem[], experiences: Experience[]): number => {
+const calculateTripTotal = (
+  items: TripItem[],
+  experiences: Experience[],
+): number => {
   return items.reduce((total, item) => {
-    const experience = experiences.find(exp => exp.id === item.experience_id);
+    const experience = experiences.find((exp) => exp.id === item.experience_id);
     if (!experience) return total;
-    return total + (experience.price * item.guest_count);
+    return total + experience.price * item.guest_count;
   }, 0);
 };
 ```
 
 ### Date Range Display
+
 - Format: "Mar 15 - 20, 2026"
 - No dates set: "Set your travel dates" with calendar icon
 - Single day trip: "Mar 15, 2026"
@@ -136,5 +149,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

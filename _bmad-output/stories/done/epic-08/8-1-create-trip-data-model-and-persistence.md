@@ -27,6 +27,7 @@ So that trip data survives page refreshes and offline use.
 ## Tasks / Subtasks
 
 ### Task 1: Define TypeScript interfaces for trip data model (AC: #1)
+
 - [x] Create Trip interface with all required fields (id, user_id, name, dates, items, status, timestamps)
 - [x] Create TripItem interface with experience reference and scheduling details
 - [x] Create TripStatus enum ('planning', 'booked', 'active', 'completed', 'cancelled')
@@ -34,6 +35,7 @@ So that trip data survives page refreshes and offline use.
 - [x] Add JSDoc comments for developer documentation
 
 ### Task 2: Implement useKV hook for trip persistence (AC: #1, #3)
+
 - [x] Create useTripManagement custom hook wrapping Spark's useKV
 - [x] Initialize with key 'current_trip' and default empty trip structure
 - [x] Configure useKV to persist to localStorage for bobjectser sessions
@@ -41,6 +43,7 @@ So that trip data survives page refreshes and offline use.
 - [x] Handle useKV initialization errors gracefully
 
 ### Task 3: Create default trip factory function (AC: #1, #2)
+
 - [x] Implement createDefaultTrip() function that generates empty trip
 - [x] Include UUID generation for trip ID
 - [x] Set default values: name="My Trip", status='planning', dates=null
@@ -48,6 +51,7 @@ So that trip data survives page refreshes and offline use.
 - [x] Add current timestamp for created_at
 
 ### Task 4: Implement null safety patterns throughout (AC: #2)
+
 - [x] Apply null safety to all trip access: `const safeTrip = trip || defaultTrip`
 - [x] Update setter functions with null checks: `setTrip(current => { const base = current || defaultTrip; return {...base, ...updates} })`
 - [x] Add defensive checks before accessing trip.items
@@ -55,6 +59,7 @@ So that trip data survives page refreshes and offline use.
 - [x] Test with intentionally null trip values
 
 ### Task 5: Create trip CRUD operations (AC: #1, #3)
+
 - [x] Implement addTripItem(experienceId, guestCount) function
 - [x] Implement removeTripItem(itemId) function
 - [x] Implement updateTripItem(itemId, updates) function
@@ -64,6 +69,7 @@ So that trip data survives page refreshes and offline use.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use Spark's `useKV` hook: `const [trip, setTrip] = useKV<Trip | null>('current_trip', null)`
 - Always use null safety wrapper before accessing trip properties
 - UUID generation: use `crypto.randomUUID()` for trip and item IDs
@@ -71,13 +77,14 @@ So that trip data survives page refreshes and offline use.
 - Consider using React Context to share trip state globally across components
 
 ### Data Structure
+
 ```typescript
 interface Trip {
   id: string;
   user_id: string;
   name: string;
   start_date: string | null; // ISO date
-  end_date: string | null;   // ISO date
+  end_date: string | null; // ISO date
   items: TripItem[];
   status: TripStatus;
   created_at: string;
@@ -99,6 +106,7 @@ type TripStatus = 'planning' | 'booked' | 'active' | 'completed' | 'cancelled';
 ```
 
 ### Default Trip Factory
+
 ```typescript
 const createDefaultTrip = (): Trip => ({
   id: crypto.randomUUID(),
@@ -109,11 +117,12 @@ const createDefaultTrip = (): Trip => ({
   items: [],
   status: 'planning',
   created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString()
+  updated_at: new Date().toISOString(),
 });
 ```
 
 ### Null Safety Pattern
+
 ```typescript
 const useTripManagement = () => {
   const [trip, setTrip] = useKV<Trip | null>('current_trip', null);
@@ -154,5 +163,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

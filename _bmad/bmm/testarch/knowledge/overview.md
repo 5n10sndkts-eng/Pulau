@@ -125,7 +125,12 @@ import { test as recurseFixture } from '@seontechnologies/playwright-utils/recur
 import { test as logFixture } from '@seontechnologies/playwright-utils/log/fixtures';
 
 // Merge all fixtures into one test object
-export const test = mergeTests(apiRequestFixture, authFixture, recurseFixture, logFixture);
+export const test = mergeTests(
+  apiRequestFixture,
+  authFixture,
+  recurseFixture,
+  logFixture,
+);
 
 export { expect } from '@playwright/test';
 ```
@@ -134,7 +139,12 @@ export { expect } from '@playwright/test';
 // In your tests
 import { test, expect } from '../support/merged-fixtures';
 
-test('all utilities available', async ({ apiRequest, authToken, recurse, log }) => {
+test('all utilities available', async ({
+  apiRequest,
+  authToken,
+  recurse,
+  log,
+}) => {
   await log.step('Making authenticated API request');
 
   const { body } = await apiRequest({

@@ -29,6 +29,7 @@ So that I can plan before committing to dates.
 ## Tasks / Subtasks
 
 ### Task 1: Create "Set your dates" prompt component (AC: #1)
+
 - [x] Build SetDatesPrompt banner component
 - [x] Display at top of trip builder when dates are null
 - [x] Include calendar icon and "Set your dates" text
@@ -36,6 +37,7 @@ So that I can plan before committing to dates.
 - [x] Style with gentle background color (yellow/sand tint)
 
 ### Task 2: Route all items to unscheduled when no dates (AC: #1)
+
 - [x] Check if trip.start_date and trip.end_date are null
 - [x] Display only "Unscheduled" section (no day sections)
 - [x] Show all trip items in unscheduled section
@@ -43,6 +45,7 @@ So that I can plan before committing to dates.
 - [x] Disable drag-to-schedule functionality when no dates
 
 ### Task 3: Implement checkout date prompt modal (AC: #2)
+
 - [x] Create CheckoutDatePromptModal component
 - [x] Trigger on "Continue to Booking" click if dates are null
 - [x] Show modal heading: "When are you traveling?"
@@ -50,6 +53,7 @@ So that I can plan before committing to dates.
 - [x] Include "Set Dates" (primary) and "Skip for now" (secondary) buttons
 
 ### Task 4: Handle "Set Dates" action (AC: #3)
+
 - [x] On "Set Dates": update trip.start_date and trip.end_date
 - [x] Persist date updates via useKV
 - [x] Keep all items in unscheduled section (no auto-assignment)
@@ -57,6 +61,7 @@ So that I can plan before committing to dates.
 - [x] Show success toast: "Dates saved"
 
 ### Task 5: Handle "Skip for now" action (AC: #2)
+
 - [x] On "Skip for now": proceed to checkout without dates
 - [x] Show warning toast: "Remember to coordinate dates with operators"
 - [x] Allow booking process to continue
@@ -66,6 +71,7 @@ So that I can plan before committing to dates.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Date check: `const noDates = !trip.start_date || !trip.end_date`
 - Modal: use shadcn/ui Dialog component
 - Date prompt should be non-blocking (allow skip)
@@ -73,6 +79,7 @@ So that I can plan before committing to dates.
 - Enable scheduling features only after dates are set
 
 ### Component Hierarchy
+
 ```
 TripBuilder
 ├── {noDates && <SetDatesPrompt onClick={openDatePicker} />}
@@ -89,6 +96,7 @@ TripBuilder
 ```
 
 ### Date State Logic
+
 ```typescript
 const noDatesSet = !trip.start_date || !trip.end_date;
 const canScheduleItems = !noDatesSet;
@@ -104,6 +112,7 @@ const handleContinueToBooking = () => {
 ```
 
 ### Visual Specifications
+
 - SetDatesPrompt: Golden sand background (#F4D03F20), padding 16px
 - Modal: centered on screen, max-width 500px
 - Date picker: calendar with range selection
@@ -130,5 +139,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

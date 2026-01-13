@@ -28,23 +28,19 @@ As a **developer**, I need **all TypeScript compilation errors resolved** so tha
   - Change `user_id` → `actor_id`
   - Add required `actor_type` field (derive from context or default to 'user')
   - Verify auditService types align with `audit_logs` table schema
-  
 - [ ] **DEF-002**: Fix `src/components/RealtimeSlotDisplay.tsx:108-113`
   - Properly destructure `{ data, error }` from useQuery result
   - Handle loading state correctly
   - Verify component renders without type errors
-  
 - [ ] **DEF-003**: Create `decrement_slot_inventory` RPC function
   - Write database migration in `supabase/migrations/`
   - Implement atomic inventory decrement logic
   - Add RPC function signature to TypeScript types
   - Run migration on local database
   - Regenerate Supabase types: `npm run db:types`
-  
 - [ ] **DEF-004**: Fix `src/lib/realtimeService.test.ts:44`
   - Update mock to return valid status: `'ok' | 'error' | 'timed out'`
   - Verify test compiles and runs
-  
 - [ ] Run full type check: `npm run type-check`
 - [ ] Run build verification: `npm run build`
 - [ ] Run test suite: `npm run test`
@@ -52,6 +48,7 @@ As a **developer**, I need **all TypeScript compilation errors resolved** so tha
 ## Technical Notes
 
 ### RPC Function Schema
+
 ```sql
 CREATE OR REPLACE FUNCTION decrement_slot_inventory(
   slot_id_param UUID,
@@ -72,17 +69,18 @@ BEGIN
     'success', true,
     'new_capacity', current_capacity
   ) INTO result;
-  
+
   IF result IS NULL THEN
     RETURN jsonb_build_object('success', false, 'error', 'Insufficient capacity');
   END IF;
-  
+
   RETURN result;
 END;
 $$;
 ```
 
 ### Audit Service Fix
+
 ```typescript
 // Change from:
 user_id: input.userId || session?.session?.user?.id,
@@ -97,6 +95,7 @@ actor_type: 'user', // or derive from context
 **Complete ALL items BEFORE marking story as 'done'**
 
 ### Implementation Checklist
+
 - [ ] All task checkboxes marked with [x]
 - [ ] Code compiles without TypeScript errors
 - [ ] All tests passing (unit + integration + E2E where applicable)
@@ -104,6 +103,7 @@ actor_type: 'user', // or derive from context
 - [ ] Code follows project conventions and style guide
 
 ### Documentation Checklist
+
 - [ ] Dev Agent Record completed with:
   - Agent model used
   - Debug log references
@@ -113,13 +113,16 @@ actor_type: 'user', // or derive from context
 - [ ] Known issues or limitations documented in story notes
 
 ### Verification Checklist
+
 - [ ] Feature tested in development environment
 - [ ] Edge cases handled appropriately
 - [ ] Error states implemented and tested
 - [ ] Performance acceptable (no obvious regressions)
 
 ### Definition of Done
+
 Story can ONLY move to 'done' status when:
+
 1. ✅ All quality gate checkboxes completed
 2. ✅ Peer review completed (or pair programming session logged)
 3. ✅ Stakeholder acceptance obtained (if user-facing feature)
@@ -130,7 +133,8 @@ Story can ONLY move to 'done' status when:
 **Agent Model Used**: _[To be filled during implementation]_  
 **Debug Log References**: _[To be filled during implementation]_  
 **Completion Notes**: _[To be filled during implementation]_  
-**Files Modified**: 
+**Files Modified**:
+
 - `src/lib/auditService.ts`
 - `src/components/RealtimeSlotDisplay.tsx`
 - `src/lib/slotService.ts`

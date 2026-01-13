@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,15 +6,15 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Clock,
   Users,
@@ -23,18 +23,21 @@ import {
   AlertTriangle,
   Loader2,
   Trash2,
-} from 'lucide-react'
-import { format } from 'date-fns'
-import type { ExperienceSlot } from '@/lib/slotService'
+} from 'lucide-react';
+import { format } from 'date-fns';
+import type { ExperienceSlot } from '@/lib/slotService';
 
 interface SlotDetailModalProps {
-  isOpen: boolean
-  onClose: () => void
-  slot: ExperienceSlot | null
-  onBlock: (slotId: string, reason: string) => Promise<void>
-  onUnblock: (slotId: string) => Promise<void>
-  onDelete: (slotId: string) => Promise<void>
-  onUpdate: (slotId: string, updates: { totalCapacity?: number }) => Promise<void>
+  isOpen: boolean;
+  onClose: () => void;
+  slot: ExperienceSlot | null;
+  onBlock: (slotId: string, reason: string) => Promise<void>;
+  onUnblock: (slotId: string) => Promise<void>;
+  onDelete: (slotId: string) => Promise<void>;
+  onUpdate: (
+    slotId: string,
+    updates: { totalCapacity?: number },
+  ) => Promise<void>;
 }
 
 export function SlotDetailModal({
@@ -46,62 +49,62 @@ export function SlotDetailModal({
   onDelete,
   onUpdate,
 }: SlotDetailModalProps) {
-  const [isBlocked, setIsBlocked] = useState(false)
-  const [blockReason, setBlockReason] = useState('')
-  const [capacity, setCapacity] = useState(10)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [blockReason, setBlockReason] = useState('');
+  const [capacity, setCapacity] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (isOpen && slot) {
-      setIsBlocked(slot.is_blocked ?? false)
-      setBlockReason('')
-      setCapacity(slot.total_capacity)
-      setShowDeleteConfirm(false)
+      setIsBlocked(slot.is_blocked ?? false);
+      setBlockReason('');
+      setCapacity(slot.total_capacity);
+      setShowDeleteConfirm(false);
     }
-  }, [isOpen, slot])
+  }, [isOpen, slot]);
 
-  if (!slot) return null
+  if (!slot) return null;
 
-  const hasBookings = slot.available_count < slot.total_capacity
-  const bookedCount = slot.total_capacity - slot.available_count
+  const hasBookings = slot.available_count < slot.total_capacity;
+  const bookedCount = slot.total_capacity - slot.available_count;
 
   const handleBlockToggle = async (checked: boolean) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       if (checked) {
-        await onBlock(slot.id, blockReason || 'Manual block by vendor')
+        await onBlock(slot.id, blockReason || 'Manual block by vendor');
       } else {
-        await onUnblock(slot.id)
+        await onUnblock(slot.id);
       }
-      setIsBlocked(checked)
+      setIsBlocked(checked);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleSaveCapacity = async () => {
-    if (capacity === slot.total_capacity) return
-    setIsLoading(true)
+    if (capacity === slot.total_capacity) return;
+    setIsLoading(true);
     try {
-      await onUpdate(slot.id, { totalCapacity: capacity })
+      await onUpdate(slot.id, { totalCapacity: capacity });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await onDelete(slot.id)
-      onClose()
+      await onDelete(slot.id);
+      onClose();
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const formattedDate = format(new Date(slot.slot_date), 'EEEE, MMMM d, yyyy')
-  const formattedTime = slot.slot_time.slice(0, 5) // HH:MM
+  const formattedDate = format(new Date(slot.slot_date), 'EEEE, MMMM d, yyyy');
+  const formattedTime = slot.slot_time.slice(0, 5); // HH:MM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -126,7 +129,10 @@ export function SlotDetailModal({
                 Blocked
               </Badge>
             ) : slot.available_count === 0 ? (
-              <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+              <Badge
+                variant="secondary"
+                className="bg-amber-100 text-amber-700"
+              >
                 <Users className="w-3 h-3 mr-1" />
                 Sold Out
               </Badge>
@@ -151,7 +157,9 @@ export function SlotDetailModal({
             {hasBookings && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Booked</span>
-                <span className="font-medium text-primary">{bookedCount} guests</span>
+                <span className="font-medium text-primary">
+                  {bookedCount} guests
+                </span>
               </div>
             )}
           </div>
@@ -182,8 +190,9 @@ export function SlotDetailModal({
               <Alert variant="default" className="border-amber-200 bg-amber-50">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
                 <AlertDescription className="text-amber-800 text-sm">
-                  This slot has {bookedCount} existing booking{bookedCount > 1 ? 's' : ''}.
-                  Blocking will not cancel them, but prevents new bookings.
+                  This slot has {bookedCount} existing booking
+                  {bookedCount > 1 ? 's' : ''}. Blocking will not cancel them,
+                  but prevents new bookings.
                 </AlertDescription>
               </Alert>
             )}
@@ -218,12 +227,16 @@ export function SlotDetailModal({
                 min={hasBookings ? bookedCount : 1}
                 className="w-24"
               />
-              <span className="text-sm text-muted-foreground">guests maximum</span>
+              <span className="text-sm text-muted-foreground">
+                guests maximum
+              </span>
               {capacity !== slot.total_capacity && (
                 <Button
                   size="sm"
                   onClick={handleSaveCapacity}
-                  disabled={isLoading || capacity < (hasBookings ? bookedCount : 1)}
+                  disabled={
+                    isLoading || capacity < (hasBookings ? bookedCount : 1)
+                  }
                 >
                   Save
                 </Button>
@@ -294,5 +307,5 @@ export function SlotDetailModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

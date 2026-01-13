@@ -1,17 +1,20 @@
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Sparkles, MapPin, Calendar } from 'lucide-react'
-import type { Destination } from '@/lib/types'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Sparkles, MapPin, Calendar } from 'lucide-react';
+import type { Destination } from '@/lib/types';
 
 interface DestinationTeaserCardProps {
-  destination: Destination
-  onNotifyMe: (destinationId: string) => void
+  destination: Destination;
+  onNotifyMe: (destinationId: string) => void;
 }
 
-export function DestinationTeaserCard({ destination, onNotifyMe }: DestinationTeaserCardProps) {
+export function DestinationTeaserCard({
+  destination,
+  onNotifyMe,
+}: DestinationTeaserCardProps) {
   if (destination.active) {
-    return null
+    return null;
   }
 
   return (
@@ -53,14 +56,16 @@ export function DestinationTeaserCard({ destination, onNotifyMe }: DestinationTe
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 interface DestinationConfigDisplayProps {
-  destination: Destination
+  destination: Destination;
 }
 
-export function DestinationConfigDisplay({ destination }: DestinationConfigDisplayProps) {
+export function DestinationConfigDisplay({
+  destination,
+}: DestinationConfigDisplayProps) {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
@@ -73,7 +78,7 @@ export function DestinationConfigDisplay({ destination }: DestinationConfigDispl
           <p className="mt-1 text-lg font-semibold">{destination.timezone}</p>
         </div>
       </div>
-      
+
       <div className="rounded-lg border p-3">
         <p className="text-sm font-medium text-muted-foreground">Status</p>
         <div className="mt-1">
@@ -85,5 +90,5 @@ export function DestinationConfigDisplay({ destination }: DestinationConfigDispl
         </div>
       </div>
     </div>
-  )
+  );
 }

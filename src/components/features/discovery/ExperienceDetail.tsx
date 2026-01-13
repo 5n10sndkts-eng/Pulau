@@ -1,15 +1,15 @@
-import { useState, useMemo, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Experience } from '@/lib/types'
-import { formatPrice } from '@/lib/helpers'
-import { Skeleton } from '@/components/ui/skeleton'
-import { AvailabilityCalendar } from '@/components/AvailabilityCalendar'
-import { RealtimeSlotDisplay } from '@/components/RealtimeSlotDisplay'
-import { SoldOutOverlay } from '@/components/ErrorHandling'
-import type { ExperienceSlot } from '@/lib/slotService'
+import { useState, useMemo, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Experience } from '@/lib/types';
+import { formatPrice } from '@/lib/helpers';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AvailabilityCalendar } from '@/components/AvailabilityCalendar';
+import { RealtimeSlotDisplay } from '@/components/RealtimeSlotDisplay';
+import { SoldOutOverlay } from '@/components/ErrorHandling';
+import type { ExperienceSlot } from '@/lib/slotService';
 import {
   ArrowLeft,
   Heart,
@@ -25,37 +25,50 @@ import {
   Info,
   CalendarDays,
   Zap,
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { PremiumContainer } from '@/components/ui/premium-container'
-import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants'
-import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import { HostProfile } from '@/components/HostProfile'
-import { ReviewList } from '@/components/ReviewList'
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { PremiumContainer } from '@/components/ui/premium-container';
+import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { HostProfile } from '@/components/HostProfile';
+import { ReviewList } from '@/components/ReviewList';
 
 interface ExperienceDetailProps {
-  experience: Experience
-  isSaved: boolean
-  onBack: () => void
-  onToggleSave: () => void
-  onAddToTrip: (guests: number, totalPrice: number) => void
+  experience: Experience;
+  isSaved: boolean;
+  onBack: () => void;
+  onToggleSave: () => void;
+  onAddToTrip: (guests: number, totalPrice: number) => void;
 }
 
-export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, onAddToTrip }: ExperienceDetailProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [guests, setGuests] = useState(2)
-  const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined)
-  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | undefined>(undefined)
-  const [showWaitlist, setShowWaitlist] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+export function ExperienceDetail({
+  experience,
+  isSaved,
+  onBack,
+  onToggleSave,
+  onAddToTrip,
+}: ExperienceDetailProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [guests, setGuests] = useState(2);
+  const [selectedDate, setSelectedDate] = useState<string | undefined>(
+    undefined,
+  );
+  const [selectedSlot, setSelectedSlot] = useState<ExperienceSlot | undefined>(
+    undefined,
+  );
+  const [showWaitlist, setShowWaitlist] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 900)
-    return () => clearTimeout(timer)
-  }, [])
+    const timer = setTimeout(() => setIsLoading(false), 900);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const totalPrice = useMemo(() => experience.price.amount * guests, [experience.price.amount, guests])
+  const totalPrice = useMemo(
+    () => experience.price.amount * guests,
+    [experience.price.amount, guests],
+  );
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -64,20 +77,22 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
           title: experience.title,
           text: `Check out this amazing experience: ${experience.title} in Bali!`,
           url: window.location.href,
-        })
+        });
       } catch (err) {
-        console.error('Error sharing:', err)
+        console.error('Error sharing:', err);
       }
     } else {
-      navigator.clipboard.writeText(window.location.href)
-      toast.success('Link copied to clipboard!')
+      navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard!');
     }
-  }
+  };
 
   const handleWaitlist = () => {
-    toast.success("You've been added to the waitlist! We'll notify you if spots open up.")
-    setShowWaitlist(false)
-  }
+    toast.success(
+      "You've been added to the waitlist! We'll notify you if spots open up.",
+    );
+    setShowWaitlist(false);
+  };
 
   if (isLoading) {
     return (
@@ -172,19 +187,25 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
               variant="ghost"
               size="icon"
               className={cn(
-                "w-11 h-11 rounded-full backdrop-blur-md border border-white/20 transition-all",
-                isSaved ? "bg-accent text-white border-accent" : "bg-white/20 text-white hover:bg-white/40"
+                'w-11 h-11 rounded-full backdrop-blur-md border border-white/20 transition-all',
+                isSaved
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-white/20 text-white hover:bg-white/40',
               )}
               onClick={onToggleSave}
-              aria-label={isSaved ? "Remove from saved" : "Save experience"}
+              aria-label={isSaved ? 'Remove from saved' : 'Save experience'}
             >
-              <Heart className={cn("w-5 h-5", isSaved && "fill-current")} />
+              <Heart className={cn('w-5 h-5', isSaved && 'fill-current')} />
             </Button>
           </div>
         </div>
 
         {/* Carousel Indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 z-20" role="tablist" aria-label="Image gallery">
+        <div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 z-20"
+          role="tablist"
+          aria-label="Image gallery"
+        >
           {experience.images.map((_, idx) => (
             <button
               key={idx}
@@ -196,8 +217,10 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
             >
               <motion.div
                 className={cn(
-                  "h-1.5 rounded-full transition-all",
-                  idx === currentImageIndex ? "bg-white w-8" : "bg-white/40 w-1.5 group-hover:bg-white/60"
+                  'h-1.5 rounded-full transition-all',
+                  idx === currentImageIndex
+                    ? 'bg-white w-8'
+                    : 'bg-white/40 w-1.5 group-hover:bg-white/60',
                 )}
                 animate={{ width: idx === currentImageIndex ? 32 : 6 }}
               />
@@ -216,16 +239,26 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
         {/* Title & Stats */}
         <motion.div variants={fadeInUp} className="space-y-4">
           <div className="flex justify-between items-start gap-4">
-            <h1 className="font-display text-3xl font-bold leading-tight flex-1">{experience.title}</h1>
-            <Badge variant="outline" className="shrink-0 mt-2 px-3 py-1 border-primary/20 text-primary uppercase text-[10px] font-bold tracking-widest">
+            <h1 className="font-display text-3xl font-bold leading-tight flex-1">
+              {experience.title}
+            </h1>
+            <Badge
+              variant="outline"
+              className="shrink-0 mt-2 px-3 py-1 border-primary/20 text-primary uppercase text-[10px] font-bold tracking-widest"
+            >
               {experience.category.replace('_', ' ')}
             </Badge>
           </div>
 
           <div className="flex flex-wrap gap-5 text-sm text-muted-foreground pt-2">
             <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 fill-golden text-golden" aria-hidden="true" />
-              <span className="font-bold text-foreground">{experience.provider.rating}</span>
+              <Star
+                className="w-4 h-4 fill-golden text-golden"
+                aria-hidden="true"
+              />
+              <span className="font-bold text-foreground">
+                {experience.provider.rating}
+              </span>
               <span>({experience.provider.reviewCount})</span>
             </div>
             <div className="flex items-center gap-2">
@@ -274,7 +307,9 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
         <motion.div variants={fadeInUp} className="mt-10 space-y-6">
           <div className="grid gap-6">
             <div className="space-y-4">
-              <h2 className="font-display text-xl font-bold">What's Included</h2>
+              <h2 className="font-display text-xl font-bold">
+                What's Included
+              </h2>
               <div className="grid gap-3">
                 {experience.included.map((item, i) => (
                   <div key={i} className="flex gap-3 text-sm">
@@ -287,10 +322,15 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
 
             {experience.notIncluded.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-widest">Not Included</h3>
+                <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-widest">
+                  Not Included
+                </h3>
                 <div className="grid gap-3">
                   {experience.notIncluded.map((item, i) => (
-                    <div key={i} className="flex gap-3 text-sm text-muted-foreground opacity-70">
+                    <div
+                      key={i}
+                      className="flex gap-3 text-sm text-muted-foreground opacity-70"
+                    >
                       <X className="w-4 h-4 mt-0.5 shrink-0" />
                       <span>{item}</span>
                     </div>
@@ -323,22 +363,24 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
           <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
             <Clock className="w-4 h-4" />
             <span>
-              Booking closes {experience.cutoffHours ?? 2} hour{(experience.cutoffHours ?? 2) !== 1 ? 's' : ''} before start time
+              Booking closes {experience.cutoffHours ?? 2} hour
+              {(experience.cutoffHours ?? 2) !== 1 ? 's' : ''} before start time
             </span>
           </div>
           <AvailabilityCalendar
             experienceId={experience.id}
             selectedDate={selectedDate}
             onDateSelect={(date) => {
-              if (date === '2024-08-15') { // Mock sold out date
-                setShowWaitlist(true)
+              if (date === '2024-08-15') {
+                // Mock sold out date
+                setShowWaitlist(true);
               } else {
-                setSelectedDate(date)
-                setSelectedSlot(undefined) // Clear slot when date changes
+                setSelectedDate(date);
+                setSelectedSlot(undefined); // Clear slot when date changes
               }
             }}
           />
-          
+
           {/* Real-time slot display when date is selected */}
           {selectedDate && (
             <motion.div
@@ -348,7 +390,9 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
               transition={{ duration: 0.3 }}
               className="mt-6"
             >
-              <h3 className="font-display text-lg font-semibold mb-4">Available Time Slots</h3>
+              <h3 className="font-display text-lg font-semibold mb-4">
+                Available Time Slots
+              </h3>
               <RealtimeSlotDisplay
                 experienceId={experience.id}
                 selectedDate={selectedDate}
@@ -358,10 +402,13 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
               />
             </motion.div>
           )}
-          
+
           {showWaitlist && (
             <div className="absolute inset-0 z-50">
-              <SoldOutOverlay onWaitlist={handleWaitlist} onViewSimilar={() => setShowWaitlist(false)} />
+              <SoldOutOverlay
+                onWaitlist={handleWaitlist}
+                onViewSimilar={() => setShowWaitlist(false)}
+              />
             </div>
           )}
         </motion.div>
@@ -374,7 +421,9 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
               <Shield className="w-5 h-5 text-primary shrink-0" />
               <div>
                 <p className="text-sm font-bold">Cancellation Policy</p>
-                <p className="text-xs text-muted-foreground">{experience.cancellation}</p>
+                <p className="text-xs text-muted-foreground">
+                  {experience.cancellation}
+                </p>
               </div>
             </div>
             {experience.whatToBring.length > 0 && (
@@ -382,7 +431,9 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
                 <MapPin className="w-5 h-5 text-primary shrink-0" />
                 <div>
                   <p className="text-sm font-bold">What to Bring</p>
-                  <p className="text-xs text-muted-foreground">{experience.whatToBring.join(', ')}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {experience.whatToBring.join(', ')}
+                  </p>
                 </div>
               </div>
             )}
@@ -392,7 +443,10 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
 
       {/* Sticky Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-gradient-to-t from-background via-background to-transparent pointer-events-none">
-        <PremiumContainer variant="glass" className="pointer-events-auto max-w-lg mx-auto flex items-center justify-between p-4 rounded-3xl shadow-2xl border-white/20 backdrop-blur-2xl">
+        <PremiumContainer
+          variant="glass"
+          className="pointer-events-auto max-w-lg mx-auto flex items-center justify-between p-4 rounded-3xl shadow-2xl border-white/20 backdrop-blur-2xl"
+        >
           <div className="space-y-0.5 flex-1">
             {selectedSlot && selectedDate ? (
               <>
@@ -401,9 +455,14 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
                 </p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-display font-bold">
-                    {formatPrice((selectedSlot.price_override_amount ?? experience.price.amount) * guests)}
+                    {formatPrice(
+                      (selectedSlot.price_override_amount ??
+                        experience.price.amount) * guests,
+                    )}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">/ {guests} guests</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    / {guests} guests
+                  </span>
                 </div>
               </>
             ) : (
@@ -412,8 +471,12 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
                   {selectedDate ? 'Select Time Slot' : 'Select Date & Time'}
                 </p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-display font-bold">{formatPrice(totalPrice)}</span>
-                  <span className="text-[10px] text-muted-foreground">/ {guests} guests</span>
+                  <span className="text-2xl font-display font-bold">
+                    {formatPrice(totalPrice)}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    / {guests} guests
+                  </span>
                 </div>
               </>
             )}
@@ -429,5 +492,5 @@ export function ExperienceDetail({ experience, isSaved, onBack, onToggleSave, on
         </PremiumContainer>
       </div>
     </div>
-  )
+  );
 }

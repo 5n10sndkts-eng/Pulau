@@ -16,35 +16,35 @@ So that I can detect, diagnose, and fix production errors quickly.
 1. **Given** Sentry account is set up
    **When** installing Sentry SDK
    **Then** it:
-     - Installs @sentry/react and @sentry/vite-plugin
-     - Initializes with production DSN
-     - Uploads source maps
-     - Captures unhandled errors
+   - Installs @sentry/react and @sentry/vite-plugin
+   - Initializes with production DSN
+   - Uploads source maps
+   - Captures unhandled errors
 
 2. **Given** Sentry is initialized
    **When** an error occurs in the application
    **Then** it:
-     - Captures error details
-     - Includes stack trace
-     - Attaches user context
-     - Records breadcrumbs
-     - Groups similar errors
+   - Captures error details
+   - Includes stack trace
+   - Attaches user context
+   - Records breadcrumbs
+   - Groups similar errors
 
 3. **Given** source maps are uploaded
    **When** viewing error in Sentry
    **Then** it shows:
-     - Original TypeScript source code
-     - Exact line numbers
-     - Full stack trace
-     - Variable values at error time
+   - Original TypeScript source code
+   - Exact line numbers
+   - Full stack trace
+   - Variable values at error time
 
 4. **Given** multiple environments (dev, staging, prod)
    **When** errors occur
    **Then** Sentry:
-     - Tags errors by environment
-     - Separates concerns
-     - Only tracks production errors (or configures per env)
-     - Respects privacy settings
+   - Tags errors by environment
+   - Separates concerns
+   - Only tracks production errors (or configures per env)
+   - Respects privacy settings
 
 ## Tasks / Subtasks
 
@@ -87,21 +87,24 @@ So that I can detect, diagnose, and fix production errors quickly.
 ### Architecture Patterns & Constraints
 
 **Sentry Pricing:**
+
 - Free: 5,000 errors/month, 10k transactions/month
 - Team: $26/month - 50k errors, 100k transactions
 - Business: $80/month - 500k errors, 1M transactions
 
 **Installation:**
+
 ```bash
 npm i @sentry/react @sentry/vite-plugin
 ```
 
 **Vite Configuration:**
+
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { sentryVitePlugin } from '@sentry/vite-plugin'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig({
   plugins: [
@@ -121,10 +124,11 @@ export default defineConfig({
   build: {
     sourcemap: true, // Required for Sentry
   },
-})
+});
 ```
 
 **Sentry Initialization:**
+
 ```typescript
 // src/main.tsx
 import * as Sentry from '@sentry/react'
@@ -149,14 +153,14 @@ if (import.meta.env.PROD) {
         blockAllMedia: true,
       }),
     ],
-    
+
     // Performance Monitoring
     tracesSampleRate: 0.1, // 10% of transactions
-    
+
     // Session Replay
     replaysSessionSampleRate: 0.1, // 10% of sessions
     replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
-    
+
     // Filter sensitive data
     beforeSend(event, hint) {
       // Don't send errors from browser extensions
@@ -165,16 +169,16 @@ if (import.meta.env.PROD) {
       )) {
         return null
       }
-      
+
       // Remove PII
       if (event.user) {
         delete event.user.email
         delete event.user.ip_address
       }
-      
+
       return event
     },
-    
+
     // Ignore common non-critical errors
     ignoreErrors: [
       'ResizeObserver loop limit exceeded',
@@ -190,32 +194,34 @@ root.render(<App />)
 ```
 
 **User Context Tracking:**
+
 ```typescript
 // src/contexts/AuthContext.tsx
-import { useEffect } from 'react'
-import * as Sentry from '@sentry/react'
-import { useAuth } from './hooks/useAuth'
+import { useEffect } from 'react';
+import * as Sentry from '@sentry/react';
+import { useAuth } from './hooks/useAuth';
 
 function AuthProvider({ children }) {
-  const { user } = useAuth()
-  
+  const { user } = useAuth();
+
   useEffect(() => {
     if (user) {
       Sentry.setUser({
         id: user.id,
         username: user.username,
         // Don't include email or other PII
-      })
+      });
     } else {
-      Sentry.setUser(null)
+      Sentry.setUser(null);
     }
-  }, [user])
-  
-  return children
+  }, [user]);
+
+  return children;
 }
 ```
 
 **Environment Variables:**
+
 ```bash
 # .env.production
 VITE_SENTRY_DSN=https://[KEY]@[ORG].ingest.sentry.io/[PROJECT]
@@ -229,6 +235,7 @@ SENTRY_PROJECT=pulau-web
 ```
 
 **Source Map Upload:**
+
 ```json
 // package.json
 {
@@ -242,6 +249,7 @@ SENTRY_PROJECT=pulau-web
 Source maps are uploaded automatically by the Vite plugin during build.
 
 **Verify Setup:**
+
 ```typescript
 // Test error capture
 throw new Error('Sentry test error')
@@ -255,63 +263,67 @@ throw new Error('Sentry test error')
 ```
 
 **Integration with React Router:**
+
 ```tsx
 // src/App.tsx
-import * as Sentry from '@sentry/react'
-import { BrowserRouter } from 'react-router-dom'
+import * as Sentry from '@sentry/react';
+import { BrowserRouter } from 'react-router-dom';
 
-const SentryRoutes = Sentry.withSentryRouting(Routes)
+const SentryRoutes = Sentry.withSentryRouting(Routes);
 
 function App() {
   return (
     <BrowserRouter>
-      <SentryRoutes>
-        {/* Your routes */}
-      </SentryRoutes>
+      <SentryRoutes>{/* Your routes */}</SentryRoutes>
     </BrowserRouter>
-  )
+  );
 }
 ```
 
 **Performance Monitoring:**
+
 ```typescript
 // Measure custom transactions
 const transaction = Sentry.startTransaction({
   name: 'Checkout Flow',
   op: 'checkout',
-})
+});
 
 try {
-  await processCheckout()
-  transaction.setStatus('ok')
+  await processCheckout();
+  transaction.setStatus('ok');
 } catch (error) {
-  transaction.setStatus('internal_error')
-  Sentry.captureException(error)
+  transaction.setStatus('internal_error');
+  Sentry.captureException(error);
 } finally {
-  transaction.finish()
+  transaction.finish();
 }
 ```
 
 ## Testing Strategy
 
 ### Unit Tests
+
 - Mock Sentry in tests
+
 ```typescript
 // vitest.setup.ts
 vi.mock('@sentry/react', () => ({
   captureException: vi.fn(),
   captureMessage: vi.fn(),
   setUser: vi.fn(),
-}))
+}));
 ```
 
 ### Integration Tests
+
 - Trigger test error
 - Verify in Sentry dashboard
 - Check source maps resolve correctly
 - Validate user context attached
 
 ### Manual QA
+
 1. Deploy to staging with Sentry enabled
 2. Trigger various errors (404, API failure, etc.)
 3. Check Sentry dashboard for captured errors
@@ -374,6 +386,7 @@ vi.mock('@sentry/react', () => ({
 - **Datadog**: Enterprise-scale, overkill for MVP
 
 **Why Sentry:**
+
 - Industry standard
 - Great React integration
 - Generous free tier

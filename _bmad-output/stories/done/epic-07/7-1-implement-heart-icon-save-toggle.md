@@ -30,6 +30,7 @@ So that I can quickly bookmark activities I'm interested in.
 ## Tasks / Subtasks
 
 ### Task 1: Build heart icon UI component (AC: #1, #2)
+
 - [x] Create HeartIcon component with outline and filled states
 - [x] Add tap/click handler with state toggle logic
 - [x] Position heart icon in top-right corner of experience cards
@@ -37,6 +38,7 @@ So that I can quickly bookmark activities I'm interested in.
 - [x] Add visual hover state for desktop users
 
 ### Task 2: Implement save/unsave animation (AC: #1, #2)
+
 - [x] Add Framer Motion wrapper to HeartIcon component
 - [x] Create "pop" bounce animation (200ms spring) for save action
 - [x] Implement reverse animation for unsave action
@@ -44,6 +46,7 @@ So that I can quickly bookmark activities I'm interested in.
 - [x] Add color transition from outline to coral (#FF6B6B)
 
 ### Task 3: Integrate with saved_experiences data layer (AC: #1, #2, #3)
+
 - [x] Create useSavedExperiences hook with useKV persistence
 - [x] Implement saveExperience function to add record (user_id, experience_id, saved_at)
 - [x] Implement unsaveExperience function to remove record
@@ -51,6 +54,7 @@ So that I can quickly bookmark activities I'm interested in.
 - [x] Sync saved state across all experience card instances
 
 ### Task 4: Add toast notifications (AC: #1, #2)
+
 - [x] Integrate toast notification system (shadcn/ui Toast)
 - [x] Display "Saved to wishlist" on successful save
 - [x] Display "Removed from wishlist" on successful unsave
@@ -58,6 +62,7 @@ So that I can quickly bookmark activities I'm interested in.
 - [x] Ensure toasts don't stack excessively on rapid taps
 
 ### Task 5: Implement offline persistence with Spark useKV (AC: #3)
+
 - [x] Configure useKV hook for saved_experiences key
 - [x] Implement optimistic UI updates for instant feedback
 - [x] Add sync mechanism for when app comes back online
@@ -67,6 +72,7 @@ So that I can quickly bookmark activities I'm interested in.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use Spark's `useKV` hook for persistence: `const [savedExperiences, setSavedExperiences] = useKV<SavedExperience[]>('saved_experiences', [])`
 - Implement null safety: check if user is logged in before allowing save
 - Heart icon should use Lucide React icons: `Heart` (outline) and `HeartIcon` with fill
@@ -74,6 +80,7 @@ So that I can quickly bookmark activities I'm interested in.
 - Toast variant: use default (not destructive) with success styling
 
 ### Data Structure
+
 ```typescript
 interface SavedExperience {
   user_id: string;
@@ -83,6 +90,7 @@ interface SavedExperience {
 ```
 
 ### Performance Considerations
+
 - Debounce rapid taps to prevent duplicate API calls
 - Use optimistic updates for instant UI feedback
 - Lazy load saved state on component mount
@@ -108,5 +116,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

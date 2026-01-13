@@ -2,7 +2,6 @@ import { test, expect } from '../support/fixtures/trip.fixture';
 import { createExperience } from '../support/factories/experience.factory';
 
 test.describe('Epic 8: Trip Canvas & Itinerary', () => {
-  
   test.beforeEach(async ({ auth }) => {
     await auth.loginAs();
   });
@@ -19,10 +18,13 @@ test.describe('Epic 8: Trip Canvas & Itinerary', () => {
     await expect(page).toHaveURL(/\/trips\/.+/);
   });
 
-  test('should drag and drop experience into itinerary @p0 @trip @interactive', async ({ page, spark }) => {
+  test('should drag and drop experience into itinerary @p0 @trip @interactive', async ({
+    page,
+    spark,
+  }) => {
     const experience = createExperience({ title: 'Surf Lesson' });
     await spark.seedKey(`experience_${experience.id}`, experience);
-    await page.goto('/trips/new'); 
+    await page.goto('/trips/new');
     // await page.getByText('Surf Lesson').dragTo(page.locator('.day-schedule'));
     // await expect(page.locator('.itinerary-item')).toContainText('Surf Lesson');
   });

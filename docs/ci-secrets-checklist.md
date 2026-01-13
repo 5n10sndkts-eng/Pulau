@@ -17,6 +17,7 @@ If you add integrations in the future, configure these secrets in GitHub:
 **Secret Name**: `SLACK_WEBHOOK`  
 **Purpose**: Send test failure notifications to Slack  
 **How to configure**:
+
 1. Create a Slack webhook: https://api.slack.com/messaging/webhooks
 2. Go to: `https://github.com/5n10sndkts-eng/Pulau/settings/secrets/actions`
 3. Click "New repository secret"

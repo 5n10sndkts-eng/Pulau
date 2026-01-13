@@ -6,11 +6,11 @@
  * Integrates with health-check endpoint and shows real-time status.
  */
 
-import { useState, useEffect } from 'react'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Activity,
   AlertTriangle,
@@ -24,41 +24,41 @@ import {
   TrendingUp,
   Users,
   ShoppingCart,
-} from 'lucide-react'
-import { motion } from 'framer-motion'
-import { supabase } from '@/lib/supabase'
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type ServiceStatus = 'healthy' | 'unhealthy'
-type OverallStatus = 'healthy' | 'degraded' | 'unhealthy'
+type ServiceStatus = 'healthy' | 'unhealthy';
+type OverallStatus = 'healthy' | 'degraded' | 'unhealthy';
 
 interface ServiceCheck {
-  status: ServiceStatus
-  latency_ms?: number
-  error?: string
+  status: ServiceStatus;
+  latency_ms?: number;
+  error?: string;
 }
 
 interface HealthCheckResult {
-  status: OverallStatus
-  timestamp: string
-  version: string
-  duration_ms: number
-  environment: string
+  status: OverallStatus;
+  timestamp: string;
+  version: string;
+  duration_ms: number;
+  environment: string;
   checks: {
-    database: ServiceCheck
-    stripe: ServiceCheck
-    edge_functions: ServiceCheck
-  }
+    database: ServiceCheck;
+    stripe: ServiceCheck;
+    edge_functions: ServiceCheck;
+  };
 }
 
 interface SystemMetrics {
-  activeUsers: number
-  bookingsToday: number
-  revenueToday: number
-  errorRate: number
+  activeUsers: number;
+  bookingsToday: number;
+  revenueToday: number;
+  errorRate: number;
 }
 
 // ============================================================================
@@ -68,39 +68,47 @@ interface SystemMetrics {
 function getStatusColor(status: ServiceStatus | OverallStatus): string {
   switch (status) {
     case 'healthy':
-      return 'text-success'
+      return 'text-success';
     case 'degraded':
-      return 'text-yellow-500'
+      return 'text-yellow-500';
     case 'unhealthy':
-      return 'text-destructive'
+      return 'text-destructive';
     default:
-      return 'text-muted-foreground'
+      return 'text-muted-foreground';
   }
 }
 
 function getStatusBadge(status: ServiceStatus | OverallStatus) {
   switch (status) {
     case 'healthy':
-      return <Badge className="bg-success/10 text-success border-success/20">Healthy</Badge>
+      return (
+        <Badge className="bg-success/10 text-success border-success/20">
+          Healthy
+        </Badge>
+      );
     case 'degraded':
-      return <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">Degraded</Badge>
+      return (
+        <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
+          Degraded
+        </Badge>
+      );
     case 'unhealthy':
-      return <Badge variant="destructive">Unhealthy</Badge>
+      return <Badge variant="destructive">Unhealthy</Badge>;
     default:
-      return <Badge variant="outline">Unknown</Badge>
+      return <Badge variant="outline">Unknown</Badge>;
   }
 }
 
 function getStatusIcon(status: ServiceStatus | OverallStatus) {
   switch (status) {
     case 'healthy':
-      return <CheckCircle2 className="w-5 h-5 text-success" />
+      return <CheckCircle2 className="w-5 h-5 text-success" />;
     case 'degraded':
-      return <AlertTriangle className="w-5 h-5 text-yellow-500" />
+      return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
     case 'unhealthy':
-      return <XCircle className="w-5 h-5 text-destructive" />
+      return <XCircle className="w-5 h-5 text-destructive" />;
     default:
-      return <Clock className="w-5 h-5 text-muted-foreground" />
+      return <Clock className="w-5 h-5 text-muted-foreground" />;
   }
 }
 
@@ -109,81 +117,83 @@ function getStatusIcon(status: ServiceStatus | OverallStatus) {
 // ============================================================================
 
 export function MonitoringDashboard() {
-  const [health, setHealth] = useState<HealthCheckResult | null>(null)
-  const [metrics, setMetrics] = useState<SystemMetrics | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+  const [health, setHealth] = useState<HealthCheckResult | null>(null);
+  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   // Fetch health status
   const fetchHealth = async () => {
     try {
-      const { data, error: funcError } = await supabase.functions.invoke('health-check')
+      const { data, error: funcError } =
+        await supabase.functions.invoke('health-check');
 
-      if (funcError) throw funcError
+      if (funcError) throw funcError;
 
-      setHealth(data as HealthCheckResult)
-      setError(null)
+      setHealth(data as HealthCheckResult);
+      setError(null);
     } catch (err) {
-      console.error('Failed to fetch health status:', err)
-      setError('Failed to fetch system health')
+      console.error('Failed to fetch health status:', err);
+      setError('Failed to fetch system health');
     }
-  }
+  };
 
   // Fetch metrics from database
   const fetchMetrics = async () => {
     try {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
       // Get bookings count for today
       const { count: bookingsCount } = await supabase
         .from('bookings')
         .select('*', { count: 'exact', head: true })
-        .gte('created_at', today.toISOString())
+        .gte('created_at', today.toISOString());
 
       // Get revenue for today
       const { data: payments } = await supabase
         .from('payments')
         .select('amount')
         .eq('status', 'succeeded')
-        .gte('created_at', today.toISOString())
+        .gte('created_at', today.toISOString());
 
-      const totalRevenue = payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0
+      const totalRevenue =
+        payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0;
 
       // Get active users (sessions in last hour - approximation)
-      const hourAgo = new Date(Date.now() - 60 * 60 * 1000)
+      const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const { count: activeCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
-        .gte('updated_at', hourAgo.toISOString())
+        .gte('updated_at', hourAgo.toISOString());
 
       setMetrics({
         activeUsers: activeCount || 0,
         bookingsToday: bookingsCount || 0,
         revenueToday: totalRevenue / 100, // Convert cents to dollars
         errorRate: 0, // Would come from Sentry API in production
-      })
+      });
     } catch (err) {
-      console.error('Failed to fetch metrics:', err)
+      console.error('Failed to fetch metrics:', err);
     }
-  }
+  };
 
   // Initial load and refresh
   const refresh = async () => {
-    setIsLoading(true)
-    await Promise.all([fetchHealth(), fetchMetrics()])
-    setLastRefresh(new Date())
-    setIsLoading(false)
-  }
+    setIsLoading(true);
+    await Promise.all([fetchHealth(), fetchMetrics()]);
+    setLastRefresh(new Date());
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    refresh()
+    refresh();
 
     // Auto-refresh every 30 seconds
-    const interval = setInterval(refresh, 30000)
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(refresh, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // ============================================================================
   // RENDER
@@ -206,7 +216,9 @@ export function MonitoringDashboard() {
             </span>
           )}
           <Button onClick={refresh} disabled={isLoading} variant="outline">
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`}
+            />
             Refresh
           </Button>
         </div>
@@ -232,8 +244,8 @@ export function MonitoringDashboard() {
               health.status === 'healthy'
                 ? 'bg-success/5 border-success/20'
                 : health.status === 'degraded'
-                ? 'bg-yellow-500/5 border-yellow-500/20'
-                : 'bg-destructive/5 border-destructive/20'
+                  ? 'bg-yellow-500/5 border-yellow-500/20'
+                  : 'bg-destructive/5 border-destructive/20'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -241,10 +253,13 @@ export function MonitoringDashboard() {
                 {getStatusIcon(health.status)}
                 <div>
                   <h2 className="font-display text-xl font-bold">
-                    System Status: {health.status.charAt(0).toUpperCase() + health.status.slice(1)}
+                    System Status:{' '}
+                    {health.status.charAt(0).toUpperCase() +
+                      health.status.slice(1)}
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Environment: {health.environment} | Version: {health.version}
+                    Environment: {health.environment} | Version:{' '}
+                    {health.version}
                   </p>
                 </div>
               </div>
@@ -280,10 +295,14 @@ export function MonitoringDashboard() {
         />
         <MetricCard
           title="Error Rate"
-          value={metrics?.errorRate !== undefined ? `${metrics.errorRate}%` : '-'}
+          value={
+            metrics?.errorRate !== undefined ? `${metrics.errorRate}%` : '-'
+          }
           icon={<AlertTriangle className="w-5 h-5" />}
           description="Last 24 hours"
-          variant={metrics?.errorRate && metrics.errorRate > 1 ? 'warning' : 'default'}
+          variant={
+            metrics?.errorRate && metrics.errorRate > 1 ? 'warning' : 'default'
+          }
         />
       </div>
 
@@ -323,8 +342,8 @@ export function MonitoringDashboard() {
                   health.duration_ms < 500
                     ? 'bg-success'
                     : health.duration_ms < 1000
-                    ? 'bg-yellow-500'
-                    : 'bg-destructive'
+                      ? 'bg-yellow-500'
+                      : 'bg-destructive'
                 }`}
                 initial={{ width: 0 }}
                 animate={{
@@ -343,7 +362,7 @@ export function MonitoringDashboard() {
         </Card>
       )}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -351,47 +370,58 @@ export function MonitoringDashboard() {
 // ============================================================================
 
 interface MetricCardProps {
-  title: string
-  value: string | number
-  icon: React.ReactNode
-  description: string
-  variant?: 'default' | 'warning' | 'error'
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  description: string;
+  variant?: 'default' | 'warning' | 'error';
 }
 
-function MetricCard({ title, value, icon, description, variant = 'default' }: MetricCardProps) {
+function MetricCard({
+  title,
+  value,
+  icon,
+  description,
+  variant = 'default',
+}: MetricCardProps) {
   const borderColor =
     variant === 'warning'
       ? 'border-yellow-500/30'
       : variant === 'error'
-      ? 'border-destructive/30'
-      : 'border-border'
+        ? 'border-destructive/30'
+        : 'border-border';
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className={`p-6 ${borderColor}`}>
         <div className="flex items-center gap-3 mb-2">
           <div className="text-muted-foreground">{icon}</div>
-          <span className="text-sm font-medium text-muted-foreground">{title}</span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {title}
+          </span>
         </div>
         <p className="font-display text-3xl font-bold">{value}</p>
         <p className="text-xs text-muted-foreground mt-1">{description}</p>
       </Card>
     </motion.div>
-  )
+  );
 }
 
 interface ServiceCardProps {
-  name: string
-  icon: React.ReactNode
-  check?: ServiceCheck
-  isLoading: boolean
+  name: string;
+  icon: React.ReactNode;
+  check?: ServiceCheck;
+  isLoading: boolean;
 }
 
 function ServiceCard({ name, icon, check, isLoading }: ServiceCardProps) {
-  const status = check?.status || 'unknown'
+  const status = check?.status || 'unknown';
 
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+    >
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -427,7 +457,7 @@ function ServiceCard({ name, icon, check, isLoading }: ServiceCardProps) {
         )}
       </Card>
     </motion.div>
-  )
+  );
 }
 
-export default MonitoringDashboard
+export default MonitoringDashboard;

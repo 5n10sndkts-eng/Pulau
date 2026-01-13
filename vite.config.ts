@@ -1,13 +1,13 @@
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react-swc";
-import { defineConfig, PluginOption } from "vite";
-import { sentryVitePlugin } from "@sentry/vite-plugin";
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react-swc';
+import { defineConfig, PluginOption } from 'vite';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
-import sparkPlugin from "@github/spark/spark-vite-plugin";
-import createIconImportProxy from "@github/spark/vitePhosphorIconProxyPlugin";
-import { resolve } from 'path'
+import sparkPlugin from '@github/spark/spark-vite-plugin';
+import createIconImportProxy from '@github/spark/vitePhosphorIconProxyPlugin';
+import { resolve } from 'path';
 
-const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
+const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname;
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -22,14 +22,14 @@ export default defineConfig({
     ...(process.env.SENTRY_AUTH_TOKEN
       ? [
           sentryVitePlugin({
-            org: process.env.SENTRY_ORG || "pulau",
-            project: process.env.SENTRY_PROJECT || "pulau-web",
+            org: process.env.SENTRY_ORG || 'pulau',
+            project: process.env.SENTRY_PROJECT || 'pulau-web',
             authToken: process.env.SENTRY_AUTH_TOKEN,
             sourcemaps: {
-              filesToDeleteAfterUpload: ["./dist/**/*.map"],
+              filesToDeleteAfterUpload: ['./dist/**/*.map'],
             },
             release: {
-              name: `pulau@${process.env.npm_package_version || "0.0.0"}`,
+              name: `pulau@${process.env.npm_package_version || '0.0.0'}`,
             },
           }),
         ]
@@ -43,8 +43,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(projectRoot, 'src')
-    }
+      '@': resolve(projectRoot, 'src'),
+    },
   },
   // Enable source maps for production builds (AC #2)
   build: {

@@ -21,7 +21,7 @@ export const test = mergeTests(base, authFixture).extend<TripFixture>({
         const storedTrip = await spark.getKey(`trip_${tripId}`);
         expect(storedTrip).toBeTruthy();
         expect(storedTrip.id).toBe(tripId);
-      }
+      },
     };
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(tripHelper);

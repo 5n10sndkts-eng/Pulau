@@ -52,6 +52,7 @@
 **Owner:** DevOps / Operations Team
 
 Steps:
+
 1. Create Resend account at https://resend.com/
 2. Verify email address
 3. Add pulau.app domain
@@ -59,6 +60,7 @@ Steps:
 5. Store API key in Supabase secrets
 
 **Acceptance Criteria:**
+
 - [ ] Resend account created
 - [ ] API key generated
 - [ ] API key stored in Supabase: `supabase secrets set RESEND_API_KEY=...`
@@ -93,6 +95,7 @@ TTL: 3600
 ```
 
 **Acceptance Criteria:**
+
 - [ ] SPF record added to DNS
 - [ ] DKIM record added to DNS
 - [ ] DMARC record added to DNS
@@ -100,6 +103,7 @@ TTL: 3600
 - [ ] Domain verified in Resend dashboard
 
 **Verification Commands:**
+
 ```bash
 # Check SPF
 dig TXT pulau.app | grep spf1
@@ -118,12 +122,14 @@ dig TXT _dmarc.pulau.app
 **Owner:** QA Team
 
 Steps:
+
 1. Create Mailosaur account: https://mailosaur.com/
 2. Create test server
 3. Get API key and Server ID
 4. Add to environment variables
 
 **Acceptance Criteria:**
+
 - [ ] Mailosaur account created (free tier: 10,000 emails/month)
 - [ ] Test server created
 - [ ] API credentials stored in `.env.local`:
@@ -140,12 +146,14 @@ Steps:
 **Owner:** DevOps Team
 
 Steps:
+
 1. Configure Resend webhooks
 2. Deploy resend-webhook edge function
 3. Set up monitoring dashboard
 4. Configure alerts
 
 **Acceptance Criteria:**
+
 - [ ] Resend webhook endpoint configured: `https://[project].supabase.co/functions/v1/resend-webhook`
 - [ ] Webhook events selected: delivered, bounced, complained
 - [ ] Webhook secret stored in Supabase
@@ -171,6 +179,7 @@ npm run test:e2e -- tests/e2e/email-monitoring.spec.ts
 ```
 
 **Acceptance Criteria:**
+
 - [ ] All email delivery tests pass (100%)
 - [ ] All email rendering tests pass
 - [ ] Email monitoring tests pass
@@ -215,6 +224,7 @@ npm run test:e2e -- tests/e2e/email-monitoring.spec.ts
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Mail-tester.com score: 10/10
 - [ ] SPF check: PASS
 - [ ] DKIM check: PASS
@@ -238,6 +248,7 @@ npm run test:e2e -- tests/e2e/email-monitoring.spec.ts
 - [ ] ProtonMail (if time permits)
 
 **What to Check:**
+
 - Layout not broken
 - Images display
 - Fonts render correctly
@@ -250,12 +261,14 @@ npm run test:e2e -- tests/e2e/email-monitoring.spec.ts
 ### Environment Variables
 
 **Supabase Secrets:**
+
 ```bash
 supabase secrets set RESEND_API_KEY=re_production_key_here
 supabase secrets list
 ```
 
 **Vercel Environment Variables (if frontend needs them):**
+
 ```bash
 RESEND_API_KEY=re_production_key_here  # If needed
 ```
@@ -263,6 +276,7 @@ RESEND_API_KEY=re_production_key_here  # If needed
 ### Deployment Steps
 
 1. **Deploy Edge Functions**
+
    ```bash
    cd /Users/moe/Pulau
    supabase functions deploy send-email
@@ -270,10 +284,11 @@ RESEND_API_KEY=re_production_key_here  # If needed
    ```
 
 2. **Verify Deployment**
+
    ```bash
    # Check function logs
    supabase functions logs send-email
-   
+
    # Test function directly
    curl -X POST 'https://[project].supabase.co/functions/v1/send-email' \
      -H 'Authorization: Bearer [anon-key]' \
@@ -291,10 +306,11 @@ RESEND_API_KEY=re_production_key_here  # If needed
 **If issues occur in production:**
 
 1. **Disable email sending temporarily:**
+
    ```typescript
    // Add feature flag in edge function
    const EMAIL_ENABLED = Deno.env.get('EMAIL_ENABLED') === 'true';
-   
+
    if (!EMAIL_ENABLED) {
      console.log('Email sending disabled');
      return;
@@ -317,12 +333,14 @@ RESEND_API_KEY=re_production_key_here  # If needed
 ### Metrics to Watch
 
 **Hour 1:**
+
 - [ ] First email sent successfully
 - [ ] Email delivered within SLA (< 30s)
 - [ ] No errors in function logs
 - [ ] Webhook receiving delivery events
 
 **Hour 24:**
+
 - [ ] Delivery rate: > 95%
 - [ ] Bounce rate: < 2%
 - [ ] Average delivery time: < 30s
@@ -330,6 +348,7 @@ RESEND_API_KEY=re_production_key_here  # If needed
 - [ ] email_logs table populating correctly
 
 **Hour 48:**
+
 - [ ] All metrics stable
 - [ ] No spike in bounces
 - [ ] No spam complaints
@@ -338,6 +357,7 @@ RESEND_API_KEY=re_production_key_here  # If needed
 ### Alert Thresholds
 
 Configure alerts for:
+
 - Delivery rate drops below 95%
 - Bounce rate exceeds 5%
 - More than 3 failed sends in 5 minutes
@@ -363,54 +383,46 @@ Email system is production-ready when:
 
 ## 7. Estimated Timeline
 
-| Task | Duration | Dependencies |
-|------|----------|--------------|
-| Resend account setup | 30 min | None |
-| DNS configuration | 15 min + 2-3 days | Resend account |
-| Mailosaur setup | 15 min | None |
-| Run E2E tests | 1 hour | Mailosaur, Resend |
-| Manual testing | 2-3 hours | DNS propagation |
-| Spam score validation | 1 hour | DNS propagation |
-| Cross-client testing | 2-4 hours | All above |
-| Production deployment | 1 hour | All testing complete |
-| Monitoring setup | 1 hour | Deployment |
+| Task                  | Duration          | Dependencies         |
+| --------------------- | ----------------- | -------------------- |
+| Resend account setup  | 30 min            | None                 |
+| DNS configuration     | 15 min + 2-3 days | Resend account       |
+| Mailosaur setup       | 15 min            | None                 |
+| Run E2E tests         | 1 hour            | Mailosaur, Resend    |
+| Manual testing        | 2-3 hours         | DNS propagation      |
+| Spam score validation | 1 hour            | DNS propagation      |
+| Cross-client testing  | 2-4 hours         | All above            |
+| Production deployment | 1 hour            | All testing complete |
+| Monitoring setup      | 1 hour            | Deployment           |
 
 **Total Critical Path:** 3-4 days (mostly DNS propagation wait time)  
 **Total Effort:** ~8-12 hours active work
 
 ## 8. Owner Assignment
 
-| Component | Owner | Status |
-|-----------|-------|--------|
-| Resend account | DevOps | Not Started |
-| DNS records | DNS Admin | Not Started |
-| Mailosaur setup | QA Team | Not Started |
-| E2E test execution | QA Team | Ready to Run |
-| Manual testing | QA Team | Blocked on DNS |
-| Deployment | DevOps | Blocked on testing |
-| Monitoring | DevOps | Blocked on deployment |
+| Component          | Owner     | Status                |
+| ------------------ | --------- | --------------------- |
+| Resend account     | DevOps    | Not Started           |
+| DNS records        | DNS Admin | Not Started           |
+| Mailosaur setup    | QA Team   | Not Started           |
+| E2E test execution | QA Team   | Ready to Run          |
+| Manual testing     | QA Team   | Blocked on DNS        |
+| Deployment         | DevOps    | Blocked on testing    |
+| Monitoring         | DevOps    | Blocked on deployment |
 
 ## 9. Next Actions
 
 **Immediate (Today):**
+
 1. Create Resend account → DevOps
 2. Add DNS records → DNS Admin
 3. Set up Mailosaur → QA Team
 
-**Day 2-3 (Waiting for DNS):**
-4. Monitor DNS propagation
-5. Verify domain in Resend
-6. Run E2E test suite → QA Team
+**Day 2-3 (Waiting for DNS):** 4. Monitor DNS propagation 5. Verify domain in Resend 6. Run E2E test suite → QA Team
 
-**Day 4 (Testing & Validation):**
-7. Manual testing across email clients → QA Team
-8. Mail-tester validation → QA Team
-9. Fix any issues found
+**Day 4 (Testing & Validation):** 7. Manual testing across email clients → QA Team 8. Mail-tester validation → QA Team 9. Fix any issues found
 
-**Day 5 (Production Launch):**
-10. Deploy to production → DevOps
-11. Enable monitoring → DevOps
-12. Watch metrics for 48 hours → All
+**Day 5 (Production Launch):** 10. Deploy to production → DevOps 11. Enable monitoring → DevOps 12. Watch metrics for 48 hours → All
 
 ---
 

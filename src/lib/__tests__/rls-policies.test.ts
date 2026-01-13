@@ -48,7 +48,14 @@ describe('Row Level Security (RLS) Policies', () => {
       return;
     }
 
-    const tables = ['users', 'vendors', 'experiences', 'trips', 'bookings', 'payments'];
+    const tables = [
+      'users',
+      'vendors',
+      'experiences',
+      'trips',
+      'bookings',
+      'payments',
+    ];
 
     for (const table of tables) {
       try {
@@ -71,36 +78,40 @@ describe('Row Level Security (RLS) Policies', () => {
     }
   });
 
-  test('AC2: Public data is readable by everyone', { timeout: 15000 }, async () => {
-    if (!anonClient) {
-      console.log('Skipping public data test - Supabase not configured');
-      return;
-    }
+  test(
+    'AC2: Public data is readable by everyone',
+    { timeout: 15000 },
+    async () => {
+      if (!anonClient) {
+        console.log('Skipping public data test - Supabase not configured');
+        return;
+      }
 
-    // Anonymous client should be able to read public data
-    const { data: destinations, error: destError } = await anonClient
-      .from('destinations')
-      .select('*')
-      .limit(5);
+      // Anonymous client should be able to read public data
+      const { data: destinations, error: destError } = await anonClient
+        .from('destinations')
+        .select('*')
+        .limit(5);
 
-    // Destinations should be publicly readable
-    if (!destError) {
-      expect(destinations).toBeDefined();
-      expect(Array.isArray(destinations)).toBe(true);
-    }
+      // Destinations should be publicly readable
+      if (!destError) {
+        expect(destinations).toBeDefined();
+        expect(Array.isArray(destinations)).toBe(true);
+      }
 
-    // Active experiences should be publicly readable
-    const { data: experiences, error: expError } = await anonClient
-      .from('experiences')
-      .select('*')
-      .eq('status', 'active')
-      .limit(5);
+      // Active experiences should be publicly readable
+      const { data: experiences, error: expError } = await anonClient
+        .from('experiences')
+        .select('*')
+        .eq('status', 'active')
+        .limit(5);
 
-    if (!expError) {
-      expect(experiences).toBeDefined();
-      expect(Array.isArray(experiences)).toBe(true);
-    }
-  });
+      if (!expError) {
+        expect(experiences).toBeDefined();
+        expect(Array.isArray(experiences)).toBe(true);
+      }
+    },
+  );
 
   test('AC3: Private data requires authentication', async () => {
     if (!anonClient || !authenticatedClient || !testUserId) {
@@ -109,7 +120,10 @@ describe('Row Level Security (RLS) Policies', () => {
     }
 
     // Anonymous client cannot read private trips
-    const { error: anonError } = await anonClient.from('trips').select('*').limit(1);
+    const { error: anonError } = await anonClient
+      .from('trips')
+      .select('*')
+      .limit(1);
 
     // Should either error or return no results
     if (anonError) {
@@ -138,7 +152,11 @@ describe('Row Level Security (RLS) Policies', () => {
     // Create a test trip
     const { data: trip, error: createError } = await authenticatedClient
       .from('trips')
-      .insert({ user_id: testUserId, name: 'RLS Test Trip', destination_id: 'dest-1' })
+      .insert({
+        user_id: testUserId,
+        name: 'RLS Test Trip',
+        destination_id: 'dest-1',
+      })
       .select()
       .single();
 
@@ -198,14 +216,20 @@ describe('Row Level Security (RLS) Policies', () => {
 
   test('AC6: Cascading access for child tables', async () => {
     if (!authenticatedClient || !testUserId) {
-      console.log('Skipping cascading access test - authentication not available');
+      console.log(
+        'Skipping cascading access test - authentication not available',
+      );
       return;
     }
 
     // Create parent trip
     const { data: trip, error: tripError } = await authenticatedClient
       .from('trips')
-      .insert({ user_id: testUserId, name: 'Parent Trip Test', destination_id: 'dest-1' })
+      .insert({
+        user_id: testUserId,
+        name: 'Parent Trip Test',
+        destination_id: 'dest-1',
+      })
       .select()
       .single();
 

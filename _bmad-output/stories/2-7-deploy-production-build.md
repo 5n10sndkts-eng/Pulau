@@ -23,6 +23,7 @@ Execute production deployment of the Pulau application to Vercel with full testi
 ## Pre-Deployment Checklist
 
 ### Code Quality
+
 - [ ] All tests passing (`npm test`)
 - [ ] E2E tests passing (`npm run test:e2e`)
 - [ ] No critical lint errors
@@ -30,6 +31,7 @@ Execute production deployment of the Pulau application to Vercel with full testi
 - [ ] Bundle size optimized (< 500KB gzipped)
 
 ### Configuration
+
 - [ ] All environment variables set (Task 2.3)
 - [ ] Domain configured (Task 2.6)
 - [ ] SSL certificate active
@@ -37,6 +39,7 @@ Execute production deployment of the Pulau application to Vercel with full testi
 - [ ] Stripe production keys configured (Task 2.4)
 
 ### Database
+
 - [ ] All migrations applied
 - [ ] RLS policies active
 - [ ] Test data removed
@@ -83,7 +86,7 @@ npm run preview
 # Open http://localhost:4173
 # Test critical flows:
 # - Search experiences
-# - Book experience  
+# - Book experience
 # - Checkout flow
 # - Vendor dashboard
 ```
@@ -147,6 +150,7 @@ curl https://pulau.app/api/config/check
 ### 6. Run Smoke Tests
 
 **Manual Testing:**
+
 1. Home page loads
 2. Search experiences works
 3. Experience details page loads
@@ -159,6 +163,7 @@ curl https://pulau.app/api/config/check
 10. PWA install prompt appears
 
 **Automated Smoke Tests:**
+
 ```bash
 # Run against production
 npm run test:e2e:prod
@@ -203,17 +208,20 @@ npm audit --production
 ### 3. Monitoring Validation
 
 **Sentry (Epic 32):**
+
 - Verify error tracking active
 - Test error capture: trigger test error
 - Check source maps uploaded
 
 **Vercel Analytics:**
+
 ```typescript
 // Verify analytics loaded
 // Check Vercel dashboard for real-time traffic
 ```
 
 **Supabase Logs:**
+
 ```bash
 # Check Edge Function logs
 supabase functions logs checkout --limit 100
@@ -232,7 +240,7 @@ SELECT count(*) FROM bookings WHERE customer_email LIKE '%test%';
 -- Should return 0
 
 -- Verify indexes
-SELECT tablename, indexname FROM pg_indexes 
+SELECT tablename, indexname FROM pg_indexes
 WHERE schemaname = 'public';
 
 -- Check database size
@@ -284,6 +292,7 @@ echo "🎉 Production deployment complete!"
 ```
 
 Make executable:
+
 ```bash
 chmod +x scripts/deploy-production.sh
 ```
@@ -293,6 +302,7 @@ chmod +x scripts/deploy-production.sh
 ### If deployment fails or critical bugs discovered:
 
 **1. Instant Rollback (Vercel)**
+
 ```bash
 # List recent deployments
 vercel ls
@@ -307,21 +317,23 @@ vercel rollback [DEPLOYMENT-URL]
 **2. Emergency Maintenance Mode**
 
 Create `public/maintenance.html`:
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Pulau - Maintenance</title>
-  <meta http-equiv="refresh" content="60">
-</head>
-<body>
-  <h1>We'll be back soon!</h1>
-  <p>Pulau is currently undergoing maintenance.</p>
-</body>
+  <head>
+    <title>Pulau - Maintenance</title>
+    <meta http-equiv="refresh" content="60" />
+  </head>
+  <body>
+    <h1>We'll be back soon!</h1>
+    <p>Pulau is currently undergoing maintenance.</p>
+  </body>
 </html>
 ```
 
 Redirect all traffic:
+
 ```json
 // vercel.json
 {
@@ -347,21 +359,25 @@ supabase db remote exec --file backups/pre-deployment-backup.sql
 ### Metrics to Watch
 
 **1. Error Rate**
+
 - Target: < 0.1% of requests
 - Monitor: Sentry dashboard
 - Alert: Spike > 1%
 
 **2. Response Time**
+
 - Target: P95 < 2 seconds
 - Monitor: Vercel Analytics
 - Alert: P95 > 5 seconds
 
 **3. Availability**
+
 - Target: 99.9% uptime
 - Monitor: UptimeRobot
 - Alert: Any downtime
 
 **4. Database Performance**
+
 - Target: Query time < 100ms
 - Monitor: Supabase dashboard
 - Alert: Slow queries > 1 second

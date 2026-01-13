@@ -10,15 +10,16 @@
 
 ### Coverage Summary
 
-| Priority  | Total Criteria | FULL Coverage | Coverage % | Status |
-| --------- | -------------- | ------------- | ---------- | ------ |
-| P0        | 6              | 4             | 67%        | ⚠️ WARN |
-| P1        | 12             | 7             | 58%        | ⚠️ WARN |
-| P2        | 4              | 2             | 50%        | ⚠️ WARN |
-| P3        | 0              | 0             | N/A        | ✅ N/A |
+| Priority  | Total Criteria | FULL Coverage | Coverage % | Status          |
+| --------- | -------------- | ------------- | ---------- | --------------- |
+| P0        | 6              | 4             | 67%        | ⚠️ WARN         |
+| P1        | 12             | 7             | 58%        | ⚠️ WARN         |
+| P2        | 4              | 2             | 50%        | ⚠️ WARN         |
+| P3        | 0              | 0             | N/A        | ✅ N/A          |
 | **Total** | **22**         | **13**        | **59%**    | **⚠️ CONCERNS** |
 
 **Legend:**
+
 - ✅ PASS - Coverage meets quality gate threshold
 - ⚠️ WARN - Coverage below threshold but not critical
 - ❌ FAIL - Coverage below minimum threshold (blocker)
@@ -410,12 +411,12 @@
 
 ### Coverage by Test Level
 
-| Test Level | Tests | Criteria Covered | Coverage % |
-| ---------- | ----- | ---------------- | ---------- |
-| E2E        | 3     | 4                | 18%        |
-| Integration | 1    | 1                | 5%         |
-| Unit       | 27+   | 8                | 36%        |
-| **Total**  | **31+** | **13**         | **59%**    |
+| Test Level  | Tests   | Criteria Covered | Coverage % |
+| ----------- | ------- | ---------------- | ---------- |
+| E2E         | 3       | 4                | 18%        |
+| Integration | 1       | 1                | 5%         |
+| Unit        | 27+     | 8                | 36%        |
+| **Total**   | **31+** | **13**           | **59%**    |
 
 ---
 
@@ -435,6 +436,7 @@
 - **Duration**: Not measured in this run
 
 **Priority Breakdown:**
+
 - **P0 Tests**: 3 criteria covered / 6 total = **50%** ⚠️
 - **P1 Tests**: 7 criteria covered / 12 total = **58%** ⚠️
 - **P2 Tests**: 2 criteria covered / 4 total = **50%** (informational)
@@ -444,6 +446,7 @@
 #### Requirements Coverage (from Phase 1)
 
 **Requirements Coverage:**
+
 - **P0 Acceptance Criteria**: 4/6 covered (67%) ⚠️
 - **P1 Acceptance Criteria**: 7/12 covered (58%) ⚠️
 - **P2 Acceptance Criteria**: 2/4 covered (50%) (informational)
@@ -455,12 +458,12 @@
 
 #### P0 Criteria (Must ALL Pass)
 
-| Criterion | Threshold | Actual | Status |
-| --------- | --------- | ------ | ------ |
-| P0 Coverage | 100% | 67% | ❌ FAIL |
-| P0 Test Pass Rate | 100% | ~95% | ⚠️ CONCERNS |
-| Security Issues | 0 | 0 known | ✅ PASS |
-| Flaky Tests | 0 | 0 known | ✅ PASS |
+| Criterion         | Threshold | Actual  | Status      |
+| ----------------- | --------- | ------- | ----------- |
+| P0 Coverage       | 100%      | 67%     | ❌ FAIL     |
+| P0 Test Pass Rate | 100%      | ~95%    | ⚠️ CONCERNS |
+| Security Issues   | 0         | 0 known | ✅ PASS     |
+| Flaky Tests       | 0         | 0 known | ✅ PASS     |
 
 **P0 Evaluation**: ❌ ONE OR MORE FAILED
 
@@ -468,11 +471,11 @@
 
 #### P1 Criteria
 
-| Criterion | Threshold | Actual | Status |
-| --------- | --------- | ------ | ------ |
-| P1 Coverage | ≥80% | 58% | ❌ FAIL |
-| P1 Test Pass Rate | ≥90% | ~95% | ✅ PASS |
-| Overall Coverage | ≥70% | 59% | ❌ FAIL |
+| Criterion         | Threshold | Actual | Status  |
+| ----------------- | --------- | ------ | ------- |
+| P1 Coverage       | ≥80%      | 58%    | ❌ FAIL |
+| P1 Test Pass Rate | ≥90%      | ~95%   | ✅ PASS |
+| Overall Coverage  | ≥70%      | 59%    | ❌ FAIL |
 
 **P1 Evaluation**: ❌ FAILED
 
@@ -487,17 +490,20 @@
 The implementation of Epics 25-28 is **functionally complete** per story completion notes, but **test coverage falls short of quality gate thresholds**.
 
 **What's Working Well:**
+
 - Epic 25 (Real-Time) has strong unit test coverage for core functionality
 - Concurrency stress test directly validates NFR-CON-01 (zero overbookings)
 - E2E offline test validates basic PWA caching
 - All stories marked as "done" or "review" with implementation notes
 
 **Critical Concerns:**
+
 - **Ticket Validation (27.2)**: P0 criteria with ZERO test coverage. Risk of accepting invalid tickets or rejecting valid ones.
 - **Refund Processing (28.3)**: P0 revenue-impacting feature with ZERO test coverage. Financial risk.
 - **Vendor Operations (Epic 27)**: Entire epic has NO automated tests. Relying on manual testing.
 
 **Risk Assessment:**
+
 - Epics 25-26 are **lower risk** - strong implementation with partial test coverage
 - Epic 27 is **medium risk** - QR scanning works but no automated validation
 - Epic 28 is **high risk** - Admin/refund functionality untested
@@ -581,8 +587,8 @@ The implementation of Epics 25-28 is **functionally complete** per story complet
 ```yaml
 traceability_and_gate:
   traceability:
-    scope: "Epic 25-28"
-    date: "2026-01-10"
+    scope: 'Epic 25-28'
+    date: '2026-01-10'
     coverage:
       overall: 59%
       p0: 67%
@@ -600,9 +606,9 @@ traceability_and_gate:
       warning_issues: 6
 
   gate_decision:
-    decision: "CONCERNS"
-    gate_type: "epic"
-    decision_mode: "risk-based"
+    decision: 'CONCERNS'
+    gate_type: 'epic'
+    decision_mode: 'risk-based'
     criteria:
       p0_coverage: 67%
       p1_coverage: 58%
@@ -612,9 +618,9 @@ traceability_and_gate:
       min_p1_coverage: 80
       min_overall_coverage: 70
     evidence:
-      test_results: "local run"
-      traceability: "_bmad-output/traceability/epic-25-28-traceability.md"
-    next_steps: "Add P0 test coverage for ticket validation and refund processing before production"
+      test_results: 'local run'
+      traceability: '_bmad-output/traceability/epic-25-28-traceability.md'
+    next_steps: 'Add P0 test coverage for ticket validation and refund processing before production'
 ```
 
 ---
@@ -630,6 +636,7 @@ traceability_and_gate:
 ## Sign-Off
 
 **Phase 1 - Traceability Assessment:**
+
 - Overall Coverage: 59%
 - P0 Coverage: 67% ⚠️
 - P1 Coverage: 58% ⚠️
@@ -637,6 +644,7 @@ traceability_and_gate:
 - High Priority Gaps: 6
 
 **Phase 2 - Gate Decision:**
+
 - **Decision**: CONCERNS ⚠️
 - **P0 Evaluation**: ❌ ONE OR MORE FAILED (coverage gap)
 - **P1 Evaluation**: ⚠️ SOME CONCERNS
@@ -644,6 +652,7 @@ traceability_and_gate:
 **Overall Status:** ⚠️ CONCERNS
 
 **Next Steps:**
+
 - ⚠️ CONCERNS: Deploy with enhanced monitoring, create P0 test remediation backlog, manual QA required for vendor and admin workflows
 
 **Generated:** 2026-01-10

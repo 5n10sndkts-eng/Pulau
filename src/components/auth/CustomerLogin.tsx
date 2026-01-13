@@ -1,19 +1,19 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { UserCircle, Building2 } from 'lucide-react'
-import { User } from '@/lib/types'
-import { authService } from '@/lib/authService'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { UserCircle, Building2 } from 'lucide-react';
+import { User } from '@/lib/types';
+import { authService } from '@/lib/authService';
 
 interface CustomerLoginProps {
-  onLoginSuccess: (user: User) => void
-  onNavigateToRegister: () => void
-  onNavigateToPasswordReset: () => void
-  onNavigateToVendor: () => void
-  onGuestEntry: () => void
+  onLoginSuccess: (user: User) => void;
+  onNavigateToRegister: () => void;
+  onNavigateToPasswordReset: () => void;
+  onNavigateToVendor: () => void;
+  onGuestEntry: () => void;
 }
 
 export function CustomerLogin({
@@ -21,77 +21,77 @@ export function CustomerLogin({
   onNavigateToRegister,
   onNavigateToPasswordReset,
   onNavigateToVendor,
-  onGuestEntry
+  onGuestEntry,
 }: CustomerLoginProps) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [authError, setAuthError] = useState<string | null>(null)
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error for this field when user starts typing
     if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = 'Email is required';
     } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address'
+      newErrors.email = 'Please enter a valid email address';
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = 'Password is required';
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setAuthError(null)
+    e.preventDefault();
+    setAuthError(null);
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const user = await authService.login(formData.email, formData.password)
-      toast.success('Welcome back!')
-      onLoginSuccess(user)
+      const user = await authService.login(formData.email, formData.password);
+      toast.success('Welcome back!');
+      onLoginSuccess(user);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Login failed'
+      const message = error instanceof Error ? error.message : 'Login failed';
       // Map Supabase error messages to user-friendly ones
       if (message.includes('Invalid login credentials')) {
-        setAuthError('Invalid email or password. Please try again.')
+        setAuthError('Invalid email or password. Please try again.');
       } else if (message.includes('Email not confirmed')) {
-        setAuthError('Please verify your email address before signing in.')
+        setAuthError('Please verify your email address before signing in.');
       } else {
-        setAuthError(message)
+        setAuthError(message);
       }
-      toast.error('Login failed')
+      toast.error('Login failed');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
@@ -154,11 +154,7 @@ export function CustomerLogin({
             )}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>
@@ -180,9 +176,7 @@ export function CustomerLogin({
             <div className="w-full border-t border-muted"></div>
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-background px-2 text-muted-foreground">
-              OR
-            </span>
+            <span className="bg-background px-2 text-muted-foreground">OR</span>
           </div>
         </div>
 
@@ -212,6 +206,6 @@ export function CustomerLogin({
           </Button>
         </div>
       </Card>
-    </div >
-  )
+    </div>
+  );
 }

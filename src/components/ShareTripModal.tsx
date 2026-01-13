@@ -1,65 +1,70 @@
-import { useState } from 'react'
-import { Copy, ExternalLink } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react';
+import { Copy, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { toast } from 'sonner'
-import type { Trip } from '@/lib/types'
+} from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import type { Trip } from '@/lib/types';
 
 interface ShareTripModalProps {
-  isOpen: boolean
-  onClose: () => void
-  trip: Trip
-  onUpdateTrip: (updates: Partial<Trip>) => void
+  isOpen: boolean;
+  onClose: () => void;
+  trip: Trip;
+  onUpdateTrip: (updates: Partial<Trip>) => void;
 }
 
-export function ShareTripModal({ isOpen, onClose, trip, onUpdateTrip }: ShareTripModalProps) {
-  const [shareToken, setShareToken] = useState(trip.shareToken)
+export function ShareTripModal({
+  isOpen,
+  onClose,
+  trip,
+  onUpdateTrip,
+}: ShareTripModalProps) {
+  const [shareToken, setShareToken] = useState(trip.shareToken);
 
   const generateShareLink = () => {
     if (!shareToken) {
-      const token = crypto.randomUUID()
-      onUpdateTrip({ shareToken: token })
-      setShareToken(token)
-      return `${window.location.origin}/trip/${token}`
+      const token = crypto.randomUUID();
+      onUpdateTrip({ shareToken: token });
+      setShareToken(token);
+      return `${window.location.origin}/trip/${token}`;
     }
-    return `${window.location.origin}/trip/${shareToken}`
-  }
+    return `${window.location.origin}/trip/${shareToken}`;
+  };
 
   const handleCopyLink = async () => {
-    const url = generateShareLink()
+    const url = generateShareLink();
     try {
-      await navigator.clipboard.writeText(url)
-      toast.success('Link copied to clipboard!')
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard!');
     } catch {
-      toast.error('Failed to copy link')
+      toast.error('Failed to copy link');
     }
-  }
+  };
 
   const handleNativeShare = async () => {
-    const url = generateShareLink()
+    const url = generateShareLink();
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'Check out my trip plan',
           text: `I'm planning a trip to ${trip.destination}. Take a look!`,
           url,
-        })
-        toast.success('Shared successfully!')
+        });
+        toast.success('Shared successfully!');
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
-          toast.error('Failed to share')
+          toast.error('Failed to share');
         }
       }
     } else {
-      handleCopyLink()
+      handleCopyLink();
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -67,18 +72,27 @@ export function ShareTripModal({ isOpen, onClose, trip, onUpdateTrip }: ShareTri
         <DialogHeader>
           <DialogTitle>Share Your Trip</DialogTitle>
           <DialogDescription>
-            Share a read-only view of your trip itinerary with friends and family
+            Share a read-only view of your trip itinerary with friends and
+            family
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3 pt-4">
-          <Button onClick={handleCopyLink} className="w-full justify-start" variant="outline">
+          <Button
+            onClick={handleCopyLink}
+            className="w-full justify-start"
+            variant="outline"
+          >
             <Copy className="mr-2 h-4 w-4" />
             Copy Link
           </Button>
 
           {typeof navigator.share === 'function' && (
-            <Button onClick={handleNativeShare} className="w-full justify-start" variant="outline">
+            <Button
+              onClick={handleNativeShare}
+              className="w-full justify-start"
+              variant="outline"
+            >
               <ExternalLink className="mr-2 h-4 w-4" />
               Share via...
             </Button>
@@ -93,5 +107,5 @@ export function ShareTripModal({ isOpen, onClose, trip, onUpdateTrip }: ShareTri
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

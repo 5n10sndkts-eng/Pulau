@@ -1,27 +1,29 @@
-import { Destination } from '@/lib/types'
-import { destinations } from '@/lib/mockData'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { MapPin, Bell } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Destination } from '@/lib/types';
+import { destinations } from '@/lib/mockData';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { MapPin, Bell } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface DestinationSelectorProps {
-  onSelectDestination: (destinationId: string) => void
+  onSelectDestination: (destinationId: string) => void;
 }
 
-export function DestinationSelector({ onSelectDestination }: DestinationSelectorProps) {
-  const activeDestinations = destinations.filter(d => d.active)
-  const comingSoonDestinations = destinations.filter(d => !d.active)
+export function DestinationSelector({
+  onSelectDestination,
+}: DestinationSelectorProps) {
+  const activeDestinations = destinations.filter((d) => d.active);
+  const comingSoonDestinations = destinations.filter((d) => !d.active);
 
   const handleNotifyMe = (destination: Destination) => {
-    alert(`We'll notify you when ${destination.name} launches!`)
-  }
+    alert(`We'll notify you when ${destination.name} launches!`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center p-6">
       <div className="max-w-4xl w-full space-y-8">
-        <motion.div 
+        <motion.div
           className="text-center space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -84,7 +86,9 @@ export function DestinationSelector({ onSelectDestination }: DestinationSelector
                   key={destination.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: (activeDestinations.length + index) * 0.1 }}
+                  transition={{
+                    delay: (activeDestinations.length + index) * 0.1,
+                  }}
                 >
                   <Card className="overflow-hidden relative">
                     <div className="relative h-40 opacity-60 grayscale">
@@ -126,5 +130,5 @@ export function DestinationSelector({ onSelectDestination }: DestinationSelector
         )}
       </div>
     </div>
-  )
+  );
 }

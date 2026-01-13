@@ -14,10 +14,11 @@ So that operators can reach me.
 **Given** I am on checkout Step 2 (Traveler Details)
 **When** the screen loads
 **Then** form displays fields (pre-filled if logged in):
-  - Primary Contact: First Name*, Last Name*, Email*, Phone*
-  - Trip Lead: Same as contact (checkbox), or separate fields
-  - Special Requests: textarea (optional)
-**And** fields marked with * are required
+
+- Primary Contact: First Name*, Last Name*, Email*, Phone*
+- Trip Lead: Same as contact (checkbox), or separate fields
+- Special Requests: textarea (optional)
+  **And** fields marked with \* are required
 
 **AC #2: Validate form with React Hook Form and Zod**
 **And** form uses React Hook Form with Zod validation schema
@@ -35,6 +36,7 @@ So that operators can reach me.
 ## Tasks / Subtasks
 
 ### Task 1: Create TravelerDetailsStep form component (AC: #1)
+
 - [x] Build TravelerDetailsStep with React Hook Form
 - [x] Add Primary Contact fields: firstName, lastName, email, phone
 - [x] Add "Trip lead is same as contact" checkbox
@@ -42,6 +44,7 @@ So that operators can reach me.
 - [x] Add Special Requests textarea (optional, 500 char max)
 
 ### Task 2: Implement Zod validation schema (AC: #2, #3)
+
 - [x] Create travelerDetailsSchema with Zod
 - [x] Validate firstName: string, min 1, max 50
 - [x] Validate lastName: string, min 1, max 50
@@ -49,6 +52,7 @@ So that operators can reach me.
 - [x] Validate phone: valid international phone format
 
 ### Task 3: Add inline error display (AC: #3)
+
 - [x] Show validation errors below each field
 - [x] Apply red border to invalid fields
 - [x] Display user-friendly error messages
@@ -56,6 +60,7 @@ So that operators can reach me.
 - [x] Add helper text for phone format (e.g., "+1234567890")
 
 ### Task 4: Pre-fill form from user profile (AC: #1)
+
 - [x] Check if user is logged in
 - [x] Pre-populate fields from user_profiles KV namespace
 - [x] Allow editing of pre-filled values
@@ -63,6 +68,7 @@ So that operators can reach me.
 - [x] Add "Use different email" option if needed
 
 ### Task 5: Implement continue button with validation (AC: #4)
+
 - [x] Disable "Continue to Payment" until form is valid
 - [x] Save form data to checkout session on continue
 - [x] Advance to Step 3 (Payment)
@@ -72,6 +78,7 @@ So that operators can reach me.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use React Hook Form: `useForm()` with Zod resolver
 - Zod schema: `zodResolver(travelerDetailsSchema)`
 - Phone validation: use `libphonenumber-js` or regex pattern
@@ -79,28 +86,32 @@ So that operators can reach me.
 - Session persistence: save to checkout_session.travelerDetails
 
 ### Zod Validation Schema
+
 ```typescript
 import { z } from 'zod';
 
 const travelerDetailsSchema = z.object({
   primaryContact: z.object({
-    firstName: z.string().min(1, "First name is required").max(50),
-    lastName: z.string().min(1, "Last name is required").max(50),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number")
+    firstName: z.string().min(1, 'First name is required').max(50),
+    lastName: z.string().min(1, 'Last name is required').max(50),
+    email: z.string().email('Invalid email address'),
+    phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'),
   }),
   tripLeadSameAsContact: z.boolean(),
-  tripLead: z.object({
-    firstName: z.string().optional(),
-    lastName: z.string().optional()
-  }).optional(),
-  specialRequests: z.string().max(500, "Max 500 characters").optional()
+  tripLead: z
+    .object({
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+    })
+    .optional(),
+  specialRequests: z.string().max(500, 'Max 500 characters').optional(),
 });
 
 type TravelerDetailsFormData = z.infer<typeof travelerDetailsSchema>;
 ```
 
 ### Form Implementation
+
 ```typescript
 const TravelerDetailsStep = () => {
   const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<TravelerDetailsFormData>({
@@ -132,6 +143,7 @@ const TravelerDetailsStep = () => {
 ```
 
 ### Visual Specifications
+
 - Form layout: single column, max-width 600px
 - Field spacing: 20px vertical gap
 - Input height: 48px (44px + 4px padding)
@@ -159,5 +171,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

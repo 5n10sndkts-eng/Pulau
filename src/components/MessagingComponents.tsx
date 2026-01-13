@@ -1,32 +1,32 @@
-import { useState } from 'react'
-import { Send, ArrowLeft, MoreVertical } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
+import { useState } from 'react';
+import { Send, ArrowLeft, MoreVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 interface Message {
-  id: string
-  senderId: string
-  text: string
-  timestamp: string
-  isOwn: boolean
+  id: string;
+  senderId: string;
+  text: string;
+  timestamp: string;
+  isOwn: boolean;
 }
 
 interface Thread {
-  id: string
-  vendorName: string
-  vendorAvatar: string
-  experienceTitle: string
-  lastMessage: string
-  timestamp: string
-  unread: boolean
+  id: string;
+  vendorName: string;
+  vendorAvatar: string;
+  experienceTitle: string;
+  lastMessage: string;
+  timestamp: string;
+  unread: boolean;
 }
 
 interface MessagingThreadListProps {
-  onSelectThread: (threadId: string) => void
-  onBack: () => void
+  onSelectThread: (threadId: string) => void;
+  onBack: () => void;
 }
 
 const mockThreads: Thread[] = [
@@ -48,9 +48,12 @@ const mockThreads: Thread[] = [
     timestamp: '1d ago',
     unread: false,
   },
-]
+];
 
-export function MessagingThreadList({ onSelectThread, onBack }: MessagingThreadListProps) {
+export function MessagingThreadList({
+  onSelectThread,
+  onBack,
+}: MessagingThreadListProps) {
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
@@ -78,33 +81,44 @@ export function MessagingThreadList({ onSelectThread, onBack }: MessagingThreadL
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-medium">{thread.vendorName}</p>
-                    <p className="text-sm text-muted-foreground">{thread.experienceTitle}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {thread.experienceTitle}
+                    </p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className="text-xs text-muted-foreground">{thread.timestamp}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {thread.timestamp}
+                    </span>
                     {thread.unread && (
-                      <Badge variant="default" className="h-5 w-5 rounded-full p-0 flex items-center justify-center">
+                      <Badge
+                        variant="default"
+                        className="h-5 w-5 rounded-full p-0 flex items-center justify-center"
+                      >
                         1
                       </Badge>
                     )}
                   </div>
                 </div>
-                <p className="mt-1 truncate text-sm text-muted-foreground">{thread.lastMessage}</p>
+                <p className="mt-1 truncate text-sm text-muted-foreground">
+                  {thread.lastMessage}
+                </p>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 interface MessagingConversationViewProps {
-  onBack: () => void
+  onBack: () => void;
 }
 
-export function MessagingConversationView({ onBack }: MessagingConversationViewProps) {
-  const [newMessage, setNewMessage] = useState('')
+export function MessagingConversationView({
+  onBack,
+}: MessagingConversationViewProps) {
+  const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -127,22 +141,25 @@ export function MessagingConversationView({ onBack }: MessagingConversationViewP
       timestamp: '10:35 AM',
       isOwn: false,
     },
-  ])
+  ]);
 
   const handleSend = () => {
-    if (!newMessage.trim()) return
+    if (!newMessage.trim()) return;
 
     const message: Message = {
       id: Date.now().toString(),
       senderId: 'user1',
       text: newMessage,
-      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
       isOwn: true,
-    }
+    };
 
-    setMessages([...messages, message])
-    setNewMessage('')
-  }
+    setMessages([...messages, message]);
+    setNewMessage('');
+  };
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -156,7 +173,9 @@ export function MessagingConversationView({ onBack }: MessagingConversationViewP
           </Avatar>
           <div className="flex-1">
             <p className="font-medium">Made Artana</p>
-            <p className="text-sm text-muted-foreground">Sunrise Yoga at Tanah Lot</p>
+            <p className="text-sm text-muted-foreground">
+              Sunrise Yoga at Tanah Lot
+            </p>
           </div>
           <Button variant="ghost" size="sm">
             <MoreVertical className="h-4 w-4" />
@@ -178,7 +197,9 @@ export function MessagingConversationView({ onBack }: MessagingConversationViewP
               }`}
             >
               <p className="text-sm">{message.text}</p>
-              <p className={`mt-1 text-xs ${message.isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+              <p
+                className={`mt-1 text-xs ${message.isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}
+              >
                 {message.timestamp}
               </p>
             </div>
@@ -200,5 +221,5 @@ export function MessagingConversationView({ onBack }: MessagingConversationViewP
         </div>
       </div>
     </div>
-  )
+  );
 }

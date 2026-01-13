@@ -13,15 +13,16 @@ So that I can find interesting experiences beyond categories.
 **Given** I tap "Explore" in bottom navigation (Compass icon)
 **When** the Explore screen loads
 **Then** I see vertically scrolling sections:
-  - Search bar at top (sticky)
-  - "Trending in Bali" horizontal carousel
-  - "Hidden Gems" horizontal carousel
-  - "Limited Availability" horizontal carousel
-  - "Destination Guides" grid (2 columns)
-  - "Stories from Travelers" vertical list
-**And** each section has "See All" link
-**And** pull-to-refresh triggers content refresh
-**And** skeleton loading states while data loads
+
+- Search bar at top (sticky)
+- "Trending in Bali" horizontal carousel
+- "Hidden Gems" horizontal carousel
+- "Limited Availability" horizontal carousel
+- "Destination Guides" grid (2 columns)
+- "Stories from Travelers" vertical list
+  **And** each section has "See All" link
+  **And** pull-to-refresh triggers content refresh
+  **And** skeleton loading states while data loads
 
 ### Story 12.2: Create Trending Experiences Section
 
@@ -88,18 +89,19 @@ So that I can learn about different areas of Bali.
 **Given** I am on the Explore screen
 **When** "Destination Guides" section loads
 **Then** I see 2-column grid of guide cards:
-  - Ubud (Culture & Rice Terraces)
-  - Seminyak (Beach & Nightlife)
-  - Uluwatu (Surf & Cliffs)
-  - Nusa Islands (Island Hopping)
-**And** each card has: cover image, destination name, tagline
-**When** I tap a guide card
-**Then** guide detail page opens with:
-  - Hero image
-  - Overview text
-  - "Top Experiences" list (filtered by destination)
-  - Map of area
-  - "Best For" tags
+
+- Ubud (Culture & Rice Terraces)
+- Seminyak (Beach & Nightlife)
+- Uluwatu (Surf & Cliffs)
+- Nusa Islands (Island Hopping)
+  **And** each card has: cover image, destination name, tagline
+  **When** I tap a guide card
+  **Then** guide detail page opens with:
+- Hero image
+- Overview text
+- "Top Experiences" list (filtered by destination)
+- Map of area
+- "Best For" tags
 
 ### Story 12.6: Create Traveler Stories Section
 

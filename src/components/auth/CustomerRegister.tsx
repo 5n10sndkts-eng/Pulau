@@ -1,107 +1,117 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { PremiumContainer } from '@/components/ui/premium-container'
-import { toast } from 'sonner'
-import { UserCircle, ArrowLeft, ShieldCheck } from 'lucide-react'
-import { User } from '@/lib/types'
-import { authService } from '@/lib/authService'
-import { motion } from 'framer-motion'
-import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants'
-import { z } from 'zod'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { PremiumContainer } from '@/components/ui/premium-container';
+import { toast } from 'sonner';
+import { UserCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { User } from '@/lib/types';
+import { authService } from '@/lib/authService';
+import { motion } from 'framer-motion';
+import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants';
+import { z } from 'zod';
 
-const registrationSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-})
+const registrationSchema = z
+  .object({
+    firstName: z.string().min(1, 'First name is required'),
+    lastName: z.string().min(1, 'Last name is required'),
+    email: z.string().email('Please enter a valid email address'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 interface CustomerRegisterProps {
-  onNavigateToLogin: () => void
-  onRegisterSuccess: (user: User) => void
+  onNavigateToLogin: () => void;
+  onRegisterSuccess: (user: User) => void;
 }
 
-export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: CustomerRegisterProps) {
+export function CustomerRegister({
+  onNavigateToLogin,
+  onRegisterSuccess,
+}: CustomerRegisterProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-  })
+  });
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [authError, setAuthError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setAuthError(null)
+    e.preventDefault();
+    setAuthError(null);
 
     // Zod Validation
-    const result = registrationSchema.safeParse(formData)
+    const result = registrationSchema.safeParse(formData);
     if (!result.success) {
-      const formattedErrors: Record<string, string> = {}
-      result.error.issues.forEach(issue => {
-        formattedErrors[issue.path[0] as string] = issue.message
-      })
-      setErrors(formattedErrors)
-      return
+      const formattedErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        formattedErrors[issue.path[0] as string] = issue.message;
+      });
+      setErrors(formattedErrors);
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`
+      const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`;
       const user = await authService.register(
         fullName,
         formData.email,
         formData.password,
         formData.firstName.trim(),
-        formData.lastName.trim()
-      )
+        formData.lastName.trim(),
+      );
 
       // User already has firstName/lastName from authService
       const enhancedUser: User = {
         ...user,
         hasCompletedOnboarding: false,
-      }
+      };
 
-      toast.success('Welcome to Pulau! Check your email to verify your account.')
-      onRegisterSuccess(enhancedUser)
+      toast.success(
+        'Welcome to Pulau! Check your email to verify your account.',
+      );
+      onRegisterSuccess(enhancedUser);
     } catch (error) {
-      console.error('Registration error:', error)
-      const message = error instanceof Error ? error.message : 'Registration failed'
+      console.error('Registration error:', error);
+      const message =
+        error instanceof Error ? error.message : 'Registration failed';
       // Map Supabase error messages to user-friendly ones
       if (message.includes('User already registered')) {
-        setAuthError('This email is already registered. Please sign in instead.')
+        setAuthError(
+          'This email is already registered. Please sign in instead.',
+        );
       } else if (message.includes('Password should be at least')) {
-        setAuthError('Password must be at least 8 characters.')
+        setAuthError('Password must be at least 8 characters.');
       } else {
-        setAuthError(message)
+        setAuthError(message);
       }
-      toast.error('Registration failed')
+      toast.error('Registration failed');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -121,17 +131,26 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
             Back to login
           </motion.button>
 
-          <motion.div variants={fadeInUp} className="flex flex-col items-center">
+          <motion.div
+            variants={fadeInUp}
+            className="flex flex-col items-center"
+          >
             <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
               <UserCircle className="h-10 w-10 text-primary" />
             </div>
-            <h1 className="text-3xl font-display font-bold mb-2 tracking-tight">Create Account</h1>
+            <h1 className="text-3xl font-display font-bold mb-2 tracking-tight">
+              Create Account
+            </h1>
             <p className="text-muted-foreground text-center text-balance">
               Join the future of premium Bali travel planning
             </p>
           </motion.div>
 
-          <motion.form variants={fadeInUp} onSubmit={handleSubmit} className="space-y-5">
+          <motion.form
+            variants={fadeInUp}
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
             {authError && (
               <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                 <p className="text-sm text-destructive">{authError}</p>
@@ -146,9 +165,17 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                   placeholder="Kadek"
                   value={formData.firstName}
                   onChange={(e) => handleChange('firstName', e.target.value)}
-                  className={errors.firstName ? 'border-destructive ring-destructive/20' : ''}
+                  className={
+                    errors.firstName
+                      ? 'border-destructive ring-destructive/20'
+                      : ''
+                  }
                 />
-                {errors.firstName && <p className="text-xs font-semibold text-destructive mt-1">{errors.firstName}</p>}
+                {errors.firstName && (
+                  <p className="text-xs font-semibold text-destructive mt-1">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
@@ -157,9 +184,17 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                   placeholder="Sastra"
                   value={formData.lastName}
                   onChange={(e) => handleChange('lastName', e.target.value)}
-                  className={errors.lastName ? 'border-destructive ring-destructive/20' : ''}
+                  className={
+                    errors.lastName
+                      ? 'border-destructive ring-destructive/20'
+                      : ''
+                  }
                 />
-                {errors.lastName && <p className="text-xs font-semibold text-destructive mt-1">{errors.lastName}</p>}
+                {errors.lastName && (
+                  <p className="text-xs font-semibold text-destructive mt-1">
+                    {errors.lastName}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -171,9 +206,15 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                 placeholder="bali.explorer@gmail.com"
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className={errors.email ? 'border-destructive ring-destructive/20' : ''}
+                className={
+                  errors.email ? 'border-destructive ring-destructive/20' : ''
+                }
               />
-              {errors.email && <p className="text-xs font-semibold text-destructive mt-1">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-xs font-semibold text-destructive mt-1">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -184,10 +225,18 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                 placeholder="At least 8 characters"
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
-                className={errors.password ? 'border-destructive ring-destructive/20' : ''}
+                className={
+                  errors.password
+                    ? 'border-destructive ring-destructive/20'
+                    : ''
+                }
                 autoComplete="new-password"
               />
-              {errors.password && <p className="text-xs font-semibold text-destructive mt-1">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-xs font-semibold text-destructive mt-1">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -197,11 +246,21 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
                 type="password"
                 placeholder="Verify password"
                 value={formData.confirmPassword}
-                onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                className={errors.confirmPassword ? 'border-destructive ring-destructive/20' : ''}
+                onChange={(e) =>
+                  handleChange('confirmPassword', e.target.value)
+                }
+                className={
+                  errors.confirmPassword
+                    ? 'border-destructive ring-destructive/20'
+                    : ''
+                }
                 autoComplete="new-password"
               />
-              {errors.confirmPassword && <p className="text-xs font-semibold text-destructive mt-1">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && (
+                <p className="text-xs font-semibold text-destructive mt-1">
+                  {errors.confirmPassword}
+                </p>
+              )}
             </div>
 
             <Button
@@ -234,14 +293,18 @@ export function CustomerRegister({ onNavigateToLogin, onRegisterSuccess }: Custo
               <ShieldCheck className="w-5 h-5 text-primary" />
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-bold text-primary uppercase tracking-wider">Secure Authentication</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-wider">
+                Secure Authentication
+              </p>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Your account is protected by Supabase Auth with industry-standard encryption. We never store your plain-text password.
+                Your account is protected by Supabase Auth with
+                industry-standard encryption. We never store your plain-text
+                password.
               </p>
             </div>
           </motion.div>
         </motion.div>
       </PremiumContainer>
     </div>
-  )
+  );
 }

@@ -2,61 +2,68 @@
  * TicketPage Component
  * Story: 26.2 - Build Offline Ticket Display
  * Story: 26.3 - Show Last Updated Timestamp
- * 
+ *
  * Offline-capable ticket display with QR code
  */
 
-import { useEffect, useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { OfflineBanner } from './OfflineBanner'
-import { useOnlineStatus } from '@/hooks/useOnlineStatus'
-import { Calendar, Users, MapPin, Clock, ArrowLeft, RefreshCw } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { formatDistanceToNow } from 'date-fns'
+import { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { OfflineBanner } from './OfflineBanner';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import {
+  Calendar,
+  Users,
+  MapPin,
+  Clock,
+  ArrowLeft,
+  RefreshCw,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { formatDistanceToNow } from 'date-fns';
 
 interface TicketData {
-  bookingId: string
-  qrCodeUrl: string
-  experienceName: string
-  experienceImage?: string
-  dateTime: string
-  guestCount: number
-  meetingPoint: string
-  vendorName: string
-  vendorContact?: string
-  bookingReference: string
-  lastUpdated: number  // Unix timestamp
+  bookingId: string;
+  qrCodeUrl: string;
+  experienceName: string;
+  experienceImage?: string;
+  dateTime: string;
+  guestCount: number;
+  meetingPoint: string;
+  vendorName: string;
+  vendorContact?: string;
+  bookingReference: string;
+  lastUpdated: number; // Unix timestamp
 }
 
 interface TicketPageProps {
-  ticketData?: TicketData
-  loading?: boolean
-  onBack?: () => void
-  onRefresh?: () => void
+  ticketData?: TicketData;
+  loading?: boolean;
+  onBack?: () => void;
+  onRefresh?: () => void;
 }
 
-export function TicketPage({ 
-  ticketData, 
-  loading = false, 
+export function TicketPage({
+  ticketData,
+  loading = false,
   onBack,
-  onRefresh 
+  onRefresh,
 }: TicketPageProps) {
-  const isOnline = useOnlineStatus()
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const isOnline = useOnlineStatus();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
-    if (!isOnline || !onRefresh) return
-    
-    setIsRefreshing(true)
+    if (!isOnline || !onRefresh) return;
+
+    setIsRefreshing(true);
     try {
-      await onRefresh()
+      await onRefresh();
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -71,7 +78,7 @@ export function TicketPage({
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   if (!ticketData) {
@@ -90,16 +97,16 @@ export function TicketPage({
           )}
         </div>
       </div>
-    )
+    );
   }
 
-  const lastUpdatedText = ticketData.lastUpdated 
+  const lastUpdatedText = ticketData.lastUpdated
     ? formatDistanceToNow(ticketData.lastUpdated, { addSuffix: true })
-    : 'Unknown'
+    : 'Unknown';
 
-  const isStale = ticketData.lastUpdated 
-    ? Date.now() - ticketData.lastUpdated > 24 * 60 * 60 * 1000 
-    : false
+  const isStale = ticketData.lastUpdated
+    ? Date.now() - ticketData.lastUpdated > 24 * 60 * 60 * 1000
+    : false;
 
   return (
     <div className="min-h-screen bg-background">
@@ -114,16 +121,18 @@ export function TicketPage({
               Back
             </Button>
           )}
-          
+
           <div className="flex items-center gap-2 ml-auto">
             {isOnline && onRefresh && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`}
+                />
                 Refresh
               </Button>
             )}
@@ -170,21 +179,29 @@ export function TicketPage({
                     <Calendar className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">Date & Time</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Date & Time
+                    </p>
                     <p className="text-base font-semibold">
-                      {new Date(ticketData.dateTime).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
+                      {new Date(ticketData.dateTime).toLocaleDateString(
+                        'en-US',
+                        {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        },
+                      )}
                     </p>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      {new Date(ticketData.dateTime).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      })}
+                      {new Date(ticketData.dateTime).toLocaleTimeString(
+                        'en-US',
+                        {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        },
+                      )}
                     </p>
                   </div>
                 </div>
@@ -195,9 +212,12 @@ export function TicketPage({
                     <Users className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">Guests</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Guests
+                    </p>
                     <p className="text-base font-semibold">
-                      {ticketData.guestCount} {ticketData.guestCount === 1 ? 'Guest' : 'Guests'}
+                      {ticketData.guestCount}{' '}
+                      {ticketData.guestCount === 1 ? 'Guest' : 'Guests'}
                     </p>
                   </div>
                 </div>
@@ -208,7 +228,9 @@ export function TicketPage({
                     <MapPin className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">Meeting Point</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Meeting Point
+                    </p>
                     <p className="text-base font-semibold">
                       {ticketData.meetingPoint}
                     </p>
@@ -254,5 +276,5 @@ export function TicketPage({
         </div>
       </div>
     </div>
-  )
+  );
 }

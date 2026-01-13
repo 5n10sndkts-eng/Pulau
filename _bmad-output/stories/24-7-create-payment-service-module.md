@@ -9,11 +9,12 @@ So that Stripe operations are centralized and type-safe.
 **Given** the paymentService module exists
 **When** used throughout the application
 **Then** it provides functions for:
-  - `createCheckoutSession(items, userId)` - Create Stripe session
-  - `getPaymentByBookingId(bookingId)` - Retrieve payment record
-  - `calculatePlatformFee(amount)` - Calculate fee (15%)
-  - `calculateVendorPayout(amount, fee)` - Calculate vendor amount
-**And** all Stripe API calls include idempotency keys
-**And** TypeScript types align with Stripe SDK types
+
+- `createCheckoutSession(items, userId)` - Create Stripe session
+- `getPaymentByBookingId(bookingId)` - Retrieve payment record
+- `calculatePlatformFee(amount)` - Calculate fee (15%)
+- `calculateVendorPayout(amount, fee)` - Calculate vendor amount
+  **And** all Stripe API calls include idempotency keys
+  **And** TypeScript types align with Stripe SDK types
 
 ---

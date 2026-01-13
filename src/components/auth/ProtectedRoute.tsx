@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
@@ -14,22 +14,24 @@ interface ProtectedRouteProps {
  * redirecting back after a successful login.
  */
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const { user, isLoading } = useAuth();
-    const location = useLocation();
+  const { user, isLoading } = useAuth();
+  const location = useLocation();
 
-    if (isLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-background">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                <p className="mt-4 text-muted-foreground animate-pulse font-medium">Loading session...</p>
-            </div>
-        );
-    }
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <p className="mt-4 text-muted-foreground animate-pulse font-medium">
+          Loading session...
+        </p>
+      </div>
+    );
+  }
 
-    if (!user) {
-        // Redirect to login page but save the current location they were trying to go to
-        return <Navigate to="/login" state={{ from: location }} replace />;
-    }
+  if (!user) {
+    // Redirect to login page but save the current location they were trying to go to
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 };

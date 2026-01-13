@@ -31,6 +31,7 @@ So that I can visualize my itinerary in my preferred format.
 ## Tasks / Subtasks
 
 ### Task 1: Create view toggle component (AC: #1, #3)
+
 - [x] Build SegmentedControl component with "Calendar" and "List" options
 - [x] Style with active state highlighting (teal background)
 - [x] Position toggle below date picker in trip builder
@@ -38,6 +39,7 @@ So that I can visualize my itinerary in my preferred format.
 - [x] Add smooth background slide animation on toggle
 
 ### Task 2: Implement list/timeline view (AC: #1, #3)
+
 - [x] Create TripTimelineView component (default view)
 - [x] Display items grouped by day with vertical timeline
 - [x] Add connecting lines between day sections
@@ -45,6 +47,7 @@ So that I can visualize my itinerary in my preferred format.
 - [x] Include unscheduled section at bottom
 
 ### Task 3: Build calendar grid view (AC: #2)
+
 - [x] Create TripCalendarView component using calendar grid layout
 - [x] Display monthly calendar showing trip date range
 - [x] Add colored dots on days with scheduled items
@@ -52,6 +55,7 @@ So that I can visualize my itinerary in my preferred format.
 - [x] Make calendar navigable (prev/next month buttons)
 
 ### Task 4: Implement day detail bottom sheet (AC: #2)
+
 - [x] Create DayDetailSheet component (modal/bottom sheet)
 - [x] Trigger sheet on calendar day tap
 - [x] Display selected day's date and all items
@@ -59,6 +63,7 @@ So that I can visualize my itinerary in my preferred format.
 - [x] Add "Close" and "Edit" actions in sheet
 
 ### Task 5: Add smooth view transition animations (AC: #3)
+
 - [x] Use Framer Motion AnimatePresence for view switching
 - [x] Configure 200ms fade + slide transition
 - [x] Ensure smooth height adjustment between views
@@ -68,6 +73,7 @@ So that I can visualize my itinerary in my preferred format.
 ## Dev Notes
 
 ### Technical Guidance
+
 - View toggle: use shadcn/ui Tabs or custom SegmentedControl
 - Calendar library: use `react-day-picker` or shadcn/ui Calendar
 - Timeline view: use CSS flexbox with pseudo-element lines
@@ -75,6 +81,7 @@ So that I can visualize my itinerary in my preferred format.
 - View state: `const [view, setView] = useState<'list' | 'calendar'>('list')`
 
 ### Component Structure
+
 ```
 TripBuilderContent
 ├── ViewToggle (Calendar | List)
@@ -87,26 +94,29 @@ TripBuilderContent
 ```
 
 ### Calendar Dot Indicator Logic
+
 ```typescript
 const getDayDots = (date: Date, items: TripItem[]): number => {
-  return items.filter(item =>
-    item.scheduled_date &&
-    isSameDay(parseISO(item.scheduled_date), date)
+  return items.filter(
+    (item) =>
+      item.scheduled_date && isSameDay(parseISO(item.scheduled_date), date),
   ).length;
 };
 ```
 
 ### Animation Configuration
+
 ```typescript
 const viewTransition = {
   initial: { opacity: 0, x: 20 },
   animate: { opacity: 1, x: 0 },
   exit: { opacity: 0, x: -20 },
-  transition: { duration: 0.2, ease: "easeInOut" }
+  transition: { duration: 0.2, ease: 'easeInOut' },
 };
 ```
 
 ### Visual Specifications
+
 - Calendar dots: 4px diameter, teal color, max 3 dots per day
 - Timeline connector: 2px vertical line, gray color
 - Day header in timeline: bold, 16px font size
@@ -132,5 +142,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

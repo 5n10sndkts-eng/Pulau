@@ -11,30 +11,36 @@ So that I can learn about different areas of Bali.
 ## Acceptance Criteria
 
 ### AC 1: Section Display
+
 **Given** I am on the Explore screen
 **When** "Destination Guides" section loads
 **Then** I see 2-column grid of guide cards with destinations:
+
 - Ubud (Culture & Rice Terraces)
 - Seminyak (Beach & Nightlife)
 - Uluwatu (Surf & Cliffs)
 - Nusa Islands (Island Hopping)
-**And** the grid layout is properly formatted
+  **And** the grid layout is properly formatted
 
 ### AC 2: Guide Card Content
+
 **Given** destination guide cards are displayed
 **When** I view a card
 **Then** each card has: cover image, destination name, tagline
 **And** content is clearly readable and visually appealing
 
 ### AC 3: Guide Detail Page Navigation
+
 **Given** I tap a guide card
 **When** the guide detail page opens
 **Then** I see complete guide information
 
 ### AC 4: Guide Detail Content
+
 **Given** the guide detail page has loaded
 **When** I view the content
 **Then** I see:
+
 - Hero image
 - Overview text
 - "Top Experiences" list (filtered by destination)
@@ -44,6 +50,7 @@ So that I can learn about different areas of Bali.
 ## Tasks / Subtasks
 
 ### Task 1: Create Destination Guides Data (AC: #1, #2)
+
 - [x] Create `destinationGuides` constant in `src/data/destination-guides.ts`
 - [x] Add static data for: Ubud, Seminyak, Uluwatu, Nusa Islands
 - [x] Include: id, name, slug, tagline, coverImageUrl, description, coordinates
@@ -52,6 +59,7 @@ So that I can learn about different areas of Bali.
 - [x] Consider storing in KV store for future dynamic updates
 
 ### Task 2: Build DestinationGuideCard Component (AC: #2)
+
 - [x] Create `DestinationGuideCard` component in `src/components/explore/DestinationGuideCard.tsx`
 - [x] Display cover image with aspect ratio: `aspect-[4/3]` or `aspect-video`
 - [x] Show destination name with Tailwind: `text-xl font-bold`
@@ -60,6 +68,7 @@ So that I can learn about different areas of Bali.
 - [x] Make card responsive: `w-full` in grid layout
 
 ### Task 3: Implement 2-Column Grid Layout (AC: #1)
+
 - [x] Use CSS Grid with Tailwind: `grid grid-cols-2 gap-4`
 - [x] Configure responsive spacing: `md:gap-6 lg:gap-8`
 - [x] Ensure responsive sizing: `sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3`
@@ -67,6 +76,7 @@ So that I can learn about different areas of Bali.
 - [x] Add padding to grid container: `p-4 md:p-6`
 
 ### Task 4: Create GuideDetailScreen (AC: #3, #4)
+
 - [x] Create `GuideDetail` page in `src/pages/guides/[slug].tsx`
 - [x] Add hero image section at top with overlay gradient
 - [x] Display overview text/description with proper typography
@@ -75,6 +85,7 @@ So that I can learn about different areas of Bali.
 - [x] Implement 404 page for invalid guide slugs
 
 ### Task 5: Build Top Experiences Section (AC: #4)
+
 - [x] Query experiences filtered by destination/region from KV store
 - [x] Display as grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`
 - [x] Show 5-10 top-rated experiences for the area
@@ -83,6 +94,7 @@ So that I can learn about different areas of Bali.
 - [x] Add loading skeleton while fetching experiences
 
 ### Task 6: Integrate Map View (AC: #4)
+
 - [x] Add Leaflet or Mapbox GL JS for interactive maps
 - [x] Install: `npm install react-leaflet leaflet` or `npm install mapbox-gl`
 - [x] Show map centered on destination coordinates
@@ -92,6 +104,7 @@ So that I can learn about different areas of Bali.
 - [x] Set map height: `h-64 md:h-96 rounded-lg overflow-hidden`
 
 ### Task 7: Add Best For Tags (AC: #4)
+
 - [x] Display tags as horizontal scrollable pills: `flex gap-2 overflow-x-auto`
 - [x] Style tags with Tailwind: `bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full text-sm`
 - [x] Tags examples: "Families", "Adventure", "Culture", "Nightlife"
@@ -101,6 +114,7 @@ So that I can learn about different areas of Bali.
 ## Dev Notes
 
 ### Destination Guides Data Structure
+
 ```typescript
 // src/lib/types.ts
 export interface DestinationGuide {
@@ -125,7 +139,8 @@ export const destinationGuides: DestinationGuide[] = [
     tagline: 'Culture & Rice Terraces',
     coverImageUrl: '/images/destinations/ubud-cover.jpg',
     heroImageUrl: '/images/destinations/ubud-hero.jpg',
-    description: 'Ubud is the cultural heart of Bali, surrounded by lush rice terraces and traditional villages. Experience authentic Balinese culture, art galleries, and wellness retreats.',
+    description:
+      'Ubud is the cultural heart of Bali, surrounded by lush rice terraces and traditional villages. Experience authentic Balinese culture, art galleries, and wellness retreats.',
     coordinates: { lat: -8.5069, lng: 115.2625 },
     bestForTags: ['Culture', 'Nature', 'Wellness', 'Families'],
     region: 'Central Bali',
@@ -137,7 +152,8 @@ export const destinationGuides: DestinationGuide[] = [
     tagline: 'Beach & Nightlife',
     coverImageUrl: '/images/destinations/seminyak-cover.jpg',
     heroImageUrl: '/images/destinations/seminyak-hero.jpg',
-    description: 'Seminyak offers upscale beach clubs, world-class dining, and vibrant nightlife along stunning coastlines.',
+    description:
+      'Seminyak offers upscale beach clubs, world-class dining, and vibrant nightlife along stunning coastlines.',
     coordinates: { lat: -8.6905, lng: 115.1682 },
     bestForTags: ['Beach', 'Nightlife', 'Dining', 'Luxury'],
     region: 'South Bali',
@@ -147,6 +163,7 @@ export const destinationGuides: DestinationGuide[] = [
 ```
 
 ### Grid Layout with CSS Grid
+
 ```typescript
 // src/components/explore/DestinationGuidesSection.tsx
 import { destinationGuides } from '@/data/destination-guides';
@@ -164,6 +181,7 @@ export function DestinationGuidesSection() {
 ```
 
 ### Guide Card Component
+
 ```typescript
 // src/components/explore/DestinationGuideCard.tsx
 import { Link } from 'react-router-dom';
@@ -175,12 +193,12 @@ interface DestinationGuideCardProps {
 
 export function DestinationGuideCard({ guide }: DestinationGuideCardProps) {
   return (
-    <Link 
+    <Link
       to={`/guides/${guide.slug}`}
       className="block rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img 
+        <img
           src={guide.coverImageUrl}
           alt={guide.name}
           className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
@@ -201,6 +219,7 @@ export function DestinationGuideCard({ guide }: DestinationGuideCardProps) {
 ```
 
 ### Map Integration with Leaflet
+
 ```typescript
 // src/components/guides/GuideMap.tsx
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -225,16 +244,16 @@ export function GuideMap({ guide, experiences }: GuideMapProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         {/* Guide center marker */}
         <Marker position={[guide.coordinates.lat, guide.coordinates.lng]}>
           <Popup>{guide.name}</Popup>
         </Marker>
-        
+
         {/* Experience markers */}
         {experiences.map(exp => (
-          <Marker 
-            key={exp.id} 
+          <Marker
+            key={exp.id}
             position={[exp.coordinates.lat, exp.coordinates.lng]}
           >
             <Popup>
@@ -252,6 +271,7 @@ export function GuideMap({ guide, experiences }: GuideMapProps) {
 ```
 
 ### Guide Detail Page
+
 ```typescript
 // src/pages/guides/[slug].tsx
 import { useParams, Navigate } from 'react-router-dom';
@@ -261,17 +281,17 @@ import { GuideMap } from '@/components/guides/GuideMap';
 export function GuideDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const guide = destinationGuides.find(g => g.slug === slug);
-  
+
   if (!guide) {
     return <Navigate to="/explore" replace />;
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
       <div className="relative h-96">
-        <img 
-          src={guide.heroImageUrl} 
+        <img
+          src={guide.heroImageUrl}
           alt={guide.name}
           className="w-full h-full object-cover"
         />
@@ -281,13 +301,13 @@ export function GuideDetailPage() {
           <p className="text-xl text-gray-200">{guide.tagline}</p>
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Best For Tags */}
         <div className="flex gap-2 overflow-x-auto mb-6">
           {guide.bestForTags.map(tag => (
-            <span 
+            <span
               key={tag}
               className="bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full text-sm whitespace-nowrap"
             >
@@ -295,15 +315,15 @@ export function GuideDetailPage() {
             </span>
           ))}
         </div>
-        
+
         {/* Description */}
         <p className="text-gray-700 dark:text-gray-300 mb-8">
           {guide.description}
         </p>
-        
+
         {/* Map */}
         <GuideMap guide={guide} experiences={topExperiences} />
-        
+
         {/* Top Experiences */}
         <section className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Top Experiences</h2>
@@ -318,6 +338,7 @@ export function GuideDetailPage() {
 ```
 
 ### Filtering Experiences by Destination
+
 ```typescript
 // src/hooks/useExperiencesByRegion.ts
 import { useKV } from '@github-spark/app';
@@ -325,18 +346,21 @@ import { useQuery } from '@tanstack/react-query';
 
 export function useExperiencesByRegion(region: string) {
   const kv = useKV();
-  
+
   return useQuery({
     queryKey: ['experiences', 'region', region],
     queryFn: async () => {
       const experiences = await kv.get<Experience[]>('experiences:all');
-      return experiences?.filter(exp => exp.region === region).slice(0, 10) ?? [];
-    }
+      return (
+        experiences?.filter((exp) => exp.region === region).slice(0, 10) ?? []
+      );
+    },
   });
 }
 ```
 
 ### Testing Considerations
+
 - Test grid layout on mobile (2 cols), KV namespacet (2 cols), desktop (3 cols)
 - Verify all 4 destination guides display correctly
 - Test navigation to detail screens with correct slugs
@@ -371,6 +395,7 @@ GitHub Spark AI Agent
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ Database KV namespace references → Static data files
 2. ✅ FlatList with numColumns → CSS Grid with Tailwind
 3. ✅ React Native Maps → Leaflet/Mapbox GL JS for web

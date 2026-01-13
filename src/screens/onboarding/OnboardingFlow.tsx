@@ -1,7 +1,7 @@
 /**
  * Onboarding Flow Container
  * Epic 4: Onboarding & Personalization
- * 
+ *
  * Orchestrates the 3-screen onboarding flow and saves preferences
  */
 
@@ -32,7 +32,10 @@ export function OnboardingFlow() {
     setStep('dates');
   };
 
-  const handleDatesComplete = async (dates: { startDate?: string; endDate?: string }) => {
+  const handleDatesComplete = async (dates: {
+    startDate?: string;
+    endDate?: string;
+  }) => {
     if (!user || !preferences) return;
 
     setIsLoading(true);

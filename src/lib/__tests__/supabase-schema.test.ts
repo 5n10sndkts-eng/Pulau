@@ -41,10 +41,17 @@ describe('Supabase Database Schema Validation', () => {
     // Test that we can query each required table
     for (const table of requiredTables) {
       try {
-        const { error } = await supabase.from(table as any).select('*').limit(0);
+        const { error } = await supabase
+          .from(table as any)
+          .select('*')
+          .limit(0);
 
         // Table should exist (error might be permission-based, not schema-based)
-        if (error && !error.message.includes('policy') && !error.message.includes('permission')) {
+        if (
+          error &&
+          !error.message.includes('policy') &&
+          !error.message.includes('permission')
+        ) {
           console.error(`Table ${table} might not exist: ${error.message}`);
         }
         expect(true).toBe(true); // Table query attempted
@@ -133,10 +140,18 @@ describe('Supabase Database Schema Validation', () => {
     }
 
     // Attempt to query protected tables without auth
-    const protectedTables = ['trips', 'bookings', 'payments', 'payment_methods'];
+    const protectedTables = [
+      'trips',
+      'bookings',
+      'payments',
+      'payment_methods',
+    ];
 
     for (const table of protectedTables) {
-      const { error } = await supabase.from(table as any).select('*').limit(1);
+      const { error } = await supabase
+        .from(table as any)
+        .select('*')
+        .limit(1);
 
       // Should either return error (RLS blocking) or empty results
       if (error) {
@@ -167,7 +182,10 @@ describe('Supabase Database Schema Validation', () => {
       'vendor_id' | 'category' | 'destination_id'
     >;
 
-    type TripIndexColumns = Pick<Database['public']['Tables']['trips']['Row'], 'user_id'>;
+    type TripIndexColumns = Pick<
+      Database['public']['Tables']['trips']['Row'],
+      'user_id'
+    >;
 
     const expIndex: ExperienceIndexColumns = {
       vendor_id: 'v1',
@@ -210,7 +228,8 @@ describe('Supabase Database Schema Validation', () => {
     // If types are invalid, the build fails before tests run
 
     // Validate insert types
-    type ExperienceInsert = Database['public']['Tables']['experiences']['Insert'];
+    type ExperienceInsert =
+      Database['public']['Tables']['experiences']['Insert'];
 
     const newExperience: ExperienceInsert = {
       vendor_id: 'v1',

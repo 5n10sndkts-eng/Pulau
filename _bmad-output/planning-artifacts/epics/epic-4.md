@@ -32,17 +32,18 @@ So that I receive personalized experience recommendations.
 **Given** I am on onboarding Screen 2
 **When** the screen loads
 **Then** I see three preference sections with tappable cards:
-  - Travel Style: Adventure, Relaxation, Culture, Mix of Everything
-  - Group Type: Solo, Couple, Friends, Family
-  - Budget Feel: Budget-Conscious, Mid-Range, Luxury
-**When** I tap a preference card
-**Then** the card highlights with teal border and checkmark icon
-**And** multiple selections are allowed within each section
-**And** at least one selection per section is required before continuing
-**When** I tap "Continue" with valid selections
-**Then** preferences are saved to user_preferences table (user_id, travel_style[], group_type, budget_level, created_at)
-**And** I proceed to Screen 3 (Trip Dates)
-**And** progress indicator shows "2 of 3"
+
+- Travel Style: Adventure, Relaxation, Culture, Mix of Everything
+- Group Type: Solo, Couple, Friends, Family
+- Budget Feel: Budget-Conscious, Mid-Range, Luxury
+  **When** I tap a preference card
+  **Then** the card highlights with teal border and checkmark icon
+  **And** multiple selections are allowed within each section
+  **And** at least one selection per section is required before continuing
+  **When** I tap "Continue" with valid selections
+  **Then** preferences are saved to user_preferences table (user_id, travel_style[], group_type, budget_level, created_at)
+  **And** I proceed to Screen 3 (Trip Dates)
+  **And** progress indicator shows "2 of 3"
 
 ### Story 4.3: Add Optional Trip Dates Screen
 
@@ -78,14 +79,15 @@ So that I discover relevant activities quickly.
 **Given** I completed onboarding with preferences saved
 **When** I browse any experience category
 **Then** experiences are scored based on my preferences:
-  - +10 points if experience.difficulty matches my travel_style (Adventure → Moderate/Challenging, Relaxation → Easy, Culture → Easy/Moderate)
-  - +15 points if experience.tags overlap with travel_style
-  - +5 points if experience.price_per_person fits my budget_level
-  - +5 points if experience.group_size max >= my group_type typical size
-**And** top 3 highest-scoring experiences in category display "Perfect for you" banner
-**And** "Perfect for you" badge has warm coral background with star icon
-**And** these experiences appear at top of category list
-**And** recommendation algorithm logs scores to recommendations_log table for future ML improvements
+
+- +10 points if experience.difficulty matches my travel_style (Adventure → Moderate/Challenging, Relaxation → Easy, Culture → Easy/Moderate)
+- +15 points if experience.tags overlap with travel_style
+- +5 points if experience.price_per_person fits my budget_level
+- +5 points if experience.group_size max >= my group_type typical size
+  **And** top 3 highest-scoring experiences in category display "Perfect for you" banner
+  **And** "Perfect for you" badge has warm coral background with star icon
+  **And** these experiences appear at top of category list
+  **And** recommendation algorithm logs scores to recommendations_log table for future ML improvements
 
 ### Story 4.5: Complete Onboarding with Main App Navigation
 

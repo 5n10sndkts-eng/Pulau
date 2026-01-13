@@ -286,7 +286,9 @@ try {
 **✅ Let retries happen, handle final failure:**
 
 ```typescript
-await expect(apiRequest({ method: 'GET', path: '/api/unstable' })).rejects.toThrow(); // Retries happen automatically, then final error caught
+await expect(
+  apiRequest({ method: 'GET', path: '/api/unstable' }),
+).rejects.toThrow(); // Retries happen automatically, then final error caught
 ```
 
 **❌ Disabling TypeScript benefits:**

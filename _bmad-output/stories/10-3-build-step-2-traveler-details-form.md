@@ -9,14 +9,15 @@ So that operators can reach me.
 **Given** I am on checkout Step 2 (Traveler Details)
 **When** the screen loads
 **Then** form displays fields (pre-filled if logged in):
-  - Primary Contact: First Name*, Last Name*, Email*, Phone*
-  - Trip Lead: Same as contact (checkbox), or separate fields
-  - Special Requests: textarea (optional)
-**And** fields marked with * are required
-**And** form uses React Hook Form with Zod validation schema
-**When** I submit with missing required fields
-**Then** validation errors display inline below each field
-**And** error border (red) highlights invalid fields
-**When** all required fields are valid
-**Then** "Continue to Payment" button enables
-**And** form data persists to checkout session state
+
+- Primary Contact: First Name*, Last Name*, Email*, Phone*
+- Trip Lead: Same as contact (checkbox), or separate fields
+- Special Requests: textarea (optional)
+  **And** fields marked with \* are required
+  **And** form uses React Hook Form with Zod validation schema
+  **When** I submit with missing required fields
+  **Then** validation errors display inline below each field
+  **And** error border (red) highlights invalid fields
+  **When** all required fields are valid
+  **Then** "Continue to Payment" button enables
+  **And** form data persists to checkout session state

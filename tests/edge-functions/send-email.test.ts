@@ -5,14 +5,14 @@
  * Phase: Launch Readiness Sprint - Phase 1
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-const FUNCTION_URL = 'http://localhost:54321/functions/v1/send-email'
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || ''
+const FUNCTION_URL = 'http://localhost:54321/functions/v1/send-email';
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || '';
 
 describe('send-email Edge Function', () => {
-  const testBookingId = '00000000-0000-0000-0000-000000000001'
-  const testEmail = 'test@example.com'
+  const testBookingId = '00000000-0000-0000-0000-000000000001';
+  const testEmail = 'test@example.com';
 
   describe('Request Validation', () => {
     it('should reject requests without required fields', async () => {
@@ -20,22 +20,22 @@ describe('send-email Edge Function', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({}),
-      })
+      });
 
-      expect(response.status).toBe(400)
-      const data = await response.json()
-      expect(data.error).toBeDefined()
-    })
+      expect(response.status).toBe(400);
+      const data = await response.json();
+      expect(data.error).toBeDefined();
+    });
 
     it('should reject invalid email type', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           type: 'invalid_type',
@@ -43,19 +43,19 @@ describe('send-email Edge Function', () => {
           booking_id: testBookingId,
           data: {},
         }),
-      })
+      });
 
-      expect(response.status).toBe(400)
-      const data = await response.json()
-      expect(data.error).toContain('Invalid or missing email type')
-    })
+      expect(response.status).toBe(400);
+      const data = await response.json();
+      expect(data.error).toContain('Invalid or missing email type');
+    });
 
     it('should reject invalid email address', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           type: 'booking_confirmation',
@@ -63,19 +63,19 @@ describe('send-email Edge Function', () => {
           booking_id: testBookingId,
           data: {},
         }),
-      })
+      });
 
-      expect(response.status).toBe(400)
-      const data = await response.json()
-      expect(data.error).toContain('Invalid or missing recipient email')
-    })
+      expect(response.status).toBe(400);
+      const data = await response.json();
+      expect(data.error).toContain('Invalid or missing recipient email');
+    });
 
     it('should reject missing required data fields', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           type: 'booking_confirmation',
@@ -86,13 +86,13 @@ describe('send-email Edge Function', () => {
             booking_reference: 'TEST-123',
           },
         }),
-      })
+      });
 
-      expect(response.status).toBe(400)
-      const data = await response.json()
-      expect(data.error).toContain('Missing required field')
-    })
-  })
+      expect(response.status).toBe(400);
+      const data = await response.json();
+      expect(data.error).toContain('Missing required field');
+    });
+  });
 
   describe('Email Sending', () => {
     it('should send booking confirmation email successfully', async () => {
@@ -100,7 +100,7 @@ describe('send-email Edge Function', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           type: 'booking_confirmation',
@@ -121,27 +121,27 @@ describe('send-email Edge Function', () => {
             ticket_url: 'https://pulau.app/tickets/test-123',
           },
         }),
-      })
+      });
 
       // Note: This will fail in CI/CD without RESEND_API_KEY
       // In production, should return 200 with message_id
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        expect(data.success).toBe(true)
-        expect(data.message_id).toBeDefined()
+        expect(data.success).toBe(true);
+        expect(data.message_id).toBeDefined();
       } else {
         // Expected in test environment without Resend API key
-        expect(data.error).toBeDefined()
+        expect(data.error).toBeDefined();
       }
-    }, 10000) // 10 second timeout for email sending
+    }, 10000); // 10 second timeout for email sending
 
     it('should send booking cancellation email', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           type: 'booking_cancellation',
@@ -161,24 +161,24 @@ describe('send-email Edge Function', () => {
             cancellation_reason: 'Weather conditions',
           },
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        expect(data.success).toBe(true)
-        expect(data.message_id).toBeDefined()
+        expect(data.success).toBe(true);
+        expect(data.message_id).toBeDefined();
       } else {
-        expect(data.error).toBeDefined()
+        expect(data.error).toBeDefined();
       }
-    }, 10000)
+    }, 10000);
 
     it('should send booking reminder email', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           type: 'booking_reminder',
@@ -199,65 +199,65 @@ describe('send-email Edge Function', () => {
             ticket_url: 'https://pulau.app/tickets/test-123',
           },
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        expect(data.success).toBe(true)
-        expect(data.message_id).toBeDefined()
+        expect(data.success).toBe(true);
+        expect(data.message_id).toBeDefined();
       } else {
-        expect(data.error).toBeDefined()
+        expect(data.error).toBeDefined();
       }
-    }, 10000)
-  })
+    }, 10000);
+  });
 
   describe('Error Handling', () => {
     it('should handle Resend API errors gracefully', async () => {
       // This test would require mocking Resend API or using invalid credentials
       // In a real scenario, you'd mock the Resend client
-      expect(true).toBe(true) // Placeholder
-    })
+      expect(true).toBe(true); // Placeholder
+    });
 
     it('should create email_logs entry on failure', async () => {
       // This test would require database access to verify email_logs table
       // In a real scenario, you'd query the database after a failed send
-      expect(true).toBe(true) // Placeholder
-    })
-  })
+      expect(true).toBe(true); // Placeholder
+    });
+  });
 
   describe('CORS Handling', () => {
     it('should handle OPTIONS preflight request', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'OPTIONS',
         headers: {
-          'Origin': 'http://localhost:3000',
+          Origin: 'http://localhost:3000',
           'Access-Control-Request-Method': 'POST',
         },
-      })
+      });
 
-      expect(response.status).toBe(200)
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*')
-    })
+      expect(response.status).toBe(200);
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    });
 
     it('should reject non-POST requests', async () => {
       const response = await fetch(FUNCTION_URL, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
-      })
+      });
 
-      expect(response.status).toBe(405)
-      const data = await response.json()
-      expect(data.error).toContain('Method not allowed')
-    })
-  })
-})
+      expect(response.status).toBe(405);
+      const data = await response.json();
+      expect(data.error).toContain('Method not allowed');
+    });
+  });
+});
 
 // Manual test helper for local development
 export async function testSendEmailManually() {
-  console.log('🧪 Testing send-email Edge Function manually...')
+  console.log('🧪 Testing send-email Edge Function manually...');
 
   const payload = {
     type: 'booking_confirmation',
@@ -272,31 +272,40 @@ export async function testSendEmailManually() {
       total_amount: 120,
       currency: 'USD',
       traveler_name: 'Test User',
-      experience_description: 'A beautiful sunset kayaking experience through calm waters',
+      experience_description:
+        'A beautiful sunset kayaking experience through calm waters',
       meeting_point: 'Marina Bay Pier 3',
-      what_to_bring: ['Sunscreen', 'Water bottle', 'Towel', 'Change of clothes'],
+      what_to_bring: [
+        'Sunscreen',
+        'Water bottle',
+        'Towel',
+        'Change of clothes',
+      ],
       ticket_url: 'https://pulau.app/tickets/test-001',
     },
-  }
+  };
 
-  const response = await fetch('http://localhost:54321/functions/v1/send-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.VITE_SUPABASE_ANON_KEY}`,
+  const response = await fetch(
+    'http://localhost:54321/functions/v1/send-email',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  })
+  );
 
-  const data = await response.json()
-  console.log('📧 Response:', data)
+  const data = await response.json();
+  console.log('📧 Response:', data);
 
   if (response.ok) {
-    console.log('✅ Email sent successfully!')
-    console.log('📬 Message ID:', data.message_id)
+    console.log('✅ Email sent successfully!');
+    console.log('📬 Message ID:', data.message_id);
   } else {
-    console.error('❌ Email send failed:', data.error)
+    console.error('❌ Email send failed:', data.error);
   }
 
-  return data
+  return data;
 }

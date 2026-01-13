@@ -128,6 +128,7 @@ so that I can make an informed booking decision.
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ File paths: `src/screens/experience/ExperienceDetailScreen.tsx` → `src/pages/ExperienceDetail.tsx`
 2. ✅ Data layer: Supabase queries with KV joins → KV store single key lookup with nested data
 3. ✅ Components: React Native SafeAreaView → Semantic HTML with Tailwind
@@ -160,5 +161,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

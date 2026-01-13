@@ -25,6 +25,7 @@ So that I can fix scheduling issues.
 ## Tasks / Subtasks
 
 ### Task 1: Create ConflictWarningBanner component (AC: #1)
+
 - [x] Build ConflictWarningBanner component with icon and message
 - [x] Style with Golden Sand background (#F4D03F20)
 - [x] Add warning icon (⚠️) from Lucide React icons
@@ -32,6 +33,7 @@ So that I can fix scheduling issues.
 - [x] Make banner tappable to show resolution options (Story 9.3)
 
 ### Task 2: Position banners in trip item list (AC: #1)
+
 - [x] Insert banner between conflicting item cards
 - [x] Determine banner position based on item order in list
 - [x] Handle multiple conflicts for same item
@@ -39,6 +41,7 @@ So that I can fix scheduling issues.
 - [x] Make banners responsive on mobile and desktop
 
 ### Task 3: Fetch and display conflicting item names (AC: #1)
+
 - [x] Access conflicts from useTripManagement hook
 - [x] Look up experience names for conflicting item IDs
 - [x] Format message dynamically with item names
@@ -46,6 +49,7 @@ So that I can fix scheduling issues.
 - [x] Truncate long names if needed (max 40 characters)
 
 ### Task 4: Implement fade-out animation on resolution (AC: #2)
+
 - [x] Detect when conflict is removed from conflicts array
 - [x] Trigger fade-out animation (200ms)
 - [x] Remove banner from DOM after animation completes
@@ -53,6 +57,7 @@ So that I can fix scheduling issues.
 - [x] Ensure no layout shift during banner removal
 
 ### Task 5: Add tap interaction to open resolution sheet (AC: #1)
+
 - [x] Make banner interactive with hover/active states
 - [x] On tap: open conflict resolution bottom sheet (Story 9.3)
 - [x] Pass conflict data to resolution component
@@ -62,6 +67,7 @@ So that I can fix scheduling issues.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Banner component: use alert/banner pattern from shadcn/ui
 - Conflicts: access via `const { conflicts } = useTripManagement()`
 - Positioning: render banners inline in item list, not as overlay
@@ -69,6 +75,7 @@ So that I can fix scheduling issues.
 - Color: Golden Sand #F4D03F with 20% opacity = #F4D03F33
 
 ### Component Structure
+
 ```typescript
 <DaySection date={date}>
   {dayItems.map(item => {
@@ -91,6 +98,7 @@ So that I can fix scheduling issues.
 ```
 
 ### ConflictWarningBanner Component
+
 ```typescript
 interface ConflictWarningBannerProps {
   conflict: Conflict;
@@ -124,6 +132,7 @@ const ConflictWarningBanner: FC<ConflictWarningBannerProps> = ({
 ```
 
 ### Visual Specifications
+
 - Background: #F4D03F33 (Golden Sand 20% opacity)
 - Border: 1px solid #F4D03F (Golden Sand)
 - Border radius: 8px
@@ -153,5 +162,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

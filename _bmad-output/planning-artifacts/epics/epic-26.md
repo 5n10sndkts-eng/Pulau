@@ -13,11 +13,12 @@ So that I can show my ticket even without internet.
 **Given** I have a confirmed booking
 **When** I view my ticket page while online
 **Then** the Service Worker caches:
-  - Ticket page HTML/JS/CSS
-  - QR code image
-  - Booking metadata (experience name, time, meeting point)
-**And** cached data persists for 30 days
-**And** cache is updated when I view the ticket online
+
+- Ticket page HTML/JS/CSS
+- QR code image
+- Booking metadata (experience name, time, meeting point)
+  **And** cached data persists for 30 days
+  **And** cache is updated when I view the ticket online
 
 ---
 
@@ -32,14 +33,15 @@ So that I can gain entry to my experience.
 **Given** I have a cached ticket
 **When** I am offline and open my ticket page
 **Then** I see:
-  - QR code (prominently displayed)
-  - Experience name and date/time
-  - Guest count
-  - Meeting point information
-  - "Offline Mode" indicator
-  - "Last Updated" timestamp
-**And** the page loads in < 1.5 seconds (TTI)
-**And** I can access the ticket from my bookings list
+
+- QR code (prominently displayed)
+- Experience name and date/time
+- Guest count
+- Meeting point information
+- "Offline Mode" indicator
+- "Last Updated" timestamp
+  **And** the page loads in < 1.5 seconds (TTI)
+  **And** I can access the ticket from my bookings list
 
 ---
 
@@ -70,11 +72,12 @@ So that I have the latest booking information.
 **Given** I was offline and network is restored
 **When** the app detects connectivity
 **Then** within 10 seconds it:
-  - Syncs any pending state changes
-  - Refreshes cached ticket data
-  - Updates booking status if changed
-  - Shows brief "Syncing..." indicator
-**And** if booking was cancelled while offline, I see a clear notification
+
+- Syncs any pending state changes
+- Refreshes cached ticket data
+- Updates booking status if changed
+- Shows brief "Syncing..." indicator
+  **And** if booking was cancelled while offline, I see a clear notification
 
 ---
 

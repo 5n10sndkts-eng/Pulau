@@ -11,23 +11,28 @@ So that I can manage my account.
 ## Acceptance Criteria
 
 ### AC 1: Profile Screen Access
+
 **Given** I tap "Profile" in bottom navigation (User icon)
 **When** the Profile screen loads
 **Then** I see my profile and settings interface
 
 ### AC 2: Profile Header Display
+
 **Given** the Profile screen has loaded
 **When** I view the header
 **Then** I see profile header containing:
+
 - Profile photo (circular, 80px, or placeholder avatar)
 - Full name
 - "Member since [month year]"
 - "Edit Profile" button
 
 ### AC 3: Menu Sections Display
+
 **Given** the Profile screen displays menu options
 **When** I scroll through the screen
 **Then** I see menu sections below header:
+
 - My Trips (arobject to booking history)
 - Saved Experiences (arobject to wishlist)
 - Payment Methods
@@ -38,6 +43,7 @@ So that I can manage my account.
 - Log Out
 
 ### AC 4: Menu Item Styling
+
 **Given** menu items are displayed
 **When** I view each item
 **Then** each menu item has icon, label, and chevron
@@ -46,6 +52,7 @@ So that I can manage my account.
 ## Tasks / Subtasks
 
 ### Task 1: Create ProfileScreen Component (AC: #1)
+
 - [x] Create `ProfilePage` component in `src/pages/Profile.tsx`
 - [x] Add route for `/profile` in React Router configuration
 - [x] Add User icon from Lucide React to navigation menu
@@ -53,6 +60,7 @@ So that I can manage my account.
 - [x] Use main container with vertical scrolling (overflow-y-auto)
 
 ### Task 2: Build Profile Header (AC: #2)
+
 - [x] Create `ProfileHeader` component in `src/components/profile/ProfileHeader.tsx`
 - [x] Display circular profile photo (80px): `w-20 h-20 rounded-full`
 - [x] Show placeholder avatar using Lucide React User icon if no photo
@@ -62,6 +70,7 @@ So that I can manage my account.
 - [x] Style header with Tailwind: `flex items-center gap-4 p-6 bg-white dark:bg-gray-800`
 
 ### Task 3: Fetch User Profile Data (AC: #2)
+
 - [x] Create `useUserProfile` hook in `src/hooks/useUserProfile.ts`
 - [x] Use `useUser()` hook from GitHub Spark SDK to get current user
 - [x] Query KV store for user profile data using key pattern: `user_profile:{userId}`
@@ -71,6 +80,7 @@ So that I can manage my account.
 - [x] Cache profile data with React Query (staleTime: 5 minutes)
 
 ### Task 4: Create Menu Item Component (AC: #4)
+
 - [x] Create `ProfileMenuItem` component in `src/components/profile/ProfileMenuItem.tsx`
 - [x] Props: icon (LucideIcon type), label, href (React Router), onClick
 - [x] Display Lucide React icon on left with `w-5 h-5 text-gray-500`
@@ -81,6 +91,7 @@ So that I can manage my account.
 - [x] Add border between items: `border-b border-gray-200 dark:border-gray-700`
 
 ### Task 5: Build Menu Sections (AC: #3)
+
 - [x] Create "My Trips" menu item linking to `/bookings`
 - [x] Create "Saved Experiences" item linking to `/wishlist`
 - [x] Create "Payment Methods" item linking to `/profile/payments`
@@ -92,6 +103,7 @@ So that I can manage my account.
 - [x] Group related items with section dividers or spacing
 
 ### Task 6: Implement Navigation (AC: #3)
+
 - [x] Use React Router Link for menu item navigation
 - [x] Use useNavigate hook for programmatic navigation
 - [x] Track analytics for menu item clicks using analytics service
@@ -99,6 +111,7 @@ So that I can manage my account.
 - [x] Add page transitions using React Router transitions (optional)
 
 ### Task 7: Implement Logout Functionality (AC: #3)
+
 - [x] Create logout confirmation dialog using Radix UI AlertDialog
 - [x] Call GitHub Spark auth logout on confirmation
 - [x] Clear React Query cache on logout
@@ -111,6 +124,7 @@ So that I can manage my account.
 ## Dev Notes
 
 ### User Profile Hook
+
 ```typescript
 // src/hooks/useUserProfile.ts
 import { useUser, useKV } from '@github-spark/app';
@@ -131,7 +145,7 @@ export function useUserProfile() {
     queryKey: ['user-profile', user?.id],
     queryFn: async () => {
       if (!user?.id) thobject new Error('Not authenticated');
-      
+
       const profile = await kv.get<UserProfile>(`user_profile:${user.id}`);
       return profile ?? {
         firstName: user.displayName?.split(' ')[0] || 'User',
@@ -146,6 +160,7 @@ export function useUserProfile() {
 ```
 
 ### Member Since Calculation
+
 ```typescript
 // src/lib/date-utils.ts
 import { format } from 'date-fns';
@@ -157,11 +172,19 @@ export function getMemberSince(createdAt: string): string {
 ```
 
 ### Menu Items Configuration
+
 ```typescript
 // src/components/profile/ProfileMenu.tsx
-import { 
-  Calendar, Heart, CreditCard, Bell, Settings, 
-  HelpCircle, Info, LogOut, type LucideIcon 
+import {
+  Calendar,
+  Heart,
+  CreditCard,
+  Bell,
+  Settings,
+  HelpCircle,
+  Info,
+  LogOut,
+  type LucideIcon,
 } from 'lucide-react';
 
 interface MenuItem {
@@ -185,6 +208,7 @@ const menuItems: MenuItem[] = [
 ```
 
 ### Profile Menu Item Component
+
 ```typescript
 // src/components/profile/ProfileMenuItem.tsx
 import { Link } from 'react-router-dom';
@@ -198,17 +222,17 @@ interface ProfileMenuItemProps {
   variant?: 'default' | 'destructive';
 }
 
-export function ProfileMenuItem({ 
-  icon: Icon, 
-  label, 
-  href, 
+export function ProfileMenuItem({
+  icon: Icon,
+  label,
+  href,
   onClick,
   variant = 'default'
 }: ProfileMenuItemProps) {
   const className = `
-    flex items-center justify-between p-4 
+    flex items-center justify-between p-4
     border-b border-gray-200 dark:border-gray-700
-    hover:bg-gray-50 dark:hover:bg-gray-700 
+    hover:bg-gray-50 dark:hover:bg-gray-700
     transition cursor-pointer
     ${variant === 'destructive' ? 'text-red-600 dark:text-red-400' : ''}
   `.trim();
@@ -238,6 +262,7 @@ export function ProfileMenuItem({
 ```
 
 ### Logout Confirmation Dialog
+
 ```typescript
 // src/components/profile/LogoutDialog.tsx
 import { useState } from 'react';
@@ -266,17 +291,17 @@ export function LogoutDialog({ open, onOpenChange }: LogoutDialogProps) {
   const handleLogout = async () => {
     try {
       setIsLoading(true);
-      
+
       // Clear authentication (GitHub Spark SDK)
       // await auth.signOut(); // Implement based on actual SDK
-      
+
       // Clear React Query cache
       queryClient.clear();
-      
+
       // Clear localStorage
       localStorage.removeItem('user_preferences');
       localStorage.removeItem('cached_data');
-      
+
       toast.success('Logged out successfully');
       navigate('/login');
     } catch (error) {
@@ -299,7 +324,7 @@ export function LogoutDialog({ open, onOpenChange }: LogoutDialogProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
-          <AlertDialogAction 
+          <AlertDialogAction
             onClick={handleLogout}
             disabled={isLoading}
             className="bg-red-600 hover:bg-red-700"
@@ -314,6 +339,7 @@ export function LogoutDialog({ open, onOpenChange }: LogoutDialogProps) {
 ```
 
 ### Profile Page Structure
+
 ```typescript
 // src/pages/Profile.tsx
 import { useState } from 'react';
@@ -335,7 +361,7 @@ export function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <ProfileHeader profile={profile} />
-      
+
       <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
         {menuItems.map((item) => (
           <ProfileMenuItem
@@ -346,9 +372,9 @@ export function ProfilePage() {
         ))}
       </div>
 
-      <LogoutDialog 
-        open={logoutDialogOpen} 
-        onOpenChange={setLogoutDialogOpen} 
+      <LogoutDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
       />
     </div>
   );
@@ -356,6 +382,7 @@ export function ProfilePage() {
 ```
 
 ### Testing Considerations
+
 - Test with users who have profile photos and without (placeholder avatar)
 - Verify "Member since" calculation for various join dates
 - Test all menu item navigation using React Router
@@ -391,6 +418,7 @@ GitHub Spark AI Agent
 ## Template Fix Notes (2026-01-06)
 
 **Issues Fixed:**
+
 1. ✅ File paths (app/(tabs)/profile → src/pages/Profile.tsx)
 2. ✅ Supabase auth → GitHub Spark SDK auth
 3. ✅ Database queries → KV store with useKV hook

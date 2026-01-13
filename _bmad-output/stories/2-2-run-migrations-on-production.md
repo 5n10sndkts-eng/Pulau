@@ -21,44 +21,49 @@ Execute all database migrations on the production Supabase instance to create th
 ## Steps
 
 1. **Link Project to Supabase CLI**
+
    ```bash
    supabase link --project-ref [PRODUCTION-PROJECT-REF]
    ```
 
 2. **Review Migrations**
+
    ```bash
    # List all pending migrations
    ls -la supabase/migrations/
-   
+
    # Verify migration count (should be 17 based on current state)
    find supabase/migrations -name "*.sql" | wc -l
    ```
 
 3. **Run Migrations**
+
    ```bash
    # Push all migrations to production
    supabase db push
-   
+
    # Verify schema
    supabase db diff
    ```
 
 4. **Validate Schema**
+
    ```bash
    # Connect to production DB
    supabase db remote shell
-   
+
    # Verify tables exist
    \dt
-   
+
    # Check RLS policies
    SELECT tablename, policyname FROM pg_policies;
-   
+
    # Verify functions
    \df
    ```
 
 5. **Deploy Edge Functions**
+
    ```bash
    # Deploy all functions
    supabase functions deploy checkout
@@ -66,7 +71,7 @@ Execute all database migrations on the production Supabase instance to create th
    supabase functions deploy vendor-onboard
    supabase functions deploy send-email
    # ... (deploy all 11 functions)
-   
+
    # Or deploy all at once
    supabase functions deploy --no-verify-jwt
    ```
@@ -80,6 +85,7 @@ Execute all database migrations on the production Supabase instance to create th
 ## Migration Checklist
 
 Expected migrations (from current state):
+
 - [x] Initial schema
 - [x] Auth tables
 - [x] Profiles table
@@ -101,6 +107,7 @@ Expected migrations (from current state):
 ## Rollback Plan
 
 If migration fails:
+
 ```bash
 # Stop immediately
 # Identify failed migration
@@ -115,12 +122,12 @@ SELECT * FROM _migration_history ORDER BY executed_at DESC LIMIT 10;
 
 ```sql
 -- Count tables
-SELECT count(*) FROM information_schema.tables 
+SELECT count(*) FROM information_schema.tables
 WHERE table_schema = 'public';
 -- Expected: ~15 tables
 
 -- Verify RLS enabled
-SELECT tablename, rowsecurity FROM pg_tables 
+SELECT tablename, rowsecurity FROM pg_tables
 WHERE schemaname = 'public';
 -- All should have rowsecurity = true
 
@@ -129,7 +136,7 @@ SELECT * FROM bookings WHERE experience_id NOT IN (SELECT id FROM experiences);
 -- Should return 0 rows
 
 -- Verify indexes
-SELECT tablename, indexname FROM pg_indexes 
+SELECT tablename, indexname FROM pg_indexes
 WHERE schemaname = 'public';
 -- Should have indexes on foreign keys and frequently queried columns
 ```

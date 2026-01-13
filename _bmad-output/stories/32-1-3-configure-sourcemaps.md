@@ -16,18 +16,18 @@ So that I can debug production errors with original source code.
 1. **Given** production build completes
    **When** source maps are generated
    **Then** they are:
-     - Uploaded to Sentry automatically
-     - Not served to users
-     - Tagged with release version
-     - Deleted from build output
+   - Uploaded to Sentry automatically
+   - Not served to users
+   - Tagged with release version
+   - Deleted from build output
 
 2. **Given** error occurs in production
    **When** viewing in Sentry
    **Then** stack trace shows:
-     - Original TypeScript code
-     - Correct file paths
-     - Accurate line numbers
-     - Variable names unminified
+   - Original TypeScript code
+   - Correct file paths
+   - Accurate line numbers
+   - Variable names unminified
 
 ## Tasks / Subtasks
 
@@ -40,6 +40,7 @@ So that I can debug production errors with original source code.
 ## Dev Notes
 
 **vite.config.ts:**
+
 ```typescript
 export default defineConfig({
   build: {
@@ -57,10 +58,11 @@ export default defineConfig({
       },
     }),
   ],
-})
+});
 ```
 
 **CI/CD (GitHub Actions):**
+
 ```yaml
 - name: Build and upload to Sentry
   env:

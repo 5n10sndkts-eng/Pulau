@@ -12,13 +12,15 @@ const MOCK_USERS: User[] = [
     id: 'user_123',
     name: 'Moe Traveler',
     email: 'moe@example.com',
-    avatar: 'https://ui-avatars.com/api/?name=Moe+Traveler&background=0D7377&color=fff',
+    avatar:
+      'https://ui-avatars.com/api/?name=Moe+Traveler&background=0D7377&color=fff',
   },
 ];
 const DELAY_MS = 800;
 // Build-time constant: import.meta.env.DEV is replaced with 'false' in production
 // This enables tree-shaking to remove all mock code from production bundle
-const USE_MOCK_AUTH = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+const USE_MOCK_AUTH =
+  import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
@@ -27,10 +29,15 @@ export const authService = {
       console.log('⚠️  DEVELOPMENT MODE: Using mock authentication');
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          if (!email || !password) { reject(new Error('Email and password are required')); return; }
+          if (!email || !password) {
+            reject(new Error('Email and password are required'));
+            return;
+          }
 
           // 1. Try to find in hardcoded MOCK_USERS
-          let user = MOCK_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
+          let user = MOCK_USERS.find(
+            (u) => u.email.toLowerCase() === email.toLowerCase(),
+          );
 
           // 2. If not found, check if we have a persisted session that matches (simulating a "registered" user in DB)
           if (!user) {
@@ -51,8 +58,7 @@ export const authService = {
             // Persist session
             localStorage.setItem('pulau_user', JSON.stringify(user));
             resolve(user);
-          }
-          else {
+          } else {
             // Mock mode: reject with same message as Supabase for consistency
             reject(new Error('Invalid login credentials'));
           }
@@ -61,7 +67,10 @@ export const authService = {
     }
 
     // Real Supabase Login
-    const { data: { session }, error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -96,7 +105,10 @@ export const authService = {
     };
   },
 
-  updateProfile: async (userId: string, updates: Partial<User>): Promise<void> => {
+  updateProfile: async (
+    userId: string,
+    updates: Partial<User>,
+  ): Promise<void> => {
     if (import.meta.env.DEV && USE_MOCK_AUTH) {
       // Update local storage
       const stored = localStorage.getItem('pulau_user');
@@ -126,7 +138,13 @@ export const authService = {
     if (error) throw error;
   },
 
-  register: async (name: string, email: string, password: string, firstName?: string, lastName?: string): Promise<User> => {
+  register: async (
+    name: string,
+    email: string,
+    password: string,
+    firstName?: string,
+    lastName?: string,
+  ): Promise<User> => {
     // Validate password BEFORE any other processing
     const validation = validatePassword(password);
     if (!validation.valid) {
@@ -137,7 +155,10 @@ export const authService = {
       console.log('⚠️  DEVELOPMENT MODE: Using mock registration');
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          if (!email || !password || !name) { reject(new Error('All fields are required')); return; }
+          if (!email || !password || !name) {
+            reject(new Error('All fields are required'));
+            return;
+          }
           const newUser = {
             id: `user_${Date.now()}`,
             name,
@@ -146,7 +167,7 @@ export const authService = {
             preferences: undefined,
             saved: [],
             currency: 'USD',
-            language: 'en'
+            language: 'en',
           };
           // Persist session
           localStorage.setItem('pulau_user', JSON.stringify(newUser));
@@ -156,7 +177,10 @@ export const authService = {
     }
 
     // Real Supabase Register
-    const { data: { user: authUser }, error } = await supabase.auth.signUp({
+    const {
+      data: { user: authUser },
+      error,
+    } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -196,7 +220,7 @@ export const authService = {
       createdAt: authUser.created_at,
       saved: [],
       currency: 'USD',
-      language: 'en'
+      language: 'en',
     };
   },
 
@@ -214,7 +238,8 @@ export const authService = {
       console.log('⚠️  DEVELOPMENT MODE: Using mock password reset');
       return new Promise((resolve) => {
         setTimeout(() => {
-          if (import.meta.env.DEV) console.log(`Password reset email sent to: ${email}`);
+          if (import.meta.env.DEV)
+            console.log(`Password reset email sent to: ${email}`);
           resolve();
         }, DELAY_MS);
       });
@@ -251,7 +276,9 @@ export const authService = {
       try {
         const stored = localStorage.getItem('pulau_user');
         if (stored) {
-          console.log('🔐 Auth Service: Check session - Found persisted local user');
+          console.log(
+            '🔐 Auth Service: Check session - Found persisted local user',
+          );
           return JSON.parse(stored) as User;
         }
       } catch (e) {
@@ -260,7 +287,9 @@ export const authService = {
       return null;
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) return null;
 
     const { data } = await supabase
@@ -286,5 +315,5 @@ export const authService = {
       language: profile?.language || 'en',
       hasCompletedOnboarding: profile?.onboarding_completed || false,
     };
-  }
+  },
 };

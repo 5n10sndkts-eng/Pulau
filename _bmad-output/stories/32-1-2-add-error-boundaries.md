@@ -16,27 +16,27 @@ So that a single component error doesn't crash the entire application.
 1. **Given** an error occurs in a component
    **When** caught by error boundary
    **Then** it:
-     - Shows fallback UI
-     - Reports to Sentry
-     - Allows app to continue functioning
-     - Provides recovery action
+   - Shows fallback UI
+   - Reports to Sentry
+   - Allows app to continue functioning
+   - Provides recovery action
 
 2. **Given** critical sections of the app
    **When** wrapping with error boundaries
    **Then** coverage includes:
-     - Root app level
-     - Route level
-     - Checkout flow
-     - Vendor dashboard
-     - Data fetching components
+   - Root app level
+   - Route level
+   - Checkout flow
+   - Vendor dashboard
+   - Data fetching components
 
 3. **Given** error boundary catches error
    **When** user sees fallback UI
    **Then** it displays:
-     - Clear error message
-     - Recovery options (reload, go home)
-     - Contact support link
-     - Error ID for reference
+   - Clear error message
+   - Recovery options (reload, go home)
+   - Contact support link
+   - Error ID for reference
 
 ## Tasks / Subtasks
 
@@ -50,9 +50,10 @@ So that a single component error doesn't crash the entire application.
 ## Dev Notes
 
 **Sentry Error Boundary:**
+
 ```tsx
 // src/components/ErrorBoundary.tsx
-import * as Sentry from '@sentry/react'
+import * as Sentry from '@sentry/react';
 
 export const ErrorBoundary = Sentry.withErrorBoundary(
   ({ children }) => children,
@@ -66,20 +67,24 @@ export const ErrorBoundary = Sentry.withErrorBoundary(
       </div>
     ),
     showDialog: false,
-  }
-)
+  },
+);
 ```
 
 **Usage:**
+
 ```tsx
 // src/App.tsx
 <ErrorBoundary>
   <Routes>
-    <Route path="/checkout" element={
-      <ErrorBoundary fallback={<CheckoutError />}>
-        <CheckoutFlow />
-      </ErrorBoundary>
-    } />
+    <Route
+      path="/checkout"
+      element={
+        <ErrorBoundary fallback={<CheckoutError />}>
+          <CheckoutFlow />
+        </ErrorBoundary>
+      }
+    />
   </Routes>
 </ErrorBoundary>
 ```

@@ -53,14 +53,14 @@ npm run dev
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run test` | Run unit tests (Vitest) |
-| `npm run test:e2e` | Run end-to-end tests (Playwright) |
-| `npm run lint` | Run ESLint |
-| `npm run type-check` | TypeScript type checking |
+| Command              | Description                       |
+| -------------------- | --------------------------------- |
+| `npm run dev`        | Start development server          |
+| `npm run build`      | Build for production              |
+| `npm run test`       | Run unit tests (Vitest)           |
+| `npm run test:e2e`   | Run end-to-end tests (Playwright) |
+| `npm run lint`       | Run ESLint                        |
+| `npm run type-check` | TypeScript type checking          |
 
 ## 📁 Project Structure
 
@@ -88,6 +88,7 @@ src/
 ## 🎨 Design System
 
 Inspired by Bali's natural palette:
+
 - **Primary**: Deep Teal `#0D7377` - tropical ocean waters
 - **Accent**: Warm Coral `#FF6B6B` - sunset warmth
 - **Golden**: Sand `#F4D03F` - highlights and ratings

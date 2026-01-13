@@ -1,40 +1,51 @@
-import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Trip } from '@/lib/types'
-import { BookingData } from './CheckoutFlow'
-import { formatPrice, formatDateRange } from '@/lib/helpers'
-import { CheckCircle, Copy, Calendar, Share2, Download, Sparkles } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { toast } from 'sonner'
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Trip } from '@/lib/types';
+import { BookingData } from './CheckoutFlow';
+import { formatPrice, formatDateRange } from '@/lib/helpers';
+import {
+  CheckCircle,
+  Copy,
+  Calendar,
+  Share2,
+  Download,
+  Sparkles,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 interface ConfirmationStepProps {
-  trip: Trip
-  bookingData: BookingData
-  bookingRef: string
+  trip: Trip;
+  bookingData: BookingData;
+  bookingRef: string;
 }
 
-export function ConfirmationStep({ trip, bookingData, bookingRef }: ConfirmationStepProps) {
-  const [showConfetti, setShowConfetti] = useState(true)
+export function ConfirmationStep({
+  trip,
+  bookingData,
+  bookingRef,
+}: ConfirmationStepProps) {
+  const [showConfetti, setShowConfetti] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowConfetti(false), 3000)
-    return () => clearTimeout(timer)
-  }, [])
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCopyRef = () => {
-    navigator.clipboard.writeText(bookingRef)
-    toast.success('Booking reference copied!')
-  }
+    navigator.clipboard.writeText(bookingRef);
+    toast.success('Booking reference copied!');
+  };
 
   const handleAddToCalendar = () => {
-    toast.info('Calendar export coming soon!')
-  }
+    toast.info('Calendar export coming soon!');
+  };
 
   const handleShare = () => {
-    toast.info('Share functionality coming soon!')
-  }
+    toast.info('Share functionality coming soon!');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-accent/10 to-background">
@@ -83,8 +94,12 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
           transition={{ delay: 0.3 }}
           className="text-center space-y-2"
         >
-          <h1 className="font-display text-4xl font-bold">You're going to Bali! 🏝️</h1>
-          <p className="text-xl text-muted-foreground">Your adventure is confirmed</p>
+          <h1 className="font-display text-4xl font-bold">
+            You're going to Bali! 🏝️
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            Your adventure is confirmed
+          </p>
         </motion.div>
 
         <motion.div
@@ -97,7 +112,9 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
               <div>
                 <p className="text-sm opacity-90 mb-2">Booking Reference</p>
                 <div className="flex items-center justify-center gap-2">
-                  <p className="font-mono text-3xl font-bold tracking-wider">{bookingRef}</p>
+                  <p className="font-mono text-3xl font-bold tracking-wider">
+                    {bookingRef}
+                  </p>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -108,7 +125,9 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
                   </Button>
                 </div>
               </div>
-              <p className="text-sm opacity-90">Save this reference - you'll need it to access your bookings</p>
+              <p className="text-sm opacity-90">
+                Save this reference - you'll need it to access your bookings
+              </p>
             </div>
           </Card>
         </motion.div>
@@ -119,7 +138,9 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
           transition={{ delay: 0.5 }}
         >
           <Card className="p-6">
-            <h2 className="font-display text-xl font-bold mb-4">Booking Details</h2>
+            <h2 className="font-display text-xl font-bold mb-4">
+              Booking Details
+            </h2>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Destination</span>
@@ -127,10 +148,14 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dates</span>
-                <span className="font-semibold">{formatDateRange(trip.startDate, trip.endDate)}</span>
+                <span className="font-semibold">
+                  {formatDateRange(trip.startDate, trip.endDate)}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Experiences Booked</span>
+                <span className="text-muted-foreground">
+                  Experiences Booked
+                </span>
                 <span className="font-semibold">{trip.items.length}</span>
               </div>
               <div className="flex justify-between">
@@ -140,7 +165,9 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
               <div className="h-px bg-border my-2" />
               <div className="flex justify-between text-lg">
                 <span className="font-semibold">Total Paid</span>
-                <span className="font-bold text-primary">{formatPrice(trip.total)}</span>
+                <span className="font-bold text-primary">
+                  {formatPrice(trip.total)}
+                </span>
               </div>
             </div>
           </Card>
@@ -152,7 +179,9 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
           transition={{ delay: 0.6 }}
         >
           <Card className="p-6">
-            <h2 className="font-display text-xl font-bold mb-4">Confirmation Sent</h2>
+            <h2 className="font-display text-xl font-bold mb-4">
+              Confirmation Sent
+            </h2>
             <div className="flex items-start gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
                 <CheckCircle className="w-5 h-5 text-success" />
@@ -161,15 +190,17 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
                 <p className="font-semibold mb-1">Email confirmation sent</p>
                 <p className="text-sm text-muted-foreground">
                   We've sent your booking details to{' '}
-                  <span className="font-semibold">{bookingData.leadTraveler?.email}</span>
+                  <span className="font-semibold">
+                    {bookingData.leadTraveler?.email}
+                  </span>
                 </p>
               </div>
             </div>
             <Alert className="bg-coral/5 border-coral">
               <Sparkles className="h-4 w-4 text-coral" />
               <AlertDescription>
-                Your booking confirmations will arrive within 1 hour. Local operators may contact you to confirm
-                pickup details.
+                Your booking confirmations will arrive within 1 hour. Local
+                operators may contact you to confirm pickup details.
               </AlertDescription>
             </Alert>
           </Card>
@@ -181,7 +212,9 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
           transition={{ delay: 0.7 }}
         >
           <Card className="p-6 bg-muted/50">
-            <h2 className="font-display text-xl font-bold mb-4">What's Next?</h2>
+            <h2 className="font-display text-xl font-bold mb-4">
+              What's Next?
+            </h2>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-sm font-bold text-primary">
@@ -190,7 +223,8 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
                 <div>
                   <p className="font-semibold mb-1">Check your email</p>
                   <p className="text-sm text-muted-foreground">
-                    Individual confirmations for each experience will arrive shortly
+                    Individual confirmations for each experience will arrive
+                    shortly
                   </p>
                 </div>
               </div>
@@ -202,7 +236,8 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
                 <div>
                   <p className="font-semibold mb-1">Operators will reach out</p>
                   <p className="text-sm text-muted-foreground">
-                    Local guides may contact you about pickup times and special requests
+                    Local guides may contact you about pickup times and special
+                    requests
                   </p>
                 </div>
               </div>
@@ -214,7 +249,8 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
                 <div>
                   <p className="font-semibold mb-1">Get ready for adventure</p>
                   <p className="text-sm text-muted-foreground">
-                    Pack your bags, get excited, and prepare for an unforgettable journey
+                    Pack your bags, get excited, and prepare for an
+                    unforgettable journey
                   </p>
                 </div>
               </div>
@@ -228,17 +264,32 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
           transition={{ delay: 0.8 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-3"
         >
-          <Button variant="outline" size="lg" onClick={handleAddToCalendar} className="w-full">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleAddToCalendar}
+            className="w-full"
+          >
             <Calendar className="w-5 h-5 mr-2" />
             Add to Calendar
           </Button>
 
-          <Button variant="outline" size="lg" onClick={handleShare} className="w-full">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleShare}
+            className="w-full"
+          >
             <Share2 className="w-5 h-5 mr-2" />
             Share Trip
           </Button>
 
-          <Button variant="outline" size="lg" onClick={() => window.print()} className="w-full">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => window.print()}
+            className="w-full"
+          >
             <Download className="w-5 h-5 mr-2" />
             Save PDF
           </Button>
@@ -253,7 +304,7 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
             size="lg"
             className="w-full"
             onClick={() => {
-              window.location.reload()
+              window.location.reload();
             }}
           >
             Back to Home
@@ -267,9 +318,11 @@ export function ConfirmationStep({ trip, bookingData, bookingRef }: Confirmation
           className="text-center text-sm text-muted-foreground pt-6"
         >
           <p>Questions? Contact us at support@pulau.travel</p>
-          <p className="mt-2">Need to make changes? Use your booking reference {bookingRef}</p>
+          <p className="mt-2">
+            Need to make changes? Use your booking reference {bookingRef}
+          </p>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

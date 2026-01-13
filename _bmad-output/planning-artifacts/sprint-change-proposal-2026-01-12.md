@@ -1,4 +1,3 @@
-
 # Sprint Change Proposal - Phase 2a Quality Remediation
 
 **Date**: January 12, 2026  
@@ -28,7 +27,7 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 
 - **Defect Backlog**: `_bmad-output/defects/phase-2a-defect-backlog.md`
 - **Build Failures**: TypeScript compilation fails in `auditService.ts`, `RealtimeSlotDisplay.tsx`, `slotService.ts`, `realtimeService.test.ts`
-- **Stub Implementations**: 
+- **Stub Implementations**:
   - `supabase/functions/process-refund/index.ts` - Returns `{ success: true }` without Stripe call
   - `src/components/vendor/QRScanner.tsx` - Empty `detectQRCode()` function
   - `src/components/vendor/VendorOperationsPage.tsx` - Uses hardcoded mock data
@@ -40,26 +39,29 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 
 ### Epic Impact
 
-| Epic | Original Status | Actual Status | Critical Issues |
-|------|----------------|---------------|-----------------|
-| **Epic 25**: Real-Time Inventory | ✅ done | ⚠️ needs-rework | P0 type errors, missing RPC function |
-| **Epic 26**: Offline PWA | ✅ done | ⚠️ needs-rework | P2 implementation gaps, SW registration unclear |
-| **Epic 27**: Vendor Operations | ✅ done | ⚠️ needs-rework | P1 critical stubs (QR, check-in, data loading) |
-| **Epic 28**: Refunds & Audit | ✅ done | ⚠️ needs-rework | P1 refund stub, P0 audit service errors |
+| Epic                             | Original Status | Actual Status   | Critical Issues                                 |
+| -------------------------------- | --------------- | --------------- | ----------------------------------------------- |
+| **Epic 25**: Real-Time Inventory | ✅ done         | ⚠️ needs-rework | P0 type errors, missing RPC function            |
+| **Epic 26**: Offline PWA         | ✅ done         | ⚠️ needs-rework | P2 implementation gaps, SW registration unclear |
+| **Epic 27**: Vendor Operations   | ✅ done         | ⚠️ needs-rework | P1 critical stubs (QR, check-in, data loading)  |
+| **Epic 28**: Refunds & Audit     | ✅ done         | ⚠️ needs-rework | P1 refund stub, P0 audit service errors         |
 
 **Impact on Future Epics**:
+
 - **Epic 33** (UX 2.0): Ready for dev, should wait for P0/P1 fixes to avoid building on unstable foundation
 - **Epic 30.1** (Email System): Blocked on external dependency (Resend setup), can proceed in parallel
 
 ### Story Impact
 
 **Stories Requiring Rework** (18 total):
+
 - Epic 25: Stories 25-1 through 25-5 (5 stories)
-- Epic 26: Stories 26-1 through 26-5 (5 stories)  
+- Epic 26: Stories 26-1 through 26-5 (5 stories)
 - Epic 27: Stories 27-1 through 27-5 (5 stories)
 - Epic 28: Stories 28-1 through 28-6, excluding 28-4 (5 stories - 28-4 appears complete)
 
 **New Stories Required** (3 total):
+
 1. **Story 25-6**: Fix Phase 2a Type Errors (P0)
 2. **Story 27-6**: Implement Vendor Critical Features (P1)
 3. **Story 28-7**: Implement Refund Processing (P1)
@@ -67,16 +69,19 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 ### Artifact Conflicts
 
 #### PRD (No Changes Required)
+
 - ✅ Product vision remains valid
 - ✅ MVP scope appropriate
 - ⚠️ **Recommendation**: Add quality gates section to prevent future premature "done" declarations
 
 #### Architecture (No Changes Required)
+
 - ✅ System design sound
 - ✅ Technology choices appropriate
 - ✅ Implementation follows architectural patterns correctly (just incomplete)
 
 #### UI/UX Specifications (No Changes Required)
+
 - ✅ User experience design validated
 - ✅ Components match specifications
 - ⚠️ Backend integration missing for several UI components
@@ -84,15 +89,18 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 #### Process Artifacts (Changes Required)
 
 **Sprint Status YAML**:
+
 - Update Epic 25-28 status from `done` → `needs-rework`
 - Add new stories 25-6, 27-6, 28-7 with `ready-for-dev` status
 
 **Story Template**:
+
 - Add "Quality Gates" section with implementation and documentation checklists
 - Enforce task completion before status change to "done"
 - Require Dev Agent Record completion
 
 **CI/CD Pipeline**:
+
 - Add pre-merge type checking (`npm run type-check`)
 - Add pre-merge test execution
 - Consider adding build step to PR checks
@@ -104,6 +112,7 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 ### Selected Path: **Direct Adjustment** (Option 1)
 
 **Rationale**:
+
 1. **No architectural issues** - Design is sound, only implementation depth insufficient
 2. **Clear fix paths** - All 21 defects have specific, actionable solutions
 3. **Preserves momentum** - Team context retained, no rollback waste
@@ -111,17 +120,20 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 5. **Risk minimized** - Fixes are straightforward technical implementations
 
 **Alternatives Considered**:
+
 - ❌ **Option 2: Rollback** - Rejected: Stories have correct structure, rollback adds no value
 - ❌ **Option 3: MVP Reduction** - Rejected: MVP scope is appropriate, just needs proper execution
 
 ### Implementation Strategy
 
 **Phase 1: Immediate Fixes (P0) - 4-6 hours**
+
 - Fix all TypeScript compilation errors
 - Create missing RPC functions
 - Verify clean build
 
 **Phase 2: Critical Features (P1) - 1.5-2 days**
+
 - Implement actual refund processing with Stripe
 - Implement QR scanner with decode logic
 - Replace mock data with real Supabase queries
@@ -129,24 +141,26 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 - Create ticket validation RPC
 
 **Phase 3: Implementation Gaps (P2) - 1 day**
+
 - Complete missing components
 - Implement network sync
 - Build admin search interface
 - Verify PWA installation prompts
 
 **Phase 4: Documentation (P3) - 2-3 hours**
+
 - Complete Dev Agent Records
 - Mark task checkboxes
 - Create compliance documentation
 
 ### Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
-| Hidden complexity in stubs | Medium | Medium | Time-box implementation, escalate if >1 day per story |
-| Additional defects discovered | High | Low | Adversarial review after each fix phase |
-| Team velocity impact | Low | Low | Dedicated fix sprint, no new feature work |
-| Timeline pressure | Medium | Medium | Prioritize P0/P1, defer P2/P3 if needed |
+| Risk                          | Likelihood | Impact | Mitigation                                            |
+| ----------------------------- | ---------- | ------ | ----------------------------------------------------- |
+| Hidden complexity in stubs    | Medium     | Medium | Time-box implementation, escalate if >1 day per story |
+| Additional defects discovered | High       | Low    | Adversarial review after each fix phase               |
+| Team velocity impact          | Low        | Low    | Dedicated fix sprint, no new feature work             |
+| Timeline pressure             | Medium     | Medium | Prioritize P0/P1, defer P2/P3 if needed               |
 
 ---
 
@@ -157,6 +171,7 @@ Issues discovered during adversarial code review executed on January 10, 2026, f
 **File**: `_bmad-output/sprint-status.yaml`
 
 **Change A1 - Update Epic Status (Lines ~286-297)**:
+
 ```yaml
 OLD:
   epic-25: done
@@ -165,18 +180,19 @@ OLD:
   epic-28: done
 
 NEW:
-  epic-25: needs-rework  # P0: Type errors + RPC missing
-  epic-26: needs-rework  # P2: Implementation gaps
-  epic-27: needs-rework  # P1: Critical stubs (QR, persistence, data)
-  epic-28: needs-rework  # P1: Refund stub + P0 audit errors
+  epic-25: needs-rework # P0: Type errors + RPC missing
+  epic-26: needs-rework # P2: Implementation gaps
+  epic-27: needs-rework # P1: Critical stubs (QR, persistence, data)
+  epic-28: needs-rework # P1: Refund stub + P0 audit errors
 ```
 
 **Change A2 - Add New Stories (Insert after line ~356)**:
+
 ```yaml
-  # Phase 2a Quality Remediation Sprint
-  25-6-fix-type-errors: ready-for-dev
-  27-6-implement-critical-features: ready-for-dev
-  28-7-implement-refund-processing: ready-for-dev
+# Phase 2a Quality Remediation Sprint
+25-6-fix-type-errors: ready-for-dev
+27-6-implement-critical-features: ready-for-dev
+28-7-implement-refund-processing: ready-for-dev
 ```
 
 ---
@@ -185,13 +201,13 @@ NEW:
 
 **Story B1**: `_bmad-output/stories/25-6-fix-type-errors.md`
 
-```markdown
+````markdown
 # Story 25-6: Fix Phase 2a Type Errors
 
 **Epic**: 25 - Real-Time Inventory & Availability  
 **Priority**: P0 - Build Breaking  
 **Status**: ready-for-dev  
-**Effort**: 4-6 hours  
+**Effort**: 4-6 hours
 
 ## Context
 
@@ -215,23 +231,19 @@ As a **developer**, I need **all TypeScript compilation errors resolved** so tha
   - Change `user_id` → `actor_id`
   - Add required `actor_type` field (derive from context or default to 'user')
   - Verify auditService types align with `audit_logs` table schema
-  
 - [ ] **DEF-002**: Fix `src/components/RealtimeSlotDisplay.tsx:108-113`
   - Properly destructure `{ data, error }` from useQuery result
   - Handle loading state correctly
   - Verify component renders without type errors
-  
 - [ ] **DEF-003**: Create `decrement_slot_inventory` RPC function
   - Write database migration in `supabase/migrations/`
   - Implement atomic inventory decrement logic
   - Add RPC function signature to TypeScript types
   - Run migration on local database
   - Regenerate Supabase types: `npm run db:types`
-  
 - [ ] **DEF-004**: Fix `src/lib/realtimeService.test.ts:44`
   - Update mock to return valid status: `'ok' | 'error' | 'timed out'`
   - Verify test compiles and runs
-  
 - [ ] Run full type check: `npm run type-check`
 - [ ] Run build verification: `npm run build`
 - [ ] Run test suite: `npm run test`
@@ -239,6 +251,7 @@ As a **developer**, I need **all TypeScript compilation errors resolved** so tha
 ## Technical Notes
 
 ### RPC Function Schema
+
 ```sql
 CREATE OR REPLACE FUNCTION decrement_slot_inventory(
   slot_id_param UUID,
@@ -259,15 +272,16 @@ BEGIN
     'success', true,
     'new_capacity', current_capacity
   ) INTO result;
-  
+
   IF result IS NULL THEN
     RETURN jsonb_build_object('success', false, 'error', 'Insufficient capacity');
   END IF;
-  
+
   RETURN result;
 END;
 $$;
 ```
+````
 
 ## Definition of Done
 
@@ -282,7 +296,8 @@ $$;
 **Agent Model Used**: _[To be filled during implementation]_  
 **Debug Log References**: _[To be filled during implementation]_  
 **Completion Notes**: _[To be filled during implementation]_  
-**Files Modified**: 
+**Files Modified**:
+
 - `src/lib/auditService.ts`
 - `src/components/RealtimeSlotDisplay.tsx`
 - `src/lib/slotService.ts`
@@ -294,7 +309,8 @@ $$;
 **Related Defects**: DEF-001, DEF-002, DEF-003, DEF-004  
 **Blocked By**: None  
 **Blocks**: Epic 25 completion, production deployment
-```
+
+````
 
 ---
 
@@ -303,10 +319,10 @@ $$;
 ```markdown
 # Story 27-6: Implement Vendor Critical Features
 
-**Epic**: 27 - Vendor Check-In & Operations  
-**Priority**: P1 - Critical Missing Functionality  
-**Status**: ready-for-dev  
-**Effort**: 1.5-2 days  
+**Epic**: 27 - Vendor Check-In & Operations
+**Priority**: P1 - Critical Missing Functionality
+**Status**: ready-for-dev
+**Effort**: 1.5-2 days
 
 ## Context
 
@@ -403,27 +419,27 @@ BEGIN
   FROM bookings b
   JOIN experiences e ON b.experience_id = e.id
   WHERE b.id = booking_id_param;
-  
+
   IF booking_record IS NULL THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Booking not found');
   END IF;
-  
+
   IF booking_record.vendor_id != vendor_id_param THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Unauthorized');
   END IF;
-  
+
   IF booking_record.status = 'checked-in' THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Already checked in');
   END IF;
-  
+
   IF booking_record.status != 'confirmed' THEN
     RETURN jsonb_build_object('valid', false, 'error', 'Booking not confirmed');
   END IF;
-  
+
   RETURN jsonb_build_object('valid', true, 'booking', row_to_json(booking_record));
 END;
 $$;
-```
+````
 
 ## Definition of Done
 
@@ -440,6 +456,7 @@ $$;
 **Debug Log References**: _[To be filled during implementation]_  
 **Completion Notes**: _[To be filled during implementation]_  
 **Files Modified**:
+
 - `src/components/vendor/QRScanner.tsx`
 - `src/components/vendor/VendorOperationsPage.tsx`
 - `src/lib/bookingService.ts`
@@ -451,7 +468,8 @@ $$;
 **Related Defects**: DEF-006, DEF-007, DEF-008, DEF-009, DEF-010, DEF-011  
 **Blocked By**: Story 25-6 (type errors must be fixed first)  
 **Blocks**: Epic 27 completion, vendor production readiness
-```
+
+````
 
 ---
 
@@ -460,10 +478,10 @@ $$;
 ```markdown
 # Story 28-7: Implement Refund Processing
 
-**Epic**: 28 - Admin Refunds & Audit Trail  
-**Priority**: P1 - Critical Missing Functionality  
-**Status**: ready-for-dev  
-**Effort**: 1 day  
+**Epic**: 28 - Admin Refunds & Audit Trail
+**Priority**: P1 - Critical Missing Functionality
+**Status**: ready-for-dev
+**Effort**: 1 day
 
 ## Context
 
@@ -541,22 +559,22 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
 Deno.serve(async (req) => {
   try {
     const { bookingId, reason, adminUserId } = await req.json();
-    
+
     // 1. Fetch booking and payment
     const { data: booking } = await supabase
       .from('bookings')
       .select('*, payment:payments(*)')
       .eq('id', bookingId)
       .single();
-    
+
     if (!booking) {
       return new Response(JSON.stringify({ error: 'Booking not found' }), { status: 404 });
     }
-    
+
     if (booking.status === 'refunded') {
       return new Response(JSON.stringify({ success: true, message: 'Already refunded' }), { status: 200 });
     }
-    
+
     // 2. Process Stripe refund
     const refund = await stripe.refunds.create({
       payment_intent: booking.payment.stripe_payment_intent_id,
@@ -565,20 +583,20 @@ Deno.serve(async (req) => {
     }, {
       idempotencyKey: `refund_${bookingId}_${Date.now()}`,
     });
-    
+
     // 3. Update database
     await supabase.from('payments').update({
       status: 'refunded',
       refund_id: refund.id,
       refunded_at: new Date().toISOString(),
     }).eq('id', booking.payment.id);
-    
+
     await supabase.from('bookings').update({
       status: 'refunded',
       refunded_at: new Date().toISOString(),
       refunded_by: adminUserId,
     }).eq('id', bookingId);
-    
+
     // 4. Audit log
     await supabase.from('audit_logs').insert({
       action: 'booking.refund',
@@ -588,15 +606,15 @@ Deno.serve(async (req) => {
       actor_type: 'admin',
       metadata: { refund_id: refund.id, amount: refund.amount, reason },
     });
-    
+
     return new Response(JSON.stringify({ success: true, refund }), { status: 200 });
-    
+
   } catch (error) {
     console.error('Refund error:', error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 });
-```
+````
 
 ## Definition of Done
 
@@ -614,6 +632,7 @@ Deno.serve(async (req) => {
 **Debug Log References**: _[To be filled during implementation]_  
 **Completion Notes**: _[To be filled during implementation]_  
 **Files Modified**:
+
 - `supabase/functions/process-refund/index.ts`
 - `tests/e2e/admin-refund.spec.ts`
 
@@ -622,7 +641,8 @@ Deno.serve(async (req) => {
 **Related Defects**: DEF-005  
 **Blocked By**: Story 25-6 (audit service type errors must be fixed)  
 **Blocks**: Epic 28 completion, admin operations production readiness
-```
+
+````
 
 ---
 
@@ -685,7 +705,7 @@ Phase 2a implementation revealed systematic issue: 20 stories marked "done" with
 2. Backfill quality gates section in existing "ready-for-dev" stories
 3. Communicate new standard to development team
 4. Consider automated checks in CI/CD to enforce gates
-```
+````
 
 ---
 
@@ -707,28 +727,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: TypeScript Type Check
         run: npm run type-check
-      
+
       - name: Lint Check
         run: npm run lint
-      
+
       - name: Unit Tests
         run: npm run test:unit
-      
+
       - name: Build Check
         run: npm run build
-      
+
       - name: Comment PR with Results
         if: always()
         uses: actions/github-script@v7
@@ -765,6 +785,7 @@ jobs:
 ### Responsibilities
 
 #### Development Team
+
 - [ ] Execute Story 25-6 (Fix type errors) - **PRIORITY 1**
 - [ ] Execute Story 27-6 (Vendor critical features) - **PRIORITY 2**
 - [ ] Execute Story 28-7 (Refund processing) - **PRIORITY 3**
@@ -773,12 +794,14 @@ jobs:
 - [ ] Run adversarial code review after each fix phase
 
 #### Scrum Master
+
 - [ ] Update sprint-status.yaml with Epic status changes
 - [ ] Add new stories (25-6, 27-6, 28-7) to backlog
 - [ ] Communicate timeline impact to stakeholders
 - [ ] Monitor progress and escalate blockers
 
 #### Product Manager
+
 - [ ] Update story template with quality gates section
 - [ ] Document lessons learned in retrospective
 - [ ] Consider process improvements (stricter DoD enforcement)
@@ -787,6 +810,7 @@ jobs:
 ### Success Criteria
 
 **Sprint Complete When**:
+
 1. ✅ All P0 defects resolved (stories 25-6)
 2. ✅ All P1 defects resolved (stories 27-6, 28-7)
 3. ✅ Clean build: `npm run build` succeeds
@@ -797,19 +821,20 @@ jobs:
 8. ✅ Sprint status reflects accurate state
 
 **Optional (P2/P3)**:
+
 - ⭕ P2 implementation gaps completed
 - ⭕ Documentation cleanup (task checkboxes, Dev Agent Records)
 - ⭕ CI/CD quality checks implemented
 
 ### Timeline Estimate
 
-| Phase | Duration | Deliverables |
-|-------|----------|--------------|
-| P0 Fixes | 4-6 hours | Story 25-6 complete, clean build |
-| P1 Critical | 1.5-2 days | Stories 27-6, 28-7 complete |
-| P2 Gaps | 1 day | Remaining implementation work |
-| P3 Docs | 2-3 hours | Documentation updates |
-| **Total** | **3-4 days** | Production-ready Phase 2a |
+| Phase       | Duration     | Deliverables                     |
+| ----------- | ------------ | -------------------------------- |
+| P0 Fixes    | 4-6 hours    | Story 25-6 complete, clean build |
+| P1 Critical | 1.5-2 days   | Stories 27-6, 28-7 complete      |
+| P2 Gaps     | 1 day        | Remaining implementation work    |
+| P3 Docs     | 2-3 hours    | Documentation updates            |
+| **Total**   | **3-4 days** | Production-ready Phase 2a        |
 
 ### Risk Mitigation
 
@@ -829,6 +854,7 @@ jobs:
 **Date Submitted**: January 12, 2026
 
 **Questions for Review**:
+
 1. Do you approve the recommended approach (Direct Adjustment)?
 2. Do you approve the priority sequence (P0 → P1 → P2 → P3)?
 3. Should Epic 33 (UX 2.0) wait for P0/P1 completion, or proceed in parallel?
@@ -837,6 +863,7 @@ jobs:
 ### Upon Approval
 
 **Immediate Actions**:
+
 1. Update sprint-status.yaml with epic status changes
 2. Create story files (25-6, 27-6, 28-7)
 3. Assign Story 25-6 to dev team (start immediately)
@@ -844,6 +871,7 @@ jobs:
 5. Prepare production deployment verification checklist
 
 **Communication Plan**:
+
 - Notify stakeholders of timeline adjustment (3-4 day focused sprint)
 - Update project board with remediation sprint
 - Document lessons learned for retrospective
@@ -857,6 +885,7 @@ jobs:
 See: `_bmad-output/defects/phase-2a-defect-backlog.md`
 
 **Summary by Priority**:
+
 - **P0** (4): DEF-001, DEF-002, DEF-003, DEF-004
 - **P1** (8): DEF-005, DEF-006, DEF-007, DEF-008, DEF-009, DEF-010, DEF-011, DEF-012
 - **P2** (6): DEF-013, DEF-014, DEF-015, DEF-016, DEF-017, DEF-018

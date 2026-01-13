@@ -11,21 +11,25 @@ So that I can switch between main sections quickly.
 ## Acceptance Criteria
 
 ### AC1: Bottom Tab Structure
+
 **Given** I am on any main screen
 **When** bottom navigation renders
 **Then** I see 5 tabs in fixed footer:
-  - Home (House icon) - navigates to home screen
-  - Explore (Compass icon) - navigates to explore
-  - Quick Add (PlusCircle icon, larger, centered) - opens modal
-  - Saved (Heart icon) - navigates to wishlist
-  - Profile (User icon) - navigates to profile
+
+- Home (House icon) - navigates to home screen
+- Explore (Compass icon) - navigates to explore
+- Quick Add (PlusCircle icon, larger, centered) - opens modal
+- Saved (Heart icon) - navigates to wishlist
+- Profile (User icon) - navigates to profile
 
 ### AC2: Active State Styling
+
 **And** current tab highlighted (teal fill, label visible)
 **And** other tabs show outline icons, no labels
 **And** tab bar height 64px + safe area inset
 
 ### AC3: Tab Navigation
+
 **When** I tap a tab
 **Then** screen changes with fade transition (150ms)
 **And** scroll position resets to top
@@ -33,6 +37,7 @@ So that I can switch between main sections quickly.
 ## Tasks / Subtasks
 
 ### Task 1: Build Bottom Tab Bar Component (AC: #1, #2)
+
 - [x] Create BottomTabBar component with 5 tab buttons
 - [x] Add icons from lucide-react (Home, Compass, PlusCircle, Heart, User)
 - [x] Implement active/inactive visual states
@@ -40,6 +45,7 @@ So that I can switch between main sections quickly.
 - [x] Ensure 44x44px minimum touch targets
 
 ### Task 2: Implement Tab Navigation Logic (AC: #3)
+
 - [x] Connect tabs to navigation system (useNavigation hook)
 - [x] Handle tab clicks to navigate to respective screens
 - [x] Reset scroll position on tab change
@@ -47,6 +53,7 @@ So that I can switch between main sections quickly.
 - [x] Prevent Quick Add from full navigation (opens modal instead)
 
 ### Task 3: Style Active and Inactive States (AC: #2)
+
 - [x] Active tab: Teal filled icon, visible label below icon
 - [x] Inactive tabs: Gray outline icons, no labels
 - [x] Quick Add tab: Larger size (28px vs 24px), slightly elevated
@@ -54,6 +61,7 @@ So that I can switch between main sections quickly.
 - [x] Apply design system color tokens
 
 ### Task 4: Handle Accessibility (AC: #1, #2, #3)
+
 - [x] Add ARIA labels to each tab button
 - [x] Mark active tab with aria-current="page"
 - [x] Ensure keyboard navigation works (Tab, Enter)
@@ -63,7 +71,9 @@ So that I can switch between main sections quickly.
 ## Dev Notes
 
 ### Component Implementation
+
 File: `src/components/navigation/BottomTabBar.tsx`
+
 ```tsx
 import { Home, Compass, PlusCircle, Heart, User } from 'lucide-react';
 import { useNavigation } from '@/hooks/useNavigation';
@@ -71,16 +81,35 @@ import { Screen } from '@/types/navigation';
 
 const tabs = [
   { id: 'home', icon: Home, label: 'Home', screen: { type: 'home' } as Screen },
-  { id: 'explore', icon: Compass, label: 'Explore', screen: { type: 'explore' } as Screen },
+  {
+    id: 'explore',
+    icon: Compass,
+    label: 'Explore',
+    screen: { type: 'explore' } as Screen,
+  },
   { id: 'quickAdd', icon: PlusCircle, label: 'Add', isCenter: true },
-  { id: 'saved', icon: Heart, label: 'Saved', screen: { type: 'saved' } as Screen },
-  { id: 'profile', icon: User, label: 'Profile', screen: { type: 'profile' } as Screen },
+  {
+    id: 'saved',
+    icon: Heart,
+    label: 'Saved',
+    screen: { type: 'saved' } as Screen,
+  },
+  {
+    id: 'profile',
+    icon: User,
+    label: 'Profile',
+    screen: { type: 'profile' } as Screen,
+  },
 ];
 
-export const BottomTabBar = ({ onQuickAddClick }: { onQuickAddClick: () => void }) => {
+export const BottomTabBar = ({
+  onQuickAddClick,
+}: {
+  onQuickAddClick: () => void;
+}) => {
   const { currentScreen, navigate } = useNavigation();
 
-  const handleTabClick = (tab: typeof tabs[number]) => {
+  const handleTabClick = (tab: (typeof tabs)[number]) => {
     if (tab.id === 'quickAdd') {
       onQuickAddClick();
     } else if (tab.screen) {
@@ -97,7 +126,7 @@ export const BottomTabBar = ({ onQuickAddClick }: { onQuickAddClick: () => void 
       aria-label="Main navigation"
     >
       <div className="flex items-center justify-around h-16">
-        {tabs.map(tab => {
+        {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = isActive(tab.id);
 
@@ -106,16 +135,16 @@ export const BottomTabBar = ({ onQuickAddClick }: { onQuickAddClick: () => void 
               key={tab.id}
               onClick={() => handleTabClick(tab)}
               className={cn(
-                "flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-3 transition-all",
-                tab.isCenter && "scale-110 -translate-y-1",
-                active ? "text-primary" : "text-gray-600"
+                'flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-3 transition-all',
+                tab.isCenter && 'scale-110 -translate-y-1',
+                active ? 'text-primary' : 'text-gray-600',
               )}
               aria-label={tab.label}
-              aria-current={active ? "page" : undefined}
+              aria-current={active ? 'page' : undefined}
             >
               <Icon
                 size={tab.isCenter ? 28 : 24}
-                fill={active ? "currentColor" : "none"}
+                fill={active ? 'currentColor' : 'none'}
                 strokeWidth={active ? 0 : 2}
               />
               {active && !tab.isCenter && (
@@ -131,6 +160,7 @@ export const BottomTabBar = ({ onQuickAddClick }: { onQuickAddClick: () => void 
 ```
 
 ### Design Specifications
+
 - **Tab bar**: Fixed bottom, 64px height + safe area
 - **Active tab**: Teal (#0D7377), filled icon, label visible
 - **Inactive tab**: Gray (#6B7280), outline icon, no label
@@ -138,6 +168,7 @@ export const BottomTabBar = ({ onQuickAddClick }: { onQuickAddClick: () => void 
 - **Transition**: 150ms fade for screen changes
 
 ### Accessibility
+
 - Navigation landmark with aria-label="Main navigation"
 - Each tab has clear aria-label
 - Active tab marked with aria-current="page"
@@ -163,5 +194,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

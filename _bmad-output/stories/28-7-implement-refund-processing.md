@@ -28,6 +28,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 ## Tasks
 
 ### Stripe Integration
+
 - [x] **DEF-005**: Add Stripe SDK to edge function
 - [x] Import and initialize Stripe with secret key from environment
 - [x] Implement `stripe.refunds.create()` call
@@ -36,6 +37,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 - [ ] Handle Stripe webhook for refund completion (async)
 
 ### Database Updates
+
 - [x] Update `payments` table:
   - [x] Set `status = 'refunded'`
   - [x] Set `refund_id` from Stripe response
@@ -46,6 +48,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
   - [x] Set `refunded_by = admin_user_id`
 
 ### Audit Trail
+
 - [x] Call `auditService.logAction()` with:
   - [x] `action: 'booking.refund'`
   - [x] `resource_type: 'booking'`
@@ -55,6 +58,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
   - [x] `metadata: { refund_id, amount, reason }`
 
 ### Error Handling
+
 - [x] Check if already refunded (idempotency)
 - [x] Validate booking exists and is in refundable state
 - [x] Catch Stripe API errors (insufficient funds, invalid payment, etc.)
@@ -62,6 +66,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 - [x] Log errors to monitoring service
 
 ### Testing
+
 - [x] Create E2E test: `tests/e2e/admin-refund.spec.ts`
 - [x] Test successful refund flow
 - [x] Test duplicate refund attempt (idempotency)
@@ -71,6 +76,7 @@ As an **admin**, I need **functional refund processing** so that **I can issue r
 ## Technical Implementation
 
 ### Edge Function Structure
+
 ```typescript
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
@@ -82,55 +88,64 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
 Deno.serve(async (req) => {
   try {
     const { bookingId, reason, adminUserId } = await req.json();
-    
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
-    
+
     // 1. Fetch booking and payment
     const { data: booking, error: fetchError } = await supabase
       .from('bookings')
       .select('*, payment:payments(*)')
       .eq('id', bookingId)
       .single();
-    
+
     if (fetchError || !booking) {
-      return new Response(
-        JSON.stringify({ error: 'Booking not found' }), 
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'Booking not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
-    
+
     if (booking.status === 'refunded') {
       return new Response(
-        JSON.stringify({ success: true, message: 'Already refunded' }), 
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: true, message: 'Already refunded' }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
     }
-    
+
     // 2. Process Stripe refund
-    const refund = await stripe.refunds.create({
-      payment_intent: booking.payment.stripe_payment_intent_id,
-      reason: 'requested_by_customer',
-      metadata: { booking_id: bookingId, reason },
-    }, {
-      idempotencyKey: `refund_${bookingId}_${Date.now()}`,
-    });
-    
+    const refund = await stripe.refunds.create(
+      {
+        payment_intent: booking.payment.stripe_payment_intent_id,
+        reason: 'requested_by_customer',
+        metadata: { booking_id: bookingId, reason },
+      },
+      {
+        idempotencyKey: `refund_${bookingId}_${Date.now()}`,
+      },
+    );
+
     // 3. Update database
-    await supabase.from('payments').update({
-      status: 'refunded',
-      refund_id: refund.id,
-      refunded_at: new Date().toISOString(),
-    }).eq('id', booking.payment.id);
-    
-    await supabase.from('bookings').update({
-      status: 'refunded',
-      refunded_at: new Date().toISOString(),
-      refunded_by: adminUserId,
-    }).eq('id', bookingId);
-    
+    await supabase
+      .from('payments')
+      .update({
+        status: 'refunded',
+        refund_id: refund.id,
+        refunded_at: new Date().toISOString(),
+      })
+      .eq('id', booking.payment.id);
+
+    await supabase
+      .from('bookings')
+      .update({
+        status: 'refunded',
+        refunded_at: new Date().toISOString(),
+        refunded_by: adminUserId,
+      })
+      .eq('id', bookingId);
+
     // 4. Audit log
     await supabase.from('audit_logs').insert({
       action: 'booking.refund',
@@ -138,29 +153,29 @@ Deno.serve(async (req) => {
       resource_id: bookingId,
       actor_id: adminUserId,
       actor_type: 'admin',
-      metadata: { 
-        refund_id: refund.id, 
-        amount: refund.amount, 
-        reason 
+      metadata: {
+        refund_id: refund.id,
+        amount: refund.amount,
+        reason,
       },
     });
-    
-    return new Response(
-      JSON.stringify({ success: true, refund }), 
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
-    
+
+    return new Response(JSON.stringify({ success: true, refund }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
     console.error('Refund error:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }), 
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 });
 ```
 
 ### Package Addition
+
 ```json
 // supabase/functions/process-refund/deno.json
 {
@@ -175,6 +190,7 @@ Deno.serve(async (req) => {
 **Complete ALL items BEFORE marking story as 'done'**
 
 ### Implementation Checklist
+
 - [ ] All task checkboxes marked with [x]
 - [ ] Code compiles without TypeScript errors
 - [ ] All tests passing (unit + integration + E2E where applicable)
@@ -182,6 +198,7 @@ Deno.serve(async (req) => {
 - [ ] Code follows project conventions and style guide
 
 ### Documentation Checklist
+
 - [ ] Dev Agent Record completed with:
   - Agent model used
   - Debug log references
@@ -191,13 +208,16 @@ Deno.serve(async (req) => {
 - [ ] Known issues or limitations documented in story notes
 
 ### Verification Checklist
+
 - [ ] Feature tested in development environment
 - [ ] Edge cases handled appropriately
 - [ ] Error states implemented and tested
 - [ ] Performance acceptable (no obvious regressions)
 
 ### Definition of Done
+
 Story can ONLY move to 'done' status when:
+
 1. ✅ All quality gate checkboxes completed
 2. ✅ Peer review completed (or pair programming session logged)
 3. ✅ Stakeholder acceptance obtained (if user-facing feature)
@@ -209,6 +229,7 @@ Story can ONLY move to 'done' status when:
 **Debug Log References**: Manual verification of ACs and implementation audit.  
 **Completion Notes**: Corrected critical implementation gaps discovered during adversarial review. Added missing `deno.json`, fixed API versions, and created E2E tests. Story remains in-progress awaiting final verification of async webhook handling if required.  
 **Files Modified**:
+
 - `supabase/functions/process-refund/index.ts`
 - `supabase/functions/process-refund/deno.json`
 - `tests/e2e/admin-refund.spec.ts`

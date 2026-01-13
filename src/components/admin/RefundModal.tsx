@@ -6,8 +6,8 @@
  * Supports full and partial refunds with validation.
  */
 
-import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -15,47 +15,49 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, AlertCircle, CheckCircle2, DollarSign } from 'lucide-react'
-import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase'
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle, CheckCircle2, DollarSign } from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase';
 
 interface RefundModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
   booking: {
-    id: string
-    reference: string
-    totalPaid: number // Amount in cents
-    currency?: string
-  }
-  onRefundComplete?: () => void
+    id: string;
+    reference: string;
+    totalPaid: number; // Amount in cents
+    currency?: string;
+  };
+  onRefundComplete?: () => void;
 }
 
-type RefundType = 'full' | 'partial'
+type RefundType = 'full' | 'partial';
 
 interface RefundRequest {
-  bookingId: string
-  amount?: number
-  reason?: string
+  bookingId: string;
+  amount?: number;
+  reason?: string;
 }
 
-async function processRefund(request: RefundRequest): Promise<{ success: boolean; refundedAmount?: number; error?: string }> {
+async function processRefund(
+  request: RefundRequest,
+): Promise<{ success: boolean; refundedAmount?: number; error?: string }> {
   const { data, error } = await supabase.functions.invoke('process-refund', {
     body: request,
-  })
+  });
 
   if (error) {
-    throw new Error(error.message || 'Failed to process refund')
+    throw new Error(error.message || 'Failed to process refund');
   }
 
-  return data
+  return data;
 }
 
 export function RefundModal({
@@ -64,59 +66,59 @@ export function RefundModal({
   booking,
   onRefundComplete,
 }: RefundModalProps) {
-  const [refundType, setRefundType] = useState<RefundType>('full')
-  const [partialAmount, setPartialAmount] = useState('')
-  const [reason, setReason] = useState('')
-  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [refundType, setRefundType] = useState<RefundType>('full');
+  const [partialAmount, setPartialAmount] = useState('');
+  const [reason, setReason] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const currency = booking.currency || 'USD'
-  const maxRefundAmount = booking.totalPaid / 100 // Convert cents to dollars
+  const currency = booking.currency || 'USD';
+  const maxRefundAmount = booking.totalPaid / 100; // Convert cents to dollars
 
   // Calculate refund amount based on type
   const refundAmount =
-    refundType === 'full'
-      ? maxRefundAmount
-      : parseFloat(partialAmount) || 0
+    refundType === 'full' ? maxRefundAmount : parseFloat(partialAmount) || 0;
 
-  const refundAmountCents = Math.round(refundAmount * 100)
+  const refundAmountCents = Math.round(refundAmount * 100);
 
   // Validation
-  const isValidAmount = refundType === 'full' || (refundAmount > 0 && refundAmount <= maxRefundAmount)
-  const isValidReason = reason.trim().length >= 10
-  const canSubmit = isValidAmount && isValidReason
+  const isValidAmount =
+    refundType === 'full' ||
+    (refundAmount > 0 && refundAmount <= maxRefundAmount);
+  const isValidReason = reason.trim().length >= 10;
+  const canSubmit = isValidAmount && isValidReason;
 
   const mutation = useMutation({
     mutationFn: processRefund,
     onSuccess: (data) => {
       if (data.success) {
         toast.success(
-          `Refund of $${(data.refundedAmount! / 100).toFixed(2)} processed successfully`
-        )
-        onRefundComplete?.()
-        handleClose()
+          `Refund of $${(data.refundedAmount! / 100).toFixed(2)} processed successfully`,
+        );
+        onRefundComplete?.();
+        handleClose();
       } else {
-        toast.error(data.error || 'Refund failed')
+        toast.error(data.error || 'Refund failed');
       }
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to process refund')
+      toast.error(error.message || 'Failed to process refund');
     },
-  })
+  });
 
   const handleClose = () => {
-    setRefundType('full')
-    setPartialAmount('')
-    setReason('')
-    setShowConfirmation(false)
-    onClose()
-  }
+    setRefundType('full');
+    setPartialAmount('');
+    setReason('');
+    setShowConfirmation(false);
+    onClose();
+  };
 
   const handleSubmit = () => {
-    if (!canSubmit) return
+    if (!canSubmit) return;
 
     if (!showConfirmation) {
-      setShowConfirmation(true)
-      return
+      setShowConfirmation(true);
+      return;
     }
 
     // Process refund
@@ -124,8 +126,8 @@ export function RefundModal({
       bookingId: booking.id,
       amount: refundType === 'partial' ? refundAmountCents : undefined,
       reason: reason.trim(),
-    })
-  }
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -133,14 +135,17 @@ export function RefundModal({
         <DialogHeader>
           <DialogTitle>Process Refund</DialogTitle>
           <DialogDescription>
-            Booking Reference: <span className="font-mono font-medium">{booking.reference}</span>
+            Booking Reference:{' '}
+            <span className="font-mono font-medium">{booking.reference}</span>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Original Amount */}
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-            <span className="text-sm text-muted-foreground">Original Payment</span>
+            <span className="text-sm text-muted-foreground">
+              Original Payment
+            </span>
             <span className="font-semibold">
               ${maxRefundAmount.toFixed(2)} {currency}
             </span>
@@ -152,8 +157,8 @@ export function RefundModal({
             <RadioGroup
               value={refundType}
               onValueChange={(v) => {
-                setRefundType(v as RefundType)
-                setShowConfirmation(false)
+                setRefundType(v as RefundType);
+                setShowConfirmation(false);
               }}
               disabled={mutation.isPending}
             >
@@ -186,8 +191,8 @@ export function RefundModal({
                   max={maxRefundAmount}
                   value={partialAmount}
                   onChange={(e) => {
-                    setPartialAmount(e.target.value)
-                    setShowConfirmation(false)
+                    setPartialAmount(e.target.value);
+                    setShowConfirmation(false);
                   }}
                   placeholder={`Max: ${maxRefundAmount.toFixed(2)}`}
                   className="pl-10"
@@ -209,8 +214,8 @@ export function RefundModal({
               id="reason"
               value={reason}
               onChange={(e) => {
-                setReason(e.target.value)
-                setShowConfirmation(false)
+                setReason(e.target.value);
+                setShowConfirmation(false);
               }}
               placeholder="Enter the reason for this refund (minimum 10 characters)..."
               rows={3}
@@ -283,5 +288,5 @@ export function RefundModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -13,6 +13,7 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 📋 Scrum Master Validation Checklist
 
 ### Pre-Validation Setup
+
 - [ ] Ensure all story files exist in `_bmad-output/stories/`
 - [ ] Confirm latest build status: `npm run build`
 - [ ] Verify type-check status: `npm run type-check`
@@ -20,6 +21,7 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] Access sprint status: `_bmad-output/sprint-status.yaml`
 
 ### Post-Validation Actions
+
 - [ ] Update story status in sprint-status.yaml
 - [ ] Document identified gaps in defect backlog
 - [ ] Create remediation stories for critical gaps
@@ -33,24 +35,28 @@ This document provides a systematic approach to validate all stories in sequenti
 ### Validation Levels
 
 **Level 1: Story Completeness**
+
 - Story file exists and follows template
 - All tasks have checkboxes
 - Acceptance criteria defined
 - Dev Agent Record present
 
 **Level 2: Implementation Verification**
+
 - Files mentioned in story actually exist
 - Code compiles without errors
 - Functions/components work as described
 - Tests pass (if applicable)
 
 **Level 3: Functional Validation**
+
 - Features work end-to-end
 - Error handling implemented
 - Edge cases covered
 - Performance acceptable
 
 **Level 4: Production Readiness**
+
 - Security considerations addressed
 - Audit trail implemented (where required)
 - Documentation complete
@@ -61,10 +67,12 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 📊 Epic 25: Real-Time Inventory & Availability
 
 ### Story 25-1: Implement Supabase Realtime Subscriptions
+
 **Status**: needs-validation  
 **Files to Check**: `src/lib/realtimeService.ts`, `src/hooks/useRealtime.ts`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete with all tasks checked
 - [ ] **L1**: Dev Agent Record filled out
 - [ ] **L2**: RealtimeService class exists and compiles
@@ -76,15 +84,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Memory leak prevention
 
 **Identified Gaps**:
+
 - ⚠️ **DEF-004**: Test file has type errors (FIXED in 25-6)
 
 ---
 
 ### Story 25-2: Create Real-Time Service Module
+
 **Status**: needs-validation  
 **Files to Check**: `src/lib/realtimeService.ts`, tests
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Service module exports all required functions
 - [ ] **L2**: TypeScript types properly defined
@@ -95,15 +106,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Graceful degradation when realtime unavailable
 
 **Identified Gaps**:
+
 - ✅ **DEF-004**: Test type errors (FIXED)
 
 ---
 
 ### Story 25-3: Implement Atomic Inventory Decrement
+
 **Status**: needs-validation  
 **Files to Check**: `src/lib/slotService.ts`, database migration
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: `decrementSlotInventory()` function exists
 - [ ] **L2**: Database RPC function `decrement_slot_inventory` exists
@@ -114,15 +128,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Performance under concurrent load
 
 **Identified Gaps**:
+
 - ✅ **DEF-003**: RPC function missing (FIXED in 25-6)
 
 ---
 
 ### Story 25-4: Add Instant Confirmation Filter
+
 **Status**: needs-validation  
 **Files to Check**: `src/components/BookingFlow.tsx`, filter logic
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Instant confirmation filter UI exists
 - [ ] **L2**: Filter logic correctly implemented
@@ -132,15 +149,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Analytics tracking for filter usage
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Filter implementation depth
 
 ---
 
 ### Story 25-5: Display Real-Time Slot Availability
+
 **Status**: needs-validation  
 **Files to Check**: `src/components/RealtimeSlotDisplay.tsx`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Component compiles without errors
 - [ ] **L2**: Real-time updates subscription working
@@ -151,11 +171,13 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Visual feedback for availability changes
 
 **Identified Gaps**:
+
 - ✅ **DEF-002**: Component destructuring error (FIXED in 25-6)
 
 ---
 
 ### Story 25-6: Fix Phase 2a Type Errors
+
 **Status**: completed ✅  
 **All P0 defects resolved, build passes**
 
@@ -164,10 +186,12 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 📊 Epic 26: Offline PWA (needs-rework)
 
 ### Story 26-1: Implement Service Worker for Ticket Caching
+
 **Status**: needs-validation  
 **Files to Check**: `public/sw.js`, registration code
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Service worker file exists and registers
 - [ ] **L2**: Cache strategies properly configured
@@ -178,15 +202,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Security considerations for cached data
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Actual offline functionality
 
 ---
 
 ### Story 26-2: Build Offline Ticket Display
+
 **Status**: needs-validation  
 **Files to Check**: `src/components/OfflineTicketDisplay.tsx`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Component exists and renders offline
 - [ ] **L2**: Cached ticket data properly displayed
@@ -196,15 +223,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Offline UI/UX meets accessibility standards
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Offline display functionality
 
 ---
 
 ### Story 26-3: Show Last Updated Timestamp
+
 **Status**: needs-validation  
 **Files to Check**: Timestamp display components
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Timestamp display implemented
 - [ ] **L3**: Timestamp updates when data refreshes
@@ -212,15 +242,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Localization support
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Implementation depth
 
 ---
 
 ### Story 26-4: Implement Network Restoration Sync
+
 **Status**: needs-validation  
 **Files to Check**: Network sync logic
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Network detection implemented
 - [ ] **L2**: Sync queue exists
@@ -229,15 +262,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: User feedback during sync process
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Sync implementation
 
 ---
 
 ### Story 26-5: PWA Installation and Offline Indicator
+
 **Status**: needs-validation  
 **Files to Check**: PWA manifest, install prompts
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Install prompts trigger correctly
 - [ ] **L2**: Offline indicator shows connection status
@@ -246,6 +282,7 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: App store requirements met
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: PWA functionality
 
 ---
@@ -253,10 +290,12 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 📊 Epic 27: Vendor Check-In & Operations
 
 ### Story 27-1: Build QR Code Scanner Interface
+
 **Status**: needs-validation  
 **Files to Check**: `src/components/vendor/QRScanner.tsx`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: QR scanner component exists
 - [ ] **L2**: Camera permission handling
@@ -266,15 +305,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Security for camera access
 
 **Identified Gaps**:
+
 - ✅ **DEF-006**: QR decoding was stub (FIXED in 27-6)
 
 ---
 
 ### Story 27-2: Implement Ticket Validation Logic
+
 **Status**: needs-validation  
 **Files to Check**: Validation RPC, validation service
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: `validate_booking_for_checkin` RPC exists
 - [ ] **L2**: Validation service calls RPC
@@ -283,15 +325,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Audit trail for validation attempts
 
 **Identified Gaps**:
+
 - ✅ **DEF-008**: RPC function missing (FIXED in 27-6)
 
 ---
 
 ### Story 27-3: Record Check-In Status
+
 **Status**: needs-validation  
 **Files to Check**: Check-in persistence logic
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Check-in persistence implemented
 - [ ] **L2**: Database updates work
@@ -301,16 +346,19 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Performance under load
 
 **Identified Gaps**:
+
 - ✅ **DEF-010**: Check-in persistence missing (FIXED in 27-6)
 - ⚠️ **DEF-009**: Offline queue still optional
 
 ---
 
 ### Story 27-4: View Today's Bookings Dashboard
+
 **Status**: needs-validation  
 **Files to Check**: `src/components/vendor/VendorOperationsPage.tsx`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Dashboard displays real data
 - [ ] **L2**: Experience filtering works
@@ -319,15 +367,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Responsive design for mobile
 
 **Identified Gaps**:
+
 - ✅ **DEF-007**: Mock data usage (FIXED in 27-6)
 
 ---
 
 ### Story 27-5: Create Vendor Payout Status Edge Function
+
 **Status**: needs-validation  
 **Files to Check**: `supabase/functions/vendor-payout-status/`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Edge function exists and deploys
 - [ ] **L3**: Payout calculations correct
@@ -335,11 +386,13 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Security for financial data
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Payout calculation implementation
 
 ---
 
 ### Story 27-6: Implement Vendor Critical Features
+
 **Status**: completed ✅  
 **All P1 vendor defects resolved**
 
@@ -348,10 +401,12 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 📊 Epic 28: Admin Refunds & Audit Trail
 
 ### Story 28-1: Build Booking Search Interface
+
 **Status**: needs-validation  
 **Files to Check**: Admin search components
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Search interface exists
 - [ ] **L3**: Search performance acceptable
@@ -359,15 +414,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Admin access control
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Search implementation
 
 ---
 
 ### Story 28-2: Create Refund Processing Interface
+
 **Status**: needs-validation  
 **Files to Check**: Refund UI components
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Refund interface exists
 - [ ] **L3**: Calls edge function correctly
@@ -375,15 +433,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Admin authorization
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Interface implementation
 
 ---
 
 ### Story 28-3: Implement Refund Edge Function
+
 **Status**: needs-validation  
 **Files to Check**: `supabase/functions/process-refund/`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Edge function exists
 - [ ] **L3**: Stripe integration functional
@@ -391,15 +452,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Idempotency and error handling
 
 **Identified Gaps**:
+
 - ✅ **DEF-005**: Stub implementation (FIXED in 28-7)
 
 ---
 
 ### Story 28-4: Display Immutable Audit Log
+
 **Status**: needs-validation  
 **Files to Check**: Audit log display components
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Audit log display exists
 - [ ] **L3**: Immutability enforced
@@ -407,15 +471,18 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Access control and security
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Display implementation
 
 ---
 
 ### Story 28-5: Create Audit Service Module
+
 **Status**: needs-validation  
 **Files to Check**: `src/lib/auditService.ts`
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Service module compiles
 - [ ] **L3**: All audit functions work
@@ -423,26 +490,31 @@ This document provides a systematic approach to validate all stories in sequenti
 - [ ] **L4**: Security and PII redaction
 
 **Identified Gaps**:
+
 - ✅ **DEF-001**: Type errors (FIXED in 25-6)
 
 ---
 
 ### Story 28-6: Enforce Audit Log Retention Policy
+
 **Status**: needs-validation  
 **Files to Check**: Retention policy implementation
 
 **Validation Checklist**:
+
 - [ ] **L1**: Story file complete
 - [ ] **L2**: Retention policy defined
 - [ ] **L3**: Automated cleanup works
 - [ ] **L4**: Compliance requirements met
 
 **Identified Gaps**:
+
 - 🔍 **NEEDS VERIFICATION**: Retention implementation
 
 ---
 
 ### Story 28-7: Implement Refund Processing
+
 **Status**: completed ✅  
 **Refund processing fully functional**
 
@@ -451,6 +523,7 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 🎯 Validation Execution Plan
 
 ### Phase 1: Critical Path Validation (Day 1)
+
 **Priority**: Stories with known gaps or high-risk areas
 
 1. **Epic 25 Stories** (Real-time functionality)
@@ -458,12 +531,13 @@ This document provides a systematic approach to validate all stories in sequenti
    - Test atomic inventory under load
    - Verify instant confirmation filters
 
-2. **Epic 26 Stories** (PWA functionality)  
+2. **Epic 26 Stories** (PWA functionality)
    - Test offline ticket access
    - Verify service worker caching
    - Validate PWA installation
 
 ### Phase 2: Feature Completeness (Day 2)
+
 **Priority**: Vendor and admin functionality
 
 3. **Epic 27 Stories** (Vendor operations)
@@ -477,6 +551,7 @@ This document provides a systematic approach to validate all stories in sequenti
    - Verify retention policies
 
 ### Phase 3: Production Readiness (Day 3)
+
 **Priority**: Security, performance, compliance
 
 5. **Cross-Epic Validation**
@@ -490,14 +565,17 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 📈 Gap Remediation Tracking
 
 ### Critical Gaps (Create Stories)
+
 - [ ] **Epic 26**: PWA functionality verification
 - [ ] **Epic 28**: Admin interface implementation depth
 
 ### Medium Priority Gaps
+
 - [ ] **Epic 27**: Offline queue implementation
 - [ ] **Epic 25**: Performance optimization
 
 ### Documentation Gaps
+
 - [ ] Complete all Dev Agent Records
 - [ ] Update task checkboxes in stories
 - [ ] Create deployment runbooks
@@ -507,13 +585,15 @@ This document provides a systematic approach to validate all stories in sequenti
 ## 🚀 Success Criteria
 
 **Validation Complete When**:
+
 - ✅ All stories pass Level 1-2 validation
-- ✅ Critical functionality passes Level 3 validation  
+- ✅ Critical functionality passes Level 3 validation
 - ✅ Production blockers identified and tracked
 - ✅ Remediation timeline established
 - ✅ SM checklist 100% complete
 
 **Ready for Production When**:
+
 - ✅ All P0/P1 gaps remediated
 - ✅ All stories pass Level 4 validation
 - ✅ Performance benchmarks met
@@ -522,4 +602,4 @@ This document provides a systematic approach to validate all stories in sequenti
 
 ---
 
-*End of Story Validation Framework*
+_End of Story Validation Framework_

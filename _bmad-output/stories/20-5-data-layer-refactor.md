@@ -23,14 +23,17 @@ so that **experiences include all related data (images, inclusions, reviews) in 
 ### dataService.ts Changes
 
 1. **Auto-detection of mock mode**:
+
 ```typescript
-import { supabase, isSupabaseConfigured } from './supabase'
+import { supabase, isSupabaseConfigured } from './supabase';
 
 // Use mock data if Supabase not configured or explicitly enabled
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupabaseConfigured()
+const USE_MOCK_DATA =
+  import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupabaseConfigured();
 ```
 
 2. **Common select query with all joins**:
+
 ```typescript
 const EXPERIENCE_SELECT = `
     *,
@@ -38,7 +41,7 @@ const EXPERIENCE_SELECT = `
     experience_images (id, image_url, display_order),
     experience_inclusions (id, item_text, inclusion_type, display_order),
     reviews (id, author_name, country, rating, text, helpful_count, created_at)
-`
+`;
 ```
 
 3. **Enhanced `toExperience()` mapper**:
@@ -54,8 +57,10 @@ const EXPERIENCE_SELECT = `
 ### vendorService.ts Changes
 
 1. **Same mock detection pattern**:
+
 ```typescript
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupabaseConfigured()
+const USE_MOCK_DATA =
+  import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupabaseConfigured();
 ```
 
 2. **`getVendorByUserId()` now maps all columns**:
@@ -70,18 +75,18 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || !isSupaba
 
 ## Files Modified
 
-| File | Changes |
-|------|---------|
-| `src/lib/dataService.ts` | Added `isSupabaseConfigured()` import, EXPERIENCE_SELECT constant, enhanced `toExperience()`, new search methods |
-| `src/lib/vendorService.ts` | Updated imports, mock detection, full column mapping, join queries |
+| File                       | Changes                                                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `src/lib/dataService.ts`   | Added `isSupabaseConfigured()` import, EXPERIENCE_SELECT constant, enhanced `toExperience()`, new search methods |
+| `src/lib/vendorService.ts` | Updated imports, mock detection, full column mapping, join queries                                               |
 
 ## Environment Variables
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `VITE_USE_MOCK_DATA` | Force mock data mode | `false` (uses Supabase if configured) |
-| `VITE_SUPABASE_URL` | Supabase project URL | Required for real mode |
-| `VITE_SUPABASE_ANON_KEY` | Supabase anon key | Required for real mode |
+| Variable                 | Purpose              | Default                               |
+| ------------------------ | -------------------- | ------------------------------------- |
+| `VITE_USE_MOCK_DATA`     | Force mock data mode | `false` (uses Supabase if configured) |
+| `VITE_SUPABASE_URL`      | Supabase project URL | Required for real mode                |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon key    | Required for real mode                |
 
 ## Dev Agent Record
 
@@ -132,11 +137,12 @@ User Request → Service Layer → USE_MOCK_DATA check
 ### Migration Compatibility
 
 Data layer now fully supports schema from migration `20260108000005_complete_schema.sql`:
+
 - Expanded vendor columns ✅
 - experience_images table ✅
 - experience_inclusions table ✅
 - reviews table ✅
-- All new experience columns (duration_hours, start_time, meeting_point_*, tags, etc.) ✅
+- All new experience columns (duration*hours, start_time, meeting_point*\*, tags, etc.) ✅
 
 ## Senior Developer Review (AI)
 
@@ -146,14 +152,14 @@ Data layer now fully supports schema from migration `20260108000005_complete_sch
 
 ### Issues Found & Fixed
 
-| # | Severity | Issue | Resolution |
-|---|----------|-------|------------|
-| 1 | MEDIUM | Code duplication - toExperience() logic duplicated in vendorService | Fixed: Exported toExperience and EXPERIENCE_SELECT from dataService, refactored vendorService to use shared functions |
-| 2 | MEDIUM | searchExperiences vulnerable to SQL injection via query param | Fixed: Added sanitization to escape special characters (%, _, \) |
-| 3 | MEDIUM | Mock searchExperiences can fail on undefined description | Fixed: Added optional chaining (e.title?.toLowerCase()) |
-| 4 | LOW | VendorRow type imported but unused | Fixed: Removed unused import |
-| 5 | LOW | Console.error statements not wrapped in DEV check | Fixed: Added import.meta.env.DEV guards to all error logs |
-| 6 | LOW | Inconsistent error handling | Noted for future improvement - not blocking |
+| #   | Severity | Issue                                                               | Resolution                                                                                                            |
+| --- | -------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 1   | MEDIUM   | Code duplication - toExperience() logic duplicated in vendorService | Fixed: Exported toExperience and EXPERIENCE_SELECT from dataService, refactored vendorService to use shared functions |
+| 2   | MEDIUM   | searchExperiences vulnerable to SQL injection via query param       | Fixed: Added sanitization to escape special characters (%, \_, \)                                                     |
+| 3   | MEDIUM   | Mock searchExperiences can fail on undefined description            | Fixed: Added optional chaining (e.title?.toLowerCase())                                                               |
+| 4   | LOW      | VendorRow type imported but unused                                  | Fixed: Removed unused import                                                                                          |
+| 5   | LOW      | Console.error statements not wrapped in DEV check                   | Fixed: Added import.meta.env.DEV guards to all error logs                                                             |
+| 6   | LOW      | Inconsistent error handling                                         | Noted for future improvement - not blocking                                                                           |
 
 ### Files Modified by Review
 

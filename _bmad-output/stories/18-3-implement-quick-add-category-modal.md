@@ -9,11 +9,12 @@ So that I can add experiences without extra navigation.
 **Given** I tap the Quick Add tab (center plus icon)
 **When** the modal opens
 **Then** bottom sheet slides up with category grid:
-  - 6 category cards (same as home screen)
-  - "Quick Add to Trip" header
-  - Drag handle at top
-  - Tap outside or swipe down to dismiss
-**When** I tap a category
-**Then** modal dismisses
-**And** I navigate to that category's browse screen
-**And** browse screen has "Back to Trip" in header (returns to trip builder)
+
+- 6 category cards (same as home screen)
+- "Quick Add to Trip" header
+- Drag handle at top
+- Tap outside or swipe down to dismiss
+  **When** I tap a category
+  **Then** modal dismisses
+  **And** I navigate to that category's browse screen
+  **And** browse screen has "Back to Trip" in header (returns to trip builder)

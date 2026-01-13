@@ -1,6 +1,6 @@
-import i18n from 'i18next'
-import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
 // English translations (default)
 const en = {
@@ -87,7 +87,8 @@ const en = {
     preferredCurrency: 'Preferred Currency',
     preferredLanguage: 'Preferred Language',
     priceDisplayNote: 'Prices will be displayed in your selected currency',
-    languageDisplayNote: 'The app interface will be displayed in your selected language',
+    languageDisplayNote:
+      'The app interface will be displayed in your selected language',
     currencyUpdated: 'Currency updated',
     languageUpdated: 'Language updated',
   },
@@ -159,7 +160,8 @@ const en = {
     addTraveler: 'Add Traveler',
     travelerInfo: 'This person will receive all booking confirmations',
     specialRequests: 'Special Requests',
-    specialRequestsPlaceholder: 'Let us know about any allergies, dietary restrictions, accessibility needs...',
+    specialRequestsPlaceholder:
+      'Let us know about any allergies, dietary restrictions, accessibility needs...',
     subtotal: 'Subtotal ({{count}} experiences)',
     serviceFee: 'Service fee',
     total: 'Total',
@@ -238,7 +240,7 @@ const en = {
     updateAvailability: 'Update Availability',
     availabilityUpdated: 'Availability updated',
   },
-}
+};
 
 // Chinese translations
 const zh = {
@@ -476,7 +478,7 @@ const zh = {
     updateAvailability: '更新可用性',
     availabilityUpdated: '可用性已更新',
   },
-}
+};
 
 // Arabic translations
 const ar = {
@@ -635,7 +637,8 @@ const ar = {
     addTraveler: 'إضافة مسافر',
     travelerInfo: 'سيتلقى هذا الشخص جميع تأكيدات الحجز',
     specialRequests: 'طلبات خاصة',
-    specialRequestsPlaceholder: 'أخبرنا عن أي حساسيات أو قيود غذائية أو احتياجات خاصة...',
+    specialRequestsPlaceholder:
+      'أخبرنا عن أي حساسيات أو قيود غذائية أو احتياجات خاصة...',
     subtotal: 'المجموع الفرعي ({{count}} تجربة)',
     serviceFee: 'رسوم الخدمة',
     total: 'الإجمالي',
@@ -714,7 +717,7 @@ const ar = {
     updateAvailability: 'تحديث التوفر',
     availabilityUpdated: 'تم تحديث التوفر',
   },
-}
+};
 
 // French translations
 const fr = {
@@ -801,7 +804,8 @@ const fr = {
     preferredCurrency: 'Devise préférée',
     preferredLanguage: 'Langue préférée',
     priceDisplayNote: 'Les prix seront affichés dans la devise sélectionnée',
-    languageDisplayNote: "L'interface sera affichée dans la langue sélectionnée",
+    languageDisplayNote:
+      "L'interface sera affichée dans la langue sélectionnée",
     currencyUpdated: 'Devise mise à jour',
     languageUpdated: 'Langue mise à jour',
   },
@@ -816,7 +820,7 @@ const fr = {
     reviews: '{{count}} avis',
     rating: 'Note de {{rating}}',
     whatsIncluded: 'Ce qui est inclus',
-    whatsNotIncluded: 'Ce qui n\'est pas inclus',
+    whatsNotIncluded: "Ce qui n'est pas inclus",
     meetingPoint: 'Point de rencontre',
     cancellationPolicy: "Politique d'annulation",
     aboutOperator: "À propos de l'opérateur",
@@ -852,7 +856,8 @@ const fr = {
     calendarView: 'Vue calendrier',
     listView: 'Vue liste',
     noActivitiesPlanned: 'Aucune activité planifiée pour ce jour',
-    setTripDates: 'Veuillez définir les dates du voyage pour voir le calendrier',
+    setTripDates:
+      'Veuillez définir les dates du voyage pour voir le calendrier',
     conflictDetected: 'Conflit de planification détecté',
     conflictCount: 'Vous avez {{count}} activités qui se chevauchent',
     noConflicts: 'Aucun conflit de planification - tout est prêt !',
@@ -871,9 +876,11 @@ const fr = {
     leadTraveler: 'Voyageur principal',
     additionalTravelers: 'Voyageurs supplémentaires',
     addTraveler: 'Ajouter un voyageur',
-    travelerInfo: 'Cette personne recevra toutes les confirmations de réservation',
+    travelerInfo:
+      'Cette personne recevra toutes les confirmations de réservation',
     specialRequests: 'Demandes spéciales',
-    specialRequestsPlaceholder: 'Informez-nous de toute allergie, restriction alimentaire, besoin d\'accessibilité...',
+    specialRequestsPlaceholder:
+      "Informez-nous de toute allergie, restriction alimentaire, besoin d'accessibilité...",
     subtotal: 'Sous-total ({{count}} expériences)',
     serviceFee: 'Frais de service',
     total: 'Total',
@@ -901,12 +908,14 @@ const fr = {
   wishlist: {
     title: 'Expériences sauvegardées',
     empty: 'Votre liste de favoris est vide',
-    emptyDescription: 'Sauvegardez les expériences que vous aimez en appuyant sur l\'icône cœur',
+    emptyDescription:
+      "Sauvegardez les expériences que vous aimez en appuyant sur l'icône cœur",
     quickAddToTrip: 'Ajout rapide au voyage',
   },
   onboarding: {
     welcome: 'Bienvenue sur Pulau !',
-    welcomeMessage: 'Découvrez des expériences incroyables dans de belles destinations',
+    welcomeMessage:
+      'Découvrez des expériences incroyables dans de belles destinations',
     getStarted: 'Commencer',
     travelPreferences: 'Préférences de voyage',
     selectStyles: 'Sélectionnez vos styles de voyage',
@@ -952,14 +961,14 @@ const fr = {
     updateAvailability: 'Mettre à jour la disponibilité',
     availabilityUpdated: 'Disponibilité mise à jour',
   },
-}
+};
 
 // RTL languages
-export const rtlLanguages = ['ar']
+export const rtlLanguages = ['ar'];
 
 // Check if current language is RTL
 export function isRtl(language: string): boolean {
-  return rtlLanguages.includes(language)
+  return rtlLanguages.includes(language);
 }
 
 // Initialize i18n
@@ -983,6 +992,6 @@ i18n
       lookupLocalStorage: 'pulau-language',
       caches: ['localStorage'],
     },
-  })
+  });
 
-export default i18n
+export default i18n;

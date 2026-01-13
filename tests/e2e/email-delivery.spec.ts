@@ -1,6 +1,6 @@
 /**
  * E2E Tests for Email Delivery System
- * 
+ *
  * Tests the complete email delivery flow from booking confirmation
  * to email receipt, content validation, and link functionality.
  */
@@ -14,7 +14,7 @@ import {
   getBookingReference,
   validateEmailContent,
   hasTicketAttachment,
-  findEmailLink
+  findEmailLink,
 } from '../support/email-helpers';
 
 const mailosaur = createMailosaurClient();
@@ -24,14 +24,18 @@ const senderEmail = process.env.EMAIL_SENDER || 'noreply@pulau.app';
 test.describe('Email Delivery E2E', () => {
   test.setTimeout(90000); // 90 seconds for email delivery
 
-  test('sends booking confirmation email after successful payment', async ({ page }) => {
+  test('sends booking confirmation email after successful payment', async ({
+    page,
+  }) => {
     const testEmail = generateTestEmail('delivery');
 
     // Complete booking flow using helper
     await completeBookingFlow(page, testEmail);
 
     // Wait for success page
-    await expect(page.locator('text=Booking Confirmed')).toBeVisible({ timeout: 30000 });
+    await expect(page.locator('text=Booking Confirmed')).toBeVisible({
+      timeout: 30000,
+    });
 
     // Extract booking reference
     const bookingRef = await getBookingReference(page);
@@ -47,7 +51,11 @@ test.describe('Email Delivery E2E', () => {
     expect(email.subject).toContain('Booking Confirmation');
 
     // Validate email content using helper
-    validateEmailContent(email, ['Thank you for booking', bookingRef, 'Test User']);
+    validateEmailContent(email, [
+      'Thank you for booking',
+      bookingRef,
+      'Test User',
+    ]);
 
     // Validate PDF attachment
     expect(hasTicketAttachment(email)).toBeTruthy();
@@ -58,7 +66,9 @@ test.describe('Email Delivery E2E', () => {
 
     if (viewBookingLink) {
       await page.goto(viewBookingLink.href);
-      await expect(page.locator('text=Booking Details')).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('text=Booking Details')).toBeVisible({
+        timeout: 15000,
+      });
     }
   });
 
@@ -107,14 +117,18 @@ test.describe('Email Delivery E2E', () => {
     await page.click('button:has-text("Complete Booking")');
 
     // Should see error
-    await expect(page.locator('text=/payment.*failed|declined/i')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('text=/payment.*failed|declined/i')).toBeVisible({
+      timeout: 15000,
+    });
 
     // Wait to ensure no email is processed
     await page.waitForTimeout(10000);
 
     const messages = await mailosaur.messages.list(serverId);
     expect(messages.items).toBeDefined();
-    const found = messages.items!.find(m => m.to?.some(t => t.email === testEmail));
+    const found = messages.items!.find((m) =>
+      m.to?.some((t) => t.email === testEmail),
+    );
     expect(found).toBeUndefined();
   });
 });
@@ -155,4 +169,3 @@ test.describe('Edge Case Validations', () => {
     }
   });
 });
-

@@ -1,7 +1,7 @@
 /**
  * Preference Service
  * Epic 4: Onboarding & Personalization
- * 
+ *
  * Handles user preferences from onboarding flow
  */
 
@@ -9,8 +9,10 @@ import { supabase } from './supabase';
 import { Database } from './database.types';
 
 type UserPreferences = Database['public']['Tables']['user_preferences']['Row'];
-type UserPreferencesInsert = Database['public']['Tables']['user_preferences']['Insert'];
-type UserPreferencesUpdate = Database['public']['Tables']['user_preferences']['Update'];
+type UserPreferencesInsert =
+  Database['public']['Tables']['user_preferences']['Insert'];
+type UserPreferencesUpdate =
+  Database['public']['Tables']['user_preferences']['Update'];
 
 export interface PreferenceData {
   travelStyle: string[];
@@ -52,7 +54,7 @@ class PreferenceService {
    */
   async upsertPreferences(
     userId: string,
-    preferences: PreferenceData
+    preferences: PreferenceData,
   ): Promise<UserPreferences> {
     try {
       const preferenceData: UserPreferencesInsert = {
@@ -87,7 +89,7 @@ class PreferenceService {
   async updateTripDates(
     userId: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<UserPreferences> {
     try {
       const updateData: UserPreferencesUpdate = {

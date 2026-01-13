@@ -1,4 +1,5 @@
 ### 29-5: Add Real-Time Revenue Notifications
+
 - Notify vendor when booking confirmed
 - Show daily/weekly revenue summaries
 - Push notification support (browser notifications)

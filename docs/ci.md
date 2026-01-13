@@ -7,12 +7,14 @@ The Pulau project uses GitHub Actions for continuous integration and testing. Th
 ## Pipeline Stages
 
 ### 1. Lint
+
 - **Purpose**: Code quality checks with ESLint
 - **Runs on**: Every push and PR
 - **Duration**: < 2 minutes
 - **Command**: `npm run lint`
 
 ### 2. Unit Tests
+
 - **Purpose**: Fast unit test execution with Vitest
 - **Runs on**: Every push and PR
 - **Duration**: < 5 minutes
@@ -20,6 +22,7 @@ The Pulau project uses GitHub Actions for continuous integration and testing. Th
 - **Artifacts**: Coverage reports (on failure)
 
 ### 3. E2E Tests (Parallel Sharding)
+
 - **Purpose**: End-to-end testing with Playwright
 - **Runs on**: Every push and PR
 - **Parallelism**: 4 shards for faster execution
@@ -28,6 +31,7 @@ The Pulau project uses GitHub Actions for continuous integration and testing. Th
 - **Artifacts**: Test results, traces, screenshots, videos (on failure)
 
 ### 4. Burn-In (Flaky Test Detection)
+
 - **Purpose**: Detect non-deterministic test failures
 - **Runs on**: Pull requests and weekly schedule (Sundays 2 AM UTC)
 - **Iterations**: 10 full test runs
@@ -44,6 +48,7 @@ The Pulau project uses GitHub Actions for continuous integration and testing. Th
 ```
 
 This mirrors the CI environment with:
+
 - Lint → Unit Tests → E2E Tests → Burn-In (3 iterations)
 
 ### Run Burn-In Loop
@@ -77,12 +82,14 @@ npm run test:e2e:ui
 ### 1. Check Artifacts
 
 When tests fail, CI uploads artifacts containing:
+
 - **Traces**: Full debugging context (Playwright Trace Viewer)
 - **Screenshots**: Visual evidence of failures
 - **Videos**: Interaction playback
 - **HTML Reports**: Detailed test results
 
 **To download:**
+
 1. Go to the failed workflow run on GitHub
 2. Scroll to "Artifacts" section
 3. Download the relevant artifact (e.g., `e2e-test-results-shard-1`)
@@ -106,19 +113,20 @@ npx playwright show-trace test-results/trace.zip
 
 ## Performance Targets
 
-| Stage | Target Duration |
-|-------|----------------|
-| Lint | < 2 minutes |
-| Unit Tests | < 5 minutes |
-| E2E Tests (per shard) | < 10 minutes |
-| Burn-In (10 iterations) | < 30 minutes |
-| **Total Pipeline** | **< 15 minutes** |
+| Stage                   | Target Duration  |
+| ----------------------- | ---------------- |
+| Lint                    | < 2 minutes      |
+| Unit Tests              | < 5 minutes      |
+| E2E Tests (per shard)   | < 10 minutes     |
+| Burn-In (10 iterations) | < 30 minutes     |
+| **Total Pipeline**      | **< 15 minutes** |
 
 **Speedup**: 4× faster through parallel sharding
 
 ## Caching Strategy
 
 The pipeline caches:
+
 - **npm dependencies**: `~/.npm` (keyed by `package-lock.json`)
 - **Playwright browsers**: `~/.cache/ms-playwright` (keyed by `package-lock.json`)
 

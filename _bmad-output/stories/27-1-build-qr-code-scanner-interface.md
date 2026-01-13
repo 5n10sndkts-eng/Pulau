@@ -11,10 +11,11 @@ So that I can validate their tickets at check-in.
 **Then** the device camera activates for QR scanning
 **And** I can scan any booking QR code
 **And** after successful scan, I see booking details:
-  - Traveler name
-  - Experience name
-  - Time slot
-  - Guest count
-  - Check-in status
+
+- Traveler name
+- Experience name
+- Time slot
+- Guest count
+- Check-in status
 
 ---

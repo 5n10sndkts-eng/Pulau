@@ -15,6 +15,7 @@ This guide covers configuring Sentry alert rules for the Pulau production enviro
 **Goal:** Be alerted to actionable issues without alert fatigue.
 
 **Principles:**
+
 1. **Critical alerts** → Immediate notification (PagerDuty/SMS)
 2. **Warning alerts** → Slack notification within 15 minutes
 3. **Info alerts** → Daily digest email
@@ -27,15 +28,18 @@ This guide covers configuring Sentry alert rules for the Pulau production enviro
 ### High Error Rate (Critical)
 
 **Trigger When:**
+
 - Error rate exceeds 1% of sessions
 - OR more than 100 errors in 5 minutes
 
 **Actions:**
+
 - Send to: PagerDuty (on-call engineer)
 - Slack: #pulau-alerts (critical)
 - Email: engineering@pulau.app
 
 **Configuration in Sentry:**
+
 ```
 Alert Name: High Error Rate - Immediate Action Required
 Metric: Error count
@@ -47,14 +51,17 @@ Environment: production
 ### New Error Introduced (Warning)
 
 **Trigger When:**
+
 - New error type not seen before appears
 - Affects > 10 users
 
 **Actions:**
+
 - Slack: #pulau-errors
 - Email: engineering@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: New Error Type Detected
 Metric: New issue
@@ -65,14 +72,17 @@ Environment: production
 ### Error Spike (Warning)
 
 **Trigger When:**
+
 - Error count increases by 100% compared to previous hour
 - Minimum 50 errors to avoid noise
 
 **Actions:**
+
 - Slack: #pulau-errors
 - Email: engineering@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: Error Spike Detected
 Metric: Error count
@@ -88,14 +98,17 @@ Environment: production
 ### Slow Page Load (Warning)
 
 **Trigger When:**
+
 - 75th percentile page load time > 3 seconds
 - For 10+ minutes
 
 **Actions:**
+
 - Slack: #pulau-performance
 - Email: engineering@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: Slow Page Load Times
 Metric: Page load (LCP)
@@ -106,14 +119,17 @@ Environment: production
 ### Slow API Response (Critical)
 
 **Trigger When:**
+
 - 95th percentile API response time > 5 seconds
 - Affects critical endpoints (checkout, bookings)
 
 **Actions:**
+
 - PagerDuty
 - Slack: #pulau-alerts (critical)
 
 **Configuration:**
+
 ```
 Alert Name: Critical API Slow Response
 Metric: Transaction duration
@@ -125,14 +141,17 @@ Environment: production
 ### High Checkout Drop-off (Critical)
 
 **Trigger When:**
+
 - Checkout completion rate drops below 70%
 - OR checkout errors spike
 
 **Actions:**
+
 - PagerDuty
 - Slack: #pulau-revenue (critical revenue impact)
 
 **Configuration:**
+
 ```
 Alert Name: Checkout Drop-off Alert
 Metric: Custom metric (checkout_completion_rate)
@@ -147,14 +166,17 @@ Environment: production
 ### High Bounce Rate (Warning)
 
 **Trigger When:**
+
 - Users encounter error within 10 seconds of landing
 - Affects > 5% of new sessions
 
 **Actions:**
+
 - Slack: #pulau-product
 - Email: product@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: High New User Error Rate
 Metric: Error count
@@ -166,15 +188,18 @@ Environment: production
 ### Failed Payment Processing (Critical)
 
 **Trigger When:**
+
 - Payment errors exceed 2% of attempts
 - Any Stripe integration errors
 
 **Actions:**
+
 - PagerDuty (immediate)
 - Slack: #pulau-revenue
 - Email: finance@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: Payment Processing Failure
 Metric: Error count
@@ -190,15 +215,18 @@ Environment: production
 ### Third-Party Service Outage
 
 **Trigger When:**
+
 - Supabase API errors spike
 - Stripe API errors spike
 - Resend email delivery failures spike
 
 **Actions:**
+
 - Slack: #pulau-infrastructure
 - Email: engineering@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: Third-Party Service Degradation
 Metric: Error count
@@ -210,14 +238,17 @@ Environment: production
 ### Browser Compatibility Issue
 
 **Trigger When:**
+
 - Specific browser/version has > 10x error rate vs others
 - Affects > 50 users
 
 **Actions:**
+
 - Slack: #pulau-engineering
 - Create GitHub issue automatically
 
 **Configuration:**
+
 ```
 Alert Name: Browser-Specific Error Spike
 Metric: Error count by browser
@@ -233,14 +264,17 @@ Environment: production
 ### Unusual Error Pattern (Warning)
 
 **Trigger When:**
+
 - 403/401 errors spike (potential security scan)
 - CORS errors spike (potential attack)
 
 **Actions:**
+
 - Slack: #pulau-security
 - Email: security@pulau.app
 
 **Configuration:**
+
 ```
 Alert Name: Potential Security Issue
 Metric: Error count
@@ -279,16 +313,16 @@ Environment: production
 
 ### Recommended Alert Categories
 
-| Alert Name | Type | Severity | Channel | Response Time |
-|------------|------|----------|---------|---------------|
-| High Error Rate | Error | Critical | PagerDuty + Slack | < 5 min |
-| Payment Failure | Error | Critical | PagerDuty + Slack | < 5 min |
-| Slow Checkout | Performance | Critical | PagerDuty + Slack | < 15 min |
-| New Error Type | Error | Warning | Slack | < 1 hour |
-| Slow Page Load | Performance | Warning | Slack | < 2 hours |
-| API Degradation | Performance | Warning | Slack | < 1 hour |
-| Browser Issue | Error | Info | Slack | Next day |
-| Security Alert | Security | Warning | Slack + Email | < 30 min |
+| Alert Name      | Type        | Severity | Channel           | Response Time |
+| --------------- | ----------- | -------- | ----------------- | ------------- |
+| High Error Rate | Error       | Critical | PagerDuty + Slack | < 5 min       |
+| Payment Failure | Error       | Critical | PagerDuty + Slack | < 5 min       |
+| Slow Checkout   | Performance | Critical | PagerDuty + Slack | < 15 min      |
+| New Error Type  | Error       | Warning  | Slack             | < 1 hour      |
+| Slow Page Load  | Performance | Warning  | Slack             | < 2 hours     |
+| API Degradation | Performance | Warning  | Slack             | < 1 hour      |
+| Browser Issue   | Error       | Info     | Slack             | Next day      |
+| Security Alert  | Security    | Warning  | Slack + Email     | < 30 min      |
 
 ---
 
@@ -329,6 +363,7 @@ Environment: production
 ### Email Notifications
 
 Configure email lists:
+
 - `engineering@pulau.app` - All engineering alerts
 - `on-call@pulau.app` - Critical alerts only
 - `product@pulau.app` - User experience issues
@@ -441,6 +476,7 @@ curl -X POST https://pulau.app/api/test/trigger-error \
 ### Automated Alert Testing
 
 Create scheduled job to test alert pipeline:
+
 - Weekly test of critical alert path
 - Verify Slack, PagerDuty, Email delivery
 - Document test results
@@ -458,6 +494,7 @@ Create scheduled job to test alert pipeline:
 ### Monitoring Usage
 
 Check monthly usage:
+
 1. Sentry → Settings → Subscription
 2. Review current usage vs quota
 3. If > 80% → upgrade plan or reduce sampling
@@ -485,6 +522,7 @@ replaysSessionSampleRate: 0.05, // 5% (from 10%)
 ### PII Protection
 
 Configured in `sentry.ts`:
+
 - Email addresses scrubbed
 - User IDs anonymized
 - Passwords filtered

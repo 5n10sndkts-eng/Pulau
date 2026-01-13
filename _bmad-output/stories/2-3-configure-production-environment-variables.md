@@ -93,6 +93,7 @@ supabase secrets list
 ### 2. Configure Hosting Platform
 
 **Vercel:**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -111,6 +112,7 @@ vercel env pull .env.production.local
 ```
 
 **Netlify:**
+
 ```bash
 # Install Netlify CLI
 npm i -g netlify-cli
@@ -129,6 +131,7 @@ netlify env:set VITE_SUPABASE_URL "https://[PROJECT-REF].supabase.co"
 ### 3. Document Variables
 
 Create `.env.production.example`:
+
 ```bash
 # Copy template
 cp .env.example .env.production.example
@@ -147,18 +150,19 @@ const requiredEnvVars = [
   'VITE_SUPABASE_ANON_KEY',
   'VITE_STRIPE_PUBLISHABLE_KEY',
   'VITE_APP_URL',
-]
+];
 
-requiredEnvVars.forEach(varName => {
+requiredEnvVars.forEach((varName) => {
   if (!import.meta.env[varName]) {
-    throw new Error(`Missing required environment variable: ${varName}`)
+    throw new Error(`Missing required environment variable: ${varName}`);
   }
-})
+});
 
-console.log('✅ All environment variables configured')
+console.log('✅ All environment variables configured');
 ```
 
 Run validation:
+
 ```bash
 npm run validate:env
 ```
@@ -166,6 +170,7 @@ npm run validate:env
 ## Security Best Practices
 
 1. **Never commit secrets to git**
+
    ```bash
    # Ensure .env files gitignored
    echo ".env*" >> .gitignore
@@ -212,12 +217,12 @@ curl https://pulau.app/api/health/stripe
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Edge Function can't access secret | Re-deploy function after setting secret |
-| Frontend build fails | Check VITE_ prefix on all public variables |
-| Stripe webhook fails | Verify STRIPE_WEBHOOK_SECRET matches Stripe dashboard |
-| CORS errors | Verify APP_URL matches deployed URL exactly |
+| Issue                             | Solution                                              |
+| --------------------------------- | ----------------------------------------------------- |
+| Edge Function can't access secret | Re-deploy function after setting secret               |
+| Frontend build fails              | Check VITE\_ prefix on all public variables           |
+| Stripe webhook fails              | Verify STRIPE_WEBHOOK_SECRET matches Stripe dashboard |
+| CORS errors                       | Verify APP_URL matches deployed URL exactly           |
 
 ## Related Files
 
@@ -240,7 +245,7 @@ curl https://pulau.app/api/health/stripe
 ## Success Validation
 
 - [ ] `supabase secrets list` shows all 8+ secrets
-- [ ] Hosting platform shows all VITE_* variables
+- [ ] Hosting platform shows all VITE\_\* variables
 - [ ] Test Edge Function call succeeds
 - [ ] Test frontend build succeeds
 - [ ] No secrets in git history

@@ -11,22 +11,26 @@ So that I know what to do next.
 ## Acceptance Criteria
 
 ### AC1: Empty State Rendering
+
 **Given** a list/screen has no data
 **When** empty state renders
 **Then** appropriate illustration and messaging displays:
-  - Empty Trip: suitcase illustration, "Your trip canvas is empty", "Start Exploring" CTA
-  - No Search Results: magnifying glass, "No experiences match '[query]'", "Try different keywords" + "Clear Filters"
-  - Empty Wishlist: heart outline, "Your wishlist is empty", "Bobjectse Experiences" CTA
-  - No Bookings: calendar, "No upcoming trips", "Plan Your Adventure" CTA
-  - No Filter Results: filter icon, "No experiences match these filters", "Clear Filters" button
+
+- Empty Trip: suitcase illustration, "Your trip canvas is empty", "Start Exploring" CTA
+- No Search Results: magnifying glass, "No experiences match '[query]'", "Try different keywords" + "Clear Filters"
+- Empty Wishlist: heart outline, "Your wishlist is empty", "Bobjectse Experiences" CTA
+- No Bookings: calendar, "No upcoming trips", "Plan Your Adventure" CTA
+- No Filter Results: filter icon, "No experiences match these filters", "Clear Filters" button
 
 ### AC2: Call-to-Action Navigation
+
 **And** CTAs navigate to appropriate screens
 **And** illustrations are lightweight SVGs
 
 ## Tasks / Subtasks
 
 ### Task 1: Create Empty State Component System (AC: #1)
+
 - [x] Build reusable EmptyState component with props for icon, title, description, CTA
 - [x] Create EmptyStateIllustration component for SVG icons
 - [x] Design 5 empty state variants (trip, search, wishlist, bookings, filters)
@@ -34,6 +38,7 @@ So that I know what to do next.
 - [x] Ensure mobile-first responsive layout
 
 ### Task 2: Design Empty Trip State (AC: #1, #2)
+
 - [x] Add suitcase SVG illustration (lightweight, ~2KB)
 - [x] Set title: "Your trip canvas is empty"
 - [x] Add description: "Start adding experiences to build your perfect Bali adventure"
@@ -41,6 +46,7 @@ So that I know what to do next.
 - [x] Use teal primary button styling
 
 ### Task 3: Design No Search Results State (AC: #1, #2)
+
 - [x] Add magnifying glass SVG illustration
 - [x] Dynamic title: "No experiences match '[query]'"
 - [x] Add suggestions: "Try different keywords or broaden your search"
@@ -48,6 +54,7 @@ So that I know what to do next.
 - [x] Show "Bobjectse All Experiences" secondary CTA
 
 ### Task 4: Design Empty Wishlist State (AC: #1, #2)
+
 - [x] Add heart outline SVG illustration
 - [x] Set title: "Your wishlist is empty"
 - [x] Add description: "Save experiences you love to plan your trip later"
@@ -55,6 +62,7 @@ So that I know what to do next.
 - [x] Use secondary button styling
 
 ### Task 5: Design No Bookings State (AC: #1, #2)
+
 - [x] Add calendar SVG illustration
 - [x] Set title: "No upcoming trips"
 - [x] Add description: "Book your first experience and start your adventure"
@@ -62,6 +70,7 @@ So that I know what to do next.
 - [x] Show inspirational message
 
 ### Task 6: Design No Filter Results State (AC: #1, #2)
+
 - [x] Add filter/funnel SVG illustration
 - [x] Set title: "No experiences match these filters"
 - [x] Add description: "Try adjusting your filters or bobjectse all experiences"
@@ -69,6 +78,7 @@ So that I know what to do next.
 - [x] Show current filter count
 
 ### Task 7: Optimize Illustrations (AC: #2)
+
 - [x] Create lightweight SVG illustrations (<5KB each)
 - [x] Use simple line art with brand colors (teal, coral)
 - [x] Ensure illustrations scale well on all screen sizes
@@ -78,7 +88,9 @@ So that I know what to do next.
 ## Dev Notes
 
 ### Component Structure
+
 File: `src/components/ui/EmptyState.tsx`
+
 ```tsx
 interface EmptyStateProps {
   icon: React.ReactNode;
@@ -94,12 +106,16 @@ interface EmptyStateProps {
   };
 }
 
-const EmptyState = ({ icon, title, description, primaryAction, secondaryAction }: EmptyStateProps) => {
+const EmptyState = ({
+  icon,
+  title,
+  description,
+  primaryAction,
+  secondaryAction,
+}: EmptyStateProps) => {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-      <div className="w-32 h-32 mb-6 text-gray-300">
-        {icon}
-      </div>
+      <div className="w-32 h-32 mb-6 text-gray-300">{icon}</div>
       <h3 className="font-heading text-2xl font-semibold text-gray-900 mb-2">
         {title}
       </h3>
@@ -110,18 +126,12 @@ const EmptyState = ({ icon, title, description, primaryAction, secondaryAction }
       )}
       <div className="flex flex-col sm:flex-object gap-3">
         {primaryAction && (
-          <button
-            onClick={primaryAction.onClick}
-            className="btn-primary"
-          >
+          <button onClick={primaryAction.onClick} className="btn-primary">
             {primaryAction.label}
           </button>
         )}
         {secondaryAction && (
-          <button
-            onClick={secondaryAction.onClick}
-            className="btn-secondary"
-          >
+          <button onClick={secondaryAction.onClick} className="btn-secondary">
             {secondaryAction.label}
           </button>
         )}
@@ -134,52 +144,57 @@ const EmptyState = ({ icon, title, description, primaryAction, secondaryAction }
 ### Usage Examples
 
 **Empty Trip**:
+
 ```tsx
 <EmptyState
   icon={<SuitcaseIcon />}
   title="Your trip canvas is empty"
   description="Start adding experiences to build your perfect Bali adventure"
   primaryAction={{
-    label: "Start Exploring",
-    onClick: () => navigate({ type: 'explore' })
+    label: 'Start Exploring',
+    onClick: () => navigate({ type: 'explore' }),
   }}
 />
 ```
 
 **No Search Results**:
+
 ```tsx
 <EmptyState
   icon={<SearchIcon />}
   title={`No experiences match "${searchQuery}"`}
   description="Try different keywords or broaden your search"
   primaryAction={{
-    label: "Clear Filters",
-    onClick: () => clearFilters()
+    label: 'Clear Filters',
+    onClick: () => clearFilters(),
   }}
   secondaryAction={{
-    label: "Bobjectse All",
-    onClick: () => navigate({ type: 'explore' })
+    label: 'Bobjectse All',
+    onClick: () => navigate({ type: 'explore' }),
   }}
 />
 ```
 
 **Empty Wishlist**:
+
 ```tsx
 <EmptyState
   icon={<HeartIcon />}
   title="Your wishlist is empty"
   description="Save experiences you love to plan your trip later"
   primaryAction={{
-    label: "Bobjectse Experiences",
-    onClick: () => navigate({ type: 'explore' })
+    label: 'Bobjectse Experiences',
+    onClick: () => navigate({ type: 'explore' }),
   }}
 />
 ```
 
 ### SVG Illustrations
+
 Store in `src/assets/illustrations/`
 
 Example optimized SVG:
+
 ```svg
 <!-- suitcase-empty.svg -->
 <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -190,6 +205,7 @@ Example optimized SVG:
 ```
 
 ### Design Tokens
+
 - Icon size: 128px (w-32 h-32)
 - Icon color: text-gray-300 (light gray)
 - Title: font-heading text-2xl font-semibold text-gray-900
@@ -198,6 +214,7 @@ Example optimized SVG:
 - Vertical spacing: py-12 (48px top/bottom padding)
 
 ### Accessibility
+
 - Illustrations use `role="img"` and `aria-label` for screen readers
 - Focus management: Primary CTA gets auto-focus when empty state displays
 - Keyboard navigation: Tab through CTAs, Enter to activate
@@ -222,5 +239,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

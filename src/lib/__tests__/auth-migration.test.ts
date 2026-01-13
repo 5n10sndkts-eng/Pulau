@@ -28,7 +28,10 @@ describe('Supabase Auth Migration', () => {
     // Test that authService.login is called with correct parameters
     const result = await authService.login('test@example.com', 'password123');
 
-    expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
+    expect(authService.login).toHaveBeenCalledWith(
+      'test@example.com',
+      'password123',
+    );
     expect(result).toBeDefined();
     expect(result.email).toBe('test@example.com');
   });
@@ -42,9 +45,17 @@ describe('Supabase Auth Migration', () => {
       role: 'customer',
     } as any);
 
-    const result = await authService.register('Test User', 'new@example.com', 'securepass123');
+    const result = await authService.register(
+      'Test User',
+      'new@example.com',
+      'securepass123',
+    );
 
-    expect(authService.register).toHaveBeenCalledWith('Test User', 'new@example.com', 'securepass123');
+    expect(authService.register).toHaveBeenCalledWith(
+      'Test User',
+      'new@example.com',
+      'securepass123',
+    );
     expect(result).toBeDefined();
     expect(result.email).toBe('new@example.com');
   });
@@ -58,7 +69,9 @@ describe('Supabase Auth Migration', () => {
 
     await authService.resetPassword('forgot@example.com');
 
-    expect(authService.resetPassword).toHaveBeenCalledWith('forgot@example.com');
+    expect(authService.resetPassword).toHaveBeenCalledWith(
+      'forgot@example.com',
+    );
   });
 
   test('AC4: Auth state changes are handled properly', async () => {
@@ -122,28 +135,34 @@ describe('Supabase Auth Migration', () => {
 
   test('Login handles errors gracefully', async () => {
     // Mock failed login
-    vi.mocked(authService.login).mockRejectedValue(new Error('Invalid credentials'));
-
-    await expect(authService.login('wrong@example.com', 'wrongpass')).rejects.toThrow(
-      'Invalid credentials'
+    vi.mocked(authService.login).mockRejectedValue(
+      new Error('Invalid credentials'),
     );
+
+    await expect(
+      authService.login('wrong@example.com', 'wrongpass'),
+    ).rejects.toThrow('Invalid credentials');
   });
 
   test('Register handles validation errors', async () => {
     // Mock validation error
     vi.mocked(authService.register).mockRejectedValue(
-      new Error('Password must be at least 8 characters')
+      new Error('Password must be at least 8 characters'),
     );
 
-    await expect(authService.register('Test User', 'test@example.com', 'short')).rejects.toThrow(
-      'Password must be at least 8 characters'
-    );
+    await expect(
+      authService.register('Test User', 'test@example.com', 'short'),
+    ).rejects.toThrow('Password must be at least 8 characters');
   });
 
   test('Password reset handles invalid email', async () => {
     // Mock invalid email error
-    vi.mocked(authService.resetPassword).mockRejectedValue(new Error('Invalid email'));
+    vi.mocked(authService.resetPassword).mockRejectedValue(
+      new Error('Invalid email'),
+    );
 
-    await expect(authService.resetPassword('invalid-email')).rejects.toThrow('Invalid email');
+    await expect(authService.resetPassword('invalid-email')).rejects.toThrow(
+      'Invalid email',
+    );
   });
 });

@@ -11,11 +11,13 @@ So that I understand the service.
 ## Acceptance Criteria
 
 ### AC 1: About Screen Display
+
 **Given** I tap "About Pulau" from profile
 **When** the about screen loads
 **Then** I see: Pulau logo and tagline, app version number, brief company description, links: "Terms of Service", "Privacy Policy", "Licenses"
 
 ### AC 2: Terms and Privacy Navigation
+
 **Given** I tap Terms or Privacy
 **When** the respective page opens
 **Then** respective policy page opens (markdown rendered or webview)
@@ -25,6 +27,7 @@ So that I understand the service.
 ## Tasks / Subtasks
 
 ### Task 1: Create About Screen (AC: #1)
+
 - [x] Create screen in `app/profile/about.tsx`
 - [x] Display Pulau logo
 - [x] Show app version from package.json
@@ -32,6 +35,7 @@ So that I understand the service.
 - [x] Add links to Terms, Privacy, Licenses
 
 ### Task 2: Create Terms and Privacy Pages (AC: #2)
+
 - [x] Create terms.md and privacy.md in assets
 - [x] Use react-native-markdown-display for rendering
 - [x] Or use WebView for HTML content
@@ -39,6 +43,7 @@ So that I understand the service.
 - [x] Ensure proper scrolling and formatting
 
 ### Task 3: Add License Information
+
 - [x] Generate licenses file (expo-licenses or manually)
 - [x] Display open source licenses
 - [x] Link to respective repositories
@@ -46,12 +51,14 @@ So that I understand the service.
 ## Dev Notes
 
 ### Version Display
+
 ```typescript
 import { version } from '../../package.json';
 <Text>Version {version}</Text>
 ```
 
 ### Markdown Rendering
+
 ```typescript
 import Markdown from 'react-native-markdown-display';
 import termsContent from './assets/terms.md';
@@ -76,5 +83,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

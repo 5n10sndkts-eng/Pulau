@@ -11,10 +11,11 @@ So that travelers can see when my experience is available.
 **Then** I see a calendar view of the current month
 **And** I can click a date to add time slots
 **And** for each slot I can set:
-  - Start time
-  - Duration (auto-calculated end time)
-  - Capacity (number of guests)
-  - Price override (optional, defaults to experience base price)
-**And** I can create recurring slots (e.g., "Every Monday at 9 AM")
+
+- Start time
+- Duration (auto-calculated end time)
+- Capacity (number of guests)
+- Price override (optional, defaults to experience base price)
+  **And** I can create recurring slots (e.g., "Every Monday at 9 AM")
 
 ---

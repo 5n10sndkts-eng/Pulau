@@ -15,32 +15,32 @@
 #   - {file-path}: File created/found (e.g., "docs/product-brief.md")
 #   - skipped: Optional/conditional workflow that was skipped
 
-generated: "2026-01-05"
-project: "Pulau"
-project_type: "web-spa"
-selected_track: "method"
-field_type: "brownfield"
-workflow_path: "method-brownfield"
+generated: '2026-01-05'
+project: 'Pulau'
+project_type: 'web-spa'
+selected_track: 'method'
+field_type: 'brownfield'
+workflow_path: 'method-brownfield'
 
 # Workflow Status Tracking
 workflow_status:
   # Phase 0: Documentation (Conditional - if_undocumented)
-  document-project: skipped  # Skipped - project already has PRD and Architecture
-  
+  document-project: skipped # Skipped - project already has PRD and Architecture
+
   # Phase 1: Analysis (Optional)
-  brainstorm-project: skipped  # Optional - not selected during init
-  research: skipped  # Optional - not selected during init
-  product-brief: skipped  # Optional - not selected during init
-  
+  brainstorm-project: skipped # Optional - not selected during init
+  research: skipped # Optional - not selected during init
+  product-brief: skipped # Optional - not selected during init
+
   # Phase 2: Planning (Required)
-  prd: "_bmad-output/planning-artifacts/prd/pulau-prd.md"  # ✅ COMPLETED
-  create-ux-design: conditional  # Conditional - if_has_ui (to be determined)
-  
+  prd: '_bmad-output/planning-artifacts/prd/pulau-prd.md' # ✅ COMPLETED
+  create-ux-design: conditional # Conditional - if_has_ui (to be determined)
+
   # Phase 3: Solutioning (Required)
-  create-architecture: "_bmad-output/planning-artifacts/architecture/architecture.md"  # ✅ COMPLETED
-  create-epics-and-stories: "_bmad-output/planning-artifacts/epics.md"  # ✅ COMPLETED
-  test-design: optional  # Optional testability assessment
-  implementation-readiness: "_bmad-output/planning-artifacts/implementation-readiness-report-2026-01-05.md"  # ✅ COMPLETED
+  create-architecture: '_bmad-output/planning-artifacts/architecture/architecture.md' # ✅ COMPLETED
+  create-epics-and-stories: '_bmad-output/planning-artifacts/epics.md' # ✅ COMPLETED
+  test-design: optional # Optional testability assessment
+  implementation-readiness: '_bmad-output/planning-artifacts/implementation-readiness-report-2026-01-05.md' # ✅ COMPLETED
 
   # Phase 4: Implementation (Required)
-  sprint-planning: "_bmad-output/sprint-status.yaml"  # ✅ COMPLETED - Ready for development
+  sprint-planning: '_bmad-output/sprint-status.yaml' # ✅ COMPLETED - Ready for development

@@ -1,17 +1,23 @@
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Clock, Loader2 } from 'lucide-react'
-import { vendorService } from '@/lib/vendorService'
-import { toast } from 'sonner'
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Clock, Loader2 } from 'lucide-react';
+import { vendorService } from '@/lib/vendorService';
+import { toast } from 'sonner';
 
 interface CutoffTimePickerProps {
-  experienceId: string
-  cutoffHours: number
-  onUpdate?: (hours: number) => void
+  experienceId: string;
+  cutoffHours: number;
+  onUpdate?: (hours: number) => void;
 }
 
 const PRESET_OPTIONS = [
@@ -20,61 +26,61 @@ const PRESET_OPTIONS = [
   { value: 12, label: '12 hours' },
   { value: 24, label: '24 hours' },
   { value: 48, label: '48 hours' },
-]
+];
 
 export function CutoffTimePicker({
   experienceId,
   cutoffHours,
-  onUpdate
+  onUpdate,
 }: CutoffTimePickerProps) {
-  const [selectedHours, setSelectedHours] = useState(cutoffHours)
-  const [customHours, setCustomHours] = useState('')
-  const [isUpdating, setIsUpdating] = useState(false)
+  const [selectedHours, setSelectedHours] = useState(cutoffHours);
+  const [customHours, setCustomHours] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
   const [showCustom, setShowCustom] = useState(
-    !PRESET_OPTIONS.some(opt => opt.value === cutoffHours)
-  )
+    !PRESET_OPTIONS.some((opt) => opt.value === cutoffHours),
+  );
 
   const handlePresetSelect = async (hours: number) => {
-    setShowCustom(false)
-    setSelectedHours(hours)
-    await updateCutoff(hours)
-  }
+    setShowCustom(false);
+    setSelectedHours(hours);
+    await updateCutoff(hours);
+  };
 
   const handleCustomSubmit = async () => {
-    const hours = parseInt(customHours, 10)
+    const hours = parseInt(customHours, 10);
     if (isNaN(hours) || hours < 0 || hours > 168) {
-      toast.error('Please enter a valid number between 0 and 168 hours')
-      return
+      toast.error('Please enter a valid number between 0 and 168 hours');
+      return;
     }
-    setSelectedHours(hours)
-    await updateCutoff(hours)
-  }
+    setSelectedHours(hours);
+    await updateCutoff(hours);
+  };
 
   const updateCutoff = async (hours: number) => {
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
-      await vendorService.updateExperienceCutoffHours(experienceId, hours)
-      onUpdate?.(hours)
-      toast.success(`Booking cut-off set to ${hours} hours before start`)
+      await vendorService.updateExperienceCutoffHours(experienceId, hours);
+      onUpdate?.(hours);
+      toast.success(`Booking cut-off set to ${hours} hours before start`);
     } catch (error) {
-      console.error('Failed to update cutoff:', error)
-      toast.error('Failed to update cut-off time')
+      console.error('Failed to update cutoff:', error);
+      toast.error('Failed to update cut-off time');
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   const formatCutoffDescription = (hours: number): string => {
-    if (hours === 0) return 'Bookings accepted until start time'
-    if (hours === 1) return 'Booking closes 1 hour before start'
-    if (hours < 24) return `Booking closes ${hours} hours before start`
-    const days = Math.floor(hours / 24)
-    const remainingHours = hours % 24
+    if (hours === 0) return 'Bookings accepted until start time';
+    if (hours === 1) return 'Booking closes 1 hour before start';
+    if (hours < 24) return `Booking closes ${hours} hours before start`;
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
     if (remainingHours === 0) {
-      return `Booking closes ${days} day${days > 1 ? 's' : ''} before start`
+      return `Booking closes ${days} day${days > 1 ? 's' : ''} before start`;
     }
-    return `Booking closes ${days} day${days > 1 ? 's' : ''} ${remainingHours}h before start`
-  }
+    return `Booking closes ${days} day${days > 1 ? 's' : ''} ${remainingHours}h before start`;
+  };
 
   return (
     <Card>
@@ -92,7 +98,11 @@ export function CutoffTimePicker({
           {PRESET_OPTIONS.map((option) => (
             <Button
               key={option.value}
-              variant={selectedHours === option.value && !showCustom ? 'default' : 'outline'}
+              variant={
+                selectedHours === option.value && !showCustom
+                  ? 'default'
+                  : 'outline'
+              }
               size="sm"
               onClick={() => handlePresetSelect(option.value)}
               disabled={isUpdating}
@@ -128,7 +138,11 @@ export function CutoffTimePicker({
               onClick={handleCustomSubmit}
               disabled={isUpdating || !customHours}
             >
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Set'}
+              {isUpdating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                'Set'
+              )}
             </Button>
           </div>
         )}
@@ -141,10 +155,11 @@ export function CutoffTimePicker({
         </div>
 
         <p className="text-xs text-muted-foreground pt-2">
-          Travelers will not be able to book slots that are within this time window.
-          For example, with a 2-hour cut-off, a 10:00 AM slot cannot be booked after 8:00 AM.
+          Travelers will not be able to book slots that are within this time
+          window. For example, with a 2-hour cut-off, a 10:00 AM slot cannot be
+          booked after 8:00 AM.
         </p>
       </CardContent>
     </Card>
-  )
+  );
 }

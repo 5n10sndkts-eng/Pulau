@@ -17,33 +17,33 @@ So that I have proof of purchase and all booking details in my inbox.
 1. **Given** a customer completes payment successfully
    **When** the Stripe webhook confirms payment
    **Then** the system:
-     - Triggers booking confirmation email
-     - Sends within 30 seconds of payment
-     - Includes PDF ticket attachment
-     - Contains all booking details
+   - Triggers booking confirmation email
+   - Sends within 30 seconds of payment
+   - Includes PDF ticket attachment
+   - Contains all booking details
 
 2. **Given** booking confirmation email is triggered
    **When** sent via send-email function
    **Then** it:
-     - Uses customer email from booking
-     - Passes correct template data
-     - Handles failures gracefully
-     - Logs email send in audit trail
+   - Uses customer email from booking
+   - Passes correct template data
+   - Handles failures gracefully
+   - Logs email send in audit trail
 
 3. **Given** email send fails
    **When** the send-email function returns error
    **Then** the system:
-     - Retries up to 3 times
-     - Logs failure in email_logs
-     - Creates alert for manual follow-up
-     - Does not block booking creation
+   - Retries up to 3 times
+   - Logs failure in email_logs
+   - Creates alert for manual follow-up
+   - Does not block booking creation
 
 4. **Given** booking is created
    **When** viewing booking details
    **Then** UI shows:
-     - Email sent status
-     - Sent timestamp
-     - Resend button (if failed)
+   - Email sent status
+   - Sent timestamp
+   - Resend button (if failed)
 
 ## Tasks / Subtasks
 
@@ -86,46 +86,50 @@ So that I have proof of purchase and all booking details in my inbox.
 ### Architecture Patterns & Constraints
 
 **Webhook Handler Update (stripe-webhook function):**
+
 ```typescript
 // supabase/functions/stripe-webhook/index.ts
 if (event.type === 'checkout.session.completed') {
-  const session = event.data.object
-  
+  const session = event.data.object;
+
   // Create booking (existing logic)
-  const booking = await createBooking(session)
-  
+  const booking = await createBooking(session);
+
   // Trigger email asynchronously
   try {
-    await sendBookingConfirmationEmail(booking)
+    await sendBookingConfirmationEmail(booking);
   } catch (error) {
     // Log error but don't fail booking creation
-    console.error('Email send failed:', error)
-    await logEmailFailure(booking.id, error)
+    console.error('Email send failed:', error);
+    await logEmailFailure(booking.id, error);
   }
 }
 ```
 
 **Email Sending Function:**
+
 ```typescript
 const sendBookingConfirmationEmail = async (booking: Booking) => {
   // Fetch complete booking data
   const bookingData = await supabase
     .from('bookings')
-    .select(`
+    .select(
+      `
       *,
       experience:experiences(*),
       trip:trips(*),
       customer:profiles(*)
-    `)
+    `,
+    )
     .eq('id', booking.id)
-    .single()
-  
+    .single();
+
   // Generate QR code
-  const qrCodeUrl = await generateQRCode(booking.id)
-  
+  const qrCodeUrl = await generateQRCode(booking.id);
+
   // Generate PDF ticket
-  const pdfBase64 = await generateTicketPDF(bookingData, qrCodeUrl)
-  
+  const pdfBase64 = await generateTicketPDF(bookingData, qrCodeUrl);
+
   // Prepare template data
   const templateData = {
     customerName: bookingData.customer.full_name,
@@ -139,24 +143,26 @@ const sendBookingConfirmationEmail = async (booking: Booking) => {
     bookingId: booking.id,
     vendorName: bookingData.experience.vendor_name,
     cancellationPolicy: bookingData.experience.cancellation_policy,
-  }
-  
+  };
+
   // Call send-email function
   const { data, error } = await supabase.functions.invoke('send-email', {
     body: {
       to: bookingData.customer_email,
       template: 'booking-confirmation',
       data: templateData,
-      attachments: [{
-        filename: `ticket-${booking.id}.pdf`,
-        content: pdfBase64,
-        contentType: 'application/pdf',
-      }],
+      attachments: [
+        {
+          filename: `ticket-${booking.id}.pdf`,
+          content: pdfBase64,
+          contentType: 'application/pdf',
+        },
+      ],
     },
-  })
-  
-  if (error) throw error
-  
+  });
+
+  if (error) throw error;
+
   // Update booking with email status
   await supabase
     .from('bookings')
@@ -164,22 +170,23 @@ const sendBookingConfirmationEmail = async (booking: Booking) => {
       email_sent: true,
       email_sent_at: new Date().toISOString(),
     })
-    .eq('id', booking.id)
-  
-  return data
-}
+    .eq('id', booking.id);
+
+  return data;
+};
 ```
 
 **Retry Logic:**
+
 ```typescript
 const sendWithRetry = async (booking: Booking, maxRetries = 3) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await sendBookingConfirmationEmail(booking)
-      return { success: true }
+      await sendBookingConfirmationEmail(booking);
+      return { success: true };
     } catch (error) {
-      console.error(`Email attempt ${attempt} failed:`, error)
-      
+      console.error(`Email attempt ${attempt} failed:`, error);
+
       if (attempt === maxRetries) {
         // All retries failed, log for manual follow-up
         await supabase.from('failed_emails').insert({
@@ -187,22 +194,23 @@ const sendWithRetry = async (booking: Booking, maxRetries = 3) => {
           email: booking.customer_email,
           error_message: error.message,
           attempts: maxRetries,
-        })
-        
+        });
+
         // Alert team
-        await sendAlertToSlack(`Email failed for booking ${booking.id}`)
-        
-        return { success: false, error }
+        await sendAlertToSlack(`Email failed for booking ${booking.id}`);
+
+        return { success: false, error };
       }
-      
+
       // Exponential backoff
-      await sleep(Math.pow(2, attempt) * 1000)
+      await sleep(Math.pow(2, attempt) * 1000);
     }
   }
-}
+};
 ```
 
 **Database Schema Updates:**
+
 ```sql
 -- Add email status to bookings
 ALTER TABLE bookings ADD COLUMN email_sent BOOLEAN DEFAULT false;
@@ -223,26 +231,27 @@ CREATE TABLE failed_emails (
 ```
 
 **UI Component (Resend Button):**
+
 ```tsx
 // src/components/BookingDetails.tsx
 const handleResendEmail = async () => {
-  setResending(true)
+  setResending(true);
   try {
     const { error } = await supabase.functions.invoke('resend-booking-email', {
-      body: { bookingId: booking.id }
-    })
-    
-    if (error) throw error
-    
-    toast.success('Email resent successfully!')
+      body: { bookingId: booking.id },
+    });
+
+    if (error) throw error;
+
+    toast.success('Email resent successfully!');
     // Refresh booking data
-    mutate()
+    mutate();
   } catch (err) {
-    toast.error('Failed to resend email')
+    toast.error('Failed to resend email');
   } finally {
-    setResending(false)
+    setResending(false);
   }
-}
+};
 
 return (
   <div className="email-status">
@@ -261,10 +270,11 @@ return (
       </div>
     )}
   </div>
-)
+);
 ```
 
 **Performance Considerations:**
+
 - Email sending should be async and not block booking creation
 - Use background jobs for retry logic
 - Cache QR codes and PDFs to avoid regeneration
@@ -273,49 +283,52 @@ return (
 ## Testing Strategy
 
 ### Integration Tests
+
 ```typescript
 describe('Booking Email Flow', () => {
   it('sends confirmation email after successful payment', async () => {
-    const booking = await createTestBooking()
-    await triggerWebhook('checkout.session.completed', booking)
-    
+    const booking = await createTestBooking();
+    await triggerWebhook('checkout.session.completed', booking);
+
     // Wait for async email send
     await waitFor(() => {
       expect(mockResend.emails.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: booking.customer_email,
           template: 'booking-confirmation',
-        })
-      )
-    })
-  })
-  
+        }),
+      );
+    });
+  });
+
   it('retries on failure', async () => {
-    mockResend.emails.send.mockRejectedValueOnce(new Error('Transient'))
-    mockResend.emails.send.mockResolvedValueOnce({ id: 'msg_123' })
-    
-    await sendWithRetry(booking)
-    
-    expect(mockResend.emails.send).toHaveBeenCalledTimes(2)
-  })
-  
+    mockResend.emails.send.mockRejectedValueOnce(new Error('Transient'));
+    mockResend.emails.send.mockResolvedValueOnce({ id: 'msg_123' });
+
+    await sendWithRetry(booking);
+
+    expect(mockResend.emails.send).toHaveBeenCalledTimes(2);
+  });
+
   it('creates booking even if email fails', async () => {
-    mockResend.emails.send.mockRejectedValue(new Error('Failed'))
-    
-    const booking = await createBooking(session)
-    
-    expect(booking).toBeDefined()
-    expect(booking.email_sent).toBe(false)
-  })
-})
+    mockResend.emails.send.mockRejectedValue(new Error('Failed'));
+
+    const booking = await createBooking(session);
+
+    expect(booking).toBeDefined();
+    expect(booking.email_sent).toBe(false);
+  });
+});
 ```
 
 ### E2E Tests
+
 - Complete checkout flow → verify email in Mailtrap
 - Test resend button functionality
 - Verify failed email queue population
 
 ### Load Testing
+
 - 100 concurrent bookings
 - Verify all emails sent within 2 minutes
 - Check for race conditions

@@ -3,4 +3,4 @@
 **Goal**: Integrate Supabase backend services including Auth, Database, and Edge Functions.
 
 **Stories**:
-*Reconstructed from sprint status*
+_Reconstructed from sprint status_

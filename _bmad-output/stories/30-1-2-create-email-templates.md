@@ -16,37 +16,37 @@ So that I have all booking information clearly presented and easily accessible.
 1. **Given** a booking confirmation email is sent
    **When** the customer views it
    **Then** it displays:
-     - Pulau branding and logo
-     - Booking summary (experience, date, time, guests)
-     - QR code for ticket
-     - Add to calendar link
-     - Cancellation policy
-     - Support contact
+   - Pulau branding and logo
+   - Booking summary (experience, date, time, guests)
+   - QR code for ticket
+   - Add to calendar link
+   - Cancellation policy
+   - Support contact
 
 2. **Given** a booking reminder email is sent (24h before)
    **When** the customer views it
    **Then** it displays:
-     - Experience details and location
-     - What to bring / preparation tips
-     - Weather forecast (if available)
-     - Contact vendor button
-     - QR code for quick check-in
+   - Experience details and location
+   - What to bring / preparation tips
+   - Weather forecast (if available)
+   - Contact vendor button
+   - QR code for quick check-in
 
 3. **Given** a cancellation confirmation email is sent
    **When** the customer views it
    **Then** it displays:
-     - Cancelled booking details
-     - Refund amount and timeline
-     - Rebooking suggestions
-     - Feedback request
+   - Cancelled booking details
+   - Refund amount and timeline
+   - Rebooking suggestions
+   - Feedback request
 
 4. **Given** emails are viewed on mobile or desktop
    **When** rendered in major email clients
    **Then** they:
-     - Display correctly in Gmail, Outlook, Apple Mail
-     - Are mobile-responsive
-     - Have working CTA buttons
-     - Load images properly
+   - Display correctly in Gmail, Outlook, Apple Mail
+   - Are mobile-responsive
+   - Have working CTA buttons
+   - Load images properly
 
 ## Tasks / Subtasks
 
@@ -90,96 +90,103 @@ So that I have all booking information clearly presented and easily accessible.
 `supabase/functions/send-email/templates/`
 
 **Base Email Layout:**
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{subject}}</title>
-  <style>
-    /* Inline CSS for email client compatibility */
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: white;
-    }
-    .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40px 20px;
-      text-align: center;
-    }
-    .logo {
-      color: white;
-      font-size: 32px;
-      font-weight: bold;
-    }
-    /* Mobile responsive */
-    @media only screen and (max-width: 600px) {
-      .container { width: 100% !important; }
-    }
-  </style>
-</head>
-<body>
-  <!-- Template content -->
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{subject}}</title>
+    <style>
+      /* Inline CSS for email client compatibility */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .logo {
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+      }
+      /* Mobile responsive */
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Template content -->
+  </body>
 </html>
 ```
 
 **Template Variables (Booking Confirmation):**
+
 ```typescript
 interface BookingConfirmationData {
-  customerName: string
-  experienceTitle: string
-  experienceDescription: string
-  bookingDate: string // "Saturday, January 15, 2026"
-  bookingTime: string // "10:00 AM"
-  guestCount: number
-  totalAmount: string // "$120.00"
-  qrCodeUrl: string
-  bookingId: string
-  vendorName: string
-  vendorContact: string
-  cancellationPolicy: string
-  supportEmail: string
+  customerName: string;
+  experienceTitle: string;
+  experienceDescription: string;
+  bookingDate: string; // "Saturday, January 15, 2026"
+  bookingTime: string; // "10:00 AM"
+  guestCount: number;
+  totalAmount: string; // "$120.00"
+  qrCodeUrl: string;
+  bookingId: string;
+  vendorName: string;
+  vendorContact: string;
+  cancellationPolicy: string;
+  supportEmail: string;
 }
 ```
 
 **Template Variables (Reminder):**
+
 ```typescript
 interface BookingReminderData {
-  customerName: string
-  experienceTitle: string
-  startTime: string // "Tomorrow at 10:00 AM"
-  location: string
-  locationMapUrl: string
-  preparationTips: string[]
-  weatherForecast?: string
-  vendorContactUrl: string
-  qrCodeUrl: string
+  customerName: string;
+  experienceTitle: string;
+  startTime: string; // "Tomorrow at 10:00 AM"
+  location: string;
+  locationMapUrl: string;
+  preparationTips: string[];
+  weatherForecast?: string;
+  vendorContactUrl: string;
+  qrCodeUrl: string;
 }
 ```
 
 **Template Variables (Cancellation):**
+
 ```typescript
 interface CancellationData {
-  customerName: string
-  experienceTitle: string
-  originalDate: string
-  refundAmount: string
-  refundTimeline: string // "5-10 business days"
-  rebookingUrl: string
-  feedbackUrl: string
+  customerName: string;
+  experienceTitle: string;
+  originalDate: string;
+  refundAmount: string;
+  refundTimeline: string; // "5-10 business days"
+  rebookingUrl: string;
+  feedbackUrl: string;
 }
 ```
 
 **Email Design Guidelines:**
+
 - Use web-safe fonts (Arial, Helvetica, Georgia)
 - Inline all CSS (use juice or similar)
 - Keep width ≤ 600px
@@ -190,24 +197,30 @@ interface CancellationData {
 - Add preheader text (hidden preview text)
 
 **Button CTA Pattern:**
+
 ```html
 <table role="presentation" cellspacing="0" cellpadding="0" border="0">
   <tr>
     <td style="border-radius: 4px; background: #667eea;">
-      <a href="{{ctaUrl}}" style="
+      <a
+        href="{{ctaUrl}}"
+        style="
         display: inline-block;
         padding: 16px 32px;
         font-size: 16px;
         color: #ffffff;
         text-decoration: none;
         font-weight: 600;
-      ">{{ctaText}}</a>
+      "
+        >{{ctaText}}</a
+      >
     </td>
   </tr>
 </table>
 ```
 
 **Add to Calendar (.ics generation):**
+
 ```typescript
 const generateICS = (booking: Booking) => {
   return `BEGIN:VCALENDAR
@@ -222,28 +235,31 @@ SUMMARY:${booking.experience_title}
 DESCRIPTION:${booking.experience_description}
 LOCATION:${booking.location}
 END:VEVENT
-END:VCALENDAR`
-}
+END:VCALENDAR`;
+};
 ```
 
 ## Testing Strategy
 
 ### Email Client Testing Matrix
-| Client | Desktop | Mobile | Dark Mode |
-|--------|---------|--------|-----------|
-| Gmail | ✅ | ✅ | ✅ |
-| Outlook | ✅ | ✅ | ✅ |
-| Apple Mail | ✅ | ✅ | ✅ |
-| Yahoo Mail | ✅ | N/A | ✅ |
-| ProtonMail | ✅ | ✅ | ✅ |
+
+| Client     | Desktop | Mobile | Dark Mode |
+| ---------- | ------- | ------ | --------- |
+| Gmail      | ✅      | ✅     | ✅        |
+| Outlook    | ✅      | ✅     | ✅        |
+| Apple Mail | ✅      | ✅     | ✅        |
+| Yahoo Mail | ✅      | N/A    | ✅        |
+| ProtonMail | ✅      | ✅     | ✅        |
 
 ### Testing Tools
+
 - **Email on Acid** - Automated rendering tests across 90+ clients
 - **Litmus** - Alternative email testing platform
 - **Mailtrap** - Email testing environment
 - **Real device testing** - iOS and Android
 
 ### Spam Score Testing
+
 - Check SPF, DKIM, DMARC records
 - Test spam assassin score (target: < 5)
 - Avoid spam trigger words

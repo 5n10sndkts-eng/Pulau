@@ -14,11 +14,12 @@ So that I can confirm my selections.
 **Given** I am on checkout Step 1 (Review)
 **When** the screen loads
 **Then** I see all trip items displayed:
-  - Experience image thumbnail
-  - Experience title
-  - Scheduled date and time (or "Unscheduled")
-  - Guest count with edit button
-  - Item price (price × guests)
+
+- Experience image thumbnail
+- Experience title
+- Scheduled date and time (or "Unscheduled")
+- Guest count with edit button
+- Item price (price × guests)
 
 **AC #2: Show price summary at bottom**
 **And** price summary at bottom: Subtotal, Service Fee (10%), Total
@@ -35,6 +36,7 @@ So that I can confirm my selections.
 ## Tasks / Subtasks
 
 ### Task 1: Create TripReviewStep component (AC: #1, #2, #3)
+
 - [x] Build TripReviewStep layout component
 - [x] Display header: "Review Your Trip"
 - [x] Render list of all trip items with TripReviewItemCard
@@ -42,6 +44,7 @@ So that I can confirm my selections.
 - [x] Include "Edit Trip" link and "Continue" button in footer
 
 ### Task 2: Build TripReviewItemCard component (AC: #1, #4)
+
 - [x] Create card showing experience thumbnail (80x80px)
 - [x] Display experience title, category, duration
 - [x] Show scheduled date/time or "Unscheduled" badge
@@ -49,6 +52,7 @@ So that I can confirm my selections.
 - [x] Display calculated item price (price × guest_count)
 
 ### Task 3: Implement inline guest count editor (AC: #4)
+
 - [x] Add "Edit" button next to guest count
 - [x] Toggle to GuestCountStepper on edit click
 - [x] Update trip item guest_count on change
@@ -56,6 +60,7 @@ So that I can confirm my selections.
 - [x] Save changes to checkout session
 
 ### Task 4: Add "Edit Trip" navigation (AC: #3)
+
 - [x] Create "Edit Trip" link button in header or footer
 - [x] Navigate back to trip builder on click
 - [x] Preserve checkout session (don't clear)
@@ -63,6 +68,7 @@ So that I can confirm my selections.
 - [x] Ensure trip changes sync to checkout session
 
 ### Task 5: Implement "Continue" validation and navigation (AC: #3)
+
 - [x] Add "Continue to Traveler Details" button
 - [x] Validate: trip has at least 1 item
 - [x] On continue: save trip snapshot to checkout session
@@ -72,6 +78,7 @@ So that I can confirm my selections.
 ## Dev Notes
 
 ### Technical Guidance
+
 - Use checkout session trip snapshot (not live trip data)
 - Guest count changes: update session, not main trip
 - Price calculations: reuse from Story 8.10 utilities
@@ -79,6 +86,7 @@ So that I can confirm my selections.
 - Layout: max-width 800px, centered
 
 ### Component Structure
+
 ```typescript
 <TripReviewStep>
   <Header>
@@ -111,6 +119,7 @@ So that I can confirm my selections.
 ```
 
 ### Visual Specifications
+
 - Item card: horizontal layout, 16px padding, border bottom
 - Thumbnail: 80x80px, rounded 8px
 - Guest count: "2 guests" with small edit icon button
@@ -138,5 +147,5 @@ GitHub Spark AI Agent
 - ✅ Story synchronized with codebase implementation state
 
 ### File List
-- See `/src` directory for component implementations
 
+- See `/src` directory for component implementations

@@ -7,14 +7,20 @@
  * Shows available capacity, price difference, and handles request submission.
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Users,
   AlertTriangle,
@@ -24,9 +30,9 @@ import {
   DollarSign,
   Plus,
   Minus,
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { format, parseISO } from 'date-fns'
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format, parseISO } from 'date-fns';
 import {
   checkModificationAllowed,
   calculateModificationPrice,
@@ -34,33 +40,33 @@ import {
   formatPriceDifference,
   ModificationAllowedResult,
   ModificationPriceResult,
-} from '@/lib/modificationService'
-import { slotService, ExperienceSlot, DateRange } from '@/lib/slotService'
+} from '@/lib/modificationService';
+import { slotService, ExperienceSlot, DateRange } from '@/lib/slotService';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 interface BookingItem {
-  tripItemId: string
-  bookingId: string
-  experienceId: string
-  experienceTitle: string
-  vendorId: string
-  vendorName: string
-  currentDate: string
-  currentTime: string
-  currentGuests: number
-  currentPrice: number // cents
-  minGuests: number
-  maxGuests: number
+  tripItemId: string;
+  bookingId: string;
+  experienceId: string;
+  experienceTitle: string;
+  vendorId: string;
+  vendorName: string;
+  currentDate: string;
+  currentTime: string;
+  currentGuests: number;
+  currentPrice: number; // cents
+  minGuests: number;
+  maxGuests: number;
 }
 
 interface GuestCountModificationModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  booking: BookingItem
-  onSuccess?: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: BookingItem;
+  onSuccess?: () => void;
 }
 
 // ============================================================================
@@ -74,14 +80,21 @@ export function GuestCountModificationModal({
   onSuccess,
 }: GuestCountModificationModalProps) {
   // State
-  const [step, setStep] = useState<'check' | 'select' | 'confirm' | 'success' | 'error'>('check')
-  const [eligibility, setEligibility] = useState<ModificationAllowedResult | null>(null)
-  const [guestCount, setGuestCount] = useState(booking.currentGuests)
-  const [availableCapacity, setAvailableCapacity] = useState<number | null>(null)
-  const [priceCalc, setPriceCalc] = useState<ModificationPriceResult | null>(null)
-  const [customerNotes, setCustomerNotes] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [step, setStep] = useState<
+    'check' | 'select' | 'confirm' | 'success' | 'error'
+  >('check');
+  const [eligibility, setEligibility] =
+    useState<ModificationAllowedResult | null>(null);
+  const [guestCount, setGuestCount] = useState(booking.currentGuests);
+  const [availableCapacity, setAvailableCapacity] = useState<number | null>(
+    null,
+  );
+  const [priceCalc, setPriceCalc] = useState<ModificationPriceResult | null>(
+    null,
+  );
+  const [customerNotes, setCustomerNotes] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // ============================================================================
   // HANDLERS
@@ -92,125 +105,150 @@ export function GuestCountModificationModal({
       const dateRange: DateRange = {
         startDate: booking.currentDate,
         endDate: booking.currentDate,
-      }
-      const { data: slots, error: slotsError } = await slotService.getAvailableSlots(booking.experienceId, dateRange)
+      };
+      const { data: slots, error: slotsError } =
+        await slotService.getAvailableSlots(booking.experienceId, dateRange);
 
       if (slotsError || !slots) {
-        console.error('Error fetching slot capacity:', slotsError)
-        return
+        console.error('Error fetching slot capacity:', slotsError);
+        return;
       }
 
       const currentSlot = slots.find(
-        (s) => s.slot_date === booking.currentDate && s.slot_time === booking.currentTime
-      )
+        (s) =>
+          s.slot_date === booking.currentDate &&
+          s.slot_time === booking.currentTime,
+      );
 
       if (currentSlot) {
         // Available = current available + guests we already have booked
-        setAvailableCapacity(currentSlot.available_count + booking.currentGuests)
+        setAvailableCapacity(
+          currentSlot.available_count + booking.currentGuests,
+        );
       }
     } catch (err) {
-      console.error('Error fetching slot capacity:', err)
+      console.error('Error fetching slot capacity:', err);
     }
-  }, [booking.currentDate, booking.currentTime, booking.experienceId, booking.currentGuests])
+  }, [
+    booking.currentDate,
+    booking.currentTime,
+    booking.experienceId,
+    booking.currentGuests,
+  ]);
 
   const checkEligibility = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      const result = await checkModificationAllowed(booking.tripItemId, 'guest_change')
-      setEligibility(result)
+      const result = await checkModificationAllowed(
+        booking.tripItemId,
+        'guest_change',
+      );
+      setEligibility(result);
 
       if (result.allowed) {
         // Also fetch current slot capacity
-        await fetchSlotCapacity()
-        setStep('select')
+        await fetchSlotCapacity();
+        setStep('select');
       } else {
-        setStep('error')
-        setError(result.reason || 'Guest count changes are not available for this booking')
+        setStep('error');
+        setError(
+          result.reason ||
+            'Guest count changes are not available for this booking',
+        );
       }
     } catch (err) {
-      setStep('error')
-      setError('Failed to check modification eligibility')
+      setStep('error');
+      setError('Failed to check modification eligibility');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [booking.tripItemId, fetchSlotCapacity])
+  }, [booking.tripItemId, fetchSlotCapacity]);
 
-  const calculatePrice = useCallback(async (newGuestCount: number) => {
-    if (newGuestCount === booking.currentGuests) {
-      setPriceCalc(null)
-      return
-    }
-
-    setLoading(true)
-
-    try {
-      const price = await calculateModificationPrice(
-        booking.tripItemId,
-        booking.currentDate,
-        booking.currentTime,
-        newGuestCount
-      )
-
-      setPriceCalc(price)
-
-      if (price.error) {
-        setError(price.error)
-      } else {
-        setError(null)
+  const calculatePrice = useCallback(
+    async (newGuestCount: number) => {
+      if (newGuestCount === booking.currentGuests) {
+        setPriceCalc(null);
+        return;
       }
-    } catch (err) {
-      setError('Failed to calculate price')
-    } finally {
-      setLoading(false)
-    }
-  }, [booking.currentGuests, booking.tripItemId, booking.currentDate, booking.currentTime])
+
+      setLoading(true);
+
+      try {
+        const price = await calculateModificationPrice(
+          booking.tripItemId,
+          booking.currentDate,
+          booking.currentTime,
+          newGuestCount,
+        );
+
+        setPriceCalc(price);
+
+        if (price.error) {
+          setError(price.error);
+        } else {
+          setError(null);
+        }
+      } catch (err) {
+        setError('Failed to calculate price');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      booking.currentGuests,
+      booking.tripItemId,
+      booking.currentDate,
+      booking.currentTime,
+    ],
+  );
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (open) {
-      setGuestCount(booking.currentGuests)
-      checkEligibility()
+      setGuestCount(booking.currentGuests);
+      checkEligibility();
     } else {
-      setStep('check')
-      setEligibility(null)
-      setAvailableCapacity(null)
-      setPriceCalc(null)
-      setCustomerNotes('')
-      setError(null)
+      setStep('check');
+      setEligibility(null);
+      setAvailableCapacity(null);
+      setPriceCalc(null);
+      setCustomerNotes('');
+      setError(null);
     }
-  }, [open, booking.currentGuests, checkEligibility])
+  }, [open, booking.currentGuests, checkEligibility]);
 
   // Calculate price when guest count changes
   useEffect(() => {
     if (step === 'select' && guestCount !== booking.currentGuests) {
-      calculatePrice(guestCount)
+      calculatePrice(guestCount);
     }
-  }, [guestCount, step, booking.currentGuests, calculatePrice])
+  }, [guestCount, step, booking.currentGuests, calculatePrice]);
 
   function handleGuestChange(delta: number) {
-    const newCount = guestCount + delta
-    const maxAllowed = availableCapacity !== null
-      ? Math.min(booking.maxGuests, availableCapacity)
-      : booking.maxGuests
+    const newCount = guestCount + delta;
+    const maxAllowed =
+      availableCapacity !== null
+        ? Math.min(booking.maxGuests, availableCapacity)
+        : booking.maxGuests;
 
     if (newCount >= booking.minGuests && newCount <= maxAllowed) {
-      setGuestCount(newCount)
+      setGuestCount(newCount);
     }
   }
 
   function handleProceedToConfirm() {
     if (priceCalc && !priceCalc.error && guestCount !== booking.currentGuests) {
-      setStep('confirm')
+      setStep('confirm');
     }
   }
 
   async function handleSubmitRequest() {
-    if (!priceCalc || guestCount === booking.currentGuests) return
+    if (!priceCalc || guestCount === booking.currentGuests) return;
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const result = await createModificationRequest({
@@ -224,19 +262,19 @@ export function GuestCountModificationModal({
         originalTotalPrice: booking.currentPrice,
         requestedGuests: guestCount,
         customerNotes: customerNotes || undefined,
-      })
+      });
 
       if (result.error) {
-        setError(result.error)
-        return
+        setError(result.error);
+        return;
       }
 
-      setStep('success')
-      onSuccess?.()
+      setStep('success');
+      onSuccess?.();
     } catch (err) {
-      setError('Failed to submit modification request')
+      setError('Failed to submit modification request');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -244,13 +282,14 @@ export function GuestCountModificationModal({
   // RENDER
   // ============================================================================
 
-  const maxAllowed = availableCapacity !== null
-    ? Math.min(booking.maxGuests, availableCapacity)
-    : booking.maxGuests
+  const maxAllowed =
+    availableCapacity !== null
+      ? Math.min(booking.maxGuests, availableCapacity)
+      : booking.maxGuests;
 
-  const canDecrease = guestCount > booking.minGuests
-  const canIncrease = guestCount < maxAllowed
-  const hasChanged = guestCount !== booking.currentGuests
+  const canDecrease = guestCount > booking.minGuests;
+  const canIncrease = guestCount < maxAllowed;
+  const hasChanged = guestCount !== booking.currentGuests;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -260,9 +299,7 @@ export function GuestCountModificationModal({
             <Users className="w-5 h-5 text-primary" />
             Change Guest Count
           </DialogTitle>
-          <DialogDescription>
-            {booking.experienceTitle}
-          </DialogDescription>
+          <DialogDescription>{booking.experienceTitle}</DialogDescription>
         </DialogHeader>
 
         <AnimatePresence mode="wait">
@@ -314,13 +351,17 @@ export function GuestCountModificationModal({
               <Card className="p-4 bg-muted/50">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Current booking</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Current booking
+                    </p>
                     <p className="font-semibold">
-                      {format(parseISO(booking.currentDate), 'MMM d, yyyy')} at {booking.currentTime}
+                      {format(parseISO(booking.currentDate), 'MMM d, yyyy')} at{' '}
+                      {booking.currentTime}
                     </p>
                   </div>
                   <Badge variant="secondary">
-                    {booking.currentGuests} {booking.currentGuests === 1 ? 'guest' : 'guests'}
+                    {booking.currentGuests}{' '}
+                    {booking.currentGuests === 1 ? 'guest' : 'guests'}
                   </Badge>
                 </div>
               </Card>
@@ -329,7 +370,8 @@ export function GuestCountModificationModal({
               {eligibility && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Badge variant="outline">
-                    {eligibility.modification_count || 0} / {eligibility.max_modifications || 2} changes used
+                    {eligibility.modification_count || 0} /{' '}
+                    {eligibility.max_modifications || 2} changes used
                   </Badge>
                 </div>
               )}
@@ -354,7 +396,9 @@ export function GuestCountModificationModal({
                     animate={{ scale: 1, opacity: 1 }}
                     className="text-center min-w-[80px]"
                   >
-                    <span className="text-5xl font-bold text-primary">{guestCount}</span>
+                    <span className="text-5xl font-bold text-primary">
+                      {guestCount}
+                    </span>
                     <p className="text-sm text-muted-foreground mt-1">
                       {guestCount === 1 ? 'guest' : 'guests'}
                     </p>
@@ -373,11 +417,12 @@ export function GuestCountModificationModal({
 
                 <p className="text-xs text-muted-foreground mt-4">
                   Min: {booking.minGuests} | Max: {maxAllowed} guests
-                  {availableCapacity !== null && availableCapacity < booking.maxGuests && (
-                    <span className="text-amber-600 ml-2">
-                      (Limited availability)
-                    </span>
-                  )}
+                  {availableCapacity !== null &&
+                    availableCapacity < booking.maxGuests && (
+                      <span className="text-amber-600 ml-2">
+                        (Limited availability)
+                      </span>
+                    )}
                 </p>
               </div>
 
@@ -390,19 +435,22 @@ export function GuestCountModificationModal({
               )}
 
               {priceCalc && !priceCalc.error && hasChanged && (
-                <Card className={`p-4 ${priceCalc.price_difference !== 0 ? 'border-primary/30' : ''}`}>
+                <Card
+                  className={`p-4 ${priceCalc.price_difference !== 0 ? 'border-primary/30' : ''}`}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-muted-foreground" />
                       <span className="text-sm font-medium">Price Change</span>
                     </div>
                     <span
-                      className={`font-semibold ${priceCalc.price_difference > 0
+                      className={`font-semibold ${
+                        priceCalc.price_difference > 0
                           ? 'text-destructive'
                           : priceCalc.price_difference < 0
                             ? 'text-success'
                             : ''
-                        }`}
+                      }`}
                     >
                       {formatPriceDifference(priceCalc.price_difference)}
                     </span>
@@ -417,7 +465,9 @@ export function GuestCountModificationModal({
               {/* Continue Button */}
               <Button
                 onClick={handleProceedToConfirm}
-                disabled={!hasChanged || !priceCalc || !!priceCalc.error || loading}
+                disabled={
+                  !hasChanged || !priceCalc || !!priceCalc.error || loading
+                }
                 className="w-full"
               >
                 Continue
@@ -439,7 +489,9 @@ export function GuestCountModificationModal({
               <Card className="p-4 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">FROM</p>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      FROM
+                    </p>
                     <p className="text-3xl font-bold text-muted-foreground">
                       {booking.currentGuests}
                     </p>
@@ -448,8 +500,12 @@ export function GuestCountModificationModal({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">TO</p>
-                    <p className="text-3xl font-bold text-primary">{guestCount}</p>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      TO
+                    </p>
+                    <p className="text-3xl font-bold text-primary">
+                      {guestCount}
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       {guestCount === 1 ? 'guest' : 'guests'}
                     </p>
@@ -459,10 +515,15 @@ export function GuestCountModificationModal({
                 {priceCalc.price_difference !== 0 && (
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Price adjustment</span>
+                      <span className="text-sm text-muted-foreground">
+                        Price adjustment
+                      </span>
                       <span
-                        className={`font-semibold ${priceCalc.price_difference > 0 ? 'text-destructive' : 'text-success'
-                          }`}
+                        className={`font-semibold ${
+                          priceCalc.price_difference > 0
+                            ? 'text-destructive'
+                            : 'text-success'
+                        }`}
                       >
                         {formatPriceDifference(priceCalc.price_difference)}
                       </span>
@@ -488,8 +549,8 @@ export function GuestCountModificationModal({
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Your change request will be sent to {booking.vendorName} for approval.
-                  They have 48 hours to respond.
+                  Your change request will be sent to {booking.vendorName} for
+                  approval. They have 48 hours to respond.
                 </AlertDescription>
               </Alert>
 
@@ -510,7 +571,11 @@ export function GuestCountModificationModal({
                 >
                   Back
                 </Button>
-                <Button onClick={handleSubmitRequest} disabled={loading} className="flex-1">
+                <Button
+                  onClick={handleSubmitRequest}
+                  disabled={loading}
+                  className="flex-1"
+                >
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -536,10 +601,12 @@ export function GuestCountModificationModal({
               <div className="bg-success/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-success" />
               </div>
-              <h3 className="font-display text-xl font-bold mb-2">Request Submitted!</h3>
+              <h3 className="font-display text-xl font-bold mb-2">
+                Request Submitted!
+              </h3>
               <p className="text-muted-foreground mb-6">
-                Your guest count change request has been sent to {booking.vendorName}.
-                You&apos;ll be notified when they respond.
+                Your guest count change request has been sent to{' '}
+                {booking.vendorName}. You&apos;ll be notified when they respond.
               </p>
               <Button onClick={() => onOpenChange(false)}>Done</Button>
             </motion.div>
@@ -547,7 +614,7 @@ export function GuestCountModificationModal({
         </AnimatePresence>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default GuestCountModificationModal
+export default GuestCountModificationModal;

@@ -83,8 +83,18 @@ describe('Data Layer Refactor - Supabase Integration', () => {
         email: 'surf@example.com',
       },
       experience_images: [
-        { id: 'img1', experience_id: 'exp-1', url: 'img1.jpg', display_order: 1 },
-        { id: 'img2', experience_id: 'exp-1', url: 'img2.jpg', display_order: 2 },
+        {
+          id: 'img1',
+          experience_id: 'exp-1',
+          url: 'img1.jpg',
+          display_order: 1,
+        },
+        {
+          id: 'img2',
+          experience_id: 'exp-1',
+          url: 'img2.jpg',
+          display_order: 2,
+        },
       ],
       experience_inclusions: [
         {
@@ -185,7 +195,8 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 
     const envVars = {
       VITE_USE_MOCK_DATA: 'Enable mock data mode for development (true/false)',
-      VITE_USE_MOCK_AUTH: 'Enable mock authentication for development (true/false)',
+      VITE_USE_MOCK_AUTH:
+        'Enable mock authentication for development (true/false)',
       VITE_SUPABASE_URL: 'Supabase project URL',
       VITE_SUPABASE_ANON_KEY: 'Supabase anonymous/public API key',
     };
