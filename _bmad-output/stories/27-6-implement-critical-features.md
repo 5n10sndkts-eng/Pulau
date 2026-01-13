@@ -140,6 +140,27 @@ $$;
 - [x] E2E test passing
 - [x] Dev Agent Record completed
 
+## Dev Agent Record
+
+**Agent Model Used**: Claude (Anthropic) / GitHub Copilot  
+**Debug Log References**: E2E test output from `vendor-check-in.spec.ts`  
+**Completion Notes**: Implemented 6 P1 vendor operations features:
+- DEF-006: Integrated `jsqr` library for real QR code decoding
+- DEF-007: Replaced mock data with Supabase queries + TanStack Query
+- DEF-008: Created `validate_booking_for_checkin` RPC function
+- DEF-009: Implemented localStorage-based offline queue with sync
+- DEF-010: Added `checkInBooking()` with database persistence
+- DEF-011: Added `markNoShow()` with database persistence
+
+**Files Modified**:
+- `src/components/vendor/QRScanner.tsx` - Real QR decoding
+- `src/lib/qrScannerHelper.ts` - New helper with jsqr
+- `src/components/vendor/VendorOperationsPage.tsx` - Supabase queries
+- `src/lib/offlineQueue.ts` - New offline queue implementation
+- `src/lib/bookingService.ts` - checkInBooking, markNoShow methods
+- `supabase/migrations/20260110000006_ticket_validation_rpc.sql` - RPC function
+- `tests/e2e/vendor-check-in.spec.ts` - E2E coverage
+
 ---
 
 **Related Defects**: DEF-006, DEF-007, DEF-008, DEF-009, DEF-010, DEF-011  

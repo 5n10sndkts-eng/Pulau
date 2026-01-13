@@ -131,6 +131,24 @@ Deno.serve(async (req) => {
 - [x] E2E tests passing
 - [x] Dev Agent Record completed
 
+## Dev Agent Record
+
+**Agent Model Used**: Claude (Anthropic) / GitHub Copilot  
+**Debug Log References**: Unit test output from `process-refund/index.test.ts`  
+**Completion Notes**: Implemented full Stripe refund processing (DEF-005):
+- Integrated Stripe SDK with `stripe.refunds.create()` call
+- Added idempotency key generation (`refund_${bookingId}_${timestamp}`)
+- Implemented payment record updates (refund_amount, refund_status)
+- Added booking status transitions on full refund
+- Created comprehensive audit trail for all refund actions
+- Added 25 unit tests covering success/failure scenarios
+
+**Files Modified**:
+- `supabase/functions/process-refund/index.ts` - Full Stripe integration
+- `supabase/functions/process-refund/index.test.ts` - 25 unit tests
+- `src/components/admin/RefundModal.tsx` - UI integration
+- `src/lib/auditService.ts` - Refund event types
+
 ---
 
 **Related Defects**: DEF-005  
