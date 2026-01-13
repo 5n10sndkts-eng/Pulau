@@ -3,6 +3,7 @@ import { Booking, Trip, TripItem } from './types';
 import { Database } from './database.types';
 import { calculateTripTotal } from './helpers';
 import { createAuditEntry } from './auditService';
+import { experiences } from './mockData';
 
 const isMockMode = () => import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
@@ -126,7 +127,27 @@ export const bookingService = {
     if (isMockMode()) {
       const stored = localStorage.getItem('pulau_bookings');
       const bookings: Booking[] = stored ? JSON.parse(stored) : [];
-      return bookings.filter((b) => b.trip.userId === userId);
+      const userBookings = bookings.filter((b) => b.trip.userId === userId);
+
+      // Enrich trip items for each booking
+      const enrichedUserBookings = userBookings.map((booking) => ({
+        ...booking,
+        trip: {
+          ...booking.trip,
+          items: booking.trip.items.map((item) => {
+            const experience = experiences.find(
+              (exp) => exp.id === item.experienceId,
+            );
+            return {
+              ...item,
+              experienceName: experience?.title,
+              vendor: experience?.provider,
+              meetingPoint: experience?.meetingPoint,
+            };
+          }),
+        },
+      }));
+      return enrichedUserBookings;
     }
 
     if (!isSupabaseConfigured()) {
@@ -199,7 +220,51 @@ export const bookingService = {
     return bookings;
   },
 
+
+  // Get a single booking by ID
+  getBookingById: async (bookingId: string): Promise<Booking | null> => {
+    if (isMockMode()) {
+      const stored = localStorage.getItem('pulau_bookings');
+      const bookings: Booking[] = stored ? JSON.parse(stored) : [];
+      const booking = bookings.find(
+        (b) => b.id === bookingId || b.reference === bookingId,
+      );
+
+      if (!booking) {
+        return null;
+      }
+
+      // Enrich trip items with experience details
+      const enrichedBooking: Booking = {
+        ...booking,
+        trip: {
+          ...booking.trip,
+          items: booking.trip.items.map((item) => {
+            const experience = experiences.find(
+              (exp) => exp.id === item.experienceId,
+            );
+            return {
+              ...item,
+              experienceName: experience?.title, // Add experienceName
+              vendor: experience?.provider, // Add vendor details
+              meetingPoint: experience?.meetingPoint, // Add meeting point
+            };
+          }),
+        },
+      };
+      return enrichedBooking;
+    }
+
+    // In a real app, this would fetch from Supabase
+    // For now, in non-mock mode, we'll return null or throw an error
+    console.warn(
+      `[bookingService] getBookingById not implemented for non-mock mode (ID: ${bookingId})`,
+    );
+    return null;
+  },
+
   // Validate a booking for check-in (Epic 27.2)
+
   validateBookingForCheckIn: async (
     bookingId: string,
     vendorId: string,

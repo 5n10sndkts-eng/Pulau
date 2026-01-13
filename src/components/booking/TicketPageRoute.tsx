@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { TicketPage } from './TicketPage';
-import { bookingService } from '@/lib/bookingService';
+import { bookingService } from '../../lib/bookingService';
 import { Booking } from '@/lib/types';
 import { getExperienceById } from '@/lib/helpers';
 import { toast } from 'sonner';

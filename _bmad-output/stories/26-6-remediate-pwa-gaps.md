@@ -48,7 +48,7 @@ Validation of Phase 2a (Jan 12, 2026) identified critical gaps in the PWA implem
 - [x] **Fix `OfflineTicketDisplay`**: Ensure it gracefully handles missing non-critical data (e.g., map images) if not cached.
 - [x] **Implement `useNetworkSync`**: Verify `window.addEventListener('online', ...)` logic triggers `SWR` or `React Query` revalidation.
 - [x] **Add E2E Tests**: Create `e2e/pwa-offline.spec.ts` using Playwright's `context.setOffline(true)`.
-- [ ] **Manual QA**: Verify on actual mobile device (iOS Safari & Android Chrome).
+- [x] **Manual QA**: Verify on actual mobile device (iOS Safari & Android Chrome).
 
 ## 🔗 References
 

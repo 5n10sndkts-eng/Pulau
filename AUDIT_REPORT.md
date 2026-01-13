@@ -235,8 +235,8 @@ npm run dev
 3. **Accessibility**: Add ARIA labels and keyboard navigation
 4. **Images**: Replace Unsplash URLs with local/CDN assets
 5. **Analytics**: Add user behavior tracking
-6. **Error Handling**: Implement error boundary with user-friendly messages
-7. **Offline Support**: Add service worker for offline functionality
+6. **Error Handling**: ✅ Implemented - ErrorBoundary with Sentry integration (Epic 32)
+7. **Offline Support**: ✅ Implemented - Service worker with ticket caching (Epic 26)
 
 ## Conclusion
 

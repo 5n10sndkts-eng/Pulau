@@ -35,9 +35,20 @@ vi.mock('@/lib/tripService', () => ({
 }));
 
 // Helper to trigger trip updates during tests
+// Use a counter to ensure each click adds a unique experience
+let experienceCounter = 0;
 function AddItemsButton() {
   const { addToTrip } = useTrip();
-  return <button onClick={() => addToTrip('exp_new', 2, 50)}>Add Item</button>;
+  return (
+    <button
+      onClick={() => {
+        experienceCounter++;
+        addToTrip(`exp_${experienceCounter}`, 2, 50);
+      }}
+    >
+      Add Item
+    </button>
+  );
 }
 
 // Test wrapper with all required providers
@@ -55,6 +66,7 @@ describe('StickyTripBar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
+    experienceCounter = 0; // Reset counter for each test
   });
 
   describe('AC #1: Conditional Visibility', () => {
@@ -190,18 +202,19 @@ describe('StickyTripBar', () => {
       // Add first item
       fireEvent.click(screen.getByText('Add Item'));
 
-      // Verify update
+      // Verify update (price includes 5% service fee: $50 + $2.50 = $52.50)
       await waitFor(() => {
         expect(screen.getByText('1')).toBeInTheDocument();
-        expect(screen.getByText(/\$50\.00/)).toBeInTheDocument();
+        expect(screen.getByText(/\$52\.50/)).toBeInTheDocument();
       });
 
       // Add second item
       fireEvent.click(screen.getByText('Add Item'));
 
+      // Verify 2 items, $100 subtotal + $5 service fee = $105
       await waitFor(() => {
         expect(screen.getByText('2')).toBeInTheDocument();
-        expect(screen.getByText(/\$100\.00/)).toBeInTheDocument();
+        expect(screen.getByText(/\$105\.00/)).toBeInTheDocument();
       });
     });
 

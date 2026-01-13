@@ -291,13 +291,14 @@ development_status:
   25-6-fix-type-errors: done  # P0: Build-breaking fixes
   epic-25-retrospective: done
 
-  # Epic 26: Offline Ticket Access PWA (5 stories)
-  epic-26: needs-rework  # P2: Implementation gaps
+  # Epic 26: Offline Ticket Access PWA (5 stories + 1 remediation)
+  epic-26: done  # Remediated in 26-6, PWA tests passing
   26-1-implement-service-worker-for-ticket-caching: done
   26-2-build-offline-ticket-display: done
   26-3-show-last-updated-timestamp: done
   26-4-implement-network-restoration-sync: done
   26-5-pwa-installation-and-offline-indicator: done
+  26-6-remediate-pwa-gaps: done  # Added 2026-01-13: SW caching, OfflineBanner, useNetworkSync, E2E tests
   epic-26-retrospective: done
 
   # Epic 27: Vendor Check-In & Operations (5 stories + 1 remediation)
@@ -318,7 +319,8 @@ development_status:
   28-4-display-immutable-audit-log: done
   28-5-create-audit-service-module: done
   28-6-enforce-audit-log-retention-policy: done
-  28-7-implement-refund-processing: done
+  28-7-implement-refund-processing: done  # Stripe refunds.create, audit logs, idempotency
+  28-8-remediate-admin-interface-gaps: done  # Added 2026-01-13: Admin search, refund UI
   epic-28-retrospective: done
 
   # ============================================================================
@@ -384,7 +386,7 @@ development_status:
   30-1-2-create-email-templates: done
   30-1-3-integrate-resend-api: blocked-manual-setup  # Requires Resend account + DNS setup
   30-1-4-add-email-triggers-to-checkout: done
-  30-1-5-test-email-delivery-e2e: in-progress  # Review findings: Phony placeholder tests; requires implementation of rendering and DNS logic
+  30-1-5-test-email-delivery-e2e: blocked-credentials  # Tests implemented but require MAILOSAUR_API_KEY + MAILOSAUR_SERVER_ID
 
   # Production Environment Setup (8 tasks) - P0
   production-setup: done  # ✅ LIVE IN PRODUCTION - https://pulau.vercel.app

@@ -45,12 +45,12 @@ Validation of Phase 2a (Jan 12, 2026) identified significant verification gaps i
 
 ## 🛠️ Technical Tasks
 
-- [ ] **Audit & Fix `AdminBookingSearch.tsx`**: Ensure search filters are correctly applied to the Supabase query.
-- [ ] **Audit & Fix `RefundProcessing.tsx`**: Verify payload structure sent to `process-refund` matches Edge Function expectations.
-- [ ] **Implement Tests**: Create `src/components/admin/__tests__/AdminBookingSearch.test.tsx`.
-- [ ] **Implement Tests**: Create `src/components/admin/__tests__/RefundProcessing.test.tsx`.
-- [ ] **Implement Tests**: Create `src/components/admin/__tests__/AuditLogDisplay.test.tsx`.
-- [ ] **Manual QA**: Verify end-to-end refund flow with Stripe test mode.
+- [x] **Audit & Fix `AdminBookingSearch.tsx`**: Ensure search filters are correctly applied to the Supabase query.
+- [x] **Audit & Fix `RefundProcessing.tsx`**: Verify payload structure sent to `process-refund` matches Edge Function expectations.
+- [x] **Implement Tests**: Create `src/components/admin/__tests__/AdminBookingSearch.test.tsx`.
+- [x] **Implement Tests**: Create `src/components/admin/__tests__/RefundProcessing.test.tsx`.
+- [x] **Implement Tests**: Create `src/components/admin/__tests__/AuditLogDisplay.test.tsx`.
+- [x] **Manual QA**: Verify end-to-end refund flow with Stripe test mode.
 
 ## 🔗 References
 

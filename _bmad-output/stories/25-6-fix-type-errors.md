@@ -16,34 +16,34 @@ As a **developer**, I need **all TypeScript compilation errors resolved** so tha
 
 ## Acceptance Criteria
 
-- [ ] All TypeScript files compile without errors
-- [ ] `npm run type-check` passes with zero errors
-- [ ] `npm run build` completes successfully
-- [ ] All existing tests continue to pass
-- [ ] No runtime regressions introduced
+- [x] All TypeScript files compile without errors
+- [x] `npm run type-check` passes with zero errors
+- [x] `npm run build` completes successfully
+- [x] All existing tests continue to pass
+- [x] No runtime regressions introduced
 
 ## Tasks
 
-- [ ] **DEF-001**: Fix `src/lib/auditService.ts:44`
+- [x] **DEF-001**: Fix `src/lib/auditService.ts:44`
   - Change `user_id` → `actor_id`
   - Add required `actor_type` field (derive from context or default to 'user')
   - Verify auditService types align with `audit_logs` table schema
-- [ ] **DEF-002**: Fix `src/components/RealtimeSlotDisplay.tsx:108-113`
+- [x] **DEF-002**: Fix `src/components/RealtimeSlotDisplay.tsx:108-113`
   - Properly destructure `{ data, error }` from useQuery result
   - Handle loading state correctly
   - Verify component renders without type errors
-- [ ] **DEF-003**: Create `decrement_slot_inventory` RPC function
+- [x] **DEF-003**: Create `decrement_slot_inventory` RPC function
   - Write database migration in `supabase/migrations/`
   - Implement atomic inventory decrement logic
   - Add RPC function signature to TypeScript types
   - Run migration on local database
   - Regenerate Supabase types: `npm run db:types`
-- [ ] **DEF-004**: Fix `src/lib/realtimeService.test.ts:44`
+- [x] **DEF-004**: Fix `src/lib/realtimeService.test.ts:44`
   - Update mock to return valid status: `'ok' | 'error' | 'timed out'`
   - Verify test compiles and runs
-- [ ] Run full type check: `npm run type-check`
-- [ ] Run build verification: `npm run build`
-- [ ] Run test suite: `npm run test`
+- [x] Run full type check: `npm run type-check`
+- [x] Run build verification: `npm run build`
+- [x] Run test suite: `npm run test`
 
 ## Technical Notes
 
@@ -96,28 +96,28 @@ actor_type: 'user', // or derive from context
 
 ### Implementation Checklist
 
-- [ ] All task checkboxes marked with [x]
-- [ ] Code compiles without TypeScript errors
-- [ ] All tests passing (unit + integration + E2E where applicable)
-- [ ] No P0/P1 defects identified in code review
-- [ ] Code follows project conventions and style guide
+- [x] All task checkboxes marked with [x]
+- [x] Code compiles without TypeScript errors
+- [x] All tests passing (unit + integration + E2E where applicable)
+- [x] No P0/P1 defects identified in code review
+- [x] Code follows project conventions and style guide
 
 ### Documentation Checklist
 
-- [ ] Dev Agent Record completed with:
+- [x] Dev Agent Record completed with:
   - Agent model used
   - Debug log references
   - Completion notes with summary
   - Complete file list
-- [ ] All Acceptance Criteria verified and documented as met
-- [ ] Known issues or limitations documented in story notes
+- [x] All Acceptance Criteria verified and documented as met
+- [x] Known issues or limitations documented in story notes
 
 ### Verification Checklist
 
-- [ ] Feature tested in development environment
-- [ ] Edge cases handled appropriately
-- [ ] Error states implemented and tested
-- [ ] Performance acceptable (no obvious regressions)
+- [x] Feature tested in development environment
+- [x] Edge cases handled appropriately
+- [x] Error states implemented and tested
+- [x] Performance acceptable (no obvious regressions)
 
 ### Definition of Done
 
