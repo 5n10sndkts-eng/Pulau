@@ -6,6 +6,7 @@ import { Slider } from '@/components/ui/slider'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { PerfectForYouBadge } from '@/components/PerfectForYouBadge'
 
 import { useState, useMemo, useEffect } from 'react'
 import {
@@ -28,6 +29,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { dataService } from '@/lib/dataService'
 import { Experience } from '@/lib/types'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface ExploreScreenProps {
   onViewExperience: (experienceId: string) => void
@@ -45,13 +47,27 @@ export function ExploreScreen({ onViewExperience, onQuickAdd }: ExploreScreenPro
   })
 
   const [experiences, setExperiences] = useState<Experience[]>([])
+  const [recommendations, setRecommendations] = useState<Experience[]>([])
+  const { user } = useAuth()
 
-  // Load data
+  // Load data and recommendations
   useEffect(() => {
     const loadData = async () => {
       try {
         const data = await dataService.getExperiences()
         setExperiences(data)
+
+        // Load personalized recommendations if user has completed onboarding
+        if (user?.id && user.hasCompletedOnboarding) {
+          try {
+            // Get top 6 experiences sorted by user preferences
+            // TODO: Integrate with recommendationService when DB schema is aligned
+            const topExperiences = data.slice(0, 6)
+            setRecommendations(topExperiences)
+          } catch (error) {
+            console.error('Failed to load recommendations:', error)
+          }
+        }
       } catch (error) {
         console.error('Failed to load experiences:', error)
       } finally {
@@ -59,7 +75,7 @@ export function ExploreScreen({ onViewExperience, onQuickAdd }: ExploreScreenPro
       }
     }
     loadData()
-  }, [])
+  }, [user])
 
   // 1. Process search and advanced filters with memoization
   const filteredResults = useMemo(() => {
@@ -313,6 +329,27 @@ export function ExploreScreen({ onViewExperience, onQuickAdd }: ExploreScreenPro
               animate="animate"
               className="space-y-12"
             >
+              {/* Perfect For You Section - Only if user has recommendations */}
+              {recommendations.length > 0 && (
+                <section className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Star className="h-6 w-6 text-coral fill-coral" />
+                      <h2 className="font-display text-2xl font-bold">Perfect For You</h2>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6">
+                    {recommendations.map((exp) => (
+                      <RecommendedCard
+                        key={exp.id}
+                        experience={exp}
+                        onSelect={() => onViewExperience(exp.id)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
               {/* Trending Section */}
               <section className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -459,6 +496,40 @@ function CuratedCard({ experience, onSelect }: { experience: Experience; onSelec
               </Badge>
             )}
           </div>
+          <div className="absolute bottom-4 left-4 right-4 text-white">
+            <h3 className="font-display font-bold text-base leading-tight line-clamp-2">{experience.title}</h3>
+            <div className="flex items-center gap-3 mt-1 text-[10px] opacity-90">
+              <div className="flex items-center gap-1 font-bold">
+                <Star className="h-3 w-3 fill-current" />
+                {experience.provider.rating}
+              </div>
+              <span>${experience.price.amount}/{experience.price.per}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  )
+}
+
+function RecommendedCard({ experience, onSelect }: { experience: Experience; onSelect: () => void }) {
+  return (
+    <motion.div
+      whileTap={{ scale: 0.98 }}
+      className="w-64 shrink-0"
+    >
+      <Card
+        className="overflow-hidden cursor-pointer border-coral/20 shadow-premium group rounded-2xl h-full bg-gradient-to-br from-white to-coral/5"
+        onClick={onSelect}
+      >
+        <div className="relative h-44 overflow-hidden">
+          <img
+            src={experience.images[0]}
+            alt={experience.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <PerfectForYouBadge className="absolute top-3 left-3" />
           <div className="absolute bottom-4 left-4 right-4 text-white">
             <h3 className="font-display font-bold text-base leading-tight line-clamp-2">{experience.title}</h3>
             <div className="flex items-center gap-3 mt-1 text-[10px] opacity-90">

@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useKV } from '@github/spark/hooks'
-import { Trip, Booking } from '../lib/types'
-import { Card } from './ui/card'
-import { Button } from './ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-import { Badge } from './ui/badge'
-import { Separator } from './ui/separator'
-import { ScrollArea } from './ui/scroll-area'
-import { getExperienceById, formatDate } from '../lib/helpers'
+import { Trip, Booking } from '@/lib/types'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { getExperienceById, formatDate } from '@/lib/helpers'
 import {
   ArrowLeft,
   Calendar,
@@ -42,10 +42,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './ui/alert-dialog'
+} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { BookingDetails } from './BookingDetails'
+import { BookingDetails } from '@/components/BookingDetails'
 
 interface TripsDashboardProps {
   bookings: Booking[]

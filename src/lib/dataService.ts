@@ -75,8 +75,6 @@ interface DBExperienceRecord {
     created_at: string
     updated_at: string | null
     published_at: string | null
-    instant_book_enabled: boolean | null
-    cutoff_hours: number | null
     // Joined relations
     vendors: DBVendor | null
     experience_images: DBExperienceImage[] | null
@@ -178,8 +176,9 @@ export function toExperience(record: DBExperienceRecord): Experience {
         createdAt: record.created_at,
         updatedAt: record.updated_at ?? undefined,
         publishedAt: record.published_at ?? undefined,
-        instantBookEnabled: record.instant_book_enabled ?? false,
-        cutoffHours: record.cutoff_hours ?? 2
+        // Note: instant_book_enabled and cutoff_hours moved to vendor level (migration 21.4)
+        instantBookEnabled: false, // TODO: Join with vendors table to get actual value
+        cutoffHours: 2 // Default value
     }
 }
 

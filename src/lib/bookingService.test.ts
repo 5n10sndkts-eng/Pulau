@@ -190,7 +190,7 @@ describe('bookingService', () => {
                     ]
                 }
             }
-            vi.mocked(supabase.rpc).mockResolvedValue({ data: mockRpcResponse, error: null })
+            vi.mocked(supabase.rpc).mockResolvedValue({ data: mockRpcResponse, error: null, count: null, status: 200, statusText: 'OK' })
 
             const result = await bookingService.validateBookingForCheckIn(mockBookingId, mockVendorId)
 
@@ -206,7 +206,7 @@ describe('bookingService', () => {
         })
 
         it('returns error on RPC failure', async () => {
-            vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: { message: 'RPC Error' } })
+            vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: { message: 'RPC Error', details: '', hint: '', code: '', name: 'PostgrestError' }, count: null, status: 400, statusText: 'Bad Request' })
 
             const result = await bookingService.validateBookingForCheckIn(mockBookingId, mockVendorId)
 

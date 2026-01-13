@@ -8,6 +8,7 @@
         "dev:test": "VITE_USE_MOCK_AUTH=true VITE_USE_MOCK_DATA=true vite --port 5173",
         "kill": "fuser -k 5000/tcp",
         "build": "tsc -b --noCheck && vite build",
+        "verify-bundle": "if grep -r 'MOCK_USERS\\|mockLogin\\|USE_MOCK_AUTH' dist/ 2>/dev/null; then echo '❌ FAIL: Mock code found in production bundle'; exit 1; else echo '✅ PASS: No mock code in production bundle'; fi",
         "lint": "eslint .",
         "test": "vitest",
         "test:ui": "vitest --ui",
@@ -16,7 +17,9 @@
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "dependencies": {
         "@github/spark": ">=0.43.1 <1",
@@ -71,7 +74,7 @@
         "input-otp": "^1.4.2",
         "jsqr": "^1.4.0",
         "lucide-react": "^0.562.0",
-        "marked": "^15.0.7",
+        "marked": "^17.0.1",
         "next-themes": "^0.4.6",
         "octokit": "^4.1.2",
         "react": "^19.0.0",
@@ -110,6 +113,7 @@
         "globals": "^16.0.0",
         "jsdom": "^27.4.0",
         "mailosaur": "^10.0.0",
+        "prettier": "^3.3.3",
         "tailwindcss": "^4.1.11",
         "tsx": "^4.21.0",
         "typescript": "~5.7.2",

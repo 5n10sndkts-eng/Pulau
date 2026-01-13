@@ -6,6 +6,7 @@ import { validatePassword } from './validation';
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 // Mock user database for testing/fallback
+// DEVELOPMENT ONLY: This code is removed in production builds via tree-shaking
 const MOCK_USERS: User[] = [
   {
     id: 'user_123',
@@ -15,12 +16,15 @@ const MOCK_USERS: User[] = [
   },
 ];
 const DELAY_MS = 800;
-const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+// Build-time constant: import.meta.env.DEV is replaced with 'false' in production
+// This enables tree-shaking to remove all mock code from production bundle
+const USE_MOCK_AUTH = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
-    if (USE_MOCK_AUTH) {
-      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK login');
+    // DEV-only block: Vite tree-shaking removes this entire block in production
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
+      console.log('⚠️  DEVELOPMENT MODE: Using mock authentication');
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (!email || !password) { reject(new Error('Email and password are required')); return; }
@@ -93,7 +97,7 @@ export const authService = {
   },
 
   updateProfile: async (userId: string, updates: Partial<User>): Promise<void> => {
-    if (USE_MOCK_AUTH) {
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
       // Update local storage
       const stored = localStorage.getItem('pulau_user');
       if (stored) {
@@ -129,8 +133,8 @@ export const authService = {
       throw new Error(validation.errors[0]);
     }
 
-    if (USE_MOCK_AUTH) {
-      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK register');
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
+      console.log('⚠️  DEVELOPMENT MODE: Using mock registration');
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (!email || !password || !name) { reject(new Error('All fields are required')); return; }
@@ -197,7 +201,7 @@ export const authService = {
   },
 
   logout: async (): Promise<void> => {
-    if (USE_MOCK_AUTH) {
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
       localStorage.removeItem('pulau_user');
       return new Promise((resolve) => setTimeout(resolve, 500));
     }
@@ -206,8 +210,8 @@ export const authService = {
   },
 
   resetPassword: async (email: string): Promise<void> => {
-    if (USE_MOCK_AUTH) {
-      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK password reset');
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
+      console.log('⚠️  DEVELOPMENT MODE: Using mock password reset');
       return new Promise((resolve) => {
         setTimeout(() => {
           if (import.meta.env.DEV) console.log(`Password reset email sent to: ${email}`);
@@ -230,8 +234,8 @@ export const authService = {
       throw new Error(validation.errors[0]);
     }
 
-    if (USE_MOCK_AUTH) {
-      if (import.meta.env.DEV) console.log('🔐 Auth Service: Using MOCK password update');
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
+      console.log('⚠️  DEVELOPMENT MODE: Using mock password update');
       return new Promise((resolve) => setTimeout(resolve, DELAY_MS));
     }
 
@@ -243,7 +247,7 @@ export const authService = {
   },
 
   getCurrentUser: async (): Promise<User | null> => {
-    if (USE_MOCK_AUTH) {
+    if (import.meta.env.DEV && USE_MOCK_AUTH) {
       try {
         const stored = localStorage.getItem('pulau_user');
         if (stored) {
@@ -280,6 +284,7 @@ export const authService = {
       saved: profile?.saved || [],
       currency: profile?.currency || 'USD',
       language: profile?.language || 'en',
+      hasCompletedOnboarding: profile?.onboarding_completed || false,
     };
   }
 };

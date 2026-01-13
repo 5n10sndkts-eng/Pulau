@@ -8,7 +8,7 @@ import { formatDateRange, formatPrice, getPreferenceBasedSections, PreferenceSec
 import { Trip, UserPreferences, Experience } from '@/lib/types'
 import { MapPin, Waves, Bike, Sparkles, UtensilsCrossed, Car, Home as HomeIcon, ShoppingBag, Calendar, Star, Clock, Users, Plus, ChevronRight, Search, Compass } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { PreferenceChips } from './PreferenceChips'
+import { PreferenceChips } from '@/components/PreferenceChips'
 import { dataService } from '@/lib/dataService'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'

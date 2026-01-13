@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@/types/database.types';
+import type { Database } from '@/lib/database.types';
 
 describe('Supabase Database Schema Validation', () => {
   let supabase: ReturnType<typeof createClient<Database>>;
@@ -58,23 +58,7 @@ describe('Supabase Database Schema Validation', () => {
     // TypeScript compilation validates this
     // If types don't match schema, tsc will fail
 
-    // Validate user type structure
-    const userRow: Database['public']['Tables']['users']['Row'] = {
-      id: 'uuid-123',
-      email: 'test@example.com',
-      created_at: new Date().toISOString(),
-      first_name: 'John',
-      last_name: 'Doe',
-      phone: '+1234567890',
-      nationality: 'US',
-      photo_url: 'https://example.com/photo.jpg',
-      email_verified: true,
-      onboarding_completed: true,
-    };
-
-    expect(userRow.id).toBeDefined();
-    expect(userRow.email).toBeDefined();
-
+    // Note: users table removed - auth now uses auth.users
     // Validate experience type structure
     const experienceRow: Database['public']['Tables']['experiences']['Row'] = {
       id: 'exp-123',
@@ -96,6 +80,18 @@ describe('Supabase Database Schema Validation', () => {
       subcategory: null,
       start_time: null,
       languages: null,
+      cancellation_policy: null,
+      guest_change_allowed: false,
+      meeting_point_address: null,
+      meeting_point_instructions: null,
+      meeting_point_lat: null,
+      meeting_point_lng: null,
+      meeting_point_name: null,
+      modification_cutoff_hours: null,
+      modification_policy: null,
+      published_at: null,
+      reschedule_allowed: null,
+      tags: null,
     };
 
     expect(experienceRow.id).toBeDefined();
@@ -199,15 +195,12 @@ describe('Supabase Database Schema Validation', () => {
     expect(true).toBe(true); // If this compiles, types match
 
     // Validate specific table types exist
-    type UserTable = Tables['users'];
     type ExperienceTable = Tables['experiences'];
     type TripTable = Tables['trips'];
 
-    const _userCheck: UserTable = {} as any;
     const _expCheck: ExperienceTable = {} as any;
     const _tripCheck: TripTable = {} as any;
 
-    expect(_userCheck).toBeDefined();
     expect(_expCheck).toBeDefined();
     expect(_tripCheck).toBeDefined();
   });
@@ -217,14 +210,7 @@ describe('Supabase Database Schema Validation', () => {
     // If types are invalid, the build fails before tests run
 
     // Validate insert types
-    type UserInsert = Database['public']['Tables']['users']['Insert'];
     type ExperienceInsert = Database['public']['Tables']['experiences']['Insert'];
-
-    const newUser: UserInsert = {
-      email: 'new@example.com',
-      first_name: 'Jane',
-      last_name: 'Doe',
-    };
 
     const newExperience: ExperienceInsert = {
       vendor_id: 'v1',
@@ -242,7 +228,6 @@ describe('Supabase Database Schema Validation', () => {
       status: 'draft',
     };
 
-    expect(newUser).toBeDefined();
     expect(newExperience).toBeDefined();
 
     // If we reached here, TypeScript compilation succeeded

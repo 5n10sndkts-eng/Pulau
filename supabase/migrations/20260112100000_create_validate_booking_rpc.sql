@@ -2,6 +2,9 @@
 -- Story: 27.2 - Implement Ticket Validation Logic
 -- Ensures consistent checking of 'status' column and robust multi-vendor handling.
 
+-- Drop the function first to allow changing return type
+DROP FUNCTION IF EXISTS validate_booking_for_checkin(UUID, UUID);
+
 CREATE OR REPLACE FUNCTION validate_booking_for_checkin(
   p_booking_id UUID,
   p_vendor_id UUID

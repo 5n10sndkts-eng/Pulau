@@ -37,6 +37,8 @@ const defaultTheme = {
       coral: {
         DEFAULT: "oklch(0.68 0.17 25)", // Warm Coral #FF6B6B (secondary/accent color)
         foreground: "oklch(1 0 0)", // White text
+        500: "oklch(0.68 0.17 25)", // Warm Coral #FF6B6B
+        600: "oklch(0.62 0.17 25)", // Darker Coral
       },
       sand: {
         DEFAULT: "oklch(0.87 0.12 85)", // Golden Sand #F4D03F (secondary color for highlights)

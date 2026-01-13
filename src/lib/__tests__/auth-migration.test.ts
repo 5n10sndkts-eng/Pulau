@@ -29,22 +29,24 @@ describe('Supabase Auth Migration', () => {
     const result = await authService.login('test@example.com', 'password123');
 
     expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
-    expect(result.user).toBeDefined();
-    expect(result.user.email).toBe('test@example.com');
+    expect(result).toBeDefined();
+    expect(result.email).toBe('test@example.com');
   });
 
   test('AC2: Register component uses authService with Supabase Auth', async () => {
     // Mock successful registration
     vi.mocked(authService.register).mockResolvedValue({
-      user: { id: 'user-456', email: 'new@example.com' },
-      session: { access_token: 'token-456' },
+      id: 'user-456',
+      email: 'new@example.com',
+      name: 'Test User',
+      role: 'customer',
     } as any);
 
-    const result = await authService.register('new@example.com', 'securepass123');
+    const result = await authService.register('Test User', 'new@example.com', 'securepass123');
 
-    expect(authService.register).toHaveBeenCalledWith('new@example.com', 'securepass123');
-    expect(result.user).toBeDefined();
-    expect(result.user.email).toBe('new@example.com');
+    expect(authService.register).toHaveBeenCalledWith('Test User', 'new@example.com', 'securepass123');
+    expect(result).toBeDefined();
+    expect(result.email).toBe('new@example.com');
   });
 
   test('AC3: Password reset functionality available', async () => {
@@ -61,24 +63,28 @@ describe('Supabase Auth Migration', () => {
 
   test('AC4: Auth state changes are handled properly', async () => {
     // Mock initial unauthenticated state
-    vi.mocked(authService.getUser).mockResolvedValue(null);
+    vi.mocked(authService.getCurrentUser).mockResolvedValue(null);
 
-    let user = await authService.getUser();
+    let user = await authService.getCurrentUser();
     expect(user).toBeNull();
 
     // Simulate login - auth state changes to authenticated
     vi.mocked(authService.login).mockResolvedValue({
-      user: { id: 'user-789', email: 'state@example.com' },
-      session: { access_token: 'token-789' },
-    } as any);
-
-    vi.mocked(authService.getUser).mockResolvedValue({
       id: 'user-789',
       email: 'state@example.com',
+      name: 'State User',
+      role: 'customer',
+    } as any);
+
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      id: 'user-789',
+      email: 'state@example.com',
+      name: 'State User',
+      role: 'customer',
     } as any);
 
     await authService.login('state@example.com', 'password123');
-    user = await authService.getUser();
+    user = await authService.getCurrentUser();
 
     expect(user).toBeDefined();
     expect(user?.email).toBe('state@example.com');
@@ -106,7 +112,7 @@ describe('Supabase Auth Migration', () => {
     expect(authService.login).toBeDefined();
     expect(authService.register).toBeDefined();
     expect(authService.resetPassword).toBeDefined();
-    expect(authService.getUser).toBeDefined();
+    expect(authService.getCurrentUser).toBeDefined();
     expect(authService.logout).toBeDefined();
 
     // Type checking is handled by TypeScript compiler
@@ -129,7 +135,7 @@ describe('Supabase Auth Migration', () => {
       new Error('Password must be at least 8 characters')
     );
 
-    await expect(authService.register('test@example.com', 'short')).rejects.toThrow(
+    await expect(authService.register('Test User', 'test@example.com', 'short')).rejects.toThrow(
       'Password must be at least 8 characters'
     );
   });

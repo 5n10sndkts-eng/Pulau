@@ -113,9 +113,9 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 
     // Mapper should handle nested data correctly
     expect(dbRow.vendors.business_name).toBe('Surf Co');
-    expect(dbRow.experience_images[0].url).toBe('img1.jpg');
-    expect(dbRow.experience_inclusions[0].is_included).toBe(true);
-    expect(dbRow.reviews[0].rating).toBe(5);
+    expect(dbRow.experience_images[0]?.url).toBe('img1.jpg');
+    expect(dbRow.experience_inclusions[0]?.is_included).toBe(true);
+    expect(dbRow.reviews[0]?.rating).toBe(5);
   });
 
   test('AC4: vendorService maps expanded vendor columns', () => {
@@ -156,7 +156,7 @@ describe('Data Layer Refactor - Supabase Integration', () => {
 
     // vendorService should have methods for vendor operations
     expect(vendorService).toBeDefined();
-    expect(typeof vendorService.getVendor).toBe('function');
+    expect(typeof vendorService.getVendorByUserId).toBe('function');
     expect(typeof vendorService.getVendorExperiences).toBe('function');
   });
 

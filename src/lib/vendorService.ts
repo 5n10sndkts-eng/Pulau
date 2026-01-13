@@ -87,12 +87,17 @@ export const vendorService = {
      * Update instant book setting for an experience.
      * Only available for vendors with BANK_LINKED or ACTIVE onboarding state.
      */
+    // TODO: Add instant_book_enabled column to experiences table (Story 23.2)
     updateExperienceInstantBook: async (experienceId: string, instantBookEnabled: boolean): Promise<void> => {
         if (USE_MOCK_DATA) {
             return
         }
 
-        const { error } = await supabase
+        // Temporarily disabled - column not in schema yet
+        console.warn('instant_book_enabled column not yet migrated to experiences table')
+        return
+        
+        /* const { error } = await supabase
             .from('experiences')
             .update({ instant_book_enabled: instantBookEnabled })
             .eq('id', experienceId)
@@ -100,12 +105,13 @@ export const vendorService = {
         if (error) {
             if (import.meta.env.DEV) console.error('Error updating instant book setting:', error)
             throw error
-        }
+        } */
     },
 
     /**
      * Update cutoff hours for an experience.
      * Cutoff is the number of hours before start time when booking closes.
+     * Uses modification_cutoff_hours column that exists in schema
      */
     updateExperienceCutoffHours: async (experienceId: string, cutoffHours: number): Promise<void> => {
         if (USE_MOCK_DATA) {
@@ -114,7 +120,7 @@ export const vendorService = {
 
         const { error } = await supabase
             .from('experiences')
-            .update({ cutoff_hours: cutoffHours })
+            .update({ modification_cutoff_hours: cutoffHours })
             .eq('id', experienceId)
 
         if (error) {

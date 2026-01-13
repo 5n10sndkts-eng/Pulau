@@ -189,7 +189,10 @@ describe('slotService', () => {
         it('decrements availability using optimistic locking', async () => {
             vi.mocked(supabase.rpc).mockResolvedValue({
                 data: { success: true, available_count: 9, error: null },
-                error: null
+                error: null,
+                count: null,
+                status: 200,
+                statusText: 'OK'
             })
             const mockChain = createMockSupabase()
             mockChain.then = (resolve: any) => resolve({ data: { ...mockSlot, available_count: 9 }, error: null })
@@ -204,7 +207,10 @@ describe('slotService', () => {
         it('returns error when slot is sold out', async () => {
             vi.mocked(supabase.rpc).mockResolvedValue({
                 data: { success: false, error: 'Slot no longer available', available_count: null },
-                error: null
+                error: null,
+                count: null,
+                status: 200,
+                statusText: 'OK'
             })
 
             const result = await decrementAvailability(mockSlotId, 1)
@@ -219,7 +225,10 @@ describe('slotService', () => {
             // First call for RPC
             vi.mocked(supabase.rpc).mockResolvedValue({
                 data: { success: true, available_count: 5, error: null },
-                error: null
+                error: null,
+                count: null,
+                status: 200,
+                statusText: 'OK'
             })
 
             // Secondary calls for fetching updated slot and audit log

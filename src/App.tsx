@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, Navigate, useParams } from 'react-router-do
 import { toast } from 'sonner'
 
 import { OnboardingSingleScreen } from './screens/customer/OnboardingSingleScreen'
+import { OnboardingFlow } from './screens/onboarding/OnboardingFlow'
 import { HomeScreen } from './screens/customer/HomeScreen'
 import { CategoryBrowser } from './components/features/discovery/CategoryBrowser'
 import { ExperienceDetail } from './components/features/discovery/ExperienceDetail'
@@ -171,12 +172,12 @@ function AppContent() {
     }
   }, [authUser])
 
-  // Redirect logic
+  // Redirect logic - Route to new onboarding flow for first-time users
   useEffect(() => {
     if (authUser && !authUser.hasCompletedOnboarding) {
-      // navigate('/onboarding') 
+      navigate('/onboarding-flow')
     }
-  }, [authUser])
+  }, [authUser, navigate])
 
   const handleOnboardingComplete = (preferences: UserPreferences) => {
     const updatedUser = { ...safeUser, preferences, hasCompletedOnboarding: true }
@@ -417,11 +418,19 @@ function AppContent() {
             </ProtectedRoute>
           } />
 
+          {/* Old single-screen onboarding (deprecated) */}
           <Route path="/onboarding" element={
             <OnboardingSingleScreen
               onComplete={handleOnboardingComplete}
               onSkip={handleOnboardingSkip}
             />
+          } />
+
+          {/* New Epic 4 onboarding flow */}
+          <Route path="/onboarding-flow" element={
+            <ProtectedRoute>
+              <OnboardingFlow />
+            </ProtectedRoute>
           } />
 
           {/* Auth Routes */}
