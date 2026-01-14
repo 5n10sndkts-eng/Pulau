@@ -355,3 +355,83 @@ describe('Booking Email Flow', () => {
 - `supabase/migrations/XXX_add_email_status_to_bookings.sql` (create)
 - `src/components/BookingDetails.tsx` (update)
 - `src/hooks/useResendEmail.ts` (create)
+
+---
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Amelia (Dev Agent)
+**Review Date:** 2026-01-13
+**Review Type:** Adversarial Code Review
+
+### Issues Found
+
+| # | Severity | Category | Issue | Resolution |
+|---|----------|----------|-------|------------|
+| 1 | HIGH | Missing Infrastructure | No database columns for email_sent, email_sent_at, email_resend_count on bookings table | Created migration `20260113000001_add_email_status_to_bookings.sql` |
+| 2 | HIGH | Missing Infrastructure | No failed_emails queue table exists | Added to same migration with full schema |
+| 3 | HIGH | Missing Functionality | Webhook sends email fire-and-forget with no retry logic | Implemented `sendEmailWithRetry` in webhook-stripe with 3 attempts + exponential backoff |
+| 4 | HIGH | Missing Functionality | No email_sent status update after successful send | Added update to booking.email_sent=true, email_sent_at in webhook |
+| 5 | HIGH | Missing Functionality | No audit logging for email.sent/email.failed events | Added audit_logs entries for both success and failure paths |
+| 6 | MEDIUM | Missing Edge Function | resend-booking-email function does not exist | Created complete edge function with retry, rate limiting, auth |
+| 7 | MEDIUM | Missing Component | No UI component for email status display | Created `BookingEmailStatus.tsx` with sent/pending/failed states |
+| 8 | MEDIUM | Missing Hook | useResendEmail hook incomplete | Updated hook with query invalidation, proper error handling |
+| 9 | MEDIUM | Missing Tests | No tests for email components | Created `BookingEmailStatus.test.tsx` with 12 test cases |
+| 10 | LOW | Code Quality | Original webhook email code lacked proper error recovery | Wrapped in async IIFE to maintain fire-and-forget while adding retry |
+
+### Changes Made
+
+**New Files Created:**
+1. `supabase/migrations/20260113000001_add_email_status_to_bookings.sql`
+   - Added email_sent (boolean), email_sent_at (timestamptz), email_resend_count (int) to bookings
+   - Created failed_emails table with full schema
+   - Added indexes for performance
+
+2. `supabase/functions/resend-booking-email/index.ts`
+   - Complete edge function with:
+     - Auth verification via JWT
+     - Rate limiting (5 emails per booking per hour)
+     - 3-retry logic with exponential backoff
+     - Audit trail logging
+     - CORS support
+
+3. `src/components/booking/BookingEmailStatus.tsx`
+   - Status display component with sent/pending/failed states
+   - Compact and full display modes
+   - Resend button with loading state
+   - Full accessibility (ARIA labels, role="status")
+
+4. `src/components/booking/__tests__/BookingEmailStatus.test.tsx`
+   - 12 unit tests covering all states and functionality
+
+**Modified Files:**
+
+5. `supabase/functions/webhook-stripe/index.ts`
+   - Replaced fire-and-forget with `sendEmailWithRetry()` 
+   - 3 attempts with 1s, 2s, 4s backoff delays
+   - Updates booking.email_sent on success
+   - Creates audit_logs entries for email.sent/email.failed
+   - Records failures in failed_emails table
+
+6. `src/hooks/useResendEmail.ts`
+   - Fixed body parameter to match edge function (booking_id)
+   - Added query invalidation for automatic UI refresh
+   - Added reset() method
+
+### Verification Status
+
+- [x] Database migration syntactically valid
+- [x] Edge function compiles with Deno
+- [x] React component types check
+- [x] Unit tests pass (12/12)
+- [x] All ACs covered by implementation
+- [x] Retry logic matches AC #3 requirements
+- [x] Non-blocking pattern preserved (AC #3)
+- [x] Audit trail logging implemented (AC #2)
+
+### Recommendations for Future
+
+1. **Production Monitoring:** Add Sentry alerts for email.failed events
+2. **Metrics Dashboard:** Track email delivery rates in analytics
+3. **Dead Letter Queue:** Consider cron job to retry failed_emails table entries
+4. **Rate Limiting:** Current 5/hour per booking may need adjustment based on usage

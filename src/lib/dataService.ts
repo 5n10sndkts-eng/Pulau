@@ -29,6 +29,7 @@ interface DBVendor {
   response_time: string | null;
   verified: boolean | null;
   created_at: string | null;
+  instant_book_enabled: boolean | null;
 }
 
 interface DBExperienceImage {
@@ -190,8 +191,8 @@ export function toExperience(record: DBExperienceRecord): Experience {
     createdAt: record.created_at,
     updatedAt: record.updated_at ?? undefined,
     publishedAt: record.published_at ?? undefined,
-    // Note: instant_book_enabled and cutoff_hours moved to vendor level (migration 21.4)
-    instantBookEnabled: false, // TODO: Join with vendors table to get actual value
+    // instant_book_enabled is on vendors table (migration 21.4)
+    instantBookEnabled: record.vendors?.instant_book_enabled ?? false,
     cutoffHours: 2, // Default value
   };
 }
@@ -209,7 +210,8 @@ const EXPERIENCE_SELECT = `
         review_count,
         response_time,
         verified,
-        created_at
+        created_at,
+        instant_book_enabled
     ),
     experience_images (
         id,

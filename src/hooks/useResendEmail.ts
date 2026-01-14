@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -6,13 +7,31 @@ interface UseResendEmailReturn {
   resendEmail: (bookingId: string) => Promise<boolean>;
   isResending: boolean;
   error: Error | null;
+  reset: () => void;
 }
 
+/**
+ * Hook for resending booking confirmation emails (Story 30-1-4)
+ * 
+ * @example
+ * ```tsx
+ * const { resendEmail, isResending, error } = useResendEmail();
+ * 
+ * <Button onClick={() => resendEmail(bookingId)} disabled={isResending}>
+ *   Resend Email
+ * </Button>
+ * ```
+ */
 export function useResendEmail(): UseResendEmailReturn {
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  const resendEmail = async (bookingId: string): Promise<boolean> => {
+  const reset = useCallback(() => {
+    setError(null);
+  }, []);
+
+  const resendEmail = useCallback(async (bookingId: string): Promise<boolean> => {
     setIsResending(true);
     setError(null);
 
@@ -20,23 +39,23 @@ export function useResendEmail(): UseResendEmailReturn {
       const { data, error: invokeError } = await supabase.functions.invoke(
         'resend-booking-email',
         {
-          body: { bookingId },
+          body: { booking_id: bookingId }, // Match edge function expected parameter
         },
       );
 
       if (invokeError) throw invokeError;
 
-      // Also check 200 OK but application level error if needed,
-      // typically invoke throws on non-2xx if configured?
-      // Supabase invoke usually returns data/error.
-
       if (data?.error) {
         throw new Error(data.error);
       }
 
-      toast.success('Email resent successfully!');
+      // Invalidate booking queries to refresh email status
+      await queryClient.invalidateQueries({ queryKey: ['booking', bookingId] });
+      await queryClient.invalidateQueries({ queryKey: ['bookings'] });
+
+      toast.success('Confirmation email sent successfully!');
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to resend email:', err);
       const e =
         err instanceof Error ? err : new Error('Unknown error occurred');
@@ -46,7 +65,7 @@ export function useResendEmail(): UseResendEmailReturn {
     } finally {
       setIsResending(false);
     }
-  };
+  }, [queryClient]);
 
-  return { resendEmail, isResending, error };
+  return { resendEmail, isResending, error, reset };
 }

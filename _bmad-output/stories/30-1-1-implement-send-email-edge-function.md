@@ -205,6 +205,53 @@ const response = await supabaseClient.functions.invoke('send-email', {
 
 ## Related Files
 
-- `supabase/functions/send-email/index.ts` (to create)
-- `supabase/functions/send-email/templates/` (to create)
-- `supabase/migrations/XXX_create_email_logs_table.sql` (to create)
+- `supabase/functions/send-email/index.ts` (created)
+- `supabase/functions/send-email/templates/` (created)
+- `supabase/migrations/20260112000004_create_email_logs_table.sql` (created)
+- `src/__tests__/send-email-validation.test.ts` (created)
+- `src/__tests__/send-email-security.test.ts` (created)
+- `tests/edge-functions/send-email.test.ts` (created)
+
+---
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Amelia (Dev Agent)
+**Review Date:** 2026-01-13
+**Review Type:** Adversarial Code Review
+
+### Issues Found
+
+| # | Severity | Category | Issue | Resolution |
+|---|----------|----------|-------|------------|
+| 1 | HIGH | Security | No authentication check - any caller could send emails | Added `validateAuthentication()` checking service role key or valid JWT |
+| 2 | MEDIUM | Security | No rate limiting to prevent email abuse | Added in-memory rate limiting (10 emails/booking/hour) |
+| 3 | MEDIUM | Testing | Integration tests skip in CI when server not running | Created `send-email-security.test.ts` with unit tests for rate limiting and hashing |
+| 4 | LOW | Security | hashEmail used btoa (reversible) instead of crypto hash | Replaced with SHA-256 via `crypto.subtle.digest` |
+| 5 | LOW | Documentation | Migration file name pattern incorrect | Fixed to `20260112000004_create_email_logs_table.sql` |
+
+### Changes Made
+
+**Modified Files:**
+
+1. `supabase/functions/send-email/index.ts`
+   - Added `validateAuthentication()` function checking service role key or JWT (AC #1)
+   - Added `checkRateLimit()` with 10 emails/booking/hour limit
+   - Replaced `hashEmail()` with SHA-256 cryptographic hash
+   - Added 401 Unauthorized response for failed auth
+   - Added 429 Too Many Requests response for rate limit exceeded
+
+**New Files:**
+
+2. `src/__tests__/send-email-security.test.ts` - 14 unit tests for:
+   - Rate limiting logic (6 tests)
+   - Email hashing PII protection (5 tests)
+   - Authentication requirements documentation (3 tests)
+
+### Verification
+
+- [x] Authentication now required for all requests
+- [x] Rate limiting prevents email abuse
+- [x] Hash function uses proper SHA-256
+- [x] Unit tests run in CI without server dependency
+- [x] Documentation updated with correct file references

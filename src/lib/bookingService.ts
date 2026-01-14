@@ -255,12 +255,118 @@ export const bookingService = {
       return enrichedBooking;
     }
 
-    // In a real app, this would fetch from Supabase
-    // For now, in non-mock mode, we'll return null or throw an error
-    console.warn(
-      `[bookingService] getBookingById not implemented for non-mock mode (ID: ${bookingId})`,
-    );
-    return null;
+    // Production mode - fetch from Supabase
+    const normalizedId = normalizeBookingId(bookingId);
+
+    // Try by UUID first if it looks like a UUID, otherwise try by reference
+    const isUuid = isValidUuid(normalizedId);
+
+    try {
+      let query = supabase.from('bookings').select(`
+          id,
+          trip_id,
+          reference,
+          status,
+          booked_at,
+          trips (
+            id,
+            user_id,
+            destination_id,
+            status,
+            start_date,
+            end_date,
+            travelers,
+            trip_items (
+              id,
+              experience_id,
+              guests,
+              total_price,
+              date,
+              time,
+              experiences (
+                id,
+                title,
+                meeting_point,
+                vendors (
+                  id,
+                  business_name,
+                  logo_url
+                )
+              )
+            )
+          )
+        `);
+
+      // Apply the appropriate filter based on ID format
+      if (isUuid) {
+        query = query.or(`id.eq.${normalizedId},reference.eq.${normalizedId}`);
+      } else {
+        query = query.eq('reference', normalizedId);
+      }
+
+      const { data, error } = await query.single();
+
+      if (error || !data) {
+        console.warn(
+          `[bookingService] getBookingById: not found (ID: ${bookingId})`,
+        );
+        return null;
+      }
+
+      // Transform database response to Booking type
+      const tripData = (data as any).trips;
+      const tripItemsRaw = tripData?.trip_items || [];
+
+      const items: TripItem[] = tripItemsRaw.map((item: any) => {
+        const experienceData = item.experiences;
+        const vendorData = experienceData?.vendors;
+
+        return {
+          experienceId: item.experience_id,
+          guests: item.guests,
+          totalPrice: Number(item.total_price),
+          date: item.date || undefined,
+          time: item.time || undefined,
+          experienceName: experienceData?.title,
+          vendor: vendorData
+            ? {
+                id: vendorData.id,
+                name: vendorData.business_name,
+                logoUrl: vendorData.logo_url,
+              }
+            : undefined,
+          meetingPoint: experienceData?.meeting_point,
+        };
+      });
+
+      const totals = calculateTripTotal(items);
+
+      const trip: Trip = {
+        id: tripData.id,
+        userId: tripData.user_id,
+        destination: tripData.destination_id,
+        status: tripData.status as Trip['status'],
+        startDate: tripData.start_date || undefined,
+        endDate: tripData.end_date || undefined,
+        travelers: tripData.travelers,
+        items: items,
+        ...totals,
+      };
+
+      const booking: Booking = {
+        id: data.id,
+        tripId: data.trip_id,
+        reference: data.reference,
+        status: data.status as Booking['status'],
+        bookedAt: data.booked_at,
+        trip: trip,
+      };
+
+      return booking;
+    } catch (err) {
+      console.error('[bookingService] getBookingById error:', err);
+      return null;
+    }
   },
 
   // Validate a booking for check-in (Epic 27.2)

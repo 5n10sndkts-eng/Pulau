@@ -9,6 +9,7 @@
 
   <flow>
     <step n="1" title="Setup">
+      <action>Set {timestamp} = current date-time (YYYY-MM-DD-HHmm)</action>
       <action>If checklist not provided, load checklist.md from workflow location</action>
       <action>Try to fuzzy match for files similar to the input document name or if user did not provide the document. If document not
         provided or unsure, ask user: "Which document should I validate?"</action>

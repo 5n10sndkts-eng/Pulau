@@ -368,12 +368,12 @@ development_status:
   # ============================================================================
 
   # Epic 33: UX 2.0 - Core Experience Improvements (5 stories)
-  epic-33: backlog
+  epic-33: done
   33-1-sticky-trip-bar-implementation: done
-  33-2-single-screen-onboarding-redesign: ready-for-dev
-  33-3-quick-add-interaction-loop: ready-for-dev
-  33-4-checkout-form-optimization: ready-for-dev
-  33-5-budget-helper-implementation: ready-for-dev
+  33-2-single-screen-onboarding-redesign: done
+  33-3-quick-add-interaction-loop: done
+  33-4-checkout-form-optimization: done
+  33-5-budget-helper-implementation: done
   epic-33-retrospective: optional
 
   # ============================================================================
@@ -407,3 +407,21 @@ development_status:
   32-1-4-setup-performance-monitoring: done  # BrowserTracing, Web Vitals, APM tracking
   32-1-5-test-error-reporting-e2e: done  # E2E test suite created (sentry-error-tracking.spec.ts)
   32-1-6-configure-alert-rules: done  # Alert configuration guide created
+
+  # ============================================================================
+  # PERFORMANCE OPTIMIZATION (2026-01-14)
+  # ============================================================================
+  
+  # Code Splitting & Lazy Loading
+  performance-optimization: done
+  perf-1-code-splitting-lazy-load: done  # React.lazy() for vendor portal, checkout, trips; Main bundle reduced 1.9MB→1.3MB (-30%)
+
+  # ============================================================================
+  # REMEDIATION SPRINT (2026-01-13) - Critical Fixes
+  # ============================================================================
+  
+  # Defect Fixes - P0/P1 Priority
+  remediation-sprint: in-progress
+  DEF-001-availability-calendar-supabase-integration: done  # Connected AvailabilityCalendar to slotService + realtimeService
+  DEF-002-getBookingById-not-implemented: done  # Implemented Supabase query for production mode
+  DEF-003-trip-timeline-visual-gaps: done  # Added TripTimeline component with connecting lines

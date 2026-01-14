@@ -46,6 +46,15 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authorization - must have valid Supabase auth token
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization header required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Get vendor ID from request
     const { vendorId } = await req.json();
 
@@ -70,12 +79,34 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get vendor's Stripe account ID
+    // Create authenticated client to verify user
+    const supabaseAuth = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') || supabaseKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    // Verify the authenticated user
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get vendor's Stripe account ID and verify ownership
     const { data: vendor, error: vendorError } = await supabase
       .from('vendors')
-      .select('stripe_account_id')
+      .select('stripe_account_id, user_id')
       .eq('id', vendorId)
       .single();
+
+    // Verify the authenticated user owns this vendor account
+    if (vendor && vendor.user_id !== user.id) {
+      return new Response(
+        JSON.stringify({ error: 'Access denied' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     if (vendorError || !vendor?.stripe_account_id) {
       return new Response(

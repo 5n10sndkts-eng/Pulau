@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import {
   Routes,
   Route,
@@ -9,15 +9,13 @@ import {
 import { toast } from 'sonner';
 
 import { OnboardingSingleScreen } from './screens/customer/OnboardingSingleScreen';
+import { ONBOARDING_DEFAULTS } from './lib/constants/onboarding';
 import { OnboardingFlow } from './screens/onboarding/OnboardingFlow';
 import { HomeScreen } from './screens/customer/HomeScreen';
 import { CategoryBrowser } from './components/features/discovery/CategoryBrowser';
 import { ExperienceDetail } from './components/features/discovery/ExperienceDetail';
-import { TripBuilder } from './components/features/trip/TripBuilder';
-import { CheckoutFlow } from './components/checkout/CheckoutFlow';
 import { CheckoutSuccess } from './components/checkout/CheckoutSuccess';
 import { CheckoutCancel } from './components/checkout/CheckoutCancel';
-import { TripsDashboard } from './screens/customer/TripsDashboard';
 import { SavedScreen } from './screens/customer/SavedScreen';
 import { ExploreScreen } from './screens/customer/ExploreScreen';
 import { ProfileScreen } from './screens/customer/ProfileScreen';
@@ -27,22 +25,38 @@ import { LoginScreen } from './components/auth/LoginScreen';
 import { RegisterScreen } from './components/auth/RegisterScreen';
 import { PasswordReset } from './components/auth/PasswordReset';
 
-// Vendor imports
-import { VendorLogin } from './components/vendor/VendorLogin';
-import { VendorRegister } from './components/vendor/VendorRegister';
-import { VendorDashboard } from './components/vendor/VendorDashboard';
-import { VendorRevenueDashboard } from './components/vendor/VendorRevenueDashboard';
+// Lazy-loaded components for code-splitting (Performance Optimization)
+// Vendor portal - rarely accessed by most users
+const VendorLogin = lazy(() => import('./components/vendor/VendorLogin').then(m => ({ default: m.VendorLogin })));
+const VendorRegister = lazy(() => import('./components/vendor/VendorRegister').then(m => ({ default: m.VendorRegister })));
+const VendorDashboard = lazy(() => import('./components/vendor/VendorDashboard').then(m => ({ default: m.VendorDashboard })));
+const VendorRevenueDashboard = lazy(() => import('./components/vendor/VendorRevenueDashboard').then(m => ({ default: m.VendorRevenueDashboard })));
+
+// Heavy checkout flow - only needed when purchasing
+const CheckoutFlow = lazy(() => import('./components/checkout/CheckoutFlow').then(m => ({ default: m.CheckoutFlow })));
+const TripBuilder = lazy(() => import('./components/features/trip/TripBuilder').then(m => ({ default: m.TripBuilder })));
+const TripsDashboard = lazy(() => import('./screens/customer/TripsDashboard').then(m => ({ default: m.TripsDashboard })));
+const TicketPageRoute = lazy(() => import('./components/booking/TicketPageRoute').then(m => ({ default: m.TicketPageRoute })));
 
 import { NavigationShellWithRouter } from './components/layout/NavigationShellWithRouter';
 import { MetaManager } from './components/common/MetaManager';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { VendorProtectedRoute } from './components/auth/VendorProtectedRoute';
 import { Toaster } from './components/ui/sonner';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { TripProvider, useTrip } from './contexts/TripContext';
-import { TicketPageRoute } from './components/booking/TicketPageRoute';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { useNetworkSync } from './hooks/useNetworkSync';
 import { StickyTripBar } from './components/features/trip/StickyTripBar';
+
+// Loading fallback for lazy components
+function LazyLoadFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+    </div>
+  );
+}
 
 import {
   User,
@@ -199,10 +213,10 @@ function AppContent() {
     }
   }, [authUser]);
 
-  // Redirect logic - Route to new onboarding flow for first-time users
+  // Redirect logic - Route to single-screen onboarding for first-time users (Story 33.2)
   useEffect(() => {
     if (authUser && !authUser.hasCompletedOnboarding) {
-      navigate('/onboarding-flow');
+      navigate('/onboarding');
     }
   }, [authUser, navigate]);
 
@@ -218,11 +232,11 @@ function AppContent() {
   };
 
   const handleOnboardingSkip = () => {
-    // Default preferences per AC #5
+    // Default preferences per AC #5 - using shared constants
     const defaultPrefs: UserPreferences = {
-      travelStyles: ['adventure'],
-      groupType: 'solo',
-      budget: 'midrange',
+      travelStyles: [ONBOARDING_DEFAULTS.travelStyles[0]],
+      groupType: ONBOARDING_DEFAULTS.groupType,
+      budget: ONBOARDING_DEFAULTS.budget,
     };
     const updatedUser = {
       ...safeUser,
@@ -433,13 +447,15 @@ function AppContent() {
             path="/plan"
             element={
               <ProtectedRoute>
-                <TripBuilder
-                  trip={trip}
-                  onBack={() => navigate('/')}
-                  onRemoveItem={handleRemoveItem}
-                  onCheckout={() => navigate('/checkout')}
-                  onUpdateTrip={handleUpdateTrip}
-                />
+                <Suspense fallback={<LazyLoadFallback />}>
+                  <TripBuilder
+                    trip={trip}
+                    onBack={() => navigate('/')}
+                    onRemoveItem={handleRemoveItem}
+                    onCheckout={() => navigate('/checkout')}
+                    onUpdateTrip={handleUpdateTrip}
+                  />
+                </Suspense>
               </ProtectedRoute>
             }
           />
@@ -448,11 +464,13 @@ function AppContent() {
             path="/checkout"
             element={
               <ProtectedRoute>
-                <CheckoutFlow
-                  trip={trip}
-                  onBack={() => navigate('/plan')}
-                  onComplete={handleCheckoutComplete}
-                />
+                <Suspense fallback={<LazyLoadFallback />}>
+                  <CheckoutFlow
+                    trip={trip}
+                    onBack={() => navigate('/plan')}
+                    onComplete={handleCheckoutComplete}
+                  />
+                </Suspense>
               </ProtectedRoute>
             }
           />
@@ -486,20 +504,22 @@ function AppContent() {
             path="/trips"
             element={
               <ProtectedRoute>
-                <TripsDashboard
-                  bookings={bookings || []}
-                  onUpdateBookings={(b) => setBookings(b)}
-                  onBack={() => navigate('/profile')}
-                  onViewTrip={() => {
-                    /* Placeholder */
-                  }}
-                  onBookAgain={handleBookAgain}
-                />
+                <Suspense fallback={<LazyLoadFallback />}>
+                  <TripsDashboard
+                    bookings={bookings || []}
+                    onUpdateBookings={(b) => setBookings(b)}
+                    onBack={() => navigate('/profile')}
+                    onViewTrip={() => {
+                      /* Placeholder */
+                    }}
+                    onBookAgain={handleBookAgain}
+                  />
+                </Suspense>
               </ProtectedRoute>
             }
           />
 
-          {/* Old single-screen onboarding (deprecated) */}
+          {/* Single-Screen Onboarding (Story 33.2 - Active) */}
           <Route
             path="/onboarding"
             element={
@@ -510,7 +530,7 @@ function AppContent() {
             }
           />
 
-          {/* New Epic 4 onboarding flow */}
+          {/* Old Epic 4 multi-step onboarding flow (deprecated - kept for reference) */}
           <Route
             path="/onboarding-flow"
             element={
@@ -532,45 +552,57 @@ function AppContent() {
           <Route
             path="/vendor/login"
             element={
-              <VendorLogin
-                onLogin={(s) => {
-                  setVendorSession(s);
-                  navigate('/vendor/dashboard');
-                }}
-                onNavigateToRegister={() => navigate('/vendor/register')}
-              />
+              <Suspense fallback={<LazyLoadFallback />}>
+                <VendorLogin
+                  onLogin={(s) => {
+                    setVendorSession(s);
+                    navigate('/vendor/dashboard');
+                  }}
+                  onNavigateToRegister={() => navigate('/vendor/register')}
+                />
+              </Suspense>
             }
           />
           <Route
             path="/vendor/register"
             element={
-              <VendorRegister
-                onNavigateToLogin={() => navigate('/vendor/login')}
-              />
+              <Suspense fallback={<LazyLoadFallback />}>
+                <VendorRegister
+                  onNavigateToLogin={() => navigate('/vendor/login')}
+                />
+              </Suspense>
             }
           />
           <Route
             path="/vendor/dashboard"
             element={
-              <VendorDashboard
-                session={vendorSession!}
-                onNavigateToExperiences={() => {}}
-                onNavigateToBookings={() => {}}
-                onNavigateToRevenue={() => navigate('/vendor/revenue')}
-                onLogout={() => {
-                  setVendorSession(null);
-                  navigate('/vendor/login');
-                }}
-              />
+              <VendorProtectedRoute session={vendorSession}>
+                <Suspense fallback={<LazyLoadFallback />}>
+                  <VendorDashboard
+                    session={vendorSession!}
+                    onNavigateToExperiences={() => {}}
+                    onNavigateToBookings={() => {}}
+                    onNavigateToRevenue={() => navigate('/vendor/revenue')}
+                    onLogout={() => {
+                      setVendorSession(null);
+                      navigate('/vendor/login');
+                    }}
+                  />
+                </Suspense>
+              </VendorProtectedRoute>
             }
           />
           <Route
             path="/vendor/revenue"
             element={
-              <VendorRevenueDashboard
-                session={vendorSession!}
-                onBack={() => navigate('/vendor/dashboard')}
-              />
+              <VendorProtectedRoute session={vendorSession}>
+                <Suspense fallback={<LazyLoadFallback />}>
+                  <VendorRevenueDashboard
+                    session={vendorSession!}
+                    onBack={() => navigate('/vendor/dashboard')}
+                  />
+                </Suspense>
+              </VendorProtectedRoute>
             }
           />
 
@@ -578,7 +610,9 @@ function AppContent() {
             path="/ticket/:bookingId"
             element={
               <ProtectedRoute>
-                <TicketPageRoute />
+                <Suspense fallback={<LazyLoadFallback />}>
+                  <TicketPageRoute />
+                </Suspense>
               </ProtectedRoute>
             }
           />

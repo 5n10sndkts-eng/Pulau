@@ -38,7 +38,7 @@ export function TripCanvas({
     <div className="mx-auto w-full max-w-sm sm:max-w-md">
       <DrawerHeader>
         <div className="flex items-center justify-between">
-          <DrawerTitle className="text-xl font-display font-bold">
+          <DrawerTitle id="trip-canvas-title" className="text-xl font-display font-bold">
             Your Trip
           </DrawerTitle>
           <Badge variant="secondary" className="font-mono">
@@ -51,7 +51,7 @@ export function TripCanvas({
         </DrawerDescription>
       </DrawerHeader>
 
-      <ScrollArea className="h-[50vh] px-4">
+      <ScrollArea className="h-[50vh] px-4" aria-labelledby="trip-canvas-title">
         {trip.items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground text-sm">
             <p>Your trip is empty</p>

@@ -10,6 +10,8 @@ import { trackCheckoutStep, measureTiming } from '@/lib/sentry';
 import { initiateCheckout } from '@/lib/paymentService';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { getGuestCountFromGroupType, getNextWeekend } from '@/lib/checkoutHelpers';
 
 export type CheckoutStep = 'review' | 'details' | 'payment' | 'confirmation';
 

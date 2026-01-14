@@ -235,3 +235,74 @@ N/A - TanStack Query implementation.
 **Modified Files:**
 
 - src/components/vendor/VendorOperationsPage.tsx
+
+---
+
+## Adversarial Code Review (2026-01-13)
+
+### Review Model
+
+Claude Opus 4.5
+
+### Issues Found
+
+| # | Severity | Category | Issue | Status |
+|---|----------|----------|-------|--------|
+| 1 | HIGH | AC Gap | Missing experience filter per AC requirement | ✅ FIXED |
+| 2 | HIGH | AC Gap | No time-gating on No Show button | ✅ FIXED |
+| 3 | MEDIUM | Testing | Zero test coverage for component | ✅ FIXED |
+| 4 | MEDIUM | Story Deviation | Auto-refresh 30s vs spec 5min | ✅ FIXED |
+| 5 | MEDIUM | Accessibility | Modal lacks keyboard escape handler | ✅ FIXED |
+| 6 | LOW | Architecture | Missing component decomposition | DEFERRED |
+| 7 | LOW | UX | No confirmation before marking no-show | ✅ FIXED |
+
+### Fixes Applied
+
+**Issue 1 - Experience Filter:**
+- Added `Select` dropdown with experience filter when vendor has multiple experiences
+- Filter persists in session storage via `EXPERIENCE_FILTER_KEY`
+- Uses `useMemo` to compute unique experiences and filtered bookings
+
+**Issue 2 - No-Show Time-Gating:**
+- Added `canMarkNoShow()` helper that compares booking dateTime to current time
+- No Show button only renders when `canMarkNoShow(booking)` returns true
+- Prevents premature no-show marking per AC requirement
+
+**Issue 3 - Test Coverage:**
+- Created comprehensive test suite with 21 tests
+- Tests cover: display, filtering, time-gating, confirmation dialog, keyboard navigation
+- Mocks TanStack Query to control booking data
+
+**Issue 4 - Refresh Interval:**
+- Changed `refetchInterval` from 30000ms to 300000ms (5 minutes)
+- Aligns with story specification
+
+**Issue 5 - Keyboard Escape:**
+- Added `useEffect` with keydown listener for Escape key
+- Closes both booking details modal and no-show confirmation dialog
+
+**Issue 7 - Confirmation Dialog:**
+- Added AlertDialog confirmation before marking no-show
+- Uses `noShowConfirmBookingId` state to track pending confirmation
+- Shows warning that action cannot be undone
+
+**Issue 6 (DEFERRED):**
+- Component decomposition (TodayBookingsList, BookingCard) deferred
+- Current 785-line monolith works but could benefit from extraction in future refactor
+
+### New Files Created
+
+- `src/components/vendor/__tests__/VendorOperationsPage.test.tsx` (21 tests)
+
+### Modified Files
+
+- `src/components/vendor/VendorOperationsPage.tsx`
+  - Added AlertDialog and Select imports
+  - Added experience filter state with session persistence
+  - Added no-show confirmation dialog state
+  - Updated refresh interval to 5 minutes
+  - Added `canMarkNoShow()` helper
+  - Added keyboard escape handler
+  - Added experience filter dropdown
+  - Added time-gated No Show button rendering
+  - Added AlertDialog confirmation UI

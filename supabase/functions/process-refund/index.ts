@@ -279,7 +279,9 @@ serve(async (req: Request): Promise<Response> => {
       .update({
         status: newPaymentStatus,
         refund_amount: newRefundTotal,
+        refund_id: refund.id,
         refund_reason: reason || 'Customer requested refund',
+        refunded_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq('id', payment.id);
@@ -298,6 +300,8 @@ serve(async (req: Request): Promise<Response> => {
       .from('bookings')
       .update({
         status: newBookingStatus,
+        refunded_by: user.id,
+        refunded_at: isFullRefund ? new Date().toISOString() : null,
       })
       .eq('id', bookingId);
 
@@ -310,8 +314,8 @@ serve(async (req: Request): Promise<Response> => {
     // ================================================
     await createAuditLog(supabase, {
       eventType: isFullRefund
-        ? 'booking.refunded'
-        : 'booking.partially_refunded',
+        ? 'booking.refund'
+        : 'booking.partial_refund',
       entityType: 'booking',
       entityId: bookingId,
       actorId: user.id,

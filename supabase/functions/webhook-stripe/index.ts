@@ -861,8 +861,33 @@ async function handleChargeRefunded(
 // ================================================
 
 /**
+ * Email retry configuration (Story 30-1-4: AC #3)
+ */
+const EMAIL_RETRY_CONFIG = {
+  maxAttempts: 3,
+  baseDelayMs: 1000, // 1 second
+  maxDelayMs: 10000, // 10 seconds
+};
+
+/**
+ * Sleep helper for retry delays
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Calculate exponential backoff delay
+ */
+function getRetryDelay(attempt: number): number {
+  const delay = EMAIL_RETRY_CONFIG.baseDelayMs * Math.pow(2, attempt);
+  return Math.min(delay, EMAIL_RETRY_CONFIG.maxDelayMs);
+}
+
+/**
  * Send booking confirmation email via send-email Edge Function (Story 30.1)
- * Fire and forget - does not block webhook response (AC #5)
+ * Now with retry logic (Story 30-1-4) - 3 retries with exponential backoff
+ * Still non-blocking to main webhook flow (AC #5)
  */
 async function sendConfirmationEmail(
   supabaseUrl: string,
@@ -870,53 +895,51 @@ async function sendConfirmationEmail(
   bookingId: string,
   userId: string,
 ) {
-  try {
-    // Fetch booking details for email
+  // Use async IIFE to maintain fire-and-forget pattern while adding retry logic
+  (async () => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    try {
+      // Fetch booking details for email
+      const { data: booking, error: bookingError } = await supabase
+        .from('bookings')
+        .select(
+          `
+          id,
+          reference,
+          guest_count,
+          total_amount,
+          profiles!inner(email, full_name),
+          experiences!inner(title, meeting_point),
+          experience_slots!inner(slot_date, slot_time)
+        `,
+        )
+        .eq('id', bookingId)
+        .single();
 
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .select(
-        `
-        id,
-        reference,
-        guest_count,
-        total_amount,
-        profiles!inner(email, full_name),
-        experiences!inner(title, meeting_point),
-        experience_slots!inner(slot_date, slot_time)
-      `,
-      )
-      .eq('id', bookingId)
-      .single();
+      if (bookingError || !booking) {
+        console.error(
+          'Failed to fetch booking for email:',
+          bookingError?.message,
+        );
+        // Record failure in failed_emails table
+        await recordEmailFailure(supabase, bookingId, userId, 'booking_confirmation', 
+          `Failed to fetch booking: ${bookingError?.message}`);
+        return;
+      }
 
-    if (bookingError || !booking) {
-      console.error(
-        'Failed to fetch booking for email:',
-        bookingError?.message,
-      );
-      return;
-    }
+      // Extract data with type safety
+      const profile = booking.profiles as { email: string; full_name: string };
+      const experience = booking.experiences as {
+        title: string;
+        meeting_point?: string;
+      };
+      const slot = booking.experience_slots as {
+        slot_date: string;
+        slot_time: string;
+      };
 
-    // Extract data with type safety
-    const profile = booking.profiles as { email: string; full_name: string };
-    const experience = booking.experiences as {
-      title: string;
-      meeting_point?: string;
-    };
-    const slot = booking.experience_slots as {
-      slot_date: string;
-      slot_time: string;
-    };
-
-    // Send email (fire and forget)
-    fetch(`${supabaseUrl}/functions/v1/send-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${supabaseServiceKey}`,
-      },
-      body: JSON.stringify({
+      const emailPayload = {
         type: 'booking_confirmation',
         to: profile.email,
         booking_id: bookingId,
@@ -931,29 +954,132 @@ async function sendConfirmationEmail(
           traveler_name: profile.full_name || 'Traveler',
           meeting_point: experience.meeting_point,
         },
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log(
-            `Confirmation email sent for booking ${booking.reference}`,
+      };
+
+      // Send email with retry logic (Story 30-1-4: AC #3)
+      let lastError: Error | null = null;
+      
+      for (let attempt = 0; attempt < EMAIL_RETRY_CONFIG.maxAttempts; attempt++) {
+        try {
+          const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${supabaseServiceKey}`,
+            },
+            body: JSON.stringify(emailPayload),
+          });
+
+          if (response.ok) {
+            console.log(
+              `Confirmation email sent for booking ${booking.reference} (attempt ${attempt + 1})`,
+            );
+            
+            // Update booking email_sent status (Story 30-1-4: AC #1)
+            await supabase
+              .from('bookings')
+              .update({
+                email_sent: true,
+                email_sent_at: new Date().toISOString(),
+              })
+              .eq('id', bookingId);
+            
+            // Create audit log for email.sent event (Story 30-1-4: AC #2)
+            await supabase.from('audit_logs').insert({
+              event_type: 'email.sent',
+              entity_type: 'booking',
+              entity_id: bookingId,
+              actor_id: userId,
+              actor_type: 'system',
+              metadata: {
+                email_type: 'booking_confirmation',
+                recipient: profile.email,
+                attempt: attempt + 1,
+                booking_reference: booking.reference,
+              },
+            });
+            
+            return; // Success - exit function
+          }
+
+          // Non-2xx response - will retry
+          lastError = new Error(`HTTP ${response.status}: ${await response.text()}`);
+          console.warn(
+            `Email attempt ${attempt + 1}/${EMAIL_RETRY_CONFIG.maxAttempts} failed for booking ${booking.reference}: ${lastError.message}`,
           );
-        } else {
-          console.error(
-            `Confirmation email failed for booking ${booking.reference}:`,
-            response.status,
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error));
+          console.warn(
+            `Email attempt ${attempt + 1}/${EMAIL_RETRY_CONFIG.maxAttempts} error for booking ${booking.reference}:`,
+            lastError.message,
           );
         }
-      })
-      .catch((error) => {
-        console.error(
-          `Confirmation email error for booking ${booking.reference}:`,
-          error,
-        );
+
+        // Wait before retry (exponential backoff)
+        if (attempt < EMAIL_RETRY_CONFIG.maxAttempts - 1) {
+          const delay = getRetryDelay(attempt);
+          console.log(`Waiting ${delay}ms before retry...`);
+          await sleep(delay);
+        }
+      }
+
+      // All retries exhausted - record failure
+      console.error(
+        `All ${EMAIL_RETRY_CONFIG.maxAttempts} email attempts failed for booking ${booking.reference}`,
+      );
+      
+      await recordEmailFailure(
+        supabase, 
+        bookingId, 
+        userId, 
+        'booking_confirmation',
+        lastError?.message || 'Unknown error after all retries',
+      );
+      
+      // Create audit log for email failure
+      await supabase.from('audit_logs').insert({
+        event_type: 'email.failed',
+        entity_type: 'booking',
+        entity_id: bookingId,
+        actor_id: userId,
+        actor_type: 'system',
+        metadata: {
+          email_type: 'booking_confirmation',
+          recipient: profile.email,
+          attempts: EMAIL_RETRY_CONFIG.maxAttempts,
+          last_error: lastError?.message,
+          booking_reference: booking.reference,
+        },
       });
+
+    } catch (error) {
+      console.error('Error preparing confirmation email:', error);
+      // Don't throw - email is non-blocking
+    }
+  })();
+}
+
+/**
+ * Record email failure in failed_emails table for retry queue (Story 30-1-4: AC #3)
+ */
+async function recordEmailFailure(
+  supabase: ReturnType<typeof createClient>,
+  bookingId: string,
+  userId: string,
+  emailType: string,
+  errorMessage: string,
+) {
+  try {
+    await supabase.from('failed_emails').insert({
+      booking_id: bookingId,
+      user_id: userId,
+      email_type: emailType,
+      error_message: errorMessage,
+      retry_count: EMAIL_RETRY_CONFIG.maxAttempts,
+      status: 'failed',
+    });
   } catch (error) {
-    console.error('Error preparing confirmation email:', error);
-    // Don't throw - email is non-blocking
+    console.error('Failed to record email failure:', error);
   }
 }
 

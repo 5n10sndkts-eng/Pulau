@@ -25,6 +25,7 @@ import {
   Clock,
   Users,
   Plus,
+  Check,
   ChevronRight,
   Search,
   Compass,
@@ -32,8 +33,10 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { PreferenceChips } from '@/components/PreferenceChips';
 import { dataService } from '@/lib/dataService';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useFlyingIcon } from '@/components/FlyingIcon';
+import { useTrip } from '@/contexts/TripContext';
 
 interface HomeScreenProps {
   trip: Trip;
@@ -66,10 +69,35 @@ export function HomeScreen({
   const navigate = useNavigate();
   const destination = destinations.find((d) => d.id === trip.destination);
   const hasItems = trip.items.length > 0;
+  const { removeFromTrip } = useTrip();
+  const { triggerFly, FlyingIcons } = useFlyingIcon();
 
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Get trip item IDs for toggle state
+  const tripItemIds = trip.items.map((i) => i.experienceId);
+
+  const handleQuickAddWithAnimation = (exp: Experience, buttonRect: DOMRect) => {
+    const isInTrip = tripItemIds.includes(exp.id);
+
+    if (isInTrip) {
+      // Remove from trip
+      removeFromTrip(exp.id);
+    } else {
+      // Add to trip with animation and haptic feedback
+      triggerFly(
+        buttonRect.x + buttonRect.width / 2,
+        buttonRect.y + buttonRect.height / 2,
+      );
+      // Haptic feedback (if supported)
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+      onQuickAdd(exp);
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -105,14 +133,16 @@ export function HomeScreen({
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      <header
-        className="relative h-56 bg-cover bg-center"
-        style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${destination?.heroImage})`,
-        }}
-        role="banner"
-      >
+    <>
+      <FlyingIcons />
+      <div className="min-h-screen bg-background pb-32">
+        <header
+          className="relative h-56 bg-cover bg-center"
+          style={{
+            backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${destination?.heroImage})`,
+          }}
+          role="banner"
+        >
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="flex items-center gap-2 mb-2">
             <MapPin className="w-5 h-5" aria-hidden="true" />
@@ -197,8 +227,11 @@ export function HomeScreen({
                       <ExperienceCard
                         key={exp.id}
                         experience={exp}
+                        isInTrip={tripItemIds.includes(exp.id)}
                         onSelect={() => onExperienceSelect(exp.id)}
-                        onQuickAdd={() => onQuickAdd(exp)}
+                        onQuickAdd={(buttonRect) =>
+                          handleQuickAddWithAnimation(exp, buttonRect)
+                        }
                       />
                     ))}
                   </div>
@@ -207,6 +240,68 @@ export function HomeScreen({
               </motion.div>
             ))}
           </AnimatePresence>
+        )}
+
+        {/* Explore All Categories (AC #3) - Escape Hatch */}
+        {!isLoading && preferenceSections.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: preferenceSections.length * 0.1 + 0.2 }}
+            className="space-y-4 pt-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-xl font-bold">
+                  Explore All Categories
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Browse experiences by category
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {categories.slice(0, 6).map((category) => {
+                const Icon = categoryIcons[category.id] || Compass;
+                return (
+                  <motion.div
+                    key={category.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Card
+                      className="cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
+                      onClick={() => onCategorySelect(category.id)}
+                    >
+                      <div
+                        className="h-24 bg-cover bg-center relative"
+                        style={{
+                          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6)), url(${category.image})`,
+                        }}
+                      >
+                        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                          <div className="flex items-center gap-2">
+                            <Icon className="w-4 h-4" />
+                            <h3 className="font-medium text-sm">
+                              {category.name}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate('/explore')}
+            >
+              <Compass className="w-4 h-4 mr-2" />
+              View All Categories
+            </Button>
+          </motion.div>
         )}
 
         {/* Empty State when no preferences */}
@@ -397,19 +492,24 @@ export function HomeScreen({
         </motion.aside>
       )}
     </div>
+    </>
   );
 }
 
 // Compact Experience Card for horizontal scrolling
 function ExperienceCard({
   experience,
+  isInTrip,
   onSelect,
   onQuickAdd,
 }: {
   experience: Experience;
+  isInTrip: boolean;
   onSelect: () => void;
-  onQuickAdd: () => void;
+  onQuickAdd: (buttonRect: DOMRect) => void;
 }) {
+  const addButtonRef = useRef<HTMLButtonElement>(null);
+  
   return (
     <motion.div
       whileHover={{ y: -4 }}
@@ -469,17 +569,47 @@ function ExperienceCard({
                 / {experience.price.per}
               </span>
             </p>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 gap-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                onQuickAdd();
-              }}
-            >
-              <Plus className="w-3 h-3" /> Add
-            </Button>
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Button
+                ref={addButtonRef}
+                size="sm"
+                variant={isInTrip ? 'secondary' : 'outline'}
+                className={`h-8 gap-1 min-w-[70px] ${isInTrip ? 'bg-success/10 text-success hover:bg-success/20 border-success/30' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const rect = addButtonRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    onQuickAdd(rect);
+                  }
+                }}
+              >
+                <AnimatePresence mode="wait">
+                  {isInTrip ? (
+                    <motion.div
+                      key="added"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="flex items-center gap-1"
+                    >
+                      <Check className="w-3 h-3" />
+                      Added
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="add"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="flex items-center gap-1"
+                    >
+                      <Plus className="w-3 h-3" />
+                      Add
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Button>
+            </motion.div>
           </div>
         </div>
       </Card>

@@ -1,18 +1,26 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Flame, Gem, Clock, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Flame, Gem, Clock, MapPin, Plus, Check } from 'lucide-react';
 import type { Experience } from '@/lib/types';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useRef } from 'react';
 
 interface TrendingExperienceCardProps {
   experience: Experience;
+  isInTrip?: boolean;
   onClick: () => void;
+  onQuickAdd?: (buttonRect: DOMRect) => void;
 }
 
 export function TrendingExperienceCard({
   experience,
+  isInTrip = false,
   onClick,
+  onQuickAdd,
 }: TrendingExperienceCardProps) {
   const bookingsThisWeek = Math.floor(Math.random() * 50) + 10;
+  const addButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Card
@@ -40,6 +48,49 @@ export function TrendingExperienceCard({
             / {experience.price.per}
           </span>
         </div>
+        {onQuickAdd && (
+          <motion.div whileTap={{ scale: 0.95 }} className="mt-3">
+            <Button
+              ref={addButtonRef}
+              size="sm"
+              variant={isInTrip ? 'secondary' : 'default'}
+              className={`w-full gap-1 ${isInTrip ? 'bg-success/10 text-success hover:bg-success/20 border-success/30' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                const rect = addButtonRef.current?.getBoundingClientRect();
+                if (rect) {
+                  onQuickAdd(rect);
+                }
+              }}
+            >
+              <AnimatePresence mode="wait">
+                {isInTrip ? (
+                  <motion.div
+                    key="added"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-1"
+                  >
+                    <Check className="w-3 h-3" />
+                    Added
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="add"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add to Trip
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </motion.div>
+        )}
       </CardContent>
     </Card>
   );
@@ -47,10 +98,13 @@ export function TrendingExperienceCard({
 
 interface HiddenGemCardProps {
   experience: Experience;
+  isInTrip?: boolean;
   onClick: () => void;
+  onQuickAdd?: (buttonRect: DOMRect) => void;
 }
 
-export function HiddenGemCard({ experience, onClick }: HiddenGemCardProps) {
+export function HiddenGemCard({ experience, isInTrip = false, onClick, onQuickAdd }: HiddenGemCardProps) {
+  const addButtonRef = useRef<HTMLButtonElement>(null);
   return (
     <Card
       className="w-[200px] shrink-0 cursor-pointer overflow-hidden transition-all hover:shadow-lg"
@@ -76,6 +130,49 @@ export function HiddenGemCard({ experience, onClick }: HiddenGemCardProps) {
         <div className="mt-2 text-sm font-semibold">
           ${experience.price.amount}
         </div>
+        {onQuickAdd && (
+          <motion.div whileTap={{ scale: 0.95 }} className="mt-3">
+            <Button
+              ref={addButtonRef}
+              size="sm"
+              variant={isInTrip ? 'secondary' : 'default'}
+              className={`w-full gap-1 text-xs ${isInTrip ? 'bg-success/10 text-success hover:bg-success/20 border-success/30' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                const rect = addButtonRef.current?.getBoundingClientRect();
+                if (rect) {
+                  onQuickAdd(rect);
+                }
+              }}
+            >
+              <AnimatePresence mode="wait">
+                {isInTrip ? (
+                  <motion.div
+                    key="added"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-1"
+                  >
+                    <Check className="w-3 h-3" />
+                    Added
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="add"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </motion.div>
+        )}
       </CardContent>
     </Card>
   );
@@ -84,14 +181,19 @@ export function HiddenGemCard({ experience, onClick }: HiddenGemCardProps) {
 interface LimitedAvailabilityCardProps {
   experience: Experience;
   spotsLeft: number;
+  isInTrip?: boolean;
   onClick: () => void;
+  onQuickAdd?: (buttonRect: DOMRect) => void;
 }
 
 export function LimitedAvailabilityCard({
   experience,
   spotsLeft,
+  isInTrip = false,
   onClick,
+  onQuickAdd,
 }: LimitedAvailabilityCardProps) {
+  const addButtonRef = useRef<HTMLButtonElement>(null);
   return (
     <Card
       className="cursor-pointer overflow-hidden transition-all hover:shadow-lg"
@@ -115,8 +217,53 @@ export function LimitedAvailabilityCard({
               Only {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left
             </Badge>
           </div>
-          <div className="mt-1 text-sm font-semibold">
-            ${experience.price.amount}
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <div className="text-sm font-semibold">
+              ${experience.price.amount}
+            </div>
+            {onQuickAdd && (
+              <motion.div whileTap={{ scale: 0.95 }}>
+                <Button
+                  ref={addButtonRef}
+                  size="sm"
+                  variant={isInTrip ? 'secondary' : 'default'}
+                  className={`gap-1 h-7 text-xs ${isInTrip ? 'bg-success/10 text-success hover:bg-success/20 border-success/30' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const rect = addButtonRef.current?.getBoundingClientRect();
+                    if (rect) {
+                      onQuickAdd(rect);
+                    }
+                  }}
+                >
+                  <AnimatePresence mode="wait">
+                    {isInTrip ? (
+                      <motion.div
+                        key="added"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="flex items-center gap-1"
+                      >
+                        <Check className="w-3 h-3" />
+                        Added
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="add"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="flex items-center gap-1"
+                      >
+                        <Plus className="w-3 h-3" />
+                        Add
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </Button>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>

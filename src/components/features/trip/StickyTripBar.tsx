@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ChevronUp, ShoppingBag, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { TripCanvas } from './TripCanvas';
 import {
@@ -30,6 +30,16 @@ export function StickyTripBar() {
     ? getBudgetStatus(budgetPref, trip.total)
     : null;
   const budgetColor = budgetStatus ? getBudgetStatusColor(budgetStatus) : '';
+
+  // Memoize formatted total to avoid repeated Intl.NumberFormat instantiation
+  const formattedTotal = useMemo(
+    () =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(trip.total),
+    [trip.total],
+  );
 
   // Pulse effect on update
   useEffect(() => {
@@ -84,7 +94,13 @@ export function StickyTripBar() {
                 `}
                 role="button"
                 tabIndex={0}
-                aria-label={`View trip summary: ${itemCount} items for ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(trip.total)}`}
+                aria-label={`View trip summary: ${itemCount} items for ${formattedTotal}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setIsOpen(true);
+                  }
+                }}
               >
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/10 p-2 rounded-full text-primary relative">
@@ -102,10 +118,7 @@ export function StickyTripBar() {
                       />
                     </span>
                     <span className="font-bold font-mono">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      }).format(trip.total)}
+                      {formattedTotal}
                     </span>
                     {/* Budget Remaining (AC #1) */}
                     {budgetPref && remaining !== null && (

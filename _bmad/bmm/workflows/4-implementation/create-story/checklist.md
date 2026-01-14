@@ -249,7 +249,7 @@ You will systematically re-do the entire story creation process, but with a crit
 
 After completing your systematic analysis, present your findings to the user interactively:
 
-### **Step 5: Present Improvement Suggestions**
+### **Step 6: Present Improvement Suggestions**
 
 ```
 🎯 **STORY CONTEXT QUALITY REVIEW COMPLETE**

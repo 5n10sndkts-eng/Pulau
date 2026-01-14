@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { TripCalendarView } from './TripCalendarView';
+import { TripTimeline, TimelineNode } from './TripTimeline';
 import { Input } from '@/components/ui/input';
 
 interface TripBuilderProps {
@@ -271,32 +272,40 @@ export function TripBuilder({
         {viewMode === 'calendar' ? (
           <TripCalendarView trip={trip} readOnly={readOnly} />
         ) : (
-          <div className="space-y-6">
+          <TripTimeline showTimeline={sortedDates.length > 1}>
             {sortedDates.map((date, dayIndex) => {
               const dayNumber = trip.startDate
                 ? getDaysBetween(trip.startDate, date)
                 : dayIndex + 1;
+              const hasItems = (itemsByDate[date]?.length ?? 0) > 0;
+              
               return (
-                <div key={date} className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-px bg-border flex-1" />
-                    <div className="text-center">
-                      <p className="font-display font-bold text-sm">
-                        DAY {dayNumber}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {getDayLabel(date)}
-                      </p>
+                <TimelineNode
+                  key={date}
+                  dayNumber={dayNumber}
+                  hasItems={hasItems}
+                  isFirst={dayIndex === 0}
+                  isLast={dayIndex === sortedDates.length - 1}
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="text-left">
+                        <p className="font-display font-bold text-sm">
+                          DAY {dayNumber}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {getDayLabel(date)}
+                        </p>
+                      </div>
+                      <div className="h-px bg-border flex-1" />
                     </div>
-                    <div className="h-px bg-border flex-1" />
-                  </div>
 
-                  <div className="space-y-3">
-                    {itemsByDate[date]?.map((item, itemIndex) => {
-                      const experience = getExperienceById(item.experienceId);
-                      if (!experience) return null;
+                    <div className="space-y-3">
+                      {itemsByDate[date]?.map((item, itemIndex) => {
+                        const experience = getExperienceById(item.experienceId);
+                        if (!experience) return null;
 
-                      return (
+                        return (
                         <Card key={itemIndex} className="p-4">
                           <div className="flex gap-4">
                             <img
@@ -349,9 +358,10 @@ export function TripBuilder({
                     })}
                   </div>
                 </div>
+                </TimelineNode>
               );
             })}
-          </div>
+          </TripTimeline>
         )}
 
         {unscheduledItems.length > 0 && (

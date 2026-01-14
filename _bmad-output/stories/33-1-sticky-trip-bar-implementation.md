@@ -88,11 +88,12 @@ So that **I can track my budget in real-time and access checkout instantly witho
 
 ## File List
 
-- src/components/StickyTripBar.tsx
-- src/components/TripCanvas.tsx
+- src/components/features/trip/StickyTripBar.tsx
+- src/components/features/trip/TripCanvas.tsx
+- src/components/features/trip/__tests__/TripCanvas.test.tsx
 - src/App.tsx
-- src/components/**tests**/StickyTripBar.test.tsx
-- src/**tests**/setup.ts
+- src/components/__tests__/StickyTripBar.test.tsx
+- src/__tests__/setup.ts
 - tests/e2e/sticky-trip-bar.spec.ts
 
 ## Change Log
@@ -100,6 +101,52 @@ So that **I can track my budget in real-time and access checkout instantly witho
 - Implemented Drawer-based Sticky Trip Bar with Trip Canvas expansion and updated tests/mocks for Drawer environment.
 - **2026-01-12 (Review):** Changes requested due to content obscuration and test gaps.
 - **2026-01-12 (Fixes):** Applied layout padding, polished animations, and refactored unit tests. Status set to DONE.
+- **2026-01-13 (AI Review):** Added TripCanvas unit tests, keyboard accessibility, memoized price formatting.
+
+---
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Amelia (Dev Agent)
+**Review Date:** 2026-01-13
+**Review Type:** Adversarial Code Review
+
+### Issues Found
+
+| # | Severity | Category | Issue | Resolution |
+|---|----------|----------|-------|------------|
+| 1 | MEDIUM | Test Coverage | No TripCanvas unit tests exist | Created `TripCanvas.test.tsx` with 17 tests |
+| 2 | MEDIUM | Accessibility | Missing keyboard Enter/Space handler for drawer trigger | Added `onKeyDown` handler for WCAG compliance |
+| 3 | LOW | Documentation | Story file lists wrong path | Fixed to `src/components/features/trip/` |
+| 4 | LOW | Performance | Price formatting not memoized | Added `useMemo` for `formattedTotal` |
+| 5 | LOW | Accessibility | Missing `aria-labelledby` on TripCanvas scroll region | Added `id` to DrawerTitle and `aria-labelledby` to ScrollArea |
+
+### Changes Made
+
+**New Files:**
+1. `src/components/features/trip/__tests__/TripCanvas.test.tsx` - 17 unit tests
+
+**Modified Files:**
+1. `src/components/features/trip/StickyTripBar.tsx`
+   - Added `useMemo` for price formatting
+   - Added keyboard handler (`Enter`/`Space` opens drawer)
+   - Uses memoized `formattedTotal` in aria-label and display
+
+2. `src/components/features/trip/TripCanvas.tsx`
+   - Added `id="trip-canvas-title"` to DrawerTitle
+   - Added `aria-labelledby="trip-canvas-title"` to ScrollArea
+
+3. `33-1-sticky-trip-bar-implementation.md`
+   - Fixed file paths in File List section
+
+### Verification
+
+- [x] All 32 tests pass (15 StickyTripBar + 17 TripCanvas)
+- [x] TypeScript compiles without errors
+- [x] Keyboard navigation now works (Enter/Space)
+- [x] ARIA attributes properly connected
+
+---
 
 ## Dev Notes
 

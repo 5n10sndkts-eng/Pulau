@@ -6,10 +6,27 @@
  * Uses Supabase real-time queries to fetch and update booking data.
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { QRScanner } from './QRScanner';
 import { ValidationCard } from './ValidationCard';
 import { bookingService, CheckInValidationResult } from '@/lib/bookingService';
@@ -152,6 +169,9 @@ async function fetchTodaysBookings(vendorId: string): Promise<VendorBooking[]> {
   return bookings;
 }
 
+// Session storage key for experience filter persistence
+const EXPERIENCE_FILTER_KEY = 'vendor-experience-filter';
+
 export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
   const queryClient = useQueryClient();
   const [scannerOpen, setScannerOpen] = useState(false);
@@ -161,6 +181,17 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
   const [validationResult, setValidationResult] =
     useState<CheckInValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  
+  // Experience filter state with session persistence
+  const [selectedExperience, setSelectedExperience] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem(EXPERIENCE_FILTER_KEY) || 'all';
+    }
+    return 'all';
+  });
+  
+  // No-show confirmation dialog state
+  const [noShowConfirmBookingId, setNoShowConfirmBookingId] = useState<string | null>(null);
 
   // Fetch today's bookings
   const {
@@ -171,7 +202,7 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
   } = useQuery({
     queryKey: ['vendor-bookings-today', session.vendorId],
     queryFn: () => fetchTodaysBookings(session.vendorId),
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 300000, // Refresh every 5 minutes per story spec
   });
 
   // Flush any offline actions on mount or when coming online
@@ -312,22 +343,72 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
     [checkInMutation],
   );
 
+  // Show confirmation dialog before marking no-show
   const handleNoShow = useCallback(
     (bookingId: string) => {
-      noShowMutation.mutate(bookingId);
+      setNoShowConfirmBookingId(bookingId);
     },
-    [noShowMutation],
+    [],
   );
+  
+  // Confirm no-show action
+  const confirmNoShow = useCallback(() => {
+    if (noShowConfirmBookingId) {
+      noShowMutation.mutate(noShowConfirmBookingId);
+      setNoShowConfirmBookingId(null);
+    }
+  }, [noShowConfirmBookingId, noShowMutation]);
+  
+  // Persist experience filter to session storage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(EXPERIENCE_FILTER_KEY, selectedExperience);
+    }
+  }, [selectedExperience]);
+  
+  // Keyboard escape handler for modals
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (selectedBooking) setSelectedBooking(null);
+        if (noShowConfirmBookingId) setNoShowConfirmBookingId(null);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [selectedBooking, noShowConfirmBookingId]);
+  
+  // Get unique experiences for filter dropdown
+  const uniqueExperiences = useMemo(() => {
+    const experienceMap = new Map<string, string>();
+    bookings.forEach((b) => {
+      if (!experienceMap.has(b.experienceId)) {
+        experienceMap.set(b.experienceId, b.experienceName);
+      }
+    });
+    return Array.from(experienceMap.entries());
+  }, [bookings]);
+  
+  // Filter bookings by selected experience
+  const filteredBookings = useMemo(() => {
+    if (selectedExperience === 'all') return bookings;
+    return bookings.filter((b) => b.experienceId === selectedExperience);
+  }, [bookings, selectedExperience]);
+  
+  // Helper to check if no-show is allowed (after slot time passes)
+  const canMarkNoShow = useCallback((booking: VendorBooking): boolean => {
+    return new Date(booking.dateTime) < new Date();
+  }, []);
 
   // Filter to show pending/confirmed (actionable) and checked_in/no_show (today's activity)
-  const actionableBookings = bookings.filter(
+  const actionableBookings = filteredBookings.filter(
     (b) => b.status === 'pending' || b.status === 'confirmed',
   );
   const pendingCount = actionableBookings.length;
-  const checkedInCount = bookings.filter(
+  const checkedInCount = filteredBookings.filter(
     (b) => b.status === 'checked_in',
   ).length;
-  const totalGuests = bookings.reduce((sum, b) => sum + b.guestCount, 0);
+  const totalGuests = filteredBookings.reduce((sum, b) => sum + b.guestCount, 0);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -409,12 +490,34 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
 
         {/* Today's Bookings */}
         <div>
-          <h2 className="font-display text-xl font-bold mb-4">
-            Today's Bookings
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-xl font-bold">
+              Today's Bookings
+            </h2>
+            
+            {/* Experience filter - only show if vendor has multiple experiences */}
+            {uniqueExperiences.length > 1 && (
+              <Select
+                value={selectedExperience}
+                onValueChange={setSelectedExperience}
+              >
+                <SelectTrigger className="w-[200px]" aria-label="Filter by experience">
+                  <SelectValue placeholder="All Experiences" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Experiences</SelectItem>
+                  {uniqueExperiences.map(([id, name]) => (
+                    <SelectItem key={id} value={id}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
 
           <div className="space-y-3">
-            {bookings.map((booking) => (
+            {filteredBookings.map((booking) => (
               <motion.div
                 key={booking.id}
                 layout
@@ -496,19 +599,23 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
                             )}
                             Check In
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleNoShow(booking.id)}
-                            disabled={noShowMutation.isPending}
-                          >
-                            {noShowMutation.isPending ? (
-                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                            ) : (
-                              <XCircle className="w-4 h-4 mr-1" />
-                            )}
-                            No Show
-                          </Button>
+                          {/* No Show button - only enabled after slot time passes */}
+                          {canMarkNoShow(booking) && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleNoShow(booking.id)}
+                              disabled={noShowMutation.isPending}
+                              aria-label={`Mark ${booking.travelerName} as no show`}
+                            >
+                              {noShowMutation.isPending ? (
+                                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                              ) : (
+                                <XCircle className="w-4 h-4 mr-1" />
+                              )}
+                              No Show
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>
@@ -650,6 +757,28 @@ export function VendorOperationsPage({ session }: VendorOperationsPageProps) {
           </motion.div>
         </div>
       )}
+
+      {/* No Show Confirmation Dialog */}
+      <AlertDialog
+        open={noShowConfirmBookingId !== null}
+        onOpenChange={(open) => !open && setNoShowConfirmBookingId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mark as No Show?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will mark the guest as a no-show for this booking. This action
+              cannot be undone and may affect their booking history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmNoShow}>
+              Confirm No Show
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

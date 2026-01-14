@@ -179,16 +179,16 @@
     <action>Save story file</action>
 
     <!-- Determine sprint tracking status -->
-    <check if="{sprint_status} file exists">
+    <check if="{{sprint_status}} file exists">
       <action>Set {{current_sprint_status}} = "enabled"</action>
     </check>
-    <check if="{sprint_status} file does NOT exist">
+    <check if="{{sprint_status}} file does NOT exist">
       <action>Set {{current_sprint_status}} = "no-sprint-tracking"</action>
     </check>
 
     <!-- Sync sprint-status.yaml when story status changes (only if sprint tracking enabled) -->
     <check if="{{current_sprint_status}} != 'no-sprint-tracking'">
-      <action>Load the FULL file: {sprint_status}</action>
+      <action>Load the FULL file: {{sprint_status}}</action>
       <action>Find development_status key matching {{story_key}}</action>
 
       <check if="{{new_status}} == 'done'">

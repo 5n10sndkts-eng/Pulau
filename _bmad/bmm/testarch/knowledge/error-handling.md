@@ -541,6 +541,13 @@ const SENSITIVE_KEYS = ['password', 'token', 'creditCard', 'ssn', 'apiKey'];
 function redactSensitiveData(obj: any): any {
   if (typeof obj !== 'object' || obj === null) return obj;
 
+  if (Array.isArray(obj)) {
+    return obj.map(redactSensitiveData);
+  }
+
+  if (obj instanceof Date) return new Date(obj);
+  if (obj instanceof Error) return obj;
+
   const redacted = { ...obj };
 
   for (const key of Object.keys(redacted)) {

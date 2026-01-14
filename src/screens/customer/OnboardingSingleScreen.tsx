@@ -11,61 +11,32 @@ import { Button } from '@/components/ui/button';
 import { PremiumContainer } from '@/components/ui/premium-container';
 import { UserPreferences } from '@/lib/types';
 import {
-  Mountain,
-  Heart,
-  Sparkles,
-  Palmtree,
-  User,
-  Users,
-  UsersRound,
-  Baby,
-  Wallet,
-  TrendingUp,
-  Gem,
-  Check,
-  Map,
-} from 'lucide-react';
+  TRAVEL_STYLES,
+  GROUP_TYPES,
+  BUDGET_LEVELS,
+  type TravelStyle,
+  type GroupType,
+  type BudgetLevel,
+} from '@/lib/constants/onboarding';
+import { Check, Map, AlertCircle, Sparkles, Users, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '@/components/ui/motion.variants';
+
+// Analytics tracking (would integrate with real analytics service)
+const trackEvent = (eventName: string, properties?: Record<string, unknown>) => {
+  if (typeof window !== 'undefined' && (window as any).analytics) {
+    (window as any).analytics.track(eventName, properties);
+  }
+  // Only log in development to prevent PII leakage in production
+  if (import.meta.env.DEV) {
+    console.log('[Analytics]', eventName, properties);
+  }
+};
 
 interface OnboardingSingleScreenProps {
   onComplete: (preferences: UserPreferences) => void;
   onSkip: () => void;
 }
-
-const TRAVEL_STYLES = [
-  {
-    id: 'adventure',
-    label: 'Adventure',
-    icon: Mountain,
-    color: 'text-primary',
-  },
-  { id: 'relaxation', label: 'Relaxation', icon: Heart, color: 'text-accent' },
-  { id: 'culture', label: 'Culture', icon: Sparkles, color: 'text-golden' },
-  { id: 'wellness', label: 'Wellness', icon: Palmtree, color: 'text-success' },
-] as const;
-
-const GROUP_TYPES = [
-  { id: 'solo', label: 'Solo', icon: User },
-  { id: 'couple', label: 'Couple', icon: Users },
-  { id: 'friends', label: 'Friends', icon: UsersRound },
-  { id: 'family', label: 'Family', icon: Baby },
-] as const;
-
-const BUDGET_LEVELS = [
-  { id: 'budget', label: 'Budget', icon: Wallet, color: 'text-success' },
-  {
-    id: 'midrange',
-    label: 'Mid-Range',
-    icon: TrendingUp,
-    color: 'text-accent',
-  },
-  { id: 'luxury', label: 'Luxury', icon: Gem, color: 'text-golden' },
-] as const;
-
-type TravelStyle = (typeof TRAVEL_STYLES)[number]['id'];
-type GroupType = (typeof GROUP_TYPES)[number]['id'];
-type BudgetLevel = (typeof BUDGET_LEVELS)[number]['id'];
 
 export function OnboardingSingleScreen({
   onComplete,
@@ -96,7 +67,28 @@ export function OnboardingSingleScreen({
       groupType,
       budget,
     };
+
+    trackEvent('onboarding_completed', {
+      travelStyles,
+      groupType,
+      budget,
+      timestamp: new Date().toISOString(),
+    });
+
     onComplete(preferences);
+  };
+
+  const handleSkip = () => {
+    trackEvent('onboarding_skipped', {
+      timestamp: new Date().toISOString(),
+      defaults: {
+        travelStyles: ['adventure'],
+        groupType: 'solo',
+        budget: 'midrange',
+      },
+    });
+
+    onSkip();
   };
 
   return (
@@ -141,6 +133,8 @@ export function OnboardingSingleScreen({
                     key={style.id}
                     type="button"
                     onClick={() => handleTravelStyleToggle(style.id)}
+                    aria-pressed={isSelected}
+                    aria-label={`${style.label} travel style${isSelected ? ' (selected)' : ''}`}
                     className={`relative p-4 rounded-2xl border-2 transition-all duration-200 ${
                       isSelected
                         ? 'border-primary bg-primary/10 shadow-md'
@@ -181,6 +175,8 @@ export function OnboardingSingleScreen({
                     key={group.id}
                     type="button"
                     onClick={() => setGroupType(group.id)}
+                    aria-pressed={isSelected}
+                    aria-label={`${group.label} group${isSelected ? ' (selected)' : ''}`}
                     className={`relative p-4 rounded-2xl border-2 transition-all duration-200 ${
                       isSelected
                         ? 'border-primary bg-primary/10 shadow-md'
@@ -221,6 +217,8 @@ export function OnboardingSingleScreen({
                     key={level.id}
                     type="button"
                     onClick={() => setBudget(level.id)}
+                    aria-pressed={isSelected}
+                    aria-label={`${level.label} budget${isSelected ? ' (selected)' : ''}`}
                     className={`relative p-4 rounded-2xl border-2 transition-all duration-200 ${
                       isSelected
                         ? 'border-primary bg-primary/10 shadow-md'
@@ -251,6 +249,12 @@ export function OnboardingSingleScreen({
             variants={fadeInUp}
             className="flex flex-col items-center gap-3"
           >
+            {!isValid && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                <AlertCircle className="w-4 h-4" />
+                <span>Select at least one option in each category</span>
+              </div>
+            )}
             <Button
               onClick={handleStartPlanning}
               disabled={!isValid}
@@ -262,7 +266,7 @@ export function OnboardingSingleScreen({
             </Button>
             <button
               type="button"
-              onClick={onSkip}
+              onClick={handleSkip}
               className="text-muted-foreground text-sm hover:text-primary transition-colors font-medium"
             >
               Skip & Explore

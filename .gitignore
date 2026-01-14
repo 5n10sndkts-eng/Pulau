@@ -42,3 +42,4 @@ lint_report*.txt
 supabase/.branches/
 supabase/.temp/
 supabase/.temp/
+.env*.local

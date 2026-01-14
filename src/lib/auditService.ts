@@ -16,13 +16,17 @@ export type AuditEventType =
   | 'booking.created'
   | 'booking.confirmed'
   | 'booking.cancelled'
+  | 'booking.refund'
   | 'booking.refunded'
+  | 'booking.partial_refund'
   | 'booking.checked_in'
   | 'booking.no_show'
   | 'slot.availability_decremented'
   | 'slot.created'
   | 'payment.succeeded'
   | 'payment.failed'
+  | 'refund.failed'
+  | 'refund.stripe_error'
   | 'vendor.onboarded'
   | 'user.created';
 

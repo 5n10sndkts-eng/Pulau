@@ -13,6 +13,7 @@
   <critical>User skill level ({user_skill_level}) affects conversation style ONLY, not code updates.</critical>
 
   <step n="1" goal="Find next ready story and load it" tag="sprint-status">
+    <action>Set {{date}} = current date (YYYY-MM-DD)</action>
     <check if="{{story_path}} is provided">
       <action>Use {{story_path}} directly</action>
       <action>Read COMPLETE story file</action>
@@ -30,10 +31,10 @@
       <action>Find the FIRST story (by reading in order from top to bottom) where:
         - Key matches pattern: number-number-name (e.g., "1-2-user-auth")
         - NOT an epic key (epic-X) or retrospective (epic-X-retrospective)
-        - Status value equals "ready-for-dev"
+        - Status value equals "in-progress" OR "ready-for-dev"
       </action>
 
-      <check if="no ready-for-dev or in-progress story found">
+      <check if="no in-progress or ready-for-dev story found">
         <output>📋 No ready-for-dev stories found in sprint-status.yaml
 
           **Current Sprint Status:** {{sprint_status_summary}}
@@ -343,8 +344,8 @@
     </action>
 
     <!-- Mark story ready for review - sprint status conditional -->
-    <check if="{sprint_status} file exists AND {{current_sprint_status}} != 'no-sprint-tracking'">
-      <action>Load the FULL file: {sprint_status}</action>
+    <check if="{{sprint_status}} file exists AND {{current_sprint_status}} != 'no-sprint-tracking'">
+      <action>Load the FULL file: {{sprint_status}}</action>
       <action>Find development_status key matching {{story_key}}</action>
       <action>Verify current status is "in-progress" (expected previous state)</action>
       <action>Update development_status[{{story_key}}] = "review"</action>
@@ -352,7 +353,7 @@
       <output>✅ Story status updated to "review" in sprint-status.yaml</output>
     </check>
 
-    <check if="{sprint_status} file does NOT exist OR {{current_sprint_status}} == 'no-sprint-tracking'">
+    <check if="{{sprint_status}} file does NOT exist OR {{current_sprint_status}} == 'no-sprint-tracking'">
       <output>ℹ️ Story status updated to "review" in story file (no sprint tracking configured)</output>
     </check>
 

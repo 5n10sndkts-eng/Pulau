@@ -8,6 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Trip } from '@/lib/types';
 import { BookingData } from './CheckoutFlow';
 import { formatPrice } from '@/lib/helpers';
+import { PaymentRequestButton } from './PaymentRequestButton';
+import { TrustBadge } from './TrustBadge';
+import { getPriceBreakdown } from '@/lib/checkoutHelpers';
 import {
   ArrowLeft,
   CreditCard,
@@ -57,8 +60,8 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!termsAccepted) return;
 
     setIsProcessing(true);
@@ -375,36 +378,22 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
       </Card>
 
       {/* Trust Signal: Free Cancellation (AC #5) */}
-      <div className="flex items-center justify-center gap-2 p-3 bg-success/10 rounded-lg border border-success/20">
-        <Calendar className="w-4 h-4 text-success" />
-        <span className="text-sm font-medium text-success">
-          Free cancellation until{' '}
-          {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(
-            'en-US',
-            { month: 'short', day: 'numeric' },
-          )}
-        </span>
-      </div>
+      <TrustBadge
+        experienceDate={trip.startDate}
+        showCancellation={true}
+        showSecure={true}
+        showInstant={true}
+        className="p-4 bg-success/5 rounded-lg border border-success/20"
+      />
 
-      {/* Primary Payment Button */}
-      <Button
-        type="submit"
-        size="lg"
-        className="w-full h-14 text-lg"
-        disabled={!isValid || isProcessing}
-      >
-        {isProcessing ? (
-          <span className="flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            Processing...
-          </span>
-        ) : (
-          <span className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
-            Pay {formatPrice(finalTotal)}
-          </span>
-        )}
-      </Button>
+      {/* Primary Payment Button (AC #4) */}
+      <PaymentRequestButton
+        amount={finalTotal}
+        currency="USD"
+        onPay={handleSubmit}
+        isProcessing={isProcessing}
+        disabled={!isValid}
+      />
 
       {/* Price Breakdown Summary (AC #5) */}
       <div className="text-center space-y-1">
@@ -414,8 +403,7 @@ export function PaymentStep({ trip, onBack, onContinue }: PaymentStepProps) {
           {promoApplied && ` - ${formatPrice(discount)} discount`}
         </p>
         <p className="text-xs text-muted-foreground">
-          Your payment information is encrypted and secure. We never store your
-          full card details.
+          All taxes included. Your payment information is encrypted and secure.
         </p>
       </div>
     </form>

@@ -109,11 +109,15 @@ export function CategoryBrowser({
       // Remove from trip
       removeFromTrip(exp.id);
     } else {
-      // Add to trip with animation
+      // Add to trip with animation and haptic feedback
       triggerFly(
         buttonRect.x + buttonRect.width / 2,
         buttonRect.y + buttonRect.height / 2,
       );
+      // Haptic feedback (if supported)
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
       onQuickAdd(exp);
     }
   };

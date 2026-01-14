@@ -112,7 +112,7 @@ function toExperience(record: any): Experience {
     createdAt: record.created_at,
     updatedAt: record.updated_at,
     publishedAt: record.published_at,
-    instantBookEnabled: record.instant_book_enabled ?? false,
+    instantBookEnabled: record.vendors?.instant_book_enabled ?? false,
     cutoffHours: record.cutoff_hours ?? 2,
   };
 }
@@ -130,7 +130,8 @@ const EXPERIENCE_SELECT = `
         review_count,
         response_time,
         verified,
-        created_at
+        created_at,
+        instant_book_enabled
     ),
     experience_images (
         id,
